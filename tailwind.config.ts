@@ -31,20 +31,14 @@ export default {
       },
       animation: {
         'corona-pulse': 'corona-pulse 4s ease-in-out infinite',
-        'diamond-flare': 'diamond-flare 3s ease-in-out infinite',
         'drift-slow': 'drift 60s linear infinite',
         'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
         'fade-in': 'fade-in 1s ease-out forwards',
-        'count-glow': 'count-glow 2s ease-in-out infinite',
       },
       keyframes: {
         'corona-pulse': {
           '0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
           '50%': { opacity: '1', transform: 'scale(1.05)' },
-        },
-        'diamond-flare': {
-          '0%, 100%': { opacity: '0.4', transform: 'scale(0.8)' },
-          '50%': { opacity: '1', transform: 'scale(1.2)' },
         },
         drift: {
           '0%': { transform: 'translateX(0) translateY(0)' },
@@ -60,10 +54,6 @@ export default {
         'fade-in': {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
-        },
-        'count-glow': {
-          '0%, 100%': { textShadow: '0 0 20px rgba(245, 158, 11, 0.3)' },
-          '50%': { textShadow: '0 0 40px rgba(245, 158, 11, 0.6), 0 0 80px rgba(245, 158, 11, 0.2)' },
         },
       },
     },

@@ -18,12 +18,14 @@ const signupRef = ref<HTMLElement | null>(null)
 const featuresVisible = ref(false)
 const signupVisible = ref(false)
 
+let staggerTimer: ReturnType<typeof setTimeout>
+
 onMounted(() => {
   // Stagger hero content reveal
   requestAnimationFrame(() => {
     heroReady.value = true
+    staggerTimer = setTimeout(() => { countdownReady.value = true }, 400)
   })
-  const timer = setTimeout(() => { countdownReady.value = true }, 400)
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -43,7 +45,7 @@ onMounted(() => {
   if (signupRef.value) observer.observe(signupRef.value)
 
   onUnmounted(() => {
-    clearTimeout(timer)
+    clearTimeout(staggerTimer)
     observer.disconnect()
   })
 })
@@ -91,7 +93,11 @@ const features = [
       <!-- Top bar — minimal nav -->
       <nav class="absolute top-0 left-0 right-0 flex items-center justify-between px-6 sm:px-10 py-5 z-10">
         <div class="flex items-center gap-3">
-          <EclipseLogo size="nav" />
+          <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none">
+            <circle cx="64" cy="64" r="36" fill="#050810" />
+            <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
+            <circle cx="96" cy="48" r="4" fill="#f59e0b" />
+          </svg>
           <span class="font-display font-semibold text-base tracking-wide text-slate-300">
             ECLIPSECHASE
           </span>
@@ -115,15 +121,11 @@ const features = [
         class="text-center max-w-3xl transition-all duration-700 ease-out"
         :class="heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
       >
-        <p class="font-mono italic text-corona/60 text-sm sm:text-base mb-3 tracking-wide">
+        <p class="font-mono italic text-slate-400 text-sm sm:text-base mb-3 tracking-wide">
           August 12, 2026 — Western Iceland
         </p>
-        <h1 class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[0.95]">
-          <span class="text-white">Find Clear Skies</span>
-          <br>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-corona via-corona-bright to-corona">
-            on Eclipse Day
-          </span>
+        <h1 class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[0.95] text-white">
+          Find Clear Skies
         </h1>
         <p class="mt-5 sm:mt-6 text-sm sm:text-base text-slate-400/80 leading-relaxed max-w-xl mx-auto font-light">
           {{ t('hero.subtitle') }}
@@ -283,7 +285,11 @@ const features = [
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
           <!-- Brand -->
           <div class="flex items-center gap-3">
-            <EclipseLogo size="footer" />
+            <svg class="w-5 h-5" viewBox="0 0 128 128" fill="none">
+              <circle cx="64" cy="64" r="36" fill="#050810" />
+              <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.6" />
+              <circle cx="96" cy="48" r="3" fill="#f59e0b" opacity="0.8" />
+            </svg>
             <span class="font-display text-xs tracking-[0.2em] text-slate-500 uppercase">
               EclipseChase.is
             </span>
