@@ -1,19 +1,4 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-
-let _supabase: SupabaseClient | null = null
-
-function getSupabase(): SupabaseClient | null {
-  if (_supabase) return _supabase
-
-  const config = useRuntimeConfig()
-  const supabaseUrl = config.public.supabaseUrl || process.env.SUPABASE_URL
-  const supabaseKey = config.public.supabaseKey || process.env.SUPABASE_KEY
-
-  if (!supabaseUrl || !supabaseKey) return null
-
-  _supabase = createClient(supabaseUrl, supabaseKey)
-  return _supabase
-}
+import { serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -27,7 +12,6 @@ export default defineEventHandler(async (event) => {
 
   const email = body.email.trim().toLowerCase()
 
-  // Basic email validation
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw createError({
       statusCode: 400,
@@ -35,12 +19,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const supabase = getSupabase()
-
-  if (!supabase) {
-    console.log(`[signup] Email signup (no Supabase configured): ${email}`)
-    return { success: true }
-  }
+  const supabase = await serverSupabaseServiceRole(event)
 
   const { error } = await supabase
     .from('email_signups')
@@ -50,7 +29,7 @@ export default defineEventHandler(async (event) => {
     )
 
   if (error) {
-    console.error('[signup] Supabase error:', error)
+    console.error('[signup] Supabase error:', JSON.stringify(error, null, 2))
     throw createError({
       statusCode: 500,
       message: 'Failed to save signup. Please try again.',
