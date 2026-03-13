@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "title": "EclipseChase.is — Find Clear Skies on Eclipse Day",
+    "description": "Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland."
+  },
+  "hero": {
+    "title": "Find Clear Skies on Eclipse Day",
+    "subtitle": "Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland",
+    "cta": "Get Notified When We Launch"
+  },
+  "countdown": {
+    "title": "Time Until Totality",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds"
+  },
+  "features": {
+    "title": "What You'll Get",
+    "weather": {
+      "title": "Live Weather Map",
+      "description": "Real-time cloud cover from Icelandic weather stations overlaid on an interactive map. See exactly where skies are clear."
+    },
+    "recommendations": {
+      "title": "Smart Recommendations",
+      "description": "AI-powered suggestions for the best viewing spot based on weather, traffic, and eclipse geometry. Updated every 15 minutes."
+    },
+    "offline": {
+      "title": "Works Offline",
+      "description": "Download maps and eclipse data before you leave. Full functionality even without cell coverage in the Westfjords."
+    },
+    "timeline": {
+      "title": "Eclipse Timeline",
+      "description": "Precise contact times for your exact GPS position. Know exactly when to look up, when totality begins, and when it ends."
+    }
+  },
+  "signup": {
+    "title": "Be the First to Know",
+    "subtitle": "Get notified when EclipseChase.is launches. No spam, just one email.",
+    "placeholder": "your{'@'}email.com",
+    "button": "Notify Me",
+    "success": "You're on the list! We'll be in touch.",
+    "error": "Something went wrong. Please try again."
+  },
+  "footer": {
+    "tagline": "Built for the once-in-170-years eclipse.",
+    "eclipse_date": "August 12, 2026 · Iceland",
+    "privacy": "Privacy",
+    "about": "About"
+  }
+}

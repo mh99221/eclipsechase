@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "title": "EclipseChase.is — Finndu hreint loft á sólmyrkvadaginn",
+    "description": "Rauntíma veðureftirlit fyrir heilsólmyrkvann 12. ágúst 2026 á Íslandi."
+  },
+  "hero": {
+    "title": "Finndu hreint loft á sólmyrkvadaginn",
+    "subtitle": "Rauntíma veðureftirlit fyrir heilsólmyrkvann 12. ágúst 2026 á Íslandi",
+    "cta": "Fáðu tilkynningu þegar við opnum"
+  },
+  "countdown": {
+    "title": "Tími þar til myrkvinn",
+    "days": "Dagar",
+    "hours": "Klukkustundir",
+    "minutes": "Mínútur",
+    "seconds": "Sekúndur"
+  },
+  "features": {
+    "title": "Hvað þú færð",
+    "weather": {
+      "title": "Lifandi veðurkort",
+      "description": "Rauntíma skýjahula frá íslenskum veðurstöðvum á gagnvirku korti. Sjáðu nákvæmlega hvar himininn er heiður."
+    },
+    "recommendations": {
+      "title": "Snjöll ráðlegging",
+      "description": "Gervigreindarstýrðar tillögur að bestu áhorfsstað miðað við veður, umferð og sólmyrkvalandfræði."
+    },
+    "offline": {
+      "title": "Virkar án nets",
+      "description": "Sæktu kort og sólmyrkvagögn áður en þú ferð. Full virkni jafnvel án farsímaþjónustu á Vestfjörðum."
+    },
+    "timeline": {
+      "title": "Sólmyrkvatímalína",
+      "description": "Nákvæmir snertigangatímar fyrir þína GPS staðsetningu. Vittu nákvæmlega hvenær á að horfa upp."
+    }
+  },
+  "signup": {
+    "title": "Vertu fyrstur til að vita",
+    "subtitle": "Fáðu tilkynningu þegar EclipseChase.is opnar. Ekkert ruslpóstur.",
+    "placeholder": "þitt{'@'}netfang.is",
+    "button": "Tilkynna mér",
+    "success": "Þú ert á listanum! Við verðum í sambandi.",
+    "error": "Eitthvað fór úrskeiðis. Vinsamlegast reyndu aftur."
+  },
+  "footer": {
+    "tagline": "Gert fyrir sólmyrkvann sem kemur einu sinni á 170 árum.",
+    "eclipse_date": "12. ágúst 2026 · Ísland",
+    "privacy": "Persónuvernd",
+    "about": "Um okkur"
+  }
+}
