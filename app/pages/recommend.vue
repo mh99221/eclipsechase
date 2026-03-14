@@ -283,8 +283,8 @@ function scoreColor(score: number): string {
         </button>
       </div>
 
-      <!-- Action buttons -->
-      <div v-if="selectedProfile" class="mt-8 flex gap-3">
+      <!-- Action buttons (inline on desktop) -->
+      <div v-if="selectedProfile" class="mt-8 hidden sm:flex gap-3">
         <NuxtLink
           :to="`/map?profile=${selectedProfile}`"
           class="px-5 py-2.5 bg-corona text-void-deep rounded-md text-sm font-semibold font-display hover:bg-corona-bright transition-colors"
@@ -294,8 +294,21 @@ function scoreColor(score: number): string {
       </div>
     </div>
 
+    <!-- Floating "View on map" button (mobile only) -->
+    <div
+      v-if="selectedProfile"
+      class="fixed bottom-5 left-4 right-4 z-20 sm:hidden"
+    >
+      <NuxtLink
+        :to="`/map?profile=${selectedProfile}`"
+        class="block w-full text-center px-5 py-3 bg-corona text-void-deep rounded-lg text-sm font-semibold font-display hover:bg-corona-bright transition-colors shadow-lg shadow-corona/20"
+      >
+        {{ t('recommend.view_on_map') }}
+      </NuxtLink>
+    </div>
+
     <!-- Footer -->
-    <footer class="border-t border-void-border/30 py-8 mt-12">
+    <footer class="border-t border-void-border/30 py-8 mt-12 sm:mb-0 mb-16">
       <div class="section-container text-center">
         <NuxtLink to="/map" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
           &larr; Back to map
