@@ -103,20 +103,6 @@ const features = [
           </span>
         </div>
         <div class="flex items-center gap-4">
-          <NuxtLink
-            to="/recommend"
-            class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider"
-          >
-            FIND YOUR SPOT
-          </NuxtLink>
-          <div class="w-px h-4 bg-void-border" />
-          <NuxtLink
-            to="/map"
-            class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider"
-          >
-            WEATHER MAP
-          </NuxtLink>
-          <div class="w-px h-4 bg-void-border" />
           <span class="hidden sm:inline text-xs font-mono text-slate-500 tracking-wider">
             64.1°N 21.9°W
           </span>
