@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import mapboxgl from 'mapbox-gl'
+import { cloudColor, formatDuration } from '~/utils/eclipse'
 
 const props = defineProps<{
   stations?: Array<{
@@ -32,14 +33,6 @@ const mapContainer = ref<HTMLElement | null>(null)
 let map: mapboxgl.Map | null = null
 const markers: mapboxgl.Marker[] = []
 const spotMarkers: mapboxgl.Marker[] = []
-
-function cloudColor(cover: number | null | undefined): string {
-  if (cover == null) return '#94a3b8' // slate-400, no data
-  if (cover <= 25) return '#22c55e'   // green — clear
-  if (cover <= 50) return '#f59e0b'   // amber — partly cloudy
-  if (cover <= 75) return '#f97316'   // orange — mostly cloudy
-  return '#ef4444'                     // red — overcast
-}
 
 function addEclipsePath() {
   if (!map) return
@@ -133,12 +126,6 @@ function updateMarkers() {
   }
 }
 
-function formatDuration(seconds: number): string {
-  const m = Math.floor(seconds / 60)
-  const s = seconds % 60
-  return m > 0 ? `${m}m ${s}s` : `${s}s`
-}
-
 function updateSpotMarkers() {
   spotMarkers.forEach(m => m.remove())
   spotMarkers.length = 0
@@ -177,11 +164,13 @@ function updateSpotMarkers() {
       </div>
     `)
 
+    // Single listener on popup open — uses { once: true } per open cycle
+    // to avoid accumulating listeners
     popup.on('open', () => {
       const popupEl = popup.getElement()
       popupEl?.addEventListener('click', () => {
         router.push(`/spots/${spot.slug}`)
-      })
+      }, { once: true })
     })
 
     const marker = new mapboxgl.Marker({ element: el })
@@ -194,7 +183,7 @@ function updateSpotMarkers() {
 }
 
 watch(() => props.stations, updateMarkers, { deep: true })
-watch(() => props.spots, updateSpotMarkers, { deep: true })
+watch(() => props.spots, updateSpotMarkers)
 
 onMounted(() => {
   if (!mapContainer.value) return

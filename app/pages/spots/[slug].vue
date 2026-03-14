@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatDuration } from '~/utils/eclipse'
+
 const route = useRoute()
 const slug = route.params.slug as string
 
@@ -16,12 +18,6 @@ useHead({
     { name: 'description', content: () => spot.value.description },
   ],
 })
-
-function formatDuration(seconds: number): string {
-  const m = Math.floor(seconds / 60)
-  const s = seconds % 60
-  return m > 0 ? `${m}m ${s}s` : `${s}s`
-}
 
 const regionLabels: Record<string, string> = {
   westfjords: 'Westfjords',

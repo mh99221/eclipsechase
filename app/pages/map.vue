@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { CLOUD_COVER_LEVELS, CLOUD_COVER_NO_DATA } from '~/utils/eclipse'
+
 const { t } = useI18n()
 
 useHead({
@@ -8,61 +10,46 @@ useHead({
   ],
 })
 
-// Fetch weather stations and viewing spots
-const { data: stationsData } = await useFetch('/api/weather/stations')
-const { data: spotsData } = await useFetch('/api/spots')
+// Fetch all data in parallel (independent requests)
+const [{ data: stationsData }, { data: spotsData }, { data: cloudData, refresh: refreshCloud }] = await Promise.all([
+  useFetch('/api/weather/stations'),
+  useFetch('/api/spots'),
+  useFetch('/api/weather/cloud-cover'),
+])
 
-// Fetch current weather (observations don't have cloud cover, forecasts do)
-const { data: forecastData, refresh: refreshForecast } = await useFetch('/api/weather/forecast')
-
-// Merge station metadata with latest forecast cloud cover
+// Merge station metadata with cloud cover
 const stations = computed(() => {
   const stationList = stationsData.value?.stations || []
-  const forecasts = forecastData.value?.forecasts || []
+  const cloudCover = cloudData.value?.cloud_cover || []
 
-  // Get the nearest forecast per station
-  const now = Date.now()
-  const latestByStation = new Map<string, any>()
-
-  for (const fc of forecasts) {
-    const validTime = new Date(fc.valid_time).getTime()
-    const existing = latestByStation.get(fc.station_id)
-    // Pick the forecast closest to now
-    if (!existing || Math.abs(validTime - now) < Math.abs(new Date(existing.valid_time).getTime() - now)) {
-      latestByStation.set(fc.station_id, fc)
-    }
+  const coverByStation = new Map<string, number | null>()
+  for (const cc of cloudCover) {
+    coverByStation.set(cc.station_id, cc.cloud_cover)
   }
 
-  return stationList.map((s: any) => {
-    const fc = latestByStation.get(s.id)
-    return {
-      station_id: s.id,
-      name: s.name,
-      lat: s.lat,
-      lng: s.lng,
-      region: s.region,
-      cloud_cover: fc?.cloud_cover ?? null,
-      temp: fc?.temp ?? null,
-    }
-  })
+  return stationList.map((s: any) => ({
+    station_id: s.id,
+    name: s.name,
+    lat: s.lat,
+    lng: s.lng,
+    region: s.region,
+    cloud_cover: coverByStation.get(s.id) ?? null,
+  }))
 })
 
-// Auto-refresh every 15 minutes
+// Auto-refresh cloud cover every 15 minutes
 let refreshTimer: ReturnType<typeof setInterval>
 onMounted(() => {
-  refreshTimer = setInterval(() => refreshForecast(), 15 * 60 * 1000)
+  refreshTimer = setInterval(() => refreshCloud(), 15 * 60 * 1000)
 })
 onUnmounted(() => {
   clearInterval(refreshTimer)
 })
 
-// Legend items
+// Legend from shared constants
 const legendItems = [
-  { label: 'Clear', color: '#22c55e' },
-  { label: 'Partly cloudy', color: '#f59e0b' },
-  { label: 'Mostly cloudy', color: '#f97316' },
-  { label: 'Overcast', color: '#ef4444' },
-  { label: 'No data', color: '#94a3b8' },
+  ...CLOUD_COVER_LEVELS.map(l => ({ label: l.label, color: l.color })),
+  { label: CLOUD_COVER_NO_DATA.label, color: CLOUD_COVER_NO_DATA.color },
 ]
 </script>
 
