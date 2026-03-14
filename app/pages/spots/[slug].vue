@@ -38,6 +38,22 @@ const coverageBadge: Record<string, { label: string; color: string }> = {
   limited: { label: 'Limited signal', color: 'text-amber-400' },
   none: { label: 'No signal', color: 'text-red-400' },
 }
+
+const difficultyBadge: Record<string, { label: string; color: string }> = {
+  easy: { label: 'Easy', color: 'text-green-400 border-green-400/30' },
+  moderate: { label: 'Moderate', color: 'text-amber-400 border-amber-400/30' },
+  difficult: { label: 'Difficult', color: 'text-orange-400 border-orange-400/30' },
+  strenuous: { label: 'Strenuous', color: 'text-red-400 border-red-400/30' },
+}
+
+const spotTypeLabels: Record<string, string> = {
+  'drive-up': 'Drive-up',
+  'short-walk': 'Short walk',
+  'moderate-hike': 'Moderate hike',
+  'serious-hike': 'Serious hike',
+}
+
+const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 'drive-up')
 </script>
 
 <template>
@@ -106,6 +122,66 @@ const coverageBadge: Record<string, { label: string; color: string }> = {
           <p class="font-display text-lg font-semibold" :class="coverageBadge[spot.cell_coverage]?.color || 'text-slate-400'">
             {{ coverageBadge[spot.cell_coverage]?.label || spot.cell_coverage }}
           </p>
+        </div>
+      </div>
+
+      <!-- Trail info (hiking spots only) -->
+      <div v-if="isTrail" class="mb-12 bg-void-surface border border-void-border/40 rounded-lg p-5 sm:p-6">
+        <h2 class="font-display text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <svg class="w-5 h-5 text-corona/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+          Trail Info
+          <span
+            v-if="spot.difficulty && difficultyBadge[spot.difficulty]"
+            class="ml-2 text-[10px] font-mono tracking-wider px-2 py-0.5 rounded border"
+            :class="difficultyBadge[spot.difficulty].color"
+          >
+            {{ difficultyBadge[spot.difficulty].label }}
+          </span>
+        </h2>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+          <div v-if="spot.spot_type">
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">Type</p>
+            <p class="text-sm font-mono text-slate-300">{{ spotTypeLabels[spot.spot_type] || spot.spot_type }}</p>
+          </div>
+          <div v-if="spot.trail_distance_km">
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">Distance</p>
+            <p class="text-sm font-mono text-slate-300">{{ spot.trail_distance_km }} km</p>
+          </div>
+          <div v-if="spot.trail_time_minutes">
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">Est. time</p>
+            <p class="text-sm font-mono text-slate-300">{{ spot.trail_time_minutes < 60 ? `${spot.trail_time_minutes} min` : `${Math.floor(spot.trail_time_minutes / 60)}h ${spot.trail_time_minutes % 60}min` }}</p>
+          </div>
+          <div v-if="spot.elevation_gain_m">
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">Elevation gain</p>
+            <p class="text-sm font-mono text-slate-300">{{ spot.elevation_gain_m }} m</p>
+          </div>
+        </div>
+
+        <!-- Trailhead coordinates -->
+        <div v-if="spot.trailhead_lat && spot.trailhead_lng" class="pt-3 border-t border-void-border/30">
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1.5">Trailhead</p>
+          <p class="font-mono text-sm text-slate-400">
+            {{ spot.trailhead_lat.toFixed(4) }}°N, {{ Math.abs(spot.trailhead_lng).toFixed(4) }}°W
+          </p>
+          <a
+            :href="`https://www.google.com/maps?q=${spot.trailhead_lat},${spot.trailhead_lng}`"
+            target="_blank"
+            rel="noopener"
+            class="inline-flex items-center gap-1.5 mt-1.5 text-sm text-corona hover:text-corona-bright transition-colors"
+          >
+            Navigate to trailhead
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </div>
+
+        <!-- Timing warning -->
+        <div class="mt-4 px-3 py-2.5 rounded bg-amber-900/15 border border-amber-700/20 text-xs font-mono text-amber-400/80">
+          Totality begins around 17:45 UTC — plan to arrive at the viewing point well before then.
         </div>
       </div>
 
