@@ -104,6 +104,8 @@ function updateMarkers() {
 
     const el = document.createElement('div')
     el.className = 'station-marker'
+    el.setAttribute('role', 'button')
+    el.setAttribute('aria-label', `${station.name} weather station${station.cloud_cover != null ? `, ${station.cloud_cover}% cloud cover` : ''}`)
     el.style.cssText = `
       width: 14px;
       height: 14px;
@@ -159,6 +161,8 @@ function updateSpotMarkers() {
 
     const el = document.createElement('div')
     el.className = 'spot-marker'
+    el.setAttribute('role', 'button')
+    el.setAttribute('aria-label', `${spot.name} viewing spot, ${formatDuration(spot.totality_duration_seconds)} totality${hasRanking && rankInfo && !rankInfo.filtered ? `, rank ${rankInfo.rank}` : ''}`)
 
     if (isFiltered) {
       // Dimmed marker for filtered spots
@@ -288,7 +292,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="mapContainer" class="w-full h-full" />
+  <div ref="mapContainer" class="w-full h-full" role="application" aria-label="Interactive weather map of western Iceland showing eclipse viewing conditions" />
 </template>
 
 <style>

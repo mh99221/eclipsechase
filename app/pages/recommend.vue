@@ -67,8 +67,8 @@ function scoreColor(score: number): string {
   <div class="relative noise min-h-screen">
     <!-- Nav -->
     <nav class="flex items-center justify-between px-4 sm:px-10 py-5">
-      <NuxtLink to="/" class="flex items-center gap-2.5 group">
-        <svg class="w-7 h-7" viewBox="0 0 128 128" fill="none">
+      <NuxtLink to="/" aria-label="EclipseChase — Home" class="flex items-center gap-2.5 group">
+        <svg class="w-7 h-7" viewBox="0 0 128 128" fill="none" aria-hidden="true">
           <circle cx="64" cy="64" r="36" fill="#050810" />
           <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
           <circle cx="96" cy="48" r="4" fill="#f59e0b" />
@@ -102,6 +102,7 @@ function scoreColor(score: number): string {
         <button
           v-for="profile in PROFILES"
           :key="profile.id"
+          :aria-pressed="selectedProfile === profile.id"
           class="px-3 sm:px-4 py-2 sm:py-2.5 rounded-md text-xs sm:text-sm font-mono tracking-wide transition-all"
           :class="selectedProfile === profile.id
             ? 'bg-corona/15 border-2 border-corona text-corona-bright'
@@ -153,7 +154,7 @@ function scoreColor(score: number): string {
 
       <!-- Spot cards -->
       <div class="flex flex-col gap-3">
-        <div
+        <article
           v-for="(item, index) in visibleSpots"
           :key="item.spot.id"
           class="rounded-lg p-4 transition-all"
@@ -226,15 +227,19 @@ function scoreColor(score: number): string {
               <div class="relative inline-block">
                 <button
                   class="text-[9px] font-mono text-slate-600 tracking-[0.1em] hover:text-slate-400 transition-colors cursor-help flex items-center gap-1"
+                  :aria-expanded="scoreTooltipOpen"
+                  aria-describedby="score-tooltip"
                   @click.stop="scoreTooltipOpen = !scoreTooltipOpen"
                 >
                   {{ t('recommend.score') }}
-                  <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </button>
                 <div
                   v-if="scoreTooltipOpen"
+                  id="score-tooltip"
+                  role="tooltip"
                   class="absolute right-0 bottom-full mb-2 w-56 bg-void-deep/95 backdrop-blur-sm border border-void-border/60 rounded px-3 py-2.5 z-30 text-left"
                   @click.stop
                 >
@@ -252,7 +257,7 @@ function scoreColor(score: number): string {
               </div>
             </div>
           </div>
-        </div>
+        </article>
       </div>
 
       <!-- Show more -->

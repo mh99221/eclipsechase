@@ -91,6 +91,24 @@ const rankedForMap = computed(() => {
 
 const activeProfileName = computed(() => PROFILES.find(p => p.id === selectedProfile.value)?.name || null)
 
+// Close profile menu on Escape or click outside
+function handleKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape' && profileMenuOpen.value) {
+    profileMenuOpen.value = false
+  }
+}
+function handleClickOutside() {
+  if (profileMenuOpen.value) profileMenuOpen.value = false
+}
+onMounted(() => {
+  document.addEventListener('keydown', handleKeydown)
+  document.addEventListener('click', handleClickOutside)
+})
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown)
+  document.removeEventListener('click', handleClickOutside)
+})
+
 // Legend from shared constants
 const legendItems = [
   ...CLOUD_COVER_LEVELS.map(l => ({ label: l.label, color: l.color })),
@@ -100,6 +118,8 @@ const legendItems = [
 
 <template>
   <div class="relative w-full h-screen bg-void-deep">
+    <h1 class="sr-only">Weather Map — Eclipse Viewing Conditions in Iceland</h1>
+
     <!-- Map -->
     <ClientOnly>
       <EclipseMap
@@ -111,13 +131,18 @@ const legendItems = [
         :initial-zoom="restoreZoom"
         class="absolute inset-0"
       />
+      <template #fallback>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <p class="text-sm font-mono text-slate-500 animate-pulse">Loading map...</p>
+        </div>
+      </template>
     </ClientOnly>
 
     <!-- Top bar -->
     <div class="absolute top-0 left-0 right-0 z-10 pointer-events-none">
       <div class="flex items-center justify-between px-4 sm:px-6 py-4">
-        <NuxtLink to="/" class="pointer-events-auto flex items-center gap-2.5 group">
-          <svg class="w-7 h-7" viewBox="0 0 128 128" fill="none">
+        <NuxtLink to="/" aria-label="EclipseChase — Home" class="pointer-events-auto flex items-center gap-2.5 group">
+          <svg class="w-7 h-7" viewBox="0 0 128 128" fill="none" aria-hidden="true">
             <circle cx="64" cy="64" r="36" fill="#050810" />
             <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
             <circle cx="96" cy="48" r="4" fill="#f59e0b" />
@@ -129,24 +154,30 @@ const legendItems = [
 
         <div class="pointer-events-auto flex items-center gap-3">
           <!-- Profile selector -->
-          <div class="relative">
+          <div class="relative" @click.stop>
             <button
               class="text-xs font-mono tracking-wider px-2.5 py-1.5 rounded transition-all"
               :class="activeProfileName
                 ? 'text-corona bg-void-deep/80 border border-corona/40'
                 : 'text-slate-400 hover:text-slate-200'"
+              :aria-expanded="profileMenuOpen"
+              aria-haspopup="true"
+              aria-controls="profile-menu"
               @click="profileMenuOpen = !profileMenuOpen"
             >
               {{ activeProfileName || 'Profile' }}
-              <span class="ml-1 text-[10px]">{{ profileMenuOpen ? '▲' : '▼' }}</span>
+              <span class="ml-1 text-[10px]" aria-hidden="true">{{ profileMenuOpen ? '▲' : '▼' }}</span>
             </button>
             <div
               v-if="profileMenuOpen"
+              id="profile-menu"
+              role="menu"
               class="absolute right-0 top-full mt-1 bg-void-deep/95 backdrop-blur-sm border border-void-border/60 rounded py-1 min-w-[140px] z-20"
             >
               <button
                 v-for="profile in PROFILES"
                 :key="profile.id"
+                role="menuitem"
                 class="w-full text-left px-3 py-1.5 text-xs font-mono transition-colors"
                 :class="selectedProfile === profile.id ? 'text-corona' : 'text-slate-400 hover:text-slate-200'"
                 @click="selectedProfile = selectedProfile === profile.id ? null : profile.id as ProfileId; profileMenuOpen = false; if (selectedProfile) requestGps()"
@@ -155,6 +186,7 @@ const legendItems = [
               </button>
               <button
                 v-if="selectedProfile"
+                role="menuitem"
                 class="w-full text-left px-3 py-1.5 text-xs font-mono text-slate-500 hover:text-slate-300 border-t border-void-border/40 mt-1 pt-1.5 transition-colors"
                 @click="selectedProfile = null; profileMenuOpen = false"
               >
@@ -181,6 +213,7 @@ const legendItems = [
           <span
             class="w-2.5 h-2.5 rounded-full shrink-0"
             :style="{ background: item.color, boxShadow: `0 0 6px ${item.color}44` }"
+            aria-hidden="true"
           />
           <span class="text-xs font-mono text-slate-400">{{ item.label }}</span>
         </div>
