@@ -2,6 +2,8 @@
 import { CLOUD_COVER_LEVELS, CLOUD_COVER_NO_DATA } from '~/utils/eclipse'
 
 const { t } = useI18n()
+const route = useRoute()
+const focusSpot = (route.query.spot as string) || null
 
 useHead({
   title: 'Weather Map — EclipseChase.is',
@@ -57,7 +59,7 @@ const legendItems = [
   <div class="relative w-full h-screen bg-void-deep">
     <!-- Map -->
     <ClientOnly>
-      <EclipseMap :stations="stations" :spots="spotsData?.spots || []" class="absolute inset-0" />
+      <EclipseMap :stations="stations" :spots="spotsData?.spots || []" :focus-spot="focusSpot" class="absolute inset-0" />
     </ClientOnly>
 
     <!-- Top bar -->

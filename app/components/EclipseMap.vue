@@ -25,6 +25,7 @@ const props = defineProps<{
     has_services: boolean
     cell_coverage: string
   }>
+  focusSpot?: string | null
 }>()
 
 const router = useRouter()
@@ -33,6 +34,7 @@ const mapContainer = ref<HTMLElement | null>(null)
 let map: mapboxgl.Map | null = null
 const markers: mapboxgl.Marker[] = []
 const spotMarkers: mapboxgl.Marker[] = []
+const spotMarkersBySlug = new Map<string, mapboxgl.Marker>()
 
 function addEclipsePath() {
   if (!map) return
@@ -179,7 +181,19 @@ function updateSpotMarkers() {
       .addTo(map)
 
     spotMarkers.push(marker)
+    spotMarkersBySlug.set(spot.slug, marker)
   }
+}
+
+function focusOnSpot(slug: string) {
+  if (!map) return
+  const marker = spotMarkersBySlug.get(slug)
+  if (!marker) return
+
+  const lngLat = marker.getLngLat()
+  map.flyTo({ center: lngLat, zoom: 10, duration: 1500 })
+  // Open popup after fly animation
+  setTimeout(() => marker.togglePopup(), 1600)
 }
 
 watch(() => props.stations, updateMarkers, { deep: true })
@@ -207,6 +221,10 @@ onMounted(() => {
     addEclipsePath()
     updateMarkers()
     updateSpotMarkers()
+
+    if (props.focusSpot) {
+      focusOnSpot(props.focusSpot)
+    }
   })
 })
 

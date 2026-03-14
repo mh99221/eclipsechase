@@ -48,7 +48,7 @@ const coverageBadge: Record<string, { label: string; color: string }> = {
           ECLIPSECHASE
         </span>
       </NuxtLink>
-      <NuxtLink to="/map" class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider">
+      <NuxtLink :to="`/map?spot=${slug}`" class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider">
         VIEW ON MAP
       </NuxtLink>
     </nav>
@@ -155,7 +155,7 @@ const coverageBadge: Record<string, { label: string; color: string }> = {
     <!-- Footer -->
     <footer class="border-t border-void-border/30 py-8">
       <div class="section-container text-center">
-        <NuxtLink to="/map" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
+        <NuxtLink :to="`/map?spot=${slug}`" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
           &larr; Back to map
         </NuxtLink>
       </div>
