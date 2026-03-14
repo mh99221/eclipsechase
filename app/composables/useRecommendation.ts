@@ -7,7 +7,7 @@ export type ProfileId = 'photographer' | 'family' | 'hiker' | 'skychaser' | 'fir
 export interface Profile {
   id: ProfileId
   name: string
-  description: string
+  descriptionKey: string
   weights: { weather: number; duration: number; services: number; accessibility: number; distance: number }
   floors: {
     hasServices?: boolean
@@ -22,21 +22,21 @@ export const PROFILES: Profile[] = [
   {
     id: 'photographer',
     name: 'Photographer',
-    description: 'Longest totality + clear skies. Doesn\'t mind remote spots.',
+    descriptionKey: 'recommend.profiles.photographer',
     weights: { weather: 0.35, duration: 0.35, services: 0.05, accessibility: 0.10, distance: 0.15 },
     floors: {},
   },
   {
     id: 'family',
     name: 'Family',
-    description: 'Easy access, services nearby, good cell signal. No difficult trails.',
+    descriptionKey: 'recommend.profiles.family',
     weights: { weather: 0.25, duration: 0.10, services: 0.30, accessibility: 0.25, distance: 0.10 },
     floors: { hasServices: true, cellCoverageNot: 'none', difficultyNot: 'challenging' },
   },
   {
     id: 'hiker',
     name: 'Hiker',
-    description: 'Prefers trails and elevation. The harder the hike, the better the spot.',
+    descriptionKey: 'recommend.profiles.hiker',
     weights: { weather: 0.25, duration: 0.20, services: 0.05, accessibility: 0.35, distance: 0.15 },
     floors: { spotTypeNot: 'drive-up' },
     invertAccessibility: true,
@@ -44,14 +44,14 @@ export const PROFILES: Profile[] = [
   {
     id: 'skychaser',
     name: 'Sky Chaser',
-    description: 'Will drive anywhere for the clearest weather. All about the sky.',
+    descriptionKey: 'recommend.profiles.skychaser',
     weights: { weather: 0.50, duration: 0.15, services: 0.05, accessibility: 0.05, distance: 0.25 },
     floors: {},
   },
   {
     id: 'firsttimer',
     name: 'First-Timer',
-    description: 'Balanced pick — safe, accessible, good conditions. A great first eclipse.',
+    descriptionKey: 'recommend.profiles.firsttimer',
     weights: { weather: 0.30, duration: 0.15, services: 0.20, accessibility: 0.20, distance: 0.15 },
     floors: { difficultyNot: 'challenging' },
   },

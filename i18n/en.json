@@ -45,6 +45,13 @@
     "privacy_note_link": "Privacy Policy"
   },
   "recommend": {
+    "profiles": {
+      "photographer": "Longest totality + clear skies. Doesn't mind remote spots.",
+      "family": "Easy access, services nearby, good cell signal. No difficult trails.",
+      "hiker": "Prefers trails and elevation. The harder the hike, the better the spot.",
+      "skychaser": "Will drive anywhere for the clearest weather. All about the sky.",
+      "firsttimer": "Balanced pick — safe, accessible, good conditions. A great first eclipse."
+    },
     "find_your_spot": "FIND YOUR SPOT",
     "title": "Where should I watch?",
     "subtitle": "Pick your style. We'll rank the best spots for you based on live weather.",

@@ -45,6 +45,13 @@
     "privacy_note_link": "persónuverndarstefnu okkar"
   },
   "recommend": {
+    "profiles": {
+      "photographer": "Lengsti myrkvinn + heiður himinn. Gerir ekki grein fyrir afskekktum stöðum.",
+      "family": "Auðvelt aðgengi, þjónusta nálægt, gott farsímasamband. Engar erfiðar gönguleiðir.",
+      "hiker": "Vill gönguleiðir og hæð. Því erfiðari gangan, því betri staðurinn.",
+      "skychaser": "Keyrir hvert sem er fyrir heiðan himininn. Allt snýst um veðrið.",
+      "firsttimer": "Jafnvægisvalkostur — öruggur, aðgengilegur, góð skilyrði. Frábært fyrsta sólmyrkva."
+    },
     "find_your_spot": "FINNDU STAÐINN ÞINN",
     "title": "Hvar ætti ég að horfa?",
     "subtitle": "Veldu stílinn þinn. Við röðum bestu stöðunum fyrir þig miðað við lifandi veður.",

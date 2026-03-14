@@ -113,13 +113,12 @@ function scoreColor(score: number): string {
       </div>
 
       <!-- Active profile description -->
-      <div
+      <p
         v-if="activeProfile"
         class="mb-8 text-sm text-slate-400 font-mono"
       >
-        {{ activeProfile.description }}
-      </div>
-      <div v-else class="mb-8" />
+        {{ t(activeProfile.descriptionKey) }}
+      </p>
 
       <!-- Thin results banner -->
       <div
