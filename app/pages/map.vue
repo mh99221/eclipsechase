@@ -8,8 +8,9 @@ useHead({
   ],
 })
 
-// Fetch weather stations with their metadata
+// Fetch weather stations and viewing spots
 const { data: stationsData } = await useFetch('/api/weather/stations')
+const { data: spotsData } = await useFetch('/api/spots')
 
 // Fetch current weather (observations don't have cloud cover, forecasts do)
 const { data: forecastData, refresh: refreshForecast } = await useFetch('/api/weather/forecast')
@@ -69,7 +70,7 @@ const legendItems = [
   <div class="relative w-full h-screen bg-void-deep">
     <!-- Map -->
     <ClientOnly>
-      <EclipseMap :stations="stations" class="absolute inset-0" />
+      <EclipseMap :stations="stations" :spots="spotsData?.spots || []" class="absolute inset-0" />
     </ClientOnly>
 
     <!-- Top bar -->
@@ -112,6 +113,12 @@ const legendItems = [
       </div>
 
       <div class="mt-3 pt-2.5 border-t border-void-border/40">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-3.5 h-3.5 rounded-full border-2 border-corona bg-void-deep flex items-center justify-center shrink-0">
+            <span class="w-1.5 h-1.5 rounded-full bg-corona" />
+          </span>
+          <span class="text-xs font-mono text-slate-400">Viewing spot</span>
+        </div>
         <div class="flex items-center gap-2 mb-1">
           <span class="w-4 h-0 border-t border-dashed border-corona/40" />
           <span class="text-xs font-mono text-slate-400">Totality path</span>

@@ -13,12 +13,25 @@ const props = defineProps<{
     wind_speed?: number | null
     wind_dir?: string | null
   }>
+  spots?: Array<{
+    id: string
+    name: string
+    slug: string
+    lat: number
+    lng: number
+    region: string
+    totality_duration_seconds: number
+    has_services: boolean
+    cell_coverage: string
+  }>
 }>()
 
+const router = useRouter()
 const config = useRuntimeConfig()
 const mapContainer = ref<HTMLElement | null>(null)
 let map: mapboxgl.Map | null = null
 const markers: mapboxgl.Marker[] = []
+const spotMarkers: mapboxgl.Marker[] = []
 
 function cloudColor(cover: number | null | undefined): string {
   if (cover == null) return '#94a3b8' // slate-400, no data
@@ -120,7 +133,68 @@ function updateMarkers() {
   }
 }
 
+function formatDuration(seconds: number): string {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return m > 0 ? `${m}m ${s}s` : `${s}s`
+}
+
+function updateSpotMarkers() {
+  spotMarkers.forEach(m => m.remove())
+  spotMarkers.length = 0
+
+  if (!map || !props.spots) return
+
+  for (const spot of props.spots) {
+    const el = document.createElement('div')
+    el.className = 'spot-marker'
+    el.style.cssText = `
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #050810;
+      border: 2px solid #f59e0b;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    `
+    // Inner dot
+    const inner = document.createElement('div')
+    inner.style.cssText = 'width: 6px; height: 6px; border-radius: 50%; background: #f59e0b;'
+    el.appendChild(inner)
+
+    const popup = new mapboxgl.Popup({
+      offset: 14,
+      closeButton: false,
+      className: 'eclipse-popup',
+    }).setHTML(`
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px; cursor: pointer;" data-slug="${spot.slug}">
+        <div style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; margin-bottom: 4px; color: #fbbf24;">${spot.name}</div>
+        <div>Totality: ${formatDuration(spot.totality_duration_seconds)}</div>
+        <div style="margin-top: 6px; color: #f59e0b; font-size: 11px;">Click for details →</div>
+      </div>
+    `)
+
+    popup.on('open', () => {
+      const popupEl = popup.getElement()
+      popupEl?.addEventListener('click', () => {
+        router.push(`/spots/${spot.slug}`)
+      })
+    })
+
+    const marker = new mapboxgl.Marker({ element: el })
+      .setLngLat([spot.lng, spot.lat])
+      .setPopup(popup)
+      .addTo(map)
+
+    spotMarkers.push(marker)
+  }
+}
+
 watch(() => props.stations, updateMarkers, { deep: true })
+watch(() => props.spots, updateSpotMarkers, { deep: true })
 
 onMounted(() => {
   if (!mapContainer.value) return
@@ -143,11 +217,13 @@ onMounted(() => {
   map.on('load', () => {
     addEclipsePath()
     updateMarkers()
+    updateSpotMarkers()
   })
 })
 
 onUnmounted(() => {
   markers.forEach(m => m.remove())
+  spotMarkers.forEach(m => m.remove())
   map?.remove()
   map = null
 })
