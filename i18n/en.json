@@ -58,6 +58,7 @@
     "from_reykjavik": "from Reykjavík",
     "thin_results": "Only {count} spots match — consider switching to First-Timer for more options.",
     "score": "SCORE",
+    "score_explanation": "Score combines weather, totality duration, distance, accessibility, and services — weighted for your profile.",
     "filtered": "Doesn't match profile",
     "totality": "Totality",
     "distance": "away"

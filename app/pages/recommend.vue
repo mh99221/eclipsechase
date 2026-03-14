@@ -49,6 +49,12 @@ const visibleSpots = computed(() => {
 const hiddenCount = computed(() => Math.max(0, ranked.value.length - 3))
 
 const unfilteredCount = computed(() => ranked.value.filter(r => !r.filtered).length)
+const activeProfile = computed(() => PROFILES.find(p => p.id === selectedProfile.value) || null)
+const scoreTooltipOpen = ref(false)
+
+function closeTooltip() { scoreTooltipOpen.value = false }
+onMounted(() => document.addEventListener('click', closeTooltip))
+onUnmounted(() => document.removeEventListener('click', closeTooltip))
 
 function scoreColor(score: number): string {
   if (score >= 80) return 'text-green-400'
@@ -92,7 +98,7 @@ function scoreColor(score: number): string {
       </div>
 
       <!-- Profile selector -->
-      <div class="flex flex-wrap gap-2 sm:gap-3 mb-8">
+      <div class="flex flex-wrap gap-2 sm:gap-3 mb-3">
         <button
           v-for="profile in PROFILES"
           :key="profile.id"
@@ -105,6 +111,15 @@ function scoreColor(score: number): string {
           {{ profile.name }}
         </button>
       </div>
+
+      <!-- Active profile description -->
+      <div
+        v-if="activeProfile"
+        class="mb-8 text-sm text-slate-400 font-mono"
+      >
+        {{ activeProfile.description }}
+      </div>
+      <div v-else class="mb-8" />
 
       <!-- Thin results banner -->
       <div
@@ -121,8 +136,8 @@ function scoreColor(score: number): string {
 
       <!-- Results header -->
       <div class="mb-4">
-        <p v-if="selectedProfile" class="font-mono text-[10px] tracking-[0.2em] text-slate-500 uppercase">
-          {{ t('recommend.top_picks', { profile: PROFILES.find(p => p.id === selectedProfile)?.name || '' }) }}
+        <p v-if="activeProfile" class="font-mono text-[10px] tracking-[0.2em] text-slate-500 uppercase">
+          {{ t('recommend.top_picks', { profile: activeProfile.name }) }}
         </p>
         <p v-else class="font-mono text-[10px] tracking-[0.2em] text-slate-500 uppercase">
           {{ t('recommend.all_spots') }}
@@ -209,8 +224,32 @@ function scoreColor(score: number): string {
               <div class="font-display text-2xl sm:text-3xl font-bold" :class="scoreColor(item.score)">
                 {{ item.score }}
               </div>
-              <div class="text-[9px] font-mono text-slate-600 tracking-[0.1em]">
-                {{ t('recommend.score') }}
+              <div class="relative inline-block">
+                <button
+                  class="text-[9px] font-mono text-slate-600 tracking-[0.1em] hover:text-slate-400 transition-colors cursor-help flex items-center gap-1"
+                  @click.stop="scoreTooltipOpen = !scoreTooltipOpen"
+                >
+                  {{ t('recommend.score') }}
+                  <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+                <div
+                  v-if="scoreTooltipOpen"
+                  class="absolute right-0 bottom-full mb-2 w-56 bg-void-deep/95 backdrop-blur-sm border border-void-border/60 rounded px-3 py-2.5 z-30 text-left"
+                  @click.stop
+                >
+                  <p class="text-[10px] font-mono text-slate-300 leading-relaxed mb-1.5">
+                    {{ t('recommend.score_explanation') }}
+                  </p>
+                  <div v-if="activeProfile" class="text-[9px] font-mono text-slate-500 space-y-0.5">
+                    <div>Weather: {{ Math.round(activeProfile.weights.weather * 100) }}%</div>
+                    <div>Duration: {{ Math.round(activeProfile.weights.duration * 100) }}%</div>
+                    <div>Services: {{ Math.round(activeProfile.weights.services * 100) }}%</div>
+                    <div>Access: {{ Math.round(activeProfile.weights.accessibility * 100) }}%</div>
+                    <div>Distance: {{ Math.round(activeProfile.weights.distance * 100) }}%</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -58,6 +58,7 @@
     "from_reykjavik": "frá Reykjavík",
     "thin_results": "Aðeins {count} staðir passa — íhugaðu að skipta yfir í Fyrsta-sinn fyrir fleiri valkosti.",
     "score": "STIG",
+    "score_explanation": "Stig sameinar veður, lengd myrkvans, fjarlægð, aðgengi og þjónustu — vegið eftir prófílnum þínum.",
     "filtered": "Passar ekki við prófíl",
     "totality": "Myrkvinn",
     "distance": "í burtu"
