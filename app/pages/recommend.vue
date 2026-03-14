@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId } from '~/composables/useRecommendation'
-import { formatDuration } from '~/utils/eclipse'
+import { formatDuration, REGION_LABELS, SPOT_TYPE_LABELS } from '~/utils/eclipse'
 
 const { t } = useI18n()
 
@@ -48,31 +48,12 @@ const visibleSpots = computed(() => {
 
 const hiddenCount = computed(() => Math.max(0, ranked.value.length - 3))
 
+const unfilteredCount = computed(() => ranked.value.filter(r => !r.filtered).length)
+
 function scoreColor(score: number): string {
   if (score >= 80) return 'text-green-400'
   if (score >= 50) return 'text-amber-400'
   return 'text-red-400'
-}
-
-function scoreBgColor(score: number): string {
-  if (score >= 80) return 'bg-green-400'
-  if (score >= 50) return 'bg-amber-400'
-  return 'bg-red-400'
-}
-
-const spotTypeLabels: Record<string, string> = {
-  'drive-up': 'Drive-up',
-  'short-walk': 'Short walk',
-  'moderate-hike': 'Moderate hike',
-  'serious-hike': 'Serious hike',
-}
-
-const regionLabels: Record<string, string> = {
-  westfjords: 'Westfjords',
-  snaefellsnes: 'Snæfellsnes',
-  reykjanes: 'Reykjanes',
-  reykjavik: 'Reykjavík',
-  borgarfjordur: 'Borgarfjörður',
 }
 </script>
 
@@ -130,7 +111,7 @@ const regionLabels: Record<string, string> = {
         v-if="selectedProfile && thinResults"
         class="mb-6 px-4 py-3 rounded bg-amber-900/20 border border-amber-700/30 text-xs font-mono text-amber-400"
       >
-        {{ t('recommend.thin_results', { count: ranked.filter(r => !r.filtered).length }) }}
+        {{ t('recommend.thin_results', { count: unfilteredCount }) }}
       </div>
 
       <!-- Location indicator -->
@@ -190,7 +171,7 @@ const regionLabels: Record<string, string> = {
                   {{ t('recommend.filtered') }}
                 </span>
                 <span class="text-[10px] tracking-[0.15em] text-corona/60 uppercase font-mono">
-                  {{ regionLabels[item.spot.region] || item.spot.region }}
+                  {{ REGION_LABELS[item.spot.region] || item.spot.region }}
                 </span>
               </div>
 
@@ -205,7 +186,7 @@ const regionLabels: Record<string, string> = {
               <!-- Summary -->
               <p class="text-xs font-mono text-slate-400 mt-1">
                 {{ formatDuration(item.spot.totality_duration_seconds) }} totality
-                · {{ spotTypeLabels[item.spot.spot_type] || item.spot.spot_type }}
+                · {{ SPOT_TYPE_LABELS[item.spot.spot_type] || item.spot.spot_type }}
                 <template v-if="item.weatherStatus"> · {{ item.weatherStatus }}</template>
               </p>
 

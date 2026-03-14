@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatDuration } from '~/utils/eclipse'
+import { formatDuration, REGION_LABELS, SPOT_TYPE_LABELS } from '~/utils/eclipse'
 
 const route = useRoute()
 const slug = route.params.slug as string
@@ -25,14 +25,6 @@ useHead({
   ],
 })
 
-const regionLabels: Record<string, string> = {
-  westfjords: 'Westfjords',
-  snaefellsnes: 'Snæfellsnes',
-  reykjanes: 'Reykjanes',
-  reykjavik: 'Reykjavík',
-  borgarfjordur: 'Borgarfjörður',
-}
-
 const coverageBadge: Record<string, { label: string; color: string }> = {
   good: { label: 'Good signal', color: 'text-green-400' },
   limited: { label: 'Limited signal', color: 'text-amber-400' },
@@ -44,13 +36,6 @@ const difficultyBadge: Record<string, { label: string; color: string }> = {
   moderate: { label: 'Moderate', color: 'text-amber-400 border-amber-400/30' },
   difficult: { label: 'Difficult', color: 'text-orange-400 border-orange-400/30' },
   strenuous: { label: 'Strenuous', color: 'text-red-400 border-red-400/30' },
-}
-
-const spotTypeLabels: Record<string, string> = {
-  'drive-up': 'Drive-up',
-  'short-walk': 'Short walk',
-  'moderate-hike': 'Moderate hike',
-  'serious-hike': 'Serious hike',
 }
 
 const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 'drive-up')
@@ -87,7 +72,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
       <!-- Header -->
       <div class="mb-10">
         <span class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase">
-          {{ regionLabels[spot.region] || spot.region }}
+          {{ REGION_LABELS[spot.region] || spot.region }}
         </span>
         <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-2 mb-4">
           {{ spot.name }}
@@ -144,7 +129,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
           <div v-if="spot.spot_type">
             <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">Type</p>
-            <p class="text-sm font-mono text-slate-300">{{ spotTypeLabels[spot.spot_type] || spot.spot_type }}</p>
+            <p class="text-sm font-mono text-slate-300">{{ SPOT_TYPE_LABELS[spot.spot_type] || spot.spot_type }}</p>
           </div>
           <div v-if="spot.trail_distance_km">
             <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">Distance</p>

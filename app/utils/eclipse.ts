@@ -20,3 +20,18 @@ export function cloudColor(cover: number | null | undefined): string {
   }
   return CLOUD_COVER_LEVELS[CLOUD_COVER_LEVELS.length - 1].color
 }
+
+export const REGION_LABELS: Record<string, string> = {
+  westfjords: 'Westfjords',
+  snaefellsnes: 'Snæfellsnes',
+  reykjanes: 'Reykjanes',
+  reykjavik: 'Reykjavík',
+  borgarfjordur: 'Borgarfjörður',
+}
+
+export const SPOT_TYPE_LABELS: Record<string, string> = {
+  'drive-up': 'Drive-up',
+  'short-walk': 'Short walk',
+  'moderate-hike': 'Moderate hike',
+  'serious-hike': 'Serious hike',
+}

@@ -31,7 +31,6 @@ const props = defineProps<{
     score: number
     filtered: boolean
   }>
-  activeProfile?: string | null
   focusSpot?: string | null
   initialCenter?: [number, number] | null
   initialZoom?: number | null

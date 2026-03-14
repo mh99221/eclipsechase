@@ -127,7 +127,7 @@ export function useRecommendation(
     if (!profile) {
       return [...spots.value]
         .sort((a, b) => (b.totality_duration_seconds || 0) - (a.totality_duration_seconds || 0))
-        .map(spot => ({ spot, score: -1, filtered: false, factors: emptyFactors, distanceKm: 0, weatherStatus: null }))
+        .map(spot => ({ spot, score: -1, filtered: false, factors: { ...emptyFactors }, distanceKm: 0, weatherStatus: null }))
     }
 
     const allSpots = spots.value
@@ -153,7 +153,7 @@ export function useRecommendation(
       if (floors.spotTypeNot && spot.spot_type === floors.spotTypeNot) filtered = true
 
       if (filtered) {
-        return { spot, score: 0, filtered: true, factors: emptyFactors, distanceKm: 0, weatherStatus: null }
+        return { spot, score: 0, filtered: true, factors: { ...emptyFactors }, distanceKm: 0, weatherStatus: null }
       }
 
       // Compute factors

@@ -106,7 +106,6 @@ const legendItems = [
         :stations="stations"
         :spots="spotsData?.spots || []"
         :ranked-spots="rankedForMap"
-        :active-profile="selectedProfile"
         :focus-spot="focusSpot"
         :initial-center="restoreCenter"
         :initial-zoom="restoreZoom"
