@@ -50,9 +50,17 @@ const hiddenCount = computed(() => Math.max(0, ranked.value.length - 3))
 
 const unfilteredCount = computed(() => ranked.value.filter(r => !r.filtered).length)
 const activeProfile = computed(() => PROFILES.find(p => p.id === selectedProfile.value) || null)
-const scoreTooltipOpen = ref(false)
+const scoreTooltipOpen = ref<string | null>(null)
 
-function closeTooltip() { scoreTooltipOpen.value = false }
+function closeTooltip() { scoreTooltipOpen.value = null }
+
+const locationLabel = computed(() => {
+  if (!isGps.value) return null
+  const [lat, lng] = coords.value
+  const latStr = `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? 'N' : 'S'}`
+  const lngStr = `${Math.abs(lng).toFixed(2)}°${lng >= 0 ? 'E' : 'W'}`
+  return `${latStr}, ${lngStr}`
+})
 onMounted(() => document.addEventListener('click', closeTooltip))
 onUnmounted(() => document.removeEventListener('click', closeTooltip))
 
@@ -68,12 +76,12 @@ function scoreColor(score: number): string {
     <!-- Nav -->
     <nav class="flex items-center justify-between px-4 sm:px-10 py-5">
       <NuxtLink to="/" aria-label="EclipseChase — Home" class="flex items-center gap-2.5 group">
-        <svg class="w-7 h-7" viewBox="0 0 128 128" fill="none" aria-hidden="true">
+        <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
           <circle cx="64" cy="64" r="36" fill="#050810" />
           <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
           <circle cx="96" cy="48" r="4" fill="#f59e0b" />
         </svg>
-        <span class="font-display font-semibold text-sm tracking-wide text-slate-400 group-hover:text-slate-200 transition-colors">
+        <span class="font-display font-semibold text-base tracking-wide text-slate-300 group-hover:text-white transition-colors">
           ECLIPSECHASE
         </span>
       </NuxtLink>
@@ -86,7 +94,7 @@ function scoreColor(score: number): string {
     <div class="section-container max-w-3xl py-6 sm:py-12">
       <!-- Header -->
       <div class="mb-8">
-        <span class="font-mono text-[10px] tracking-[0.3em] text-corona/60 uppercase">
+        <span class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase">
           {{ t('recommend.find_your_spot') }}
         </span>
         <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-2 mb-3">
@@ -98,19 +106,23 @@ function scoreColor(score: number): string {
       </div>
 
       <!-- Profile selector -->
-      <div class="flex flex-wrap gap-2 sm:gap-3 mb-3">
-        <button
-          v-for="profile in PROFILES"
-          :key="profile.id"
-          :aria-pressed="selectedProfile === profile.id"
-          class="px-3 sm:px-4 py-2 sm:py-2.5 rounded-md text-xs sm:text-sm font-mono tracking-wide transition-all"
-          :class="selectedProfile === profile.id
-            ? 'bg-corona/15 border-2 border-corona text-corona-bright'
-            : 'bg-void-surface border border-void-border/50 text-slate-400 hover:text-slate-200 hover:border-slate-500'"
-          @click="selectedProfile = selectedProfile === profile.id ? null : profile.id; showAll = false"
-        >
-          {{ profile.name }}
-        </button>
+      <div class="relative mb-3">
+        <div class="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide sm:flex-wrap sm:overflow-visible">
+          <button
+            v-for="profile in PROFILES"
+            :key="profile.id"
+            :aria-pressed="selectedProfile === profile.id"
+            class="px-3 sm:px-4 py-2 sm:py-2.5 rounded-md text-xs sm:text-sm font-mono tracking-wide transition-all whitespace-nowrap shrink-0 sm:shrink"
+            :class="selectedProfile === profile.id
+              ? 'bg-corona/15 border-2 border-corona text-corona-bright'
+              : 'bg-void-surface border border-void-border/50 text-slate-400 hover:text-slate-200 hover:border-slate-500'"
+            @click="selectedProfile = selectedProfile === profile.id ? null : profile.id; showAll = false"
+          >
+            {{ profile.name }}
+          </button>
+        </div>
+        <!-- Scroll fade hint (mobile only) -->
+        <div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-void-deep to-transparent pointer-events-none sm:hidden" />
       </div>
 
       <!-- Active profile description -->
@@ -132,14 +144,15 @@ function scoreColor(score: number): string {
       <!-- Location indicator -->
       <div class="mb-6 text-xs font-mono text-slate-500">
         {{ isGps ? t('recommend.from_location') : t('recommend.from_reykjavik') }}
+        <span v-if="locationLabel" class="text-slate-600"> ({{ locationLabel }})</span>
       </div>
 
       <!-- Results header -->
       <div class="mb-4">
-        <p v-if="activeProfile" class="font-mono text-[10px] tracking-[0.2em] text-slate-500 uppercase">
+        <p v-if="activeProfile" class="font-mono text-xs tracking-[0.2em] text-slate-500 uppercase">
           {{ t('recommend.top_picks', { profile: activeProfile.name }) }}
         </p>
-        <p v-else class="font-mono text-[10px] tracking-[0.2em] text-slate-500 uppercase">
+        <p v-else class="font-mono text-xs tracking-[0.2em] text-slate-500 uppercase">
           {{ t('recommend.all_spots') }}
         </p>
       </div>
@@ -172,7 +185,7 @@ function scoreColor(score: number): string {
               <div class="flex items-center gap-2 mb-1.5">
                 <span
                   v-if="selectedProfile && !item.filtered"
-                  class="text-[11px] font-bold px-1.5 py-0.5 rounded"
+                  class="text-xs font-bold px-1.5 py-0.5 rounded"
                   :class="index < 3
                     ? 'bg-corona text-void-deep'
                     : 'bg-slate-700 text-slate-200'"
@@ -181,11 +194,11 @@ function scoreColor(score: number): string {
                 </span>
                 <span
                   v-if="item.filtered"
-                  class="text-[10px] font-mono text-slate-600"
+                  class="text-xs font-mono text-slate-600"
                 >
                   {{ t('recommend.filtered') }}
                 </span>
-                <span class="text-[10px] tracking-[0.15em] text-corona/60 uppercase font-mono">
+                <span class="text-xs tracking-[0.15em] text-corona/60 uppercase font-mono">
                   {{ REGION_LABELS[item.spot.region] || item.spot.region }}
                 </span>
               </div>
@@ -199,7 +212,7 @@ function scoreColor(score: number): string {
               </NuxtLink>
 
               <!-- Summary -->
-              <p class="text-xs font-mono text-slate-400 mt-1">
+              <p class="text-xs sm:text-sm font-mono text-slate-400 mt-1">
                 {{ formatDuration(item.spot.totality_duration_seconds) }} totality
                 · {{ SPOT_TYPE_LABELS[item.spot.spot_type] || item.spot.spot_type }}
                 <template v-if="item.weatherStatus"> · {{ item.weatherStatus }}</template>
@@ -208,7 +221,7 @@ function scoreColor(score: number): string {
               <!-- Factor breakdown -->
               <div
                 v-if="selectedProfile && !item.filtered"
-                class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[11px] font-mono text-slate-500"
+                class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs font-mono text-slate-500"
               >
                 <span v-if="item.factors.weather">Weather: {{ Math.round(item.factors.weather * 100) }}%</span>
                 <span>Duration: {{ Math.round(item.factors.duration * 100) }}%</span>
@@ -226,10 +239,10 @@ function scoreColor(score: number): string {
               </div>
               <div class="relative inline-block">
                 <button
-                  class="text-[9px] font-mono text-slate-600 tracking-[0.1em] hover:text-slate-400 transition-colors cursor-help flex items-center gap-1"
-                  :aria-expanded="scoreTooltipOpen"
-                  aria-describedby="score-tooltip"
-                  @click.stop="scoreTooltipOpen = !scoreTooltipOpen"
+                  class="text-[11px] font-mono text-slate-600 tracking-[0.1em] hover:text-slate-400 transition-colors cursor-help flex items-center gap-1"
+                  :aria-expanded="scoreTooltipOpen === item.spot.id"
+                  :aria-describedby="`score-tooltip-${item.spot.id}`"
+                  @click.stop="scoreTooltipOpen = scoreTooltipOpen === item.spot.id ? null : item.spot.id"
                 >
                   {{ t('recommend.score') }}
                   <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -237,16 +250,16 @@ function scoreColor(score: number): string {
                   </svg>
                 </button>
                 <div
-                  v-if="scoreTooltipOpen"
-                  id="score-tooltip"
+                  v-if="scoreTooltipOpen === item.spot.id"
+                  :id="`score-tooltip-${item.spot.id}`"
                   role="tooltip"
                   class="absolute right-0 bottom-full mb-2 w-56 bg-void-deep/95 backdrop-blur-sm border border-void-border/60 rounded px-3 py-2.5 z-30 text-left"
                   @click.stop
                 >
-                  <p class="text-[10px] font-mono text-slate-300 leading-relaxed mb-1.5">
+                  <p class="text-xs font-mono text-slate-300 leading-relaxed mb-1.5">
                     {{ t('recommend.score_explanation') }}
                   </p>
-                  <div v-if="activeProfile" class="text-[9px] font-mono text-slate-500 space-y-0.5">
+                  <div v-if="activeProfile" class="text-[11px] font-mono text-slate-500 space-y-0.5">
                     <div>Weather: {{ Math.round(activeProfile.weights.weather * 100) }}%</div>
                     <div>Duration: {{ Math.round(activeProfile.weights.duration * 100) }}%</div>
                     <div>Services: {{ Math.round(activeProfile.weights.services * 100) }}%</div>

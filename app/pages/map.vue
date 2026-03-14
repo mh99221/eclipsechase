@@ -142,12 +142,12 @@ const legendItems = [
     <div class="absolute top-0 left-0 right-0 z-10 pointer-events-none">
       <div class="flex items-center justify-between px-4 sm:px-6 py-4">
         <NuxtLink to="/" aria-label="EclipseChase — Home" class="pointer-events-auto flex items-center gap-2.5 group">
-          <svg class="w-7 h-7" viewBox="0 0 128 128" fill="none" aria-hidden="true">
+          <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
             <circle cx="64" cy="64" r="36" fill="#050810" />
             <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
             <circle cx="96" cy="48" r="4" fill="#f59e0b" />
           </svg>
-          <span class="font-display font-semibold text-sm tracking-wide text-slate-300 group-hover:text-white transition-colors">
+          <span class="font-display font-semibold text-base tracking-wide text-slate-300 group-hover:text-white transition-colors">
             ECLIPSECHASE
           </span>
         </NuxtLink>
