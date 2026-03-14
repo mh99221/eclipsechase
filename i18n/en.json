@@ -44,6 +44,24 @@
     "privacy_note_pre": "By signing up, you agree to our",
     "privacy_note_link": "Privacy Policy"
   },
+  "recommend": {
+    "find_your_spot": "FIND YOUR SPOT",
+    "title": "Where should I watch?",
+    "subtitle": "Pick your style. We'll rank the best spots for you based on live weather.",
+    "top_picks": "TOP PICKS FOR {profile}",
+    "no_profile": "Pick your style to see personalized rankings.",
+    "all_spots": "All spots sorted by totality duration",
+    "view_all": "View all",
+    "more_spots": "+ {count} more spots ranked below",
+    "view_on_map": "View on Map",
+    "from_location": "from your location",
+    "from_reykjavik": "from Reykjavík",
+    "thin_results": "Only {count} spots match — consider switching to First-Timer for more options.",
+    "score": "SCORE",
+    "filtered": "Doesn't match profile",
+    "totality": "Totality",
+    "distance": "away"
+  },
   "footer": {
     "tagline": "Built for the once-in-170-years eclipse.",
     "eclipse_date": "August 12, 2026 · Iceland",

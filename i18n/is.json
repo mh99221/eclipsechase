@@ -44,6 +44,24 @@
     "privacy_note_pre": "Með skráningu samþykkir þú",
     "privacy_note_link": "persónuverndarstefnu okkar"
   },
+  "recommend": {
+    "find_your_spot": "FINNDU STAÐINN ÞINN",
+    "title": "Hvar ætti ég að horfa?",
+    "subtitle": "Veldu stílinn þinn. Við röðum bestu stöðunum fyrir þig miðað við lifandi veður.",
+    "top_picks": "BESTU STAÐIR FYRIR {profile}",
+    "no_profile": "Veldu stíl til að sjá persónulega röðun.",
+    "all_spots": "Allir staðir raðaðir eftir lengd myrkvans",
+    "view_all": "Sjá alla",
+    "more_spots": "+ {count} fleiri staðir raðaðir fyrir neðan",
+    "view_on_map": "Skoða á korti",
+    "from_location": "frá þinni staðsetningu",
+    "from_reykjavik": "frá Reykjavík",
+    "thin_results": "Aðeins {count} staðir passa — íhugaðu að skipta yfir í Fyrsta-sinn fyrir fleiri valkosti.",
+    "score": "STIG",
+    "filtered": "Passar ekki við prófíl",
+    "totality": "Myrkvinn",
+    "distance": "í burtu"
+  },
   "footer": {
     "tagline": "Gert fyrir sólmyrkvann sem kemur einu sinni á 170 árum.",
     "eclipse_date": "12. ágúst 2026 · Ísland",
