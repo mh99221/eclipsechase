@@ -5,6 +5,12 @@ const { t } = useI18n()
 const route = useRoute()
 const focusSpot = (route.query.spot as string) || null
 
+// Restore map position from query params (passed from spot detail "Back to map")
+const restoreCenter = route.query.mlat && route.query.mlng
+  ? [parseFloat(route.query.mlng as string), parseFloat(route.query.mlat as string)] as [number, number]
+  : null
+const restoreZoom = route.query.mzoom ? parseFloat(route.query.mzoom as string) : null
+
 useHead({
   title: 'Weather Map — EclipseChase.is',
   meta: [
@@ -59,7 +65,14 @@ const legendItems = [
   <div class="relative w-full h-screen bg-void-deep">
     <!-- Map -->
     <ClientOnly>
-      <EclipseMap :stations="stations" :spots="spotsData?.spots || []" :focus-spot="focusSpot" class="absolute inset-0" />
+      <EclipseMap
+        :stations="stations"
+        :spots="spotsData?.spots || []"
+        :focus-spot="focusSpot"
+        :initial-center="restoreCenter"
+        :initial-zoom="restoreZoom"
+        class="absolute inset-0"
+      />
     </ClientOnly>
 
     <!-- Top bar -->

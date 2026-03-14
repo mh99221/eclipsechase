@@ -26,6 +26,8 @@ const props = defineProps<{
     cell_coverage: string
   }>
   focusSpot?: string | null
+  initialCenter?: [number, number] | null
+  initialZoom?: number | null
 }>()
 
 const router = useRouter()
@@ -171,7 +173,10 @@ function updateSpotMarkers() {
     popup.on('open', () => {
       const popupEl = popup.getElement()
       popupEl?.addEventListener('click', () => {
-        router.push(`/spots/${spot.slug}`)
+        // Encode current map state so "Back to map" can restore it
+        const center = map!.getCenter()
+        const zoom = map!.getZoom().toFixed(1)
+        router.push(`/spots/${spot.slug}?mlat=${center.lat.toFixed(4)}&mlng=${center.lng.toFixed(4)}&mzoom=${zoom}`)
       }, { once: true })
     })
 
@@ -207,8 +212,8 @@ onMounted(() => {
   map = new mapboxgl.Map({
     container: mapContainer.value,
     style: 'mapbox://styles/mapbox/dark-v11',
-    center: [-23.5, 65.0],
-    zoom: 6,
+    center: props.initialCenter || [-23.5, 65.0],
+    zoom: props.initialZoom ?? 6,
     minZoom: 5,
     maxZoom: 12,
     attributionControl: false,

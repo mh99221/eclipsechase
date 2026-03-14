@@ -4,6 +4,12 @@ import { formatDuration } from '~/utils/eclipse'
 const route = useRoute()
 const slug = route.params.slug as string
 
+// Map state passed from the map page for "Back to map" restoration
+const mapState = route.query.mlat
+  ? `mlat=${route.query.mlat}&mlng=${route.query.mlng}&mzoom=${route.query.mzoom}`
+  : ''
+const backToMapUrl = mapState ? `/map?${mapState}` : '/map'
+
 const { data, error } = await useFetch(`/api/spots/${slug}`)
 
 if (error.value || !data.value?.spot) {
@@ -155,7 +161,7 @@ const coverageBadge: Record<string, { label: string; color: string }> = {
     <!-- Footer -->
     <footer class="border-t border-void-border/30 py-8">
       <div class="section-container text-center">
-        <NuxtLink :to="`/map?spot=${slug}`" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
+        <NuxtLink :to="backToMapUrl" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
           &larr; Back to map
         </NuxtLink>
       </div>
