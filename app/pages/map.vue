@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { CLOUD_COVER_LEVELS, CLOUD_COVER_NO_DATA } from '~/utils/eclipse'
+import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
+import type { ProfileId } from '~/composables/useRecommendation'
 
 const { t } = useI18n()
 const route = useRoute()
 const focusSpot = (route.query.spot as string) || null
+const profileParam = (route.query.profile as string) || null
 
 // Restore map position from query params (passed from spot detail "Back to map")
 const restoreCenter = route.query.mlat && route.query.mlng
@@ -54,6 +57,40 @@ onUnmounted(() => {
   clearInterval(refreshTimer)
 })
 
+// Profile-based ranking
+const selectedProfile = ref<ProfileId | null>(
+  PROFILES.some(p => p.id === profileParam) ? profileParam as ProfileId : null,
+)
+const profileMenuOpen = ref(false)
+
+const { coords, request: requestGps } = useLocation()
+onMounted(() => {
+  if (selectedProfile.value) requestGps()
+})
+
+const allSpots = computed(() => spotsData.value?.spots || [])
+const stationList = computed(() => stationsData.value?.stations || [])
+const cloudCoverData = computed(() => cloudData.value?.cloud_cover || null)
+
+const { ranked } = useRecommendation(
+  allSpots,
+  cloudCoverData,
+  stationList,
+  coords,
+  selectedProfile,
+)
+
+const rankedForMap = computed(() => {
+  if (!selectedProfile.value) return undefined
+  let rank = 0
+  return ranked.value.map((r) => {
+    if (!r.filtered) rank++
+    return { slug: r.spot.slug, rank: r.filtered ? 999 : rank, score: r.score, filtered: r.filtered }
+  })
+})
+
+const activeProfileName = computed(() => PROFILES.find(p => p.id === selectedProfile.value)?.name || null)
+
 // Legend from shared constants
 const legendItems = [
   ...CLOUD_COVER_LEVELS.map(l => ({ label: l.label, color: l.color })),
@@ -68,6 +105,8 @@ const legendItems = [
       <EclipseMap
         :stations="stations"
         :spots="spotsData?.spots || []"
+        :ranked-spots="rankedForMap"
+        :active-profile="selectedProfile"
         :focus-spot="focusSpot"
         :initial-center="restoreCenter"
         :initial-zoom="restoreZoom"
@@ -90,6 +129,40 @@ const legendItems = [
         </NuxtLink>
 
         <div class="pointer-events-auto flex items-center gap-3">
+          <!-- Profile selector -->
+          <div class="relative">
+            <button
+              class="text-xs font-mono tracking-wider px-2.5 py-1.5 rounded transition-all"
+              :class="activeProfileName
+                ? 'text-corona bg-void-deep/80 border border-corona/40'
+                : 'text-slate-400 hover:text-slate-200'"
+              @click="profileMenuOpen = !profileMenuOpen"
+            >
+              {{ activeProfileName || 'Profile' }}
+              <span class="ml-1 text-[10px]">{{ profileMenuOpen ? '▲' : '▼' }}</span>
+            </button>
+            <div
+              v-if="profileMenuOpen"
+              class="absolute right-0 top-full mt-1 bg-void-deep/95 backdrop-blur-sm border border-void-border/60 rounded py-1 min-w-[140px] z-20"
+            >
+              <button
+                v-for="profile in PROFILES"
+                :key="profile.id"
+                class="w-full text-left px-3 py-1.5 text-xs font-mono transition-colors"
+                :class="selectedProfile === profile.id ? 'text-corona' : 'text-slate-400 hover:text-slate-200'"
+                @click="selectedProfile = selectedProfile === profile.id ? null : profile.id as ProfileId; profileMenuOpen = false; if (selectedProfile) requestGps()"
+              >
+                {{ profile.name }}
+              </button>
+              <button
+                v-if="selectedProfile"
+                class="w-full text-left px-3 py-1.5 text-xs font-mono text-slate-500 hover:text-slate-300 border-t border-void-border/40 mt-1 pt-1.5 transition-colors"
+                @click="selectedProfile = null; profileMenuOpen = false"
+              >
+                Clear profile
+              </button>
+            </div>
+          </div>
           <span class="text-xs font-mono text-corona/70 tracking-wider hidden sm:inline">
             AUG 12 2026
           </span>

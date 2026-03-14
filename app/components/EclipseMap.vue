@@ -25,6 +25,13 @@ const props = defineProps<{
     has_services: boolean
     cell_coverage: string
   }>
+  rankedSpots?: Array<{
+    slug: string
+    rank: number
+    score: number
+    filtered: boolean
+  }>
+  activeProfile?: string | null
   focusSpot?: string | null
   initialCenter?: [number, number] | null
   initialZoom?: number | null
@@ -133,28 +140,69 @@ function updateMarkers() {
 function updateSpotMarkers() {
   spotMarkers.forEach(m => m.remove())
   spotMarkers.length = 0
+  spotMarkersBySlug.clear()
 
   if (!map || !props.spots) return
 
+  // Build rank lookup
+  const rankMap = new Map<string, { rank: number; score: number; filtered: boolean }>()
+  if (props.rankedSpots) {
+    for (const r of props.rankedSpots) {
+      rankMap.set(r.slug, r)
+    }
+  }
+  const hasRanking = rankMap.size > 0
+
   for (const spot of props.spots) {
+    const rankInfo = rankMap.get(spot.slug)
+    const isFiltered = hasRanking && rankInfo?.filtered
+    const isTop3 = hasRanking && rankInfo && !rankInfo.filtered && rankInfo.rank <= 3
+
     const el = document.createElement('div')
     el.className = 'spot-marker'
-    el.style.cssText = `
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #050810;
-      border: 2px solid #f59e0b;
-      box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    `
-    // Inner dot
-    const inner = document.createElement('div')
-    inner.style.cssText = 'width: 6px; height: 6px; border-radius: 50%; background: #f59e0b;'
-    el.appendChild(inner)
+
+    if (isFiltered) {
+      // Dimmed marker for filtered spots
+      el.style.cssText = `
+        width: 18px; height: 18px; border-radius: 50%;
+        background: #050810; border: 2px solid #475569;
+        opacity: 0.4; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+      `
+      const inner = document.createElement('div')
+      inner.style.cssText = 'width: 5px; height: 5px; border-radius: 50%; background: #475569;'
+      el.appendChild(inner)
+    } else if (hasRanking && rankInfo) {
+      // Ranked marker with number
+      const size = isTop3 ? 24 : 20
+      const borderColor = isTop3 ? '#f59e0b' : '#d97706'
+      const shadow = isTop3 ? '0 0 14px rgba(245, 158, 11, 0.4)' : '0 0 8px rgba(245, 158, 11, 0.2)'
+      el.style.cssText = `
+        width: ${size}px; height: ${size}px; border-radius: 50%;
+        background: #050810; border: 2px solid ${borderColor};
+        box-shadow: ${shadow}; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'IBM Plex Mono', monospace; font-size: ${isTop3 ? 11 : 9}px;
+        font-weight: 700; color: ${isTop3 ? '#fbbf24' : '#d97706'};
+      `
+      el.textContent = String(rankInfo.rank)
+    } else {
+      // Default amber dot (no ranking)
+      el.style.cssText = `
+        width: 20px; height: 20px; border-radius: 50%;
+        background: #050810; border: 2px solid #f59e0b;
+        box-shadow: 0 0 12px rgba(245, 158, 11, 0.3); cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+      `
+      const inner = document.createElement('div')
+      inner.style.cssText = 'width: 6px; height: 6px; border-radius: 50%; background: #f59e0b;'
+      el.appendChild(inner)
+    }
+
+    // Build popup HTML
+    const scoreHtml = hasRanking && rankInfo && !rankInfo.filtered
+      ? `<div style="margin-top: 4px; color: ${rankInfo.score >= 80 ? '#22c55e' : rankInfo.score >= 50 ? '#fbbf24' : '#ef4444'};">Score: ${rankInfo.score}/100</div>`
+      : ''
 
     const popup = new mapboxgl.Popup({
       offset: 14,
@@ -164,16 +212,14 @@ function updateSpotMarkers() {
       <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px; cursor: pointer;" data-slug="${spot.slug}">
         <div style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; margin-bottom: 4px; color: #fbbf24;">${spot.name}</div>
         <div>Totality: ${formatDuration(spot.totality_duration_seconds)}</div>
+        ${scoreHtml}
         <div style="margin-top: 6px; color: #f59e0b; font-size: 11px;">Click for details →</div>
       </div>
     `)
 
-    // Single listener on popup open — uses { once: true } per open cycle
-    // to avoid accumulating listeners
     popup.on('open', () => {
       const popupEl = popup.getElement()
       popupEl?.addEventListener('click', () => {
-        // Encode current map state so "Back to map" can restore it
         const center = map!.getCenter()
         const zoom = map!.getZoom().toFixed(1)
         router.push(`/spots/${spot.slug}?mlat=${center.lat.toFixed(4)}&mlng=${center.lng.toFixed(4)}&mzoom=${zoom}`)
@@ -203,6 +249,7 @@ function focusOnSpot(slug: string) {
 
 watch(() => props.stations, updateMarkers, { deep: true })
 watch(() => props.spots, updateSpotMarkers)
+watch(() => props.rankedSpots, updateSpotMarkers, { deep: true })
 
 onMounted(() => {
   if (!mapContainer.value) return
