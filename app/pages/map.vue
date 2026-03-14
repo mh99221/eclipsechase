@@ -85,9 +85,9 @@ const legendItems = [
     </div>
 
     <!-- Legend panel -->
-    <div class="absolute bottom-12 sm:bottom-6 left-4 sm:left-6 z-10 bg-void-deep/90 backdrop-blur-sm border border-void-border/50 rounded px-4 py-3 max-h-[calc(100dvh-120px)] overflow-y-auto">
+    <div class="absolute bottom-20 sm:bottom-6 left-4 sm:left-6 z-10 bg-void-deep/90 backdrop-blur-sm border border-void-border/50 rounded px-3 py-2.5 sm:px-4 sm:py-3 max-h-[calc(100dvh-160px)] overflow-y-auto text-[11px] sm:text-xs">
       <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2.5">Cloud Cover</p>
-      <div class="flex flex-col gap-1.5">
+      <div class="flex flex-col gap-1 sm:gap-1.5">
         <div
           v-for="item in legendItems"
           :key="item.label"
