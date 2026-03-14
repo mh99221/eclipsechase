@@ -260,11 +260,11 @@ function scoreColor(score: number): string {
                     {{ t('recommend.score_explanation') }}
                   </p>
                   <div v-if="activeProfile" class="text-[11px] font-mono text-slate-500 space-y-0.5">
-                    <div>Weather: {{ Math.round(activeProfile.weights.weather * 100) }}%</div>
-                    <div>Duration: {{ Math.round(activeProfile.weights.duration * 100) }}%</div>
-                    <div>Services: {{ Math.round(activeProfile.weights.services * 100) }}%</div>
-                    <div>Access: {{ Math.round(activeProfile.weights.accessibility * 100) }}%</div>
-                    <div>Distance: {{ Math.round(activeProfile.weights.distance * 100) }}%</div>
+                    <div>Weather: {{ Math.round(activeProfile.weights.weather * item.factors.weather * 100) }} pts <span class="text-slate-600">({{ Math.round(activeProfile.weights.weather * 100) }}%)</span></div>
+                    <div>Duration: {{ Math.round(activeProfile.weights.duration * item.factors.duration * 100) }} pts <span class="text-slate-600">({{ Math.round(activeProfile.weights.duration * 100) }}%)</span></div>
+                    <div>Services: {{ Math.round(activeProfile.weights.services * item.factors.services * 100) }} pts <span class="text-slate-600">({{ Math.round(activeProfile.weights.services * 100) }}%)</span></div>
+                    <div>Access: {{ Math.round(activeProfile.weights.accessibility * item.factors.accessibility * 100) }} pts <span class="text-slate-600">({{ Math.round(activeProfile.weights.accessibility * 100) }}%)</span></div>
+                    <div>Distance: {{ Math.round(activeProfile.weights.distance * item.factors.distance * 100) }} pts <span class="text-slate-600">({{ Math.round(activeProfile.weights.distance * 100) }}%)</span></div>
                   </div>
                 </div>
               </div>
