@@ -11,11 +11,13 @@ export default defineEventHandler(async (event) => {
 
   if (error) {
     // Fallback: simple query if RPC doesn't exist yet
-    const now = new Date().toISOString()
+    const now = new Date()
+    const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString()
     const { data: fallback } = await supabase
       .from('weather_forecasts')
       .select('station_id, cloud_cover, valid_time')
-      .gte('valid_time', now)
+      .gte('valid_time', now.toISOString())
+      .gte('forecast_time', sixHoursAgo)
       .order('valid_time', { ascending: true })
       .limit(150)
 
