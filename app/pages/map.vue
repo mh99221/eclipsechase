@@ -15,7 +15,7 @@ const restoreCenter = route.query.mlat && route.query.mlng
 const restoreZoom = route.query.mzoom ? parseFloat(route.query.mzoom as string) : null
 
 useHead({
-  title: 'Weather Map — EclipseChase.is',
+  title: 'Weather Map',
   meta: [
     { name: 'description', content: 'Live weather conditions across western Iceland for the 2026 total solar eclipse.' },
   ],

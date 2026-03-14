@@ -1,12 +1,61 @@
 <script setup lang="ts">
 const { t } = useI18n()
+const siteUrl = useRuntimeConfig().public.siteUrl as string
 
-useHead({
+useHead(() => ({
   title: t('meta.title'),
+  titleTemplate: '%s',
   meta: [
     { name: 'description', content: t('meta.description') },
   ],
-})
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'WebSite',
+            'name': 'EclipseChase.is',
+            'url': siteUrl,
+            'description': t('meta.description'),
+            'inLanguage': ['en', 'is'],
+          },
+          {
+            '@type': 'Event',
+            'name': 'Total Solar Eclipse in Iceland 2026',
+            'startDate': '2026-08-12T17:43:00+00:00',
+            'endDate': '2026-08-12T17:48:00+00:00',
+            'eventAttendanceMode': 'https://schema.org/OfflineEventAttendanceMode',
+            'eventStatus': 'https://schema.org/EventScheduled',
+            'location': {
+              '@type': 'Place',
+              'name': 'Western Iceland',
+              'geo': {
+                '@type': 'GeoCoordinates',
+                'latitude': 64.15,
+                'longitude': -21.94,
+              },
+              'address': {
+                '@type': 'PostalAddress',
+                'addressCountry': 'IS',
+                'addressRegion': 'Western Iceland',
+              },
+            },
+            'description': 'Total solar eclipse visible from Western Iceland. Maximum totality duration 2m 18s. Path crosses Westfjords, Snæfellsnes, and Reykjanes.',
+            'image': `${siteUrl}/og-image.jpg`,
+            'url': siteUrl,
+            'organizer': {
+              '@type': 'Organization',
+              'name': 'EclipseChase.is',
+              'url': siteUrl,
+            },
+          },
+        ],
+      }),
+    },
+  ],
+}))
 
 // Staggered reveal on mount
 const heroReady = ref(false)
@@ -50,7 +99,14 @@ onMounted(() => {
   })
 })
 
-const features = [
+const dataStripItems = [
+  { color: 'bg-corona/60', label: 'data_strip.totality', value: 'data_strip.totality_value' },
+  { color: 'bg-ice/60', label: 'data_strip.sun_alt', value: 'data_strip.sun_alt_value' },
+  { color: 'bg-corona/60', label: 'data_strip.path', value: 'data_strip.path_value' },
+  { color: 'bg-red-400/60', label: 'data_strip.next', value: 'data_strip.next_value' },
+]
+
+const features = computed(() => [
   {
     title: t('features.weather.title'),
     description: t('features.weather.description'),
@@ -75,7 +131,7 @@ const features = [
     accent: 'ice',
     number: '04',
   },
-]
+])
 </script>
 
 <template>
@@ -122,10 +178,11 @@ const features = [
         :class="heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
       >
         <p class="font-mono italic text-slate-400 text-base mb-3 tracking-wide">
-          August 12, 2026 — Western Iceland
+          {{ t('hero.date_location') }}
         </p>
         <h1 class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[0.95] text-white">
-          Find Clear Skies
+          {{ t('hero.title') }}<br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-corona to-corona-bright">{{ t('hero.title_accent') }}</span>
         </h1>
         <p class="mt-5 sm:mt-6 text-base text-slate-400 leading-relaxed max-w-xl mx-auto font-light">
           {{ t('hero.subtitle') }}
@@ -149,7 +206,7 @@ const features = [
         :class="countdownReady ? 'opacity-100' : 'opacity-0'"
         style="transition-delay: 600ms"
       >
-        <span class="text-[11px] font-display uppercase tracking-[0.3em] text-slate-600">Scroll</span>
+        <span class="text-[11px] font-display uppercase tracking-[0.3em] text-slate-600">{{ t('hero.scroll') }}</span>
         <div class="w-px h-6 bg-gradient-to-b from-slate-700 to-transparent" />
       </div>
     </header>
@@ -159,25 +216,10 @@ const features = [
     <!-- ═══════════════════════════════════════════ -->
     <div class="border-y border-void-border/50 bg-void-deep/50 backdrop-blur-sm">
       <div class="section-container py-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs sm:text-sm md:flex-nowrap md:justify-between font-mono tracking-wider">
-        <div class="flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-corona/60" />
-          <span class="text-slate-500">TOTALITY</span>
-          <span class="text-slate-300">2m 18s max</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-ice/60" />
-          <span class="text-slate-500">SUN ALT</span>
-          <span class="text-slate-300">24° above horizon</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-corona/60" />
-          <span class="text-slate-500">PATH</span>
-          <span class="text-slate-300">Westfjords → Reykjanes</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-red-400/60" />
-          <span class="text-slate-500">NEXT</span>
-          <span class="text-slate-300">2196 (170 yrs)</span>
+        <div v-for="item in dataStripItems" :key="item.label" class="flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full" :class="item.color" />
+          <span class="text-slate-500">{{ t(item.label) }}</span>
+          <span class="text-slate-300">{{ t(item.value) }}</span>
         </div>
       </div>
     </div>
@@ -204,10 +246,10 @@ const features = [
           class="mb-14 max-w-2xl transition-all duration-700 ease-out"
           :class="featuresVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
         >
-          <span class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase">What you'll get</span>
+          <span class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase">{{ t('features.label') }}</span>
           <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-3 leading-tight">
-            Everything for<br>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-slate-500">the perfect view</span>
+            {{ t('features.title') }}<br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-slate-500">{{ t('features.title_accent') }}</span>
           </h2>
         </div>
 
@@ -266,7 +308,7 @@ const features = [
         class="section-container text-center transition-all duration-700 ease-out"
         :class="signupVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
       >
-        <span class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase">Stay informed</span>
+        <span class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase">{{ t('signup.label') }}</span>
         <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-3 mb-3">
           {{ t('signup.title') }}
         </h2>

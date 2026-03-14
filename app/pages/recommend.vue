@@ -6,7 +6,7 @@ import { formatDuration, REGION_LABELS, SPOT_TYPE_LABELS } from '~/utils/eclipse
 const { t } = useI18n()
 
 useHead({
-  title: 'Find Your Spot — EclipseChase.is',
+  title: 'Find Your Spot',
   meta: [
     { name: 'description', content: 'Personalized eclipse viewing spot recommendations based on your style and live weather conditions.' },
   ],

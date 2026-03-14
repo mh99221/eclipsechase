@@ -4,9 +4,22 @@
     "description": "Rauntíma veðureftirlit fyrir heilsólmyrkvann 12. ágúst 2026 á Íslandi."
   },
   "hero": {
-    "title": "Finndu hreint loft á sólmyrkvadaginn",
+    "title": "Finndu hreint loft",
+    "title_accent": "á sólmyrkvadaginn",
+    "date_location": "12. ágúst 2026 — Vestur-Ísland",
     "subtitle": "Rauntíma veðureftirlit fyrir heilsólmyrkvann 12. ágúst 2026 á Íslandi",
-    "cta": "Fáðu tilkynningu þegar við opnum"
+    "cta": "Fáðu tilkynningu þegar við opnum",
+    "scroll": "Skruna"
+  },
+  "data_strip": {
+    "totality": "MYRKVINN",
+    "totality_value": "2m 18s hámark",
+    "sun_alt": "SÓLHÆÐ",
+    "sun_alt_value": "24° yfir sjóndeildarhring",
+    "path": "LEIÐ",
+    "path_value": "Vestfirðir → Reykjanes",
+    "next": "NÆST",
+    "next_value": "2196 (170 ár)"
   },
   "countdown": {
     "title": "Tími þar til myrkvinn",
@@ -16,7 +29,9 @@
     "seconds": "Sekúndur"
   },
   "features": {
-    "title": "Hvað þú færð",
+    "label": "Hvað þú færð",
+    "title": "Allt fyrir",
+    "title_accent": "fullkomna sýn",
     "weather": {
       "title": "Lifandi veðurkort",
       "description": "Rauntíma skýjahula frá íslenskum veðurstöðvum á gagnvirku korti. Sjáðu nákvæmlega hvar himininn er heiður."
@@ -35,6 +50,7 @@
     }
   },
   "signup": {
+    "label": "Vertu í tengslum",
     "title": "Vertu fyrstur til að vita",
     "subtitle": "Fáðu tilkynningu þegar EclipseChase.is opnar. Ekkert ruslpóstur.",
     "placeholder": "þitt{'@'}netfang.is",

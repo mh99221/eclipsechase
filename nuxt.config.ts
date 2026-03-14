@@ -11,7 +11,8 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'EclipseChase.is — Find Clear Skies on Eclipse Day',
+      title: 'Find Clear Skies on Eclipse Day',
+      titleTemplate: '%s — EclipseChase.is',
       htmlAttrs: { lang: 'en' },
       meta: [
         { charset: 'utf-8' },
@@ -19,16 +20,19 @@ export default defineNuxtConfig({
         { name: 'description', content: 'Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland. Find the clearest skies on eclipse day.' },
         { name: 'theme-color', content: '#050810' },
         // Open Graph
+        { property: 'og:locale', content: 'en_US' },
+        { property: 'og:locale:alternate', content: 'is_IS' },
+        { property: 'og:site_name', content: 'EclipseChase.is' },
         { property: 'og:title', content: 'EclipseChase.is — Find Clear Skies on Eclipse Day' },
         { property: 'og:description', content: 'Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland.' },
-        { property: 'og:image', content: '/og-image.jpg' },
+        { property: 'og:image', content: 'https://eclipsechase.is/og-image.jpg' },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://eclipsechase.is' },
         // Twitter
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: 'EclipseChase.is — Find Clear Skies on Eclipse Day' },
         { name: 'twitter:description', content: 'Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland.' },
-        { name: 'twitter:image', content: '/og-image.jpg' },
+        { name: 'twitter:image', content: 'https://eclipsechase.is/og-image.jpg' },
       ],
       script: [
         ...(process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID
@@ -40,6 +44,7 @@ export default defineNuxtConfig({
           : []),
       ],
       link: [
+        { rel: 'canonical', href: 'https://eclipsechase.is' },
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'manifest', href: '/manifest.json' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -74,6 +79,7 @@ export default defineNuxtConfig({
     stripeSecretKey: '',
     stripeWebhookSecret: '',
     public: {
+      siteUrl: 'https://eclipsechase.is',
       mapboxToken: '',
       supabaseUrl: '',
       supabaseKey: '',

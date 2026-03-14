@@ -1,6 +1,6 @@
 <script setup lang="ts">
 useHead({
-  title: 'Privacy Policy — EclipseChase.is',
+  title: 'Privacy Policy',
   meta: [
     { name: 'description', content: 'Privacy policy for EclipseChase.is — how we handle your data.' },
   ],

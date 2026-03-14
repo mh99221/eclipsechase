@@ -19,7 +19,7 @@ if (error.value || !data.value?.spot) {
 const spot = computed(() => data.value!.spot)
 
 useHead({
-  title: () => `${spot.value.name} — EclipseChase.is`,
+  title: () => spot.value.name,
   meta: [
     { name: 'description', content: () => spot.value.description },
   ],
