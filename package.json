@@ -13,12 +13,14 @@
     "@nuxtjs/i18n": "^10.2.3",
     "@nuxtjs/supabase": "^2.0.4",
     "@nuxtjs/tailwindcss": "^6.14.0",
+    "mapbox-gl": "^3.20.0",
     "nuxt": "^4.4.2",
     "vue": "^3.5.30",
     "vue-router": "^5.0.3",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
+    "@types/mapbox-gl": "^3.4.1",
     "@types/xml2js": "^0.4.14"
   }
 }

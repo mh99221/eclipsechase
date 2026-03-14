@@ -49,7 +49,7 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ['~/assets/css/main.css'],
+  css: ['~/assets/css/main.css', 'mapbox-gl/dist/mapbox-gl.css'],
 
   tailwindcss: {
     cssPath: '~/assets/css/main.css',
