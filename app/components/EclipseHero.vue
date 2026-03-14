@@ -96,6 +96,8 @@ onMounted(() => {
         r="14"
         fill="url(#prominence-glow)"
         filter="url(#prominence-blur)"
+        class="prominence-fade"
+        style="animation-duration: 6s"
       />
 
       <!-- Prominence 2: Right (~3 o'clock position) -->
@@ -104,6 +106,8 @@ onMounted(() => {
         r="17"
         fill="url(#prominence-glow)"
         filter="url(#prominence-blur)"
+        class="prominence-fade"
+        style="animation-duration: 8s; animation-delay: -2s"
       />
 
       <!-- Prominence 3: Lower-right (~6 o'clock position) -->
@@ -112,6 +116,8 @@ onMounted(() => {
         r="4"
         fill="url(#prominence-glow)"
         filter="url(#prominence-blur)"
+        class="prominence-fade"
+        style="animation-duration: 5s; animation-delay: -3.5s"
       />
 
       <!-- Prominence 4: Lower-right (~5 o'clock position) -->
@@ -120,6 +126,8 @@ onMounted(() => {
         r="35"
         fill="url(#prominence-glow)"
         filter="url(#prominence-blur)"
+        class="prominence-fade"
+        style="animation-duration: 7s; animation-delay: -1s"
       />
 
       <!-- Moon disc — solid black, blocks corona behind it -->
@@ -198,6 +206,15 @@ onMounted(() => {
   );
   filter: blur(30px);
   animation: haze-pulse 5s ease-in-out infinite;
+}
+
+.prominence-fade {
+  animation: prominence-pulse ease-in-out infinite;
+}
+
+@keyframes prominence-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
 
 @keyframes haze-pulse {
