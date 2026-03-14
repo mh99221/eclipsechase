@@ -1,139 +1,207 @@
 <script setup lang="ts">
-// Concentric instrument rings — rotating via CSS animations
 const isVisible = ref(false)
 
 onMounted(() => {
   isVisible.value = true
 })
-
-// Ring definitions: radius, speed (deg/s), direction, dash pattern, opacity, width
-const rings = [
-  { r: 140, speed: 0.8, dir: 1, dash: '1 12', opacity: 0.12, width: 0.5 },
-  { r: 130, speed: 1.2, dir: -1, dash: '3 8', opacity: 0.15, width: 0.5 },
-  { r: 118, speed: 0.5, dir: 1, dash: '8 16', opacity: 0.1, width: 0.8 },
-  { r: 105, speed: 2.0, dir: -1, dash: '1 6', opacity: 0.08, width: 0.3 },
-  { r: 95, speed: 0.3, dir: 1, dash: '20 10 2 10', opacity: 0.18, width: 1 },
-  { r: 82, speed: 1.5, dir: -1, dash: '2 4', opacity: 0.12, width: 0.5 },
-]
-
-// Pre-compute static tick mark positions
-const DEG_TO_RAD = Math.PI / 180
-const ticks = Array.from({ length: 36 }, (_, i) => {
-  const idx = i + 1
-  const angle = idx * 10 * DEG_TO_RAD
-  const cos = Math.cos(angle)
-  const sin = Math.sin(angle)
-  const isMajor = idx % 9 === 0
-  return {
-    x1: 160 + 148 * cos,
-    y1: 160 + 148 * sin,
-    x2: 160 + (isMajor ? 156 : 152) * cos,
-    y2: 160 + (isMajor ? 156 : 152) * sin,
-    strokeWidth: isMajor ? '0.8' : '0.3',
-  }
-})
 </script>
 
 <template>
   <div
-    class="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80"
+    class="relative w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96"
     :class="{ 'opacity-0': !isVisible, 'opacity-100 transition-opacity duration-[2000ms]': isVisible }"
   >
+    <!-- CSS blur glow behind SVG for soft ambient haze -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div class="eclipse-haze w-[65%] h-[65%] rounded-full" />
+    </div>
+
     <svg
       class="relative w-full h-full"
-      viewBox="0 0 320 320"
+      viewBox="0 0 400 400"
       fill="none"
       aria-hidden="true"
     >
       <defs>
-        <!-- Soft ambient glow -->
-        <radialGradient id="ring-glow" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0.3" stop-color="#f59e0b" stop-opacity="0" />
-          <stop offset="0.5" stop-color="#f59e0b" stop-opacity="0.04" />
-          <stop offset="0.7" stop-color="#f59e0b" stop-opacity="0.02" />
+        <!-- Outer diffuse corona glow -->
+        <radialGradient id="corona-haze" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0.28" stop-color="#f59e0b" stop-opacity="0" />
+          <stop offset="0.34" stop-color="#d97706" stop-opacity="0.06" />
+          <stop offset="0.40" stop-color="#f59e0b" stop-opacity="0.15" />
+          <stop offset="0.48" stop-color="#f59e0b" stop-opacity="0.04" />
+          <stop offset="0.65" stop-color="#b45309" stop-opacity="0.02" />
           <stop offset="1" stop-color="#f59e0b" stop-opacity="0" />
         </radialGradient>
+
+        <!-- Bright prominence glow -->
+        <radialGradient id="prominence-glow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#fef3c7" stop-opacity="1" />
+          <stop offset="0.3" stop-color="#fbbf24" stop-opacity="0.9" />
+          <stop offset="0.6" stop-color="#f59e0b" stop-opacity="0.4" />
+          <stop offset="1" stop-color="#f59e0b" stop-opacity="0" />
+        </radialGradient>
+
+        <!-- Blur filter for corona softness -->
+        <filter id="corona-blur" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="6" />
+        </filter>
+
+        <!-- Heavier blur for outer haze -->
+        <filter id="haze-blur" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="14" />
+        </filter>
+
+        <!-- Blur for prominences -->
+        <filter id="prominence-blur" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4" />
+        </filter>
       </defs>
 
-      <!-- Ambient glow -->
-      <circle cx="160" cy="160" r="155" fill="url(#ring-glow)" />
+      <!-- Layer 1: Outer diffuse haze -->
+      <circle cx="200" cy="200" r="195" fill="url(#corona-haze)" filter="url(#haze-blur)" />
 
-      <!-- Rotating concentric rings — CSS-driven -->
+      <!-- Layer 2: Mid corona glow (blurred ring) -->
       <circle
-        v-for="(ring, i) in rings" :key="'ring-' + i"
-        cx="160" cy="160"
-        :r="ring.r"
+        cx="200" cy="200" r="86"
         fill="none"
-        stroke="#f59e0b"
-        :stroke-width="ring.width"
-        :stroke-dasharray="ring.dash"
-        :opacity="ring.opacity"
-        class="ring-rotate"
-        :style="{
-          transformOrigin: '160px 160px',
-          animationDuration: `${360 / ring.speed}s`,
-          animationDirection: ring.dir === -1 ? 'reverse' : 'normal',
-        }"
+        stroke="#d97706"
+        stroke-width="18"
+        opacity="0.3"
+        filter="url(#haze-blur)"
       />
 
-      <!-- Static fine crosshair lines — reticle aesthetic -->
-      <g opacity="0.06">
-        <line x1="160" y1="20" x2="160" y2="68" stroke="#f59e0b" stroke-width="0.5" />
-        <line x1="160" y1="252" x2="160" y2="300" stroke="#f59e0b" stroke-width="0.5" />
-        <line x1="20" y1="160" x2="68" y2="160" stroke="#f59e0b" stroke-width="0.5" />
-        <line x1="252" y1="160" x2="300" y2="160" stroke="#f59e0b" stroke-width="0.5" />
-      </g>
-
-      <!-- Corona flares — rays bursting outward from the pulsating ring edge -->
-      <g class="animate-corona-pulse">
-        <line x1="160" y1="92" x2="160" y2="46" stroke="#f59e0b" stroke-width="1.2" opacity="0.2" />
-        <line x1="208" y1="112" x2="248" y2="78" stroke="#fbbf24" stroke-width="0.8" opacity="0.15" />
-        <line x1="228" y1="160" x2="274" y2="160" stroke="#f59e0b" stroke-width="1" opacity="0.18" />
-        <line x1="200" y1="216" x2="232" y2="252" stroke="#fbbf24" stroke-width="0.6" opacity="0.12" />
-        <line x1="160" y1="228" x2="160" y2="270" stroke="#f59e0b" stroke-width="0.8" opacity="0.14" />
-        <line x1="108" y1="208" x2="72" y2="232" stroke="#fbbf24" stroke-width="1" opacity="0.16" />
-        <line x1="93" y1="148" x2="52" y2="140" stroke="#f59e0b" stroke-width="0.7" opacity="0.13" />
-        <line x1="118" y1="108" x2="96" y2="68" stroke="#fbbf24" stroke-width="0.9" opacity="0.15" />
-      </g>
-
-      <!-- Pulsating corona ring -->
+      <!-- Layer 3: Inner corona glow (medium blur) -->
       <circle
-        cx="160" cy="160" r="68"
+        cx="200" cy="200" r="82"
         fill="none"
         stroke="#f59e0b"
-        stroke-width="5"
+        stroke-width="10"
+        opacity="0.6"
+        filter="url(#corona-blur)"
+      />
+
+      <!-- Layer 4: Soft bright corona ring -->
+      <circle
+        cx="200" cy="200" r="80"
+        fill="none"
+        stroke="#fbbf24"
+        stroke-width="4"
+        opacity="0.55"
+        filter="url(#corona-blur)"
+      />
+
+      <!-- Prominence 1: Upper-left (~11 o'clock position) — behind disc -->
+      <circle
+        cx="147" cy="144"
+        r="14"
+        fill="url(#prominence-glow)"
+        filter="url(#prominence-blur)"
+      />
+
+      <!-- Prominence 2: Right (~3 o'clock position) -->
+      <circle
+        cx="270" cy="197"
+        r="17"
+        fill="url(#prominence-glow)"
+        filter="url(#prominence-blur)"
+      />
+
+      <!-- Prominence 3: Lower-right (~6 o'clock position) -->
+      <circle
+        cx="200" cy="282"
+        r="4"
+        fill="url(#prominence-glow)"
+        filter="url(#prominence-blur)"
+      />
+
+      <!-- Prominence 4: Lower-right (~5 o'clock position) -->
+      <circle
+        cx="240" cy="254"
+        r="35"
+        fill="url(#prominence-glow)"
+        filter="url(#prominence-blur)"
+      />
+
+      <!-- Moon disc — solid black, blocks corona behind it -->
+      <circle cx="200" cy="200" r="76" fill="#050810" />
+
+      <!-- Moon surface — craters, maria, and terrain irregularities -->
+      <!-- Large maria (dark basaltic plains) -->
+      <ellipse cx="183" cy="185" rx="18" ry="14" fill="#080c16" opacity="0.35" />
+      <ellipse cx="218" cy="198" rx="12" ry="16" fill="#070b14" opacity="0.25" />
+      <ellipse cx="195" cy="222" rx="15" ry="10" fill="#080c16" opacity="0.2" />
+
+      <!-- Medium craters -->
+      <circle cx="172" cy="178" r="8" fill="#0a0f1a" opacity="0.3" />
+      <circle cx="210" cy="170" r="6" fill="#090d18" opacity="0.2" />
+      <circle cx="228" cy="210" r="7" fill="#0a0f1a" opacity="0.25" />
+      <circle cx="185" cy="230" r="5" fill="#080c16" opacity="0.2" />
+      <circle cx="200" cy="195" r="9" fill="#070b14" opacity="0.15" />
+
+      <!-- Small craters and surface detail -->
+      <circle cx="165" cy="200" r="3" fill="#0b1020" opacity="0.3" />
+      <circle cx="220" cy="185" r="3.5" fill="#090e1a" opacity="0.2" />
+      <circle cx="192" cy="210" r="2.5" fill="#0a0f1c" opacity="0.25" />
+      <circle cx="205" cy="178" r="2" fill="#0b1020" opacity="0.2" />
+      <circle cx="178" cy="215" r="4" fill="#080d18" opacity="0.18" />
+      <circle cx="215" cy="225" r="3" fill="#090e1a" opacity="0.15" />
+      <circle cx="190" cy="175" r="2.5" fill="#0a1020" opacity="0.22" />
+
+      <!-- Crater rims (subtle bright edges) -->
+      <circle cx="172" cy="178" r="8.5" fill="none" stroke="#0e1424" stroke-width="0.5" opacity="0.3" />
+      <circle cx="228" cy="210" r="7.5" fill="none" stroke="#0e1424" stroke-width="0.5" opacity="0.25" />
+      <circle cx="200" cy="195" r="9.5" fill="none" stroke="#0d1322" stroke-width="0.4" opacity="0.2" />
+
+      <!-- Highland ridges (subtle lighter patches) -->
+      <ellipse cx="210" cy="190" rx="5" ry="8" fill="#0c1120" opacity="0.15" transform="rotate(-20 210 190)" />
+      <ellipse cx="178" cy="205" rx="7" ry="4" fill="#0c1120" opacity="0.12" transform="rotate(35 178 205)" />
+      <ellipse cx="198" cy="168" rx="4" ry="6" fill="#0b1020" opacity="0.1" transform="rotate(-10 198 168)" />
+
+      <!-- Layer 5: Thin warm inner edge (slightly off-center, on top of disc) -->
+      <circle
+        cx="201" cy="200" r="78"
+        fill="none"
+        stroke="#fef3c7"
+        stroke-width="1"
         opacity="0.4"
-        class="animate-corona-pulse"
       />
 
-      <!-- Outer measurement tick marks (pre-computed) -->
-      <g opacity="0.15">
-        <line v-for="(tick, i) in ticks" :key="'tick-' + i"
-          :x1="tick.x1" :y1="tick.y1"
-          :x2="tick.x2" :y2="tick.y2"
-          stroke="#f59e0b"
-          :stroke-width="tick.strokeWidth"
-        />
-      </g>
-
-      <!-- Small degree labels at cardinal points -->
-      <g font-size="5" fill="#f59e0b" opacity="0.12" text-anchor="middle" font-family="monospace">
-        <text x="160" y="14">0°</text>
-        <text x="306" y="163">90°</text>
-        <text x="160" y="312">180°</text>
-        <text x="17" y="163">270°</text>
-      </g>
+      <!-- Non-uniform corona brightness (on top of disc for edge glow) -->
+      <path
+        d="M 280 200 A 80 80 0 0 1 200 280"
+        fill="none"
+        stroke="#fbbf24"
+        stroke-width="6"
+        opacity="0.25"
+        filter="url(#corona-blur)"
+      />
+      <path
+        d="M 200 120 A 80 80 0 0 1 270 170"
+        fill="none"
+        stroke="#fef3c7"
+        stroke-width="4"
+        opacity="0.15"
+        filter="url(#corona-blur)"
+      />
     </svg>
   </div>
 </template>
 
 <style scoped>
-.ring-rotate {
-  animation: ring-spin linear infinite;
+.eclipse-haze {
+  background: radial-gradient(
+    circle,
+    rgba(245, 158, 11, 0.2) 0%,
+    rgba(217, 119, 6, 0.1) 30%,
+    rgba(180, 83, 9, 0.04) 50%,
+    transparent 70%
+  );
+  filter: blur(30px);
+  animation: haze-pulse 5s ease-in-out infinite;
 }
 
-@keyframes ring-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@keyframes haze-pulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
 }
 </style>
