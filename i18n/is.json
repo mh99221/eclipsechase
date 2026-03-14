@@ -40,7 +40,9 @@
     "placeholder": "þitt{'@'}netfang.is",
     "button": "Tilkynna mér",
     "success": "Þú ert á listanum! Við verðum í sambandi.",
-    "error": "Eitthvað fór úrskeiðis. Vinsamlegast reyndu aftur."
+    "error": "Eitthvað fór úrskeiðis. Vinsamlegast reyndu aftur.",
+    "privacy_note_pre": "Með skráningu samþykkir þú",
+    "privacy_note_link": "persónuverndarstefnu okkar"
   },
   "footer": {
     "tagline": "Gert fyrir sólmyrkvann sem kemur einu sinni á 170 árum.",

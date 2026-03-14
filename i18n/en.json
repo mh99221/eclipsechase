@@ -40,7 +40,9 @@
     "placeholder": "your{'@'}email.com",
     "button": "Notify Me",
     "success": "You're on the list! We'll be in touch.",
-    "error": "Something went wrong. Please try again."
+    "error": "Something went wrong. Please try again.",
+    "privacy_note_pre": "By signing up, you agree to our",
+    "privacy_note_link": "Privacy Policy"
   },
   "footer": {
     "tagline": "Built for the once-in-170-years eclipse.",

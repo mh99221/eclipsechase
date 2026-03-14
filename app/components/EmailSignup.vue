@@ -56,7 +56,7 @@ async function handleSubmit() {
             :placeholder="t('signup.placeholder')"
             :disabled="status === 'loading'"
             class="w-full px-5 py-4 bg-void-surface border border-void-border
-                   text-slate-200 placeholder-slate-600 font-display text-sm tracking-wide
+                   text-slate-200 placeholder-slate-500 font-display text-base tracking-wide
                    focus:outline-none focus:border-corona/40 focus:shadow-[0_0_20px_rgba(245,158,11,0.08)]
                    disabled:opacity-50 transition-all duration-300"
             style="border-radius: 2px;"
@@ -93,9 +93,16 @@ async function handleSubmit() {
 
       <p
         v-if="status === 'error'"
-        class="mt-3 text-sm text-red-400/80 font-display"
+        class="mt-3 text-sm text-red-400 font-display"
       >
         {{ errorMessage }}
+      </p>
+
+      <p class="mt-3 text-xs text-slate-500 text-center">
+        {{ t('signup.privacy_note_pre') }}
+        <NuxtLink to="/privacy" class="text-slate-400 hover:text-slate-300 underline underline-offset-2 transition-colors">
+          {{ t('signup.privacy_note_link') }}
+        </NuxtLink>
       </p>
     </form>
   </div>

@@ -103,11 +103,11 @@ const features = [
           </span>
         </div>
         <div class="flex items-center gap-4">
-          <span class="hidden sm:inline text-xs font-mono text-slate-600 tracking-wider">
+          <span class="hidden sm:inline text-xs font-mono text-slate-500 tracking-wider">
             64.1°N 21.9°W
           </span>
           <div class="w-px h-4 bg-void-border hidden sm:block" />
-          <span class="text-xs font-mono text-corona/50 tracking-wider">
+          <span class="text-xs font-mono text-corona/70 tracking-wider">
             AUG 12 2026
           </span>
         </div>
@@ -121,13 +121,13 @@ const features = [
         class="text-center max-w-3xl transition-all duration-700 ease-out"
         :class="heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
       >
-        <p class="font-mono italic text-slate-400 text-sm sm:text-base mb-3 tracking-wide">
+        <p class="font-mono italic text-slate-400 text-base mb-3 tracking-wide">
           August 12, 2026 — Western Iceland
         </p>
         <h1 class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[0.95] text-white">
           Find Clear Skies
         </h1>
-        <p class="mt-5 sm:mt-6 text-sm sm:text-base text-slate-400/80 leading-relaxed max-w-xl mx-auto font-light">
+        <p class="mt-5 sm:mt-6 text-base text-slate-400 leading-relaxed max-w-xl mx-auto font-light">
           {{ t('hero.subtitle') }}
         </p>
       </div>
@@ -137,7 +137,7 @@ const features = [
         class="mt-10 sm:mt-12 transition-all duration-700 ease-out"
         :class="countdownReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
       >
-        <p class="font-display text-[10px] sm:text-xs uppercase tracking-[0.3em] text-slate-600 mb-4 text-center">
+        <p class="font-display text-xs uppercase tracking-[0.3em] text-slate-500 mb-4 text-center">
           {{ t('countdown.title') }}
         </p>
         <CountdownBar />
@@ -149,7 +149,7 @@ const features = [
         :class="countdownReady ? 'opacity-100' : 'opacity-0'"
         style="transition-delay: 600ms"
       >
-        <span class="text-[9px] font-display uppercase tracking-[0.3em] text-slate-700">Scroll</span>
+        <span class="text-[11px] font-display uppercase tracking-[0.3em] text-slate-600">Scroll</span>
         <div class="w-px h-6 bg-gradient-to-b from-slate-700 to-transparent" />
       </div>
     </header>
@@ -158,7 +158,7 @@ const features = [
     <!-- ECLIPSE DATA STRIP -->
     <!-- ═══════════════════════════════════════════ -->
     <div class="border-y border-void-border/50 bg-void-deep/50 backdrop-blur-sm">
-      <div class="section-container py-4 flex flex-wrap items-center justify-center sm:justify-between gap-x-8 gap-y-2 text-xs font-mono tracking-wider">
+      <div class="section-container py-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs sm:text-sm md:flex-nowrap md:justify-between font-mono tracking-wider">
         <div class="flex items-center gap-2">
           <span class="w-1.5 h-1.5 rounded-full bg-corona/60" />
           <span class="text-slate-500">TOTALITY</span>
@@ -204,7 +204,7 @@ const features = [
           class="mb-14 max-w-2xl transition-all duration-700 ease-out"
           :class="featuresVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
         >
-          <span class="font-mono text-[10px] tracking-[0.3em] text-corona/40 uppercase">What you'll get</span>
+          <span class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase">What you'll get</span>
           <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-3 leading-tight">
             Everything for<br>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-slate-500">the perfect view</span>
@@ -235,7 +235,7 @@ const features = [
                 <h3 class="font-display text-xl sm:text-2xl font-semibold text-white/90 group-hover:text-white transition-colors duration-300 mb-2">
                   {{ feature.title }}
                 </h3>
-                <p class="text-slate-500 text-sm leading-relaxed max-w-xl group-hover:text-slate-400 transition-colors duration-300">
+                <p class="text-slate-400 text-sm sm:text-base leading-relaxed max-w-xl group-hover:text-slate-300 transition-colors duration-300">
                   {{ feature.description }}
                 </p>
               </div>
@@ -266,11 +266,11 @@ const features = [
         class="section-container text-center transition-all duration-700 ease-out"
         :class="signupVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
       >
-        <span class="font-mono text-[10px] tracking-[0.3em] text-corona/40 uppercase">Stay informed</span>
+        <span class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase">Stay informed</span>
         <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-3 mb-3">
           {{ t('signup.title') }}
         </h2>
-        <p class="text-slate-500 mb-10 max-w-md mx-auto text-sm sm:text-base leading-relaxed">
+        <p class="text-slate-400 mb-10 max-w-lg mx-auto text-base leading-relaxed">
           {{ t('signup.subtitle') }}
         </p>
         <EmailSignup />
@@ -290,18 +290,22 @@ const features = [
               <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.6" />
               <circle cx="96" cy="48" r="3" fill="#f59e0b" opacity="0.8" />
             </svg>
-            <span class="font-display text-xs tracking-[0.2em] text-slate-500 uppercase">
+            <span class="font-display text-sm tracking-[0.2em] text-slate-500 uppercase">
               EclipseChase.is
             </span>
           </div>
 
           <!-- Tagline -->
-          <p class="font-mono italic text-slate-600 text-sm">
+          <p class="font-mono italic text-slate-500 text-sm">
             {{ t('footer.tagline') }}
           </p>
 
           <!-- Meta -->
-          <div class="flex items-center gap-4 text-xs font-mono text-slate-700 tracking-wider">
+          <div class="flex items-center gap-4 text-xs font-mono text-slate-500 tracking-wider">
+            <NuxtLink to="/privacy" class="hover:text-slate-300 transition-colors">
+              {{ t('footer.privacy') }}
+            </NuxtLink>
+            <div class="w-px h-3 bg-void-border" />
             <span>{{ t('footer.eclipse_date') }}</span>
           </div>
         </div>
