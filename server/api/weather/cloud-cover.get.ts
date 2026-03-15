@@ -1,5 +1,5 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
-import { fetchForecasts, STATION_IDS } from '../../utils/vedur'
+import { fetchForecasts, forecastsToRows, STATION_IDS } from '../../utils/vedur'
 
 const STALE_THRESHOLD_MS = 15 * 60 * 1000
 
@@ -12,16 +12,14 @@ export default defineEventHandler(async (event) => {
     .select('forecast_time')
     .order('forecast_time', { ascending: false })
     .limit(1)
-    .single()
+    .maybeSingle()
 
-  if (latestError && latestError.code !== 'PGRST116') {
-    // PGRST116 = no rows found (acceptable — means empty table)
+  if (latestError) {
     throw createError({ statusCode: 500, message: 'Failed to check forecast freshness' })
   }
 
   const latestTime = latestRow?.forecast_time ? new Date(latestRow.forecast_time).getTime() : 0
-  const age = Date.now() - latestTime
-  const isStale = age >= STALE_THRESHOLD_MS
+  const isStale = (Date.now() - latestTime) >= STALE_THRESHOLD_MS
 
   // 2. If stale, fetch from vedur.is and upsert
   let refreshFailed = false
@@ -30,20 +28,9 @@ export default defineEventHandler(async (event) => {
       const forecasts = await fetchForecasts(STATION_IDS)
 
       if (forecasts.length > 0) {
-        const rows = forecasts
-          .filter(fc => fc.validTime)
-          .map(fc => ({
-            station_id: fc.stationId,
-            forecast_time: fc.forecastTime,
-            valid_time: fc.validTime,
-            cloud_cover: fc.cloudCover,
-            precipitation_prob: fc.precipitation,
-            source_model: 'vedur',
-          }))
-
         await supabase
           .from('weather_forecasts')
-          .upsert(rows, { onConflict: 'station_id,forecast_time,valid_time' })
+          .upsert(forecastsToRows(forecasts), { onConflict: 'station_id,forecast_time,valid_time' })
       }
     } catch (err) {
       console.error('[cloud-cover] Failed to refresh from vedur.is:', err)

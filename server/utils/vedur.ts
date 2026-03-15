@@ -1,6 +1,7 @@
 import { parseStringPromise } from 'xml2js'
 
 const VEDUR_BASE = 'https://xmlweather.vedur.is'
+const VEDUR_FETCH_TIMEOUT_MS = 10_000
 
 // All station IDs we track
 export const STATION_IDS = [
@@ -19,7 +20,7 @@ interface VedurObservation {
   precipitation: number | null
 }
 
-interface VedurForecast {
+export interface VedurForecast {
   stationId: string
   forecastTime: string
   validTime: string
@@ -34,23 +35,39 @@ function parseNum(val: string | undefined): number | null {
   return Number.isNaN(n) ? null : n
 }
 
+async function fetchWithTimeout(url: string, errorLabel: string): Promise<string> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), VEDUR_FETCH_TIMEOUT_MS)
+
+  try {
+    const response = await fetch(url, { signal: controller.signal })
+    if (!response.ok) {
+      throw new Error(`${errorLabel}: ${response.status}`)
+    }
+    return await response.text()
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
+export function forecastsToRows(forecasts: VedurForecast[]) {
+  return forecasts
+    .filter(fc => fc.validTime)
+    .map(fc => ({
+      station_id: fc.stationId,
+      forecast_time: fc.forecastTime,
+      valid_time: fc.validTime,
+      cloud_cover: fc.cloudCover,
+      precipitation_prob: fc.precipitation,
+      source_model: 'vedur',
+    }))
+}
+
 export async function fetchObservations(stationIds: string[] = STATION_IDS): Promise<VedurObservation[]> {
   const ids = stationIds.join(';')
   const url = `${VEDUR_BASE}/?op_w=xml&type=obs&lang=en&view=xml&ids=${ids}&params=F;D;T;R`
 
-  const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), 10_000)
-
-  let xml: string
-  try {
-    const response = await fetch(url, { signal: controller.signal })
-    if (!response.ok) {
-      throw new Error(`vedur.is observations request failed: ${response.status}`)
-    }
-    xml = await response.text()
-  } finally {
-    clearTimeout(timeout)
-  }
+  const xml = await fetchWithTimeout(url, 'vedur.is observations request failed')
   const parsed = await parseStringPromise(xml, { explicitArray: false })
 
   const stations = parsed?.observations?.station
@@ -81,19 +98,7 @@ export async function fetchForecasts(stationIds: string[] = STATION_IDS): Promis
   const ids = stationIds.join(';')
   const url = `${VEDUR_BASE}/?op_w=xml&type=forec&lang=en&view=xml&ids=${ids}&params=N;T;R`
 
-  const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), 10_000)
-
-  let xml: string
-  try {
-    const response = await fetch(url, { signal: controller.signal })
-    if (!response.ok) {
-      throw new Error(`vedur.is forecast request failed: ${response.status}`)
-    }
-    xml = await response.text()
-  } finally {
-    clearTimeout(timeout)
-  }
+  const xml = await fetchWithTimeout(url, 'vedur.is forecast request failed')
   const parsed = await parseStringPromise(xml, { explicitArray: false })
 
   const stations = parsed?.forecasts?.station
