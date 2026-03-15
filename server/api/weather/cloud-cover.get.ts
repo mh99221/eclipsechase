@@ -28,9 +28,13 @@ export default defineEventHandler(async (event) => {
       const forecasts = await fetchForecasts(STATION_IDS)
 
       if (forecasts.length > 0) {
-        await supabase
+        const { error: upsertError } = await supabase
           .from('weather_forecasts')
           .upsert(forecastsToRows(forecasts), { onConflict: 'station_id,forecast_time,valid_time' })
+        if (upsertError) {
+          console.error('[cloud-cover] Upsert failed:', upsertError.message)
+          refreshFailed = true
+        }
       }
     } catch (err) {
       console.error('[cloud-cover] Failed to refresh from vedur.is:', err)
@@ -48,7 +52,7 @@ export default defineEventHandler(async (event) => {
     .gte('valid_time', now.toISOString())
     .gte('forecast_time', sixHoursAgo)
     .order('valid_time', { ascending: true })
-    .limit(150)
+    .limit(STATION_IDS.length * 10) // ~10 nearest forecast slots per station
 
   // Deduplicate: first row per station (nearest future forecast)
   const byStation = new Map<string, { station_id: string; cloud_cover: number | null }>()

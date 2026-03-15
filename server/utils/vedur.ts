@@ -3,11 +3,19 @@ import { parseStringPromise } from 'xml2js'
 const VEDUR_BASE = 'https://xmlweather.vedur.is'
 const VEDUR_FETCH_TIMEOUT_MS = 10_000
 
-// All station IDs we track
+// All station IDs we track (55 stations from vedur.is forecast areas)
+// Keep in sync with scripts/seed-weather-stations.sql
 export const STATION_IDS = [
-  '1', '1477', '990', '1453', '1777',
-  '178', '1938', '1924', '1919',
-  '2266', '2319', '2428', '2631', '2644', '2738',
+  // Reykjavík area
+  '1', '1471', '1477', '1479', '1481', '1482', '1578', '1590', '1596', '31579', '36504',
+  // Reykjanes peninsula
+  '990', '1361', '1453', '1473', '1474', '1487', '6300', '7001', '31109', '31380', '31392', '31488',
+  // Borgarfjörður
+  '1777', '1868', '6802', '31572', '31985', '32097',
+  // Snæfellsnes peninsula
+  '178', '1919', '1924', '1936', '1938', '31932', '31948',
+  // Westfjords
+  '293', '2175', '2266', '2304', '2315', '2319', '2428', '2481', '2530', '2631', '2644', '2655', '2738', '2862', '2941', '32250', '32336', '32355', '32390',
 ]
 
 interface VedurObservation {
