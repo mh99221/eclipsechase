@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import mapboxgl from 'mapbox-gl'
-import { cloudColor, formatDuration } from '~/utils/eclipse'
+import { cloudColor, formatDuration, weatherSvgHtml } from '~/utils/eclipse'
 
 const props = defineProps<{
   stations?: Array<{
@@ -106,15 +106,8 @@ function updateMarkers() {
     el.className = 'station-marker'
     el.setAttribute('role', 'button')
     el.setAttribute('aria-label', `${station.name} weather station${station.cloud_cover != null ? `, ${station.cloud_cover}% cloud cover` : ''}`)
-    el.style.cssText = `
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: ${color};
-      border: 2px solid rgba(5, 8, 16, 0.8);
-      box-shadow: 0 0 8px ${color}66;
-      cursor: pointer;
-    `
+    el.style.cssText = 'cursor: pointer; line-height: 0;'
+    el.innerHTML = weatherSvgHtml(station.cloud_cover, 18)
 
     const popup = new mapboxgl.Popup({
       offset: 12,

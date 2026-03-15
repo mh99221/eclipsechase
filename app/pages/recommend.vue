@@ -215,7 +215,10 @@ function scoreColor(score: number): string {
               <p class="text-xs sm:text-sm font-mono text-slate-400 mt-1">
                 {{ formatDuration(item.spot.totality_duration_seconds) }} totality
                 · {{ SPOT_TYPE_LABELS[item.spot.spot_type] || item.spot.spot_type }}
-                <template v-if="item.weatherStatus"> · {{ item.weatherStatus }}</template>
+                <template v-if="item.weatherStatus">
+                  · <WeatherIcon :cloud-cover="item.cloudCover" :size="20" class="inline-block align-middle" />
+                  {{ item.weatherStatus }}
+                </template>
               </p>
 
               <!-- Factor breakdown -->

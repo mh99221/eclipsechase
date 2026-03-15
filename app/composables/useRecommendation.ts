@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import { cloudLevel } from '~/utils/eclipse'
 
 // --- Types ---
 
@@ -110,6 +111,7 @@ export interface RankedSpot {
   factors: { weather: number; duration: number; services: number; accessibility: number; distance: number }
   distanceKm: number
   weatherStatus: string | null
+  cloudCover: number | null
 }
 
 const DISTANCE_CAP_KM = 300
@@ -133,7 +135,7 @@ export function useRecommendation(
     if (!profile) {
       return [...spots.value]
         .sort((a, b) => (b.totality_duration_seconds || 0) - (a.totality_duration_seconds || 0))
-        .map(spot => ({ spot, score: -1, filtered: false, factors: { ...emptyFactors }, distanceKm: 0, weatherStatus: null }))
+        .map(spot => ({ spot, score: -1, filtered: false, factors: { ...emptyFactors }, distanceKm: 0, weatherStatus: null, cloudCover: null }))
     }
 
     const allSpots = spots.value
@@ -159,7 +161,7 @@ export function useRecommendation(
       if (floors.spotTypeNot && spot.spot_type === floors.spotTypeNot) filtered = true
 
       if (filtered) {
-        return { spot, score: 0, filtered: true, factors: { ...emptyFactors }, distanceKm: 0, weatherStatus: null }
+        return { spot, score: 0, filtered: true, factors: { ...emptyFactors }, distanceKm: 0, weatherStatus: null, cloudCover: null }
       }
 
       // Compute factors
@@ -200,15 +202,9 @@ export function useRecommendation(
       score = Math.round(Math.min(1, Math.max(0, score)) * 100)
 
       // Weather status label
-      let weatherStatus: string | null = null
-      if (cloudCover != null) {
-        if (cloudCover <= 25) weatherStatus = 'Clear'
-        else if (cloudCover <= 50) weatherStatus = 'Partly cloudy'
-        else if (cloudCover <= 75) weatherStatus = 'Mostly cloudy'
-        else weatherStatus = 'Overcast'
-      }
+      const weatherStatus = cloudCover != null ? cloudLevel(cloudCover).label : null
 
-      return { spot, score, filtered: false, factors, distanceKm: Math.round(distKm), weatherStatus }
+      return { spot, score, filtered: false, factors, distanceKm: Math.round(distKm), weatherStatus, cloudCover }
     })
       .sort((a, b) => {
         if (a.filtered !== b.filtered) return a.filtered ? 1 : -1

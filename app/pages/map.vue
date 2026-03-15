@@ -111,8 +111,8 @@ onUnmounted(() => {
 
 // Legend from shared constants
 const legendItems = [
-  ...CLOUD_COVER_LEVELS.map(l => ({ label: l.label, color: l.color })),
-  { label: CLOUD_COVER_NO_DATA.label, color: CLOUD_COVER_NO_DATA.color },
+  ...CLOUD_COVER_LEVELS.map(l => ({ label: l.label, cloudCover: l.max })),
+  { label: CLOUD_COVER_NO_DATA.label, cloudCover: null as number | null },
 ]
 </script>
 
@@ -210,11 +210,7 @@ const legendItems = [
           :key="item.label"
           class="flex items-center gap-2"
         >
-          <span
-            class="w-2.5 h-2.5 rounded-full shrink-0"
-            :style="{ background: item.color, boxShadow: `0 0 6px ${item.color}44` }"
-            aria-hidden="true"
-          />
+          <WeatherIcon :cloud-cover="item.cloudCover" :size="20" class="shrink-0" />
           <span class="text-xs font-mono text-slate-400">{{ item.label }}</span>
         </div>
       </div>
