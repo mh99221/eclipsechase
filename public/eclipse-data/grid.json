@@ -1,0 +1,5113 @@
+{
+  "eclipse_date": "2026-08-12",
+  "generated": "2026-03-15T21:28:05.627082+00:00",
+  "grid_step_degrees": 0.15,
+  "total_points": 567,
+  "in_totality": 460,
+  "approximate": true,
+  "points": [
+    {
+      "lat": 63.5,
+      "lng": -24.5,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.5,
+      "lng": -24.35,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.5,
+      "lng": -24.2,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.5,
+      "lng": -24.05,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.5,
+      "lng": -23.9,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.5,
+      "lng": -23.75,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.5,
+      "lng": -23.6,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.5,
+      "lng": -23.45,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.5,
+      "lng": -23.3,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.5,
+      "lng": -23.15,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.5,
+      "lng": -23.0,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.5,
+      "lng": -22.85,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.5,
+      "lng": -22.7,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.5,
+      "lng": -22.55,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:46:07Z",
+      "duration_seconds": 3.9
+    },
+    {
+      "lat": 63.5,
+      "lng": -22.4,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:46:17Z",
+      "duration_seconds": 13.6
+    },
+    {
+      "lat": 63.5,
+      "lng": -22.25,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:46:26Z",
+      "duration_seconds": 22.4
+    },
+    {
+      "lat": 63.5,
+      "lng": -22.1,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:46:34Z",
+      "duration_seconds": 30.4
+    },
+    {
+      "lat": 63.5,
+      "lng": -21.95,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:46:41Z",
+      "duration_seconds": 37.5
+    },
+    {
+      "lat": 63.5,
+      "lng": -21.8,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:46:47Z",
+      "duration_seconds": 43.7
+    },
+    {
+      "lat": 63.5,
+      "lng": -21.65,
+      "sun_altitude": 25.0,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:30Z",
+      "totality_end": "2026-08-12T17:47:13Z",
+      "duration_seconds": 43.8
+    },
+    {
+      "lat": 63.5,
+      "lng": -21.5,
+      "sun_altitude": 25.0,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:30Z",
+      "totality_end": "2026-08-12T17:47:19Z",
+      "duration_seconds": 49.3
+    },
+    {
+      "lat": 63.5,
+      "lng": -21.35,
+      "sun_altitude": 25.0,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:30Z",
+      "totality_end": "2026-08-12T17:47:24Z",
+      "duration_seconds": 54.1
+    },
+    {
+      "lat": 63.5,
+      "lng": -21.2,
+      "sun_altitude": 25.0,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:30Z",
+      "totality_end": "2026-08-12T17:47:28Z",
+      "duration_seconds": 58.1
+    },
+    {
+      "lat": 63.5,
+      "lng": -21.05,
+      "sun_altitude": 25.0,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:30Z",
+      "totality_end": "2026-08-12T17:47:31Z",
+      "duration_seconds": 61.3
+    },
+    {
+      "lat": 63.5,
+      "lng": -20.9,
+      "sun_altitude": 25.0,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:30Z",
+      "totality_end": "2026-08-12T17:47:33Z",
+      "duration_seconds": 63.8
+    },
+    {
+      "lat": 63.5,
+      "lng": -20.75,
+      "sun_altitude": 25.0,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:30Z",
+      "totality_end": "2026-08-12T17:47:35Z",
+      "duration_seconds": 65.5
+    },
+    {
+      "lat": 63.5,
+      "lng": -20.6,
+      "sun_altitude": 25.0,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:30Z",
+      "totality_end": "2026-08-12T17:47:36Z",
+      "duration_seconds": 66.4
+    },
+    {
+      "lat": 63.65,
+      "lng": -24.5,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.65,
+      "lng": -24.35,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.65,
+      "lng": -24.2,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.65,
+      "lng": -24.05,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.65,
+      "lng": -23.9,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.65,
+      "lng": -23.75,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.65,
+      "lng": -23.6,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.65,
+      "lng": -23.45,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.65,
+      "lng": -23.3,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.65,
+      "lng": -23.15,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.65,
+      "lng": -23.0,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.65,
+      "lng": -22.85,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.65,
+      "lng": -22.7,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:45:44Z",
+      "duration_seconds": 6.9
+    },
+    {
+      "lat": 63.65,
+      "lng": -22.55,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:45:53Z",
+      "duration_seconds": 15.9
+    },
+    {
+      "lat": 63.65,
+      "lng": -22.4,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:46:27Z",
+      "duration_seconds": 23.6
+    },
+    {
+      "lat": 63.65,
+      "lng": -22.25,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:46:36Z",
+      "duration_seconds": 32.3
+    },
+    {
+      "lat": 63.65,
+      "lng": -22.1,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:46:43Z",
+      "duration_seconds": 40.2
+    },
+    {
+      "lat": 63.65,
+      "lng": -21.95,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:46:50Z",
+      "duration_seconds": 47.2
+    },
+    {
+      "lat": 63.65,
+      "lng": -21.8,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:46:57Z",
+      "duration_seconds": 53.4
+    },
+    {
+      "lat": 63.65,
+      "lng": -21.65,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:02Z",
+      "duration_seconds": 58.6
+    },
+    {
+      "lat": 63.65,
+      "lng": -21.5,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:06Z",
+      "duration_seconds": 63.1
+    },
+    {
+      "lat": 63.65,
+      "lng": -21.35,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:10Z",
+      "duration_seconds": 66.7
+    },
+    {
+      "lat": 63.65,
+      "lng": -21.2,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:13Z",
+      "duration_seconds": 69.4
+    },
+    {
+      "lat": 63.65,
+      "lng": -21.05,
+      "sun_altitude": 25.0,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:30Z",
+      "totality_end": "2026-08-12T17:47:34Z",
+      "duration_seconds": 64.6
+    },
+    {
+      "lat": 63.65,
+      "lng": -20.9,
+      "sun_altitude": 25.0,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:30Z",
+      "totality_end": "2026-08-12T17:47:37Z",
+      "duration_seconds": 67.1
+    },
+    {
+      "lat": 63.65,
+      "lng": -20.75,
+      "sun_altitude": 25.0,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:30Z",
+      "totality_end": "2026-08-12T17:47:38Z",
+      "duration_seconds": 68.7
+    },
+    {
+      "lat": 63.65,
+      "lng": -20.6,
+      "sun_altitude": 25.0,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:30Z",
+      "totality_end": "2026-08-12T17:47:39Z",
+      "duration_seconds": 69.6
+    },
+    {
+      "lat": 63.8,
+      "lng": -24.5,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.8,
+      "lng": -24.35,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.8,
+      "lng": -24.2,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.8,
+      "lng": -24.05,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.8,
+      "lng": -23.9,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.8,
+      "lng": -23.75,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.8,
+      "lng": -23.6,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.8,
+      "lng": -23.45,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.8,
+      "lng": -23.3,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.8,
+      "lng": -23.15,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.8,
+      "lng": -23.0,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:45:39Z",
+      "duration_seconds": 2.0
+    },
+    {
+      "lat": 63.8,
+      "lng": -22.85,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:45:50Z",
+      "duration_seconds": 12.8
+    },
+    {
+      "lat": 63.8,
+      "lng": -22.7,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:00Z",
+      "duration_seconds": 22.7
+    },
+    {
+      "lat": 63.8,
+      "lng": -22.55,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:09Z",
+      "duration_seconds": 31.7
+    },
+    {
+      "lat": 63.8,
+      "lng": -22.4,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:17Z",
+      "duration_seconds": 39.7
+    },
+    {
+      "lat": 63.8,
+      "lng": -22.25,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:24Z",
+      "duration_seconds": 46.7
+    },
+    {
+      "lat": 63.8,
+      "lng": -22.1,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:30Z",
+      "duration_seconds": 52.9
+    },
+    {
+      "lat": 63.8,
+      "lng": -21.95,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:46:56Z",
+      "duration_seconds": 52.5
+    },
+    {
+      "lat": 63.8,
+      "lng": -21.8,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:02Z",
+      "duration_seconds": 58.6
+    },
+    {
+      "lat": 63.8,
+      "lng": -21.65,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:07Z",
+      "duration_seconds": 63.9
+    },
+    {
+      "lat": 63.8,
+      "lng": -21.5,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:12Z",
+      "duration_seconds": 68.3
+    },
+    {
+      "lat": 63.8,
+      "lng": -21.35,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:15Z",
+      "duration_seconds": 71.8
+    },
+    {
+      "lat": 63.8,
+      "lng": -21.2,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:18Z",
+      "duration_seconds": 74.5
+    },
+    {
+      "lat": 63.8,
+      "lng": -21.05,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:20Z",
+      "duration_seconds": 76.4
+    },
+    {
+      "lat": 63.8,
+      "lng": -20.9,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:21Z",
+      "duration_seconds": 77.3
+    },
+    {
+      "lat": 63.8,
+      "lng": -20.75,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:21Z",
+      "duration_seconds": 77.5
+    },
+    {
+      "lat": 63.8,
+      "lng": -20.6,
+      "sun_altitude": 25.0,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:30Z",
+      "totality_end": "2026-08-12T17:47:38Z",
+      "duration_seconds": 69.0
+    },
+    {
+      "lat": 63.95,
+      "lng": -24.5,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.95,
+      "lng": -24.35,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.95,
+      "lng": -24.2,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.95,
+      "lng": -24.05,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.95,
+      "lng": -23.9,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.95,
+      "lng": -23.75,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.95,
+      "lng": -23.6,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.95,
+      "lng": -23.45,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.95,
+      "lng": -23.3,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 63.95,
+      "lng": -23.15,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:45:39Z",
+      "duration_seconds": 1.5
+    },
+    {
+      "lat": 63.95,
+      "lng": -23.0,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:45:50Z",
+      "duration_seconds": 13.2
+    },
+    {
+      "lat": 63.95,
+      "lng": -22.85,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:01Z",
+      "duration_seconds": 23.9
+    },
+    {
+      "lat": 63.95,
+      "lng": -22.7,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:11Z",
+      "duration_seconds": 33.7
+    },
+    {
+      "lat": 63.95,
+      "lng": -22.55,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:20Z",
+      "duration_seconds": 42.5
+    },
+    {
+      "lat": 63.95,
+      "lng": -22.4,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:27Z",
+      "duration_seconds": 50.5
+    },
+    {
+      "lat": 63.95,
+      "lng": -22.25,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:34Z",
+      "duration_seconds": 57.4
+    },
+    {
+      "lat": 63.95,
+      "lng": -22.1,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:41Z",
+      "duration_seconds": 63.5
+    },
+    {
+      "lat": 63.95,
+      "lng": -21.95,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:46Z",
+      "duration_seconds": 68.6
+    },
+    {
+      "lat": 63.95,
+      "lng": -21.8,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:50Z",
+      "duration_seconds": 72.8
+    },
+    {
+      "lat": 63.95,
+      "lng": -21.65,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:53Z",
+      "duration_seconds": 76.1
+    },
+    {
+      "lat": 63.95,
+      "lng": -21.5,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:55Z",
+      "duration_seconds": 78.4
+    },
+    {
+      "lat": 63.95,
+      "lng": -21.35,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:16Z",
+      "duration_seconds": 72.6
+    },
+    {
+      "lat": 63.95,
+      "lng": -21.2,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:19Z",
+      "duration_seconds": 75.3
+    },
+    {
+      "lat": 63.95,
+      "lng": -21.05,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:20Z",
+      "duration_seconds": 77.1
+    },
+    {
+      "lat": 63.95,
+      "lng": -20.9,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:21Z",
+      "duration_seconds": 78.1
+    },
+    {
+      "lat": 63.95,
+      "lng": -20.75,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:21Z",
+      "duration_seconds": 78.2
+    },
+    {
+      "lat": 63.95,
+      "lng": -20.6,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:21Z",
+      "duration_seconds": 77.5
+    },
+    {
+      "lat": 64.1,
+      "lng": -24.5,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.1,
+      "lng": -24.35,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.1,
+      "lng": -24.2,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.1,
+      "lng": -24.05,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.1,
+      "lng": -23.9,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.1,
+      "lng": -23.75,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.1,
+      "lng": -23.6,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.1,
+      "lng": -23.45,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.1,
+      "lng": -23.3,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:45:15Z",
+      "duration_seconds": 3.8
+    },
+    {
+      "lat": 64.1,
+      "lng": -23.15,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:45:26Z",
+      "duration_seconds": 15.4
+    },
+    {
+      "lat": 64.1,
+      "lng": -23.0,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:45:37Z",
+      "duration_seconds": 26.0
+    },
+    {
+      "lat": 64.1,
+      "lng": -22.85,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:45:46Z",
+      "duration_seconds": 35.6
+    },
+    {
+      "lat": 64.1,
+      "lng": -22.7,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:45:55Z",
+      "duration_seconds": 44.2
+    },
+    {
+      "lat": 64.1,
+      "lng": -22.55,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:26Z",
+      "duration_seconds": 48.6
+    },
+    {
+      "lat": 64.1,
+      "lng": -22.4,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:33Z",
+      "duration_seconds": 56.4
+    },
+    {
+      "lat": 64.1,
+      "lng": -22.25,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:40Z",
+      "duration_seconds": 63.3
+    },
+    {
+      "lat": 64.1,
+      "lng": -22.1,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:46Z",
+      "duration_seconds": 69.3
+    },
+    {
+      "lat": 64.1,
+      "lng": -21.95,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:51Z",
+      "duration_seconds": 74.4
+    },
+    {
+      "lat": 64.1,
+      "lng": -21.8,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:56Z",
+      "duration_seconds": 78.5
+    },
+    {
+      "lat": 64.1,
+      "lng": -21.65,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:59Z",
+      "duration_seconds": 81.8
+    },
+    {
+      "lat": 64.1,
+      "lng": -21.5,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:47:01Z",
+      "duration_seconds": 84.1
+    },
+    {
+      "lat": 64.1,
+      "lng": -21.35,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:47:02Z",
+      "duration_seconds": 85.5
+    },
+    {
+      "lat": 64.1,
+      "lng": -21.2,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:47:03Z",
+      "duration_seconds": 85.9
+    },
+    {
+      "lat": 64.1,
+      "lng": -21.05,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:47:02Z",
+      "duration_seconds": 85.5
+    },
+    {
+      "lat": 64.1,
+      "lng": -20.9,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:47:01Z",
+      "duration_seconds": 84.1
+    },
+    {
+      "lat": 64.1,
+      "lng": -20.75,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:18Z",
+      "duration_seconds": 74.6
+    },
+    {
+      "lat": 64.1,
+      "lng": -20.6,
+      "sun_altitude": 24.8,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:46:03Z",
+      "totality_end": "2026-08-12T17:47:17Z",
+      "duration_seconds": 73.9
+    },
+    {
+      "lat": 64.25,
+      "lng": -24.5,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.25,
+      "lng": -24.35,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.25,
+      "lng": -24.2,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.25,
+      "lng": -24.05,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.25,
+      "lng": -23.9,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.25,
+      "lng": -23.75,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.25,
+      "lng": -23.6,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.25,
+      "lng": -23.45,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:44:57Z",
+      "duration_seconds": 12.0
+    },
+    {
+      "lat": 64.25,
+      "lng": -23.3,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:08Z",
+      "duration_seconds": 23.5
+    },
+    {
+      "lat": 64.25,
+      "lng": -23.15,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:18Z",
+      "duration_seconds": 33.8
+    },
+    {
+      "lat": 64.25,
+      "lng": -23.0,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:28Z",
+      "duration_seconds": 43.1
+    },
+    {
+      "lat": 64.25,
+      "lng": -22.85,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:45:58Z",
+      "duration_seconds": 47.6
+    },
+    {
+      "lat": 64.25,
+      "lng": -22.7,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:07Z",
+      "duration_seconds": 56.1
+    },
+    {
+      "lat": 64.25,
+      "lng": -22.55,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:14Z",
+      "duration_seconds": 63.6
+    },
+    {
+      "lat": 64.25,
+      "lng": -22.4,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:21Z",
+      "duration_seconds": 70.1
+    },
+    {
+      "lat": 64.25,
+      "lng": -22.25,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:26Z",
+      "duration_seconds": 75.6
+    },
+    {
+      "lat": 64.25,
+      "lng": -22.1,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:31Z",
+      "duration_seconds": 80.1
+    },
+    {
+      "lat": 64.25,
+      "lng": -21.95,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:34Z",
+      "duration_seconds": 83.6
+    },
+    {
+      "lat": 64.25,
+      "lng": -21.8,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:56Z",
+      "duration_seconds": 79.4
+    },
+    {
+      "lat": 64.25,
+      "lng": -21.65,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:47:00Z",
+      "duration_seconds": 82.6
+    },
+    {
+      "lat": 64.25,
+      "lng": -21.5,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:47:02Z",
+      "duration_seconds": 84.9
+    },
+    {
+      "lat": 64.25,
+      "lng": -21.35,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:47:03Z",
+      "duration_seconds": 86.3
+    },
+    {
+      "lat": 64.25,
+      "lng": -21.2,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:47:04Z",
+      "duration_seconds": 86.7
+    },
+    {
+      "lat": 64.25,
+      "lng": -21.05,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:47:03Z",
+      "duration_seconds": 86.3
+    },
+    {
+      "lat": 64.25,
+      "lng": -20.9,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:47:02Z",
+      "duration_seconds": 84.9
+    },
+    {
+      "lat": 64.25,
+      "lng": -20.75,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:47:00Z",
+      "duration_seconds": 82.6
+    },
+    {
+      "lat": 64.25,
+      "lng": -20.6,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:56Z",
+      "duration_seconds": 79.4
+    },
+    {
+      "lat": 64.4,
+      "lng": -24.5,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.4,
+      "lng": -24.35,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.4,
+      "lng": -24.2,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.4,
+      "lng": -24.05,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.4,
+      "lng": -23.9,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.4,
+      "lng": -23.75,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:44:46Z",
+      "duration_seconds": 1.3
+    },
+    {
+      "lat": 64.4,
+      "lng": -23.6,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:44:59Z",
+      "duration_seconds": 14.8
+    },
+    {
+      "lat": 64.4,
+      "lng": -23.45,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:12Z",
+      "duration_seconds": 27.2
+    },
+    {
+      "lat": 64.4,
+      "lng": -23.3,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:23Z",
+      "duration_seconds": 38.5
+    },
+    {
+      "lat": 64.4,
+      "lng": -23.15,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:33Z",
+      "duration_seconds": 48.8
+    },
+    {
+      "lat": 64.4,
+      "lng": -23.0,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:42Z",
+      "duration_seconds": 57.9
+    },
+    {
+      "lat": 64.4,
+      "lng": -22.85,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:51Z",
+      "duration_seconds": 66.0
+    },
+    {
+      "lat": 64.4,
+      "lng": -22.7,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:58Z",
+      "duration_seconds": 73.0
+    },
+    {
+      "lat": 64.4,
+      "lng": -22.55,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:03Z",
+      "duration_seconds": 79.0
+    },
+    {
+      "lat": 64.4,
+      "lng": -22.4,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:08Z",
+      "duration_seconds": 83.8
+    },
+    {
+      "lat": 64.4,
+      "lng": -22.25,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:33Z",
+      "duration_seconds": 81.9
+    },
+    {
+      "lat": 64.4,
+      "lng": -22.1,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:37Z",
+      "duration_seconds": 86.4
+    },
+    {
+      "lat": 64.4,
+      "lng": -21.95,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:41Z",
+      "duration_seconds": 89.9
+    },
+    {
+      "lat": 64.4,
+      "lng": -21.8,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:43Z",
+      "duration_seconds": 92.3
+    },
+    {
+      "lat": 64.4,
+      "lng": -21.65,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:45Z",
+      "duration_seconds": 93.8
+    },
+    {
+      "lat": 64.4,
+      "lng": -21.5,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:45Z",
+      "duration_seconds": 94.3
+    },
+    {
+      "lat": 64.4,
+      "lng": -21.35,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:45Z",
+      "duration_seconds": 93.8
+    },
+    {
+      "lat": 64.4,
+      "lng": -21.2,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:43Z",
+      "duration_seconds": 92.3
+    },
+    {
+      "lat": 64.4,
+      "lng": -21.05,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:59Z",
+      "duration_seconds": 82.3
+    },
+    {
+      "lat": 64.4,
+      "lng": -20.9,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:58Z",
+      "duration_seconds": 80.9
+    },
+    {
+      "lat": 64.4,
+      "lng": -20.75,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:56Z",
+      "duration_seconds": 78.6
+    },
+    {
+      "lat": 64.4,
+      "lng": -20.6,
+      "sun_altitude": 24.6,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:37Z",
+      "totality_end": "2026-08-12T17:46:52Z",
+      "duration_seconds": 75.5
+    },
+    {
+      "lat": 64.55,
+      "lng": -24.5,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.55,
+      "lng": -24.35,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.55,
+      "lng": -24.2,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.55,
+      "lng": -24.05,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.55,
+      "lng": -23.9,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:44:29Z",
+      "duration_seconds": 10.3
+    },
+    {
+      "lat": 64.55,
+      "lng": -23.75,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:44:41Z",
+      "duration_seconds": 22.8
+    },
+    {
+      "lat": 64.55,
+      "lng": -23.6,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:44:52Z",
+      "duration_seconds": 34.1
+    },
+    {
+      "lat": 64.55,
+      "lng": -23.45,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:03Z",
+      "duration_seconds": 44.3
+    },
+    {
+      "lat": 64.55,
+      "lng": -23.3,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:12Z",
+      "duration_seconds": 53.3
+    },
+    {
+      "lat": 64.55,
+      "lng": -23.15,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:42Z",
+      "duration_seconds": 57.9
+    },
+    {
+      "lat": 64.55,
+      "lng": -23.0,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:51Z",
+      "duration_seconds": 67.0
+    },
+    {
+      "lat": 64.55,
+      "lng": -22.85,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:59Z",
+      "duration_seconds": 75.0
+    },
+    {
+      "lat": 64.55,
+      "lng": -22.7,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:06Z",
+      "duration_seconds": 81.9
+    },
+    {
+      "lat": 64.55,
+      "lng": -22.55,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:12Z",
+      "duration_seconds": 87.8
+    },
+    {
+      "lat": 64.55,
+      "lng": -22.4,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:17Z",
+      "duration_seconds": 92.6
+    },
+    {
+      "lat": 64.55,
+      "lng": -22.25,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:21Z",
+      "duration_seconds": 96.3
+    },
+    {
+      "lat": 64.55,
+      "lng": -22.1,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:23Z",
+      "duration_seconds": 99.0
+    },
+    {
+      "lat": 64.55,
+      "lng": -21.95,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:25Z",
+      "duration_seconds": 100.6
+    },
+    {
+      "lat": 64.55,
+      "lng": -21.8,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:44Z",
+      "duration_seconds": 93.2
+    },
+    {
+      "lat": 64.55,
+      "lng": -21.65,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:45Z",
+      "duration_seconds": 94.7
+    },
+    {
+      "lat": 64.55,
+      "lng": -21.5,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:46Z",
+      "duration_seconds": 95.2
+    },
+    {
+      "lat": 64.55,
+      "lng": -21.35,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:45Z",
+      "duration_seconds": 94.7
+    },
+    {
+      "lat": 64.55,
+      "lng": -21.2,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:44Z",
+      "duration_seconds": 93.2
+    },
+    {
+      "lat": 64.55,
+      "lng": -21.05,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:42Z",
+      "duration_seconds": 90.8
+    },
+    {
+      "lat": 64.55,
+      "lng": -20.9,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:38Z",
+      "duration_seconds": 87.4
+    },
+    {
+      "lat": 64.55,
+      "lng": -20.75,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:34Z",
+      "duration_seconds": 83.0
+    },
+    {
+      "lat": 64.55,
+      "lng": -20.6,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:28Z",
+      "duration_seconds": 77.6
+    },
+    {
+      "lat": 64.7,
+      "lng": -24.5,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.7,
+      "lng": -24.35,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.7,
+      "lng": -24.2,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.7,
+      "lng": -24.05,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:44:31Z",
+      "duration_seconds": 13.2
+    },
+    {
+      "lat": 64.7,
+      "lng": -23.9,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:44:45Z",
+      "duration_seconds": 26.7
+    },
+    {
+      "lat": 64.7,
+      "lng": -23.75,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:44:57Z",
+      "duration_seconds": 39.1
+    },
+    {
+      "lat": 64.7,
+      "lng": -23.6,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:09Z",
+      "duration_seconds": 50.3
+    },
+    {
+      "lat": 64.7,
+      "lng": -23.45,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:19Z",
+      "duration_seconds": 60.4
+    },
+    {
+      "lat": 64.7,
+      "lng": -23.3,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:28Z",
+      "duration_seconds": 69.3
+    },
+    {
+      "lat": 64.7,
+      "lng": -23.15,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:35Z",
+      "duration_seconds": 77.1
+    },
+    {
+      "lat": 64.7,
+      "lng": -23.0,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:42Z",
+      "duration_seconds": 83.8
+    },
+    {
+      "lat": 64.7,
+      "lng": -22.85,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:48Z",
+      "duration_seconds": 89.3
+    },
+    {
+      "lat": 64.7,
+      "lng": -22.7,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:52Z",
+      "duration_seconds": 93.7
+    },
+    {
+      "lat": 64.7,
+      "lng": -22.55,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:15Z",
+      "duration_seconds": 90.8
+    },
+    {
+      "lat": 64.7,
+      "lng": -22.4,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:20Z",
+      "duration_seconds": 95.6
+    },
+    {
+      "lat": 64.7,
+      "lng": -22.25,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:24Z",
+      "duration_seconds": 99.3
+    },
+    {
+      "lat": 64.7,
+      "lng": -22.1,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:26Z",
+      "duration_seconds": 101.9
+    },
+    {
+      "lat": 64.7,
+      "lng": -21.95,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:28Z",
+      "duration_seconds": 103.5
+    },
+    {
+      "lat": 64.7,
+      "lng": -21.8,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:29Z",
+      "duration_seconds": 104.0
+    },
+    {
+      "lat": 64.7,
+      "lng": -21.65,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:28Z",
+      "duration_seconds": 103.5
+    },
+    {
+      "lat": 64.7,
+      "lng": -21.5,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:26Z",
+      "duration_seconds": 101.9
+    },
+    {
+      "lat": 64.7,
+      "lng": -21.35,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:24Z",
+      "duration_seconds": 99.3
+    },
+    {
+      "lat": 64.7,
+      "lng": -21.2,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:40Z",
+      "duration_seconds": 88.8
+    },
+    {
+      "lat": 64.7,
+      "lng": -21.05,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:37Z",
+      "duration_seconds": 86.4
+    },
+    {
+      "lat": 64.7,
+      "lng": -20.9,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:34Z",
+      "duration_seconds": 83.0
+    },
+    {
+      "lat": 64.7,
+      "lng": -20.75,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:29Z",
+      "duration_seconds": 78.7
+    },
+    {
+      "lat": 64.7,
+      "lng": -20.6,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:24Z",
+      "duration_seconds": 73.3
+    },
+    {
+      "lat": 64.85,
+      "lng": -24.5,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 64.85,
+      "lng": -24.35,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:03Z",
+      "duration_seconds": 11.0
+    },
+    {
+      "lat": 64.85,
+      "lng": -24.2,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:15Z",
+      "duration_seconds": 22.9
+    },
+    {
+      "lat": 64.85,
+      "lng": -24.05,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:26Z",
+      "duration_seconds": 33.7
+    },
+    {
+      "lat": 64.85,
+      "lng": -23.9,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:35Z",
+      "duration_seconds": 43.2
+    },
+    {
+      "lat": 64.85,
+      "lng": -23.75,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:07Z",
+      "duration_seconds": 49.1
+    },
+    {
+      "lat": 64.85,
+      "lng": -23.6,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:18Z",
+      "duration_seconds": 60.2
+    },
+    {
+      "lat": 64.85,
+      "lng": -23.45,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:28Z",
+      "duration_seconds": 70.2
+    },
+    {
+      "lat": 64.85,
+      "lng": -23.3,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:37Z",
+      "duration_seconds": 79.0
+    },
+    {
+      "lat": 64.85,
+      "lng": -23.15,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:45Z",
+      "duration_seconds": 86.7
+    },
+    {
+      "lat": 64.85,
+      "lng": -23.0,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:52Z",
+      "duration_seconds": 93.3
+    },
+    {
+      "lat": 64.85,
+      "lng": -22.85,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:57Z",
+      "duration_seconds": 98.8
+    },
+    {
+      "lat": 64.85,
+      "lng": -22.7,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:01Z",
+      "duration_seconds": 103.1
+    },
+    {
+      "lat": 64.85,
+      "lng": -22.55,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:05Z",
+      "duration_seconds": 106.3
+    },
+    {
+      "lat": 64.85,
+      "lng": -22.4,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:07Z",
+      "duration_seconds": 108.4
+    },
+    {
+      "lat": 64.85,
+      "lng": -22.25,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:08Z",
+      "duration_seconds": 109.3
+    },
+    {
+      "lat": 64.85,
+      "lng": -22.1,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:07Z",
+      "duration_seconds": 109.1
+    },
+    {
+      "lat": 64.85,
+      "lng": -21.95,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:25Z",
+      "duration_seconds": 100.6
+    },
+    {
+      "lat": 64.85,
+      "lng": -21.8,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:26Z",
+      "duration_seconds": 101.1
+    },
+    {
+      "lat": 64.85,
+      "lng": -21.65,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:25Z",
+      "duration_seconds": 100.6
+    },
+    {
+      "lat": 64.85,
+      "lng": -21.5,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:24Z",
+      "duration_seconds": 99.0
+    },
+    {
+      "lat": 64.85,
+      "lng": -21.35,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:21Z",
+      "duration_seconds": 96.4
+    },
+    {
+      "lat": 64.85,
+      "lng": -21.2,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:17Z",
+      "duration_seconds": 92.8
+    },
+    {
+      "lat": 64.85,
+      "lng": -21.05,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:13Z",
+      "duration_seconds": 88.1
+    },
+    {
+      "lat": 64.85,
+      "lng": -20.9,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:07Z",
+      "duration_seconds": 82.3
+    },
+    {
+      "lat": 64.85,
+      "lng": -20.75,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:00Z",
+      "duration_seconds": 75.5
+    },
+    {
+      "lat": 64.85,
+      "lng": -20.6,
+      "sun_altitude": 24.4,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:45:11Z",
+      "totality_end": "2026-08-12T17:46:15Z",
+      "duration_seconds": 63.8
+    },
+    {
+      "lat": 65.0,
+      "lng": -24.5,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:12Z",
+      "duration_seconds": 20.0
+    },
+    {
+      "lat": 65.0,
+      "lng": -24.35,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:25Z",
+      "duration_seconds": 33.0
+    },
+    {
+      "lat": 65.0,
+      "lng": -24.2,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:37Z",
+      "duration_seconds": 44.8
+    },
+    {
+      "lat": 65.0,
+      "lng": -24.05,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:47Z",
+      "duration_seconds": 55.4
+    },
+    {
+      "lat": 65.0,
+      "lng": -23.9,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:57Z",
+      "duration_seconds": 64.8
+    },
+    {
+      "lat": 65.0,
+      "lng": -23.75,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:05Z",
+      "duration_seconds": 73.0
+    },
+    {
+      "lat": 65.0,
+      "lng": -23.6,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:12Z",
+      "duration_seconds": 80.0
+    },
+    {
+      "lat": 65.0,
+      "lng": -23.45,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:18Z",
+      "duration_seconds": 85.8
+    },
+    {
+      "lat": 65.0,
+      "lng": -23.3,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:22Z",
+      "duration_seconds": 90.4
+    },
+    {
+      "lat": 65.0,
+      "lng": -23.15,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:48Z",
+      "duration_seconds": 90.1
+    },
+    {
+      "lat": 65.0,
+      "lng": -23.0,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:55Z",
+      "duration_seconds": 96.6
+    },
+    {
+      "lat": 65.0,
+      "lng": -22.85,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:00Z",
+      "duration_seconds": 102.0
+    },
+    {
+      "lat": 65.0,
+      "lng": -22.7,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:05Z",
+      "duration_seconds": 106.3
+    },
+    {
+      "lat": 65.0,
+      "lng": -22.55,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:08Z",
+      "duration_seconds": 109.5
+    },
+    {
+      "lat": 65.0,
+      "lng": -22.4,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:10Z",
+      "duration_seconds": 111.5
+    },
+    {
+      "lat": 65.0,
+      "lng": -22.25,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:11Z",
+      "duration_seconds": 112.4
+    },
+    {
+      "lat": 65.0,
+      "lng": -22.1,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:11Z",
+      "duration_seconds": 112.3
+    },
+    {
+      "lat": 65.0,
+      "lng": -21.95,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:09Z",
+      "duration_seconds": 110.9
+    },
+    {
+      "lat": 65.0,
+      "lng": -21.8,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:07Z",
+      "duration_seconds": 108.5
+    },
+    {
+      "lat": 65.0,
+      "lng": -21.65,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:03Z",
+      "duration_seconds": 105.0
+    },
+    {
+      "lat": 65.0,
+      "lng": -21.5,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:59Z",
+      "duration_seconds": 100.3
+    },
+    {
+      "lat": 65.0,
+      "lng": -21.35,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:12Z",
+      "duration_seconds": 87.8
+    },
+    {
+      "lat": 65.0,
+      "lng": -21.2,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:09Z",
+      "duration_seconds": 84.2
+    },
+    {
+      "lat": 65.0,
+      "lng": -21.05,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:46:04Z",
+      "duration_seconds": 79.5
+    },
+    {
+      "lat": 65.0,
+      "lng": -20.9,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:58Z",
+      "duration_seconds": 73.9
+    },
+    {
+      "lat": 65.0,
+      "lng": -20.75,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:52Z",
+      "duration_seconds": 67.2
+    },
+    {
+      "lat": 65.0,
+      "lng": -20.6,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:44Z",
+      "duration_seconds": 59.4
+    },
+    {
+      "lat": 65.15,
+      "lng": -24.5,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:27Z",
+      "duration_seconds": 35.4
+    },
+    {
+      "lat": 65.15,
+      "lng": -24.35,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:40Z",
+      "duration_seconds": 48.3
+    },
+    {
+      "lat": 65.15,
+      "lng": -24.2,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:52Z",
+      "duration_seconds": 60.0
+    },
+    {
+      "lat": 65.15,
+      "lng": -24.05,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:02Z",
+      "duration_seconds": 70.4
+    },
+    {
+      "lat": 65.15,
+      "lng": -23.9,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:12Z",
+      "duration_seconds": 79.7
+    },
+    {
+      "lat": 65.15,
+      "lng": -23.75,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:20Z",
+      "duration_seconds": 87.9
+    },
+    {
+      "lat": 65.15,
+      "lng": -23.6,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:27Z",
+      "duration_seconds": 94.8
+    },
+    {
+      "lat": 65.15,
+      "lng": -23.45,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:33Z",
+      "duration_seconds": 100.5
+    },
+    {
+      "lat": 65.15,
+      "lng": -23.3,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:37Z",
+      "duration_seconds": 105.1
+    },
+    {
+      "lat": 65.15,
+      "lng": -23.15,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:40Z",
+      "duration_seconds": 108.4
+    },
+    {
+      "lat": 65.15,
+      "lng": -23.0,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:43Z",
+      "duration_seconds": 110.6
+    },
+    {
+      "lat": 65.15,
+      "lng": -22.85,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:44Z",
+      "duration_seconds": 111.6
+    },
+    {
+      "lat": 65.15,
+      "lng": -22.7,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:43Z",
+      "duration_seconds": 111.4
+    },
+    {
+      "lat": 65.15,
+      "lng": -22.55,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:05Z",
+      "duration_seconds": 106.4
+    },
+    {
+      "lat": 65.15,
+      "lng": -22.4,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:07Z",
+      "duration_seconds": 108.4
+    },
+    {
+      "lat": 65.15,
+      "lng": -22.25,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:08Z",
+      "duration_seconds": 109.3
+    },
+    {
+      "lat": 65.15,
+      "lng": -22.1,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:07Z",
+      "duration_seconds": 109.1
+    },
+    {
+      "lat": 65.15,
+      "lng": -21.95,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:06Z",
+      "duration_seconds": 107.8
+    },
+    {
+      "lat": 65.15,
+      "lng": -21.8,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:04Z",
+      "duration_seconds": 105.5
+    },
+    {
+      "lat": 65.15,
+      "lng": -21.65,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:46:00Z",
+      "duration_seconds": 102.0
+    },
+    {
+      "lat": 65.15,
+      "lng": -21.5,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:56Z",
+      "duration_seconds": 97.4
+    },
+    {
+      "lat": 65.15,
+      "lng": -21.35,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:50Z",
+      "duration_seconds": 91.7
+    },
+    {
+      "lat": 65.15,
+      "lng": -21.2,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:43Z",
+      "duration_seconds": 84.8
+    },
+    {
+      "lat": 65.15,
+      "lng": -21.05,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:35Z",
+      "duration_seconds": 76.9
+    },
+    {
+      "lat": 65.15,
+      "lng": -20.9,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:26Z",
+      "duration_seconds": 67.9
+    },
+    {
+      "lat": 65.15,
+      "lng": -20.75,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:16Z",
+      "duration_seconds": 57.8
+    },
+    {
+      "lat": 65.15,
+      "lng": -20.6,
+      "sun_altitude": 24.2,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:45Z",
+      "totality_end": "2026-08-12T17:45:30Z",
+      "duration_seconds": 45.3
+    },
+    {
+      "lat": 65.3,
+      "lng": -24.5,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:27Z",
+      "duration_seconds": 61.6
+    },
+    {
+      "lat": 65.3,
+      "lng": -24.35,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:35Z",
+      "duration_seconds": 69.4
+    },
+    {
+      "lat": 65.3,
+      "lng": -24.2,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:42Z",
+      "duration_seconds": 75.9
+    },
+    {
+      "lat": 65.3,
+      "lng": -24.05,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:11Z",
+      "duration_seconds": 78.7
+    },
+    {
+      "lat": 65.3,
+      "lng": -23.9,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:20Z",
+      "duration_seconds": 87.9
+    },
+    {
+      "lat": 65.3,
+      "lng": -23.75,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:28Z",
+      "duration_seconds": 96.0
+    },
+    {
+      "lat": 65.3,
+      "lng": -23.6,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:35Z",
+      "duration_seconds": 102.8
+    },
+    {
+      "lat": 65.3,
+      "lng": -23.45,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:40Z",
+      "duration_seconds": 108.5
+    },
+    {
+      "lat": 65.3,
+      "lng": -23.3,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:45Z",
+      "duration_seconds": 113.0
+    },
+    {
+      "lat": 65.3,
+      "lng": -23.15,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:48Z",
+      "duration_seconds": 116.3
+    },
+    {
+      "lat": 65.3,
+      "lng": -23.0,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:50Z",
+      "duration_seconds": 118.5
+    },
+    {
+      "lat": 65.3,
+      "lng": -22.85,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:51Z",
+      "duration_seconds": 119.4
+    },
+    {
+      "lat": 65.3,
+      "lng": -22.7,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:51Z",
+      "duration_seconds": 119.2
+    },
+    {
+      "lat": 65.3,
+      "lng": -22.55,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:50Z",
+      "duration_seconds": 117.9
+    },
+    {
+      "lat": 65.3,
+      "lng": -22.4,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:47Z",
+      "duration_seconds": 115.3
+    },
+    {
+      "lat": 65.3,
+      "lng": -22.25,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:44Z",
+      "duration_seconds": 111.6
+    },
+    {
+      "lat": 65.3,
+      "lng": -22.1,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:58Z",
+      "duration_seconds": 99.8
+    },
+    {
+      "lat": 65.3,
+      "lng": -21.95,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:57Z",
+      "duration_seconds": 98.5
+    },
+    {
+      "lat": 65.3,
+      "lng": -21.8,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:54Z",
+      "duration_seconds": 96.1
+    },
+    {
+      "lat": 65.3,
+      "lng": -21.65,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:51Z",
+      "duration_seconds": 92.7
+    },
+    {
+      "lat": 65.3,
+      "lng": -21.5,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:46Z",
+      "duration_seconds": 88.1
+    },
+    {
+      "lat": 65.3,
+      "lng": -21.35,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:41Z",
+      "duration_seconds": 82.5
+    },
+    {
+      "lat": 65.3,
+      "lng": -21.2,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:34Z",
+      "duration_seconds": 75.7
+    },
+    {
+      "lat": 65.3,
+      "lng": -21.05,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:26Z",
+      "duration_seconds": 67.9
+    },
+    {
+      "lat": 65.3,
+      "lng": -20.9,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:17Z",
+      "duration_seconds": 59.0
+    },
+    {
+      "lat": 65.3,
+      "lng": -20.75,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:07Z",
+      "duration_seconds": 49.0
+    },
+    {
+      "lat": 65.3,
+      "lng": -20.6,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:44:56Z",
+      "duration_seconds": 37.9
+    },
+    {
+      "lat": 65.45,
+      "lng": -24.5,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:48Z",
+      "duration_seconds": 82.3
+    },
+    {
+      "lat": 65.45,
+      "lng": -24.35,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:56Z",
+      "duration_seconds": 90.0
+    },
+    {
+      "lat": 65.45,
+      "lng": -24.2,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:02Z",
+      "duration_seconds": 96.4
+    },
+    {
+      "lat": 65.45,
+      "lng": -24.05,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:07Z",
+      "duration_seconds": 101.6
+    },
+    {
+      "lat": 65.45,
+      "lng": -23.9,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:11Z",
+      "duration_seconds": 105.5
+    },
+    {
+      "lat": 65.45,
+      "lng": -23.75,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:14Z",
+      "duration_seconds": 108.2
+    },
+    {
+      "lat": 65.45,
+      "lng": -23.6,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:36Z",
+      "duration_seconds": 104.1
+    },
+    {
+      "lat": 65.45,
+      "lng": -23.45,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:42Z",
+      "duration_seconds": 109.7
+    },
+    {
+      "lat": 65.45,
+      "lng": -23.3,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:46Z",
+      "duration_seconds": 114.2
+    },
+    {
+      "lat": 65.45,
+      "lng": -23.15,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:49Z",
+      "duration_seconds": 117.5
+    },
+    {
+      "lat": 65.45,
+      "lng": -23.0,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:52Z",
+      "duration_seconds": 119.6
+    },
+    {
+      "lat": 65.45,
+      "lng": -22.85,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:53Z",
+      "duration_seconds": 120.6
+    },
+    {
+      "lat": 65.45,
+      "lng": -22.7,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:52Z",
+      "duration_seconds": 120.4
+    },
+    {
+      "lat": 65.45,
+      "lng": -22.55,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:51Z",
+      "duration_seconds": 119.0
+    },
+    {
+      "lat": 65.45,
+      "lng": -22.4,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:49Z",
+      "duration_seconds": 116.5
+    },
+    {
+      "lat": 65.45,
+      "lng": -22.25,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:45Z",
+      "duration_seconds": 112.8
+    },
+    {
+      "lat": 65.45,
+      "lng": -22.1,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:40Z",
+      "duration_seconds": 108.0
+    },
+    {
+      "lat": 65.45,
+      "lng": -21.95,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:34Z",
+      "duration_seconds": 102.0
+    },
+    {
+      "lat": 65.45,
+      "lng": -21.8,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:27Z",
+      "duration_seconds": 94.8
+    },
+    {
+      "lat": 65.45,
+      "lng": -21.65,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:19Z",
+      "duration_seconds": 86.5
+    },
+    {
+      "lat": 65.45,
+      "lng": -21.5,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:31Z",
+      "duration_seconds": 72.6
+    },
+    {
+      "lat": 65.45,
+      "lng": -21.35,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:25Z",
+      "duration_seconds": 67.1
+    },
+    {
+      "lat": 65.45,
+      "lng": -21.2,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:19Z",
+      "duration_seconds": 60.4
+    },
+    {
+      "lat": 65.45,
+      "lng": -21.05,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:11Z",
+      "duration_seconds": 52.7
+    },
+    {
+      "lat": 65.45,
+      "lng": -20.9,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:45:02Z",
+      "duration_seconds": 43.9
+    },
+    {
+      "lat": 65.45,
+      "lng": -20.75,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:44:52Z",
+      "duration_seconds": 34.0
+    },
+    {
+      "lat": 65.45,
+      "lng": -20.6,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:44:41Z",
+      "duration_seconds": 23.0
+    },
+    {
+      "lat": 65.6,
+      "lng": -24.5,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:02Z",
+      "duration_seconds": 95.8
+    },
+    {
+      "lat": 65.6,
+      "lng": -24.35,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:09Z",
+      "duration_seconds": 103.4
+    },
+    {
+      "lat": 65.6,
+      "lng": -24.2,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:15Z",
+      "duration_seconds": 109.7
+    },
+    {
+      "lat": 65.6,
+      "lng": -24.05,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:21Z",
+      "duration_seconds": 114.9
+    },
+    {
+      "lat": 65.6,
+      "lng": -23.9,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:24Z",
+      "duration_seconds": 118.7
+    },
+    {
+      "lat": 65.6,
+      "lng": -23.75,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:27Z",
+      "duration_seconds": 121.4
+    },
+    {
+      "lat": 65.6,
+      "lng": -23.6,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:29Z",
+      "duration_seconds": 122.8
+    },
+    {
+      "lat": 65.6,
+      "lng": -23.45,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:29Z",
+      "duration_seconds": 123.0
+    },
+    {
+      "lat": 65.6,
+      "lng": -23.3,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:28Z",
+      "duration_seconds": 122.0
+    },
+    {
+      "lat": 65.6,
+      "lng": -23.15,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:44Z",
+      "duration_seconds": 111.9
+    },
+    {
+      "lat": 65.6,
+      "lng": -23.0,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:46Z",
+      "duration_seconds": 114.0
+    },
+    {
+      "lat": 65.6,
+      "lng": -22.85,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:47Z",
+      "duration_seconds": 115.0
+    },
+    {
+      "lat": 65.6,
+      "lng": -22.7,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:47Z",
+      "duration_seconds": 114.8
+    },
+    {
+      "lat": 65.6,
+      "lng": -22.55,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:45Z",
+      "duration_seconds": 113.4
+    },
+    {
+      "lat": 65.6,
+      "lng": -22.4,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:43Z",
+      "duration_seconds": 110.9
+    },
+    {
+      "lat": 65.6,
+      "lng": -22.25,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:39Z",
+      "duration_seconds": 107.3
+    },
+    {
+      "lat": 65.6,
+      "lng": -22.1,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:35Z",
+      "duration_seconds": 102.5
+    },
+    {
+      "lat": 65.6,
+      "lng": -21.95,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:29Z",
+      "duration_seconds": 96.6
+    },
+    {
+      "lat": 65.6,
+      "lng": -21.8,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:22Z",
+      "duration_seconds": 89.5
+    },
+    {
+      "lat": 65.6,
+      "lng": -21.65,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:13Z",
+      "duration_seconds": 81.3
+    },
+    {
+      "lat": 65.6,
+      "lng": -21.5,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:04Z",
+      "duration_seconds": 71.9
+    },
+    {
+      "lat": 65.6,
+      "lng": -21.35,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:53Z",
+      "duration_seconds": 61.4
+    },
+    {
+      "lat": 65.6,
+      "lng": -21.2,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:42Z",
+      "duration_seconds": 49.8
+    },
+    {
+      "lat": 65.6,
+      "lng": -21.05,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:29Z",
+      "duration_seconds": 37.0
+    },
+    {
+      "lat": 65.6,
+      "lng": -20.9,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:44:41Z",
+      "duration_seconds": 22.4
+    },
+    {
+      "lat": 65.6,
+      "lng": -20.75,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:44:31Z",
+      "duration_seconds": 12.7
+    },
+    {
+      "lat": 65.6,
+      "lng": -20.6,
+      "sun_altitude": 24.1,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:44:18Z",
+      "totality_end": "2026-08-12T17:44:20Z",
+      "duration_seconds": 1.8
+    },
+    {
+      "lat": 65.75,
+      "lng": -24.5,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:08Z",
+      "duration_seconds": 102.1
+    },
+    {
+      "lat": 65.75,
+      "lng": -24.35,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:15Z",
+      "duration_seconds": 109.6
+    },
+    {
+      "lat": 65.75,
+      "lng": -24.2,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:22Z",
+      "duration_seconds": 115.9
+    },
+    {
+      "lat": 65.75,
+      "lng": -24.05,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:27Z",
+      "duration_seconds": 120.9
+    },
+    {
+      "lat": 65.75,
+      "lng": -23.9,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:31Z",
+      "duration_seconds": 124.8
+    },
+    {
+      "lat": 65.75,
+      "lng": -23.75,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:33Z",
+      "duration_seconds": 127.4
+    },
+    {
+      "lat": 65.75,
+      "lng": -23.6,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:35Z",
+      "duration_seconds": 128.8
+    },
+    {
+      "lat": 65.75,
+      "lng": -23.45,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:35Z",
+      "duration_seconds": 129.0
+    },
+    {
+      "lat": 65.75,
+      "lng": -23.3,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:34Z",
+      "duration_seconds": 128.0
+    },
+    {
+      "lat": 65.75,
+      "lng": -23.15,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:32Z",
+      "duration_seconds": 125.8
+    },
+    {
+      "lat": 65.75,
+      "lng": -23.0,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:28Z",
+      "duration_seconds": 122.4
+    },
+    {
+      "lat": 65.75,
+      "lng": -22.85,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:23Z",
+      "duration_seconds": 117.7
+    },
+    {
+      "lat": 65.75,
+      "lng": -22.7,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:18Z",
+      "duration_seconds": 111.8
+    },
+    {
+      "lat": 65.75,
+      "lng": -22.55,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:33Z",
+      "duration_seconds": 101.1
+    },
+    {
+      "lat": 65.75,
+      "lng": -22.4,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:31Z",
+      "duration_seconds": 98.7
+    },
+    {
+      "lat": 65.75,
+      "lng": -22.25,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:27Z",
+      "duration_seconds": 95.1
+    },
+    {
+      "lat": 65.75,
+      "lng": -22.1,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:22Z",
+      "duration_seconds": 90.4
+    },
+    {
+      "lat": 65.75,
+      "lng": -21.95,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:16Z",
+      "duration_seconds": 84.5
+    },
+    {
+      "lat": 65.75,
+      "lng": -21.8,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:10Z",
+      "duration_seconds": 77.5
+    },
+    {
+      "lat": 65.75,
+      "lng": -21.65,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:01Z",
+      "duration_seconds": 69.4
+    },
+    {
+      "lat": 65.75,
+      "lng": -21.5,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:52Z",
+      "duration_seconds": 60.1
+    },
+    {
+      "lat": 65.75,
+      "lng": -21.35,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:42Z",
+      "duration_seconds": 49.7
+    },
+    {
+      "lat": 65.75,
+      "lng": -21.2,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:30Z",
+      "duration_seconds": 38.2
+    },
+    {
+      "lat": 65.75,
+      "lng": -21.05,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:18Z",
+      "duration_seconds": 25.5
+    },
+    {
+      "lat": 65.75,
+      "lng": -20.9,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:04Z",
+      "duration_seconds": 11.7
+    },
+    {
+      "lat": 65.75,
+      "lng": -20.75,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 65.75,
+      "lng": -20.6,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 65.9,
+      "lng": -24.5,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:02Z",
+      "duration_seconds": 122.7
+    },
+    {
+      "lat": 65.9,
+      "lng": -24.35,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:02Z",
+      "duration_seconds": 122.0
+    },
+    {
+      "lat": 65.9,
+      "lng": -24.2,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:21Z",
+      "duration_seconds": 114.8
+    },
+    {
+      "lat": 65.9,
+      "lng": -24.05,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:26Z",
+      "duration_seconds": 119.8
+    },
+    {
+      "lat": 65.9,
+      "lng": -23.9,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:29Z",
+      "duration_seconds": 123.6
+    },
+    {
+      "lat": 65.9,
+      "lng": -23.75,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:32Z",
+      "duration_seconds": 126.2
+    },
+    {
+      "lat": 65.9,
+      "lng": -23.6,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:33Z",
+      "duration_seconds": 127.6
+    },
+    {
+      "lat": 65.9,
+      "lng": -23.45,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:34Z",
+      "duration_seconds": 127.8
+    },
+    {
+      "lat": 65.9,
+      "lng": -23.3,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:33Z",
+      "duration_seconds": 126.8
+    },
+    {
+      "lat": 65.9,
+      "lng": -23.15,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:30Z",
+      "duration_seconds": 124.6
+    },
+    {
+      "lat": 65.9,
+      "lng": -23.0,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:27Z",
+      "duration_seconds": 121.2
+    },
+    {
+      "lat": 65.9,
+      "lng": -22.85,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:22Z",
+      "duration_seconds": 116.6
+    },
+    {
+      "lat": 65.9,
+      "lng": -22.7,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:17Z",
+      "duration_seconds": 110.8
+    },
+    {
+      "lat": 65.9,
+      "lng": -22.55,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:10Z",
+      "duration_seconds": 103.8
+    },
+    {
+      "lat": 65.9,
+      "lng": -22.4,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:01Z",
+      "duration_seconds": 95.6
+    },
+    {
+      "lat": 65.9,
+      "lng": -22.25,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:52Z",
+      "duration_seconds": 86.2
+    },
+    {
+      "lat": 65.9,
+      "lng": -22.1,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:45:03Z",
+      "duration_seconds": 71.4
+    },
+    {
+      "lat": 65.9,
+      "lng": -21.95,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:58Z",
+      "duration_seconds": 65.7
+    },
+    {
+      "lat": 65.9,
+      "lng": -21.8,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:51Z",
+      "duration_seconds": 58.7
+    },
+    {
+      "lat": 65.9,
+      "lng": -21.65,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:43Z",
+      "duration_seconds": 50.7
+    },
+    {
+      "lat": 65.9,
+      "lng": -21.5,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:34Z",
+      "duration_seconds": 41.6
+    },
+    {
+      "lat": 65.9,
+      "lng": -21.35,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:23Z",
+      "duration_seconds": 31.3
+    },
+    {
+      "lat": 65.9,
+      "lng": -21.2,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:12Z",
+      "duration_seconds": 19.9
+    },
+    {
+      "lat": 65.9,
+      "lng": -21.05,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:43:59Z",
+      "duration_seconds": 7.4
+    },
+    {
+      "lat": 65.9,
+      "lng": -20.9,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 65.9,
+      "lng": -20.75,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 65.9,
+      "lng": -20.6,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.05,
+      "lng": -24.5,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:14Z",
+      "duration_seconds": 134.2
+    },
+    {
+      "lat": 66.05,
+      "lng": -24.35,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:13Z",
+      "duration_seconds": 133.5
+    },
+    {
+      "lat": 66.05,
+      "lng": -24.2,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:11Z",
+      "duration_seconds": 131.6
+    },
+    {
+      "lat": 66.05,
+      "lng": -24.05,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:08Z",
+      "duration_seconds": 128.5
+    },
+    {
+      "lat": 66.05,
+      "lng": -23.9,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:04Z",
+      "duration_seconds": 124.1
+    },
+    {
+      "lat": 66.05,
+      "lng": -23.75,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:24Z",
+      "duration_seconds": 117.9
+    },
+    {
+      "lat": 66.05,
+      "lng": -23.6,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:25Z",
+      "duration_seconds": 119.2
+    },
+    {
+      "lat": 66.05,
+      "lng": -23.45,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:25Z",
+      "duration_seconds": 119.4
+    },
+    {
+      "lat": 66.05,
+      "lng": -23.3,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:24Z",
+      "duration_seconds": 118.5
+    },
+    {
+      "lat": 66.05,
+      "lng": -23.15,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:22Z",
+      "duration_seconds": 116.3
+    },
+    {
+      "lat": 66.05,
+      "lng": -23.0,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:19Z",
+      "duration_seconds": 112.9
+    },
+    {
+      "lat": 66.05,
+      "lng": -22.85,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:14Z",
+      "duration_seconds": 108.4
+    },
+    {
+      "lat": 66.05,
+      "lng": -22.7,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:08Z",
+      "duration_seconds": 102.6
+    },
+    {
+      "lat": 66.05,
+      "lng": -22.55,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:01Z",
+      "duration_seconds": 95.7
+    },
+    {
+      "lat": 66.05,
+      "lng": -22.4,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:53Z",
+      "duration_seconds": 87.6
+    },
+    {
+      "lat": 66.05,
+      "lng": -22.25,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:44Z",
+      "duration_seconds": 78.3
+    },
+    {
+      "lat": 66.05,
+      "lng": -22.1,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:34Z",
+      "duration_seconds": 67.9
+    },
+    {
+      "lat": 66.05,
+      "lng": -21.95,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:22Z",
+      "duration_seconds": 56.2
+    },
+    {
+      "lat": 66.05,
+      "lng": -21.8,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:09Z",
+      "duration_seconds": 43.4
+    },
+    {
+      "lat": 66.05,
+      "lng": -21.65,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:43:55Z",
+      "duration_seconds": 29.3
+    },
+    {
+      "lat": 66.05,
+      "lng": -21.5,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:44:08Z",
+      "duration_seconds": 16.3
+    },
+    {
+      "lat": 66.05,
+      "lng": -21.35,
+      "sun_altitude": 23.9,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:52Z",
+      "totality_end": "2026-08-12T17:43:58Z",
+      "duration_seconds": 6.1
+    },
+    {
+      "lat": 66.05,
+      "lng": -21.2,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.05,
+      "lng": -21.05,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.05,
+      "lng": -20.9,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.05,
+      "lng": -20.75,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.05,
+      "lng": -20.6,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.2,
+      "lng": -24.5,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:18Z",
+      "duration_seconds": 138.0
+    },
+    {
+      "lat": 66.2,
+      "lng": -24.35,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:17Z",
+      "duration_seconds": 137.4
+    },
+    {
+      "lat": 66.2,
+      "lng": -24.2,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:15Z",
+      "duration_seconds": 135.5
+    },
+    {
+      "lat": 66.2,
+      "lng": -24.05,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:12Z",
+      "duration_seconds": 132.4
+    },
+    {
+      "lat": 66.2,
+      "lng": -23.9,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:08Z",
+      "duration_seconds": 128.0
+    },
+    {
+      "lat": 66.2,
+      "lng": -23.75,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:02Z",
+      "duration_seconds": 122.4
+    },
+    {
+      "lat": 66.2,
+      "lng": -23.6,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:55Z",
+      "duration_seconds": 115.5
+    },
+    {
+      "lat": 66.2,
+      "lng": -23.45,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:10Z",
+      "duration_seconds": 103.9
+    },
+    {
+      "lat": 66.2,
+      "lng": -23.3,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:09Z",
+      "duration_seconds": 102.9
+    },
+    {
+      "lat": 66.2,
+      "lng": -23.15,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:06Z",
+      "duration_seconds": 100.7
+    },
+    {
+      "lat": 66.2,
+      "lng": -23.0,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:45:03Z",
+      "duration_seconds": 97.4
+    },
+    {
+      "lat": 66.2,
+      "lng": -22.85,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:59Z",
+      "duration_seconds": 92.9
+    },
+    {
+      "lat": 66.2,
+      "lng": -22.7,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:53Z",
+      "duration_seconds": 87.3
+    },
+    {
+      "lat": 66.2,
+      "lng": -22.55,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:46Z",
+      "duration_seconds": 80.4
+    },
+    {
+      "lat": 66.2,
+      "lng": -22.4,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:38Z",
+      "duration_seconds": 72.4
+    },
+    {
+      "lat": 66.2,
+      "lng": -22.25,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:29Z",
+      "duration_seconds": 63.2
+    },
+    {
+      "lat": 66.2,
+      "lng": -22.1,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:19Z",
+      "duration_seconds": 52.9
+    },
+    {
+      "lat": 66.2,
+      "lng": -21.95,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:07Z",
+      "duration_seconds": 41.4
+    },
+    {
+      "lat": 66.2,
+      "lng": -21.8,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:43:54Z",
+      "duration_seconds": 28.7
+    },
+    {
+      "lat": 66.2,
+      "lng": -21.65,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:43:41Z",
+      "duration_seconds": 14.8
+    },
+    {
+      "lat": 66.2,
+      "lng": -21.5,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.2,
+      "lng": -21.35,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.2,
+      "lng": -21.2,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.2,
+      "lng": -21.05,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.2,
+      "lng": -20.9,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.2,
+      "lng": -20.75,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.2,
+      "lng": -20.6,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.35,
+      "lng": -24.5,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:14Z",
+      "duration_seconds": 134.2
+    },
+    {
+      "lat": 66.35,
+      "lng": -24.35,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:13Z",
+      "duration_seconds": 133.5
+    },
+    {
+      "lat": 66.35,
+      "lng": -24.2,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:11Z",
+      "duration_seconds": 131.7
+    },
+    {
+      "lat": 66.35,
+      "lng": -24.05,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:08Z",
+      "duration_seconds": 128.6
+    },
+    {
+      "lat": 66.35,
+      "lng": -23.9,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:04Z",
+      "duration_seconds": 124.3
+    },
+    {
+      "lat": 66.35,
+      "lng": -23.75,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:58Z",
+      "duration_seconds": 118.7
+    },
+    {
+      "lat": 66.35,
+      "lng": -23.6,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:51Z",
+      "duration_seconds": 112.0
+    },
+    {
+      "lat": 66.35,
+      "lng": -23.45,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:43Z",
+      "duration_seconds": 103.9
+    },
+    {
+      "lat": 66.35,
+      "lng": -23.3,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:34Z",
+      "duration_seconds": 94.7
+    },
+    {
+      "lat": 66.35,
+      "lng": -23.15,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:24Z",
+      "duration_seconds": 84.2
+    },
+    {
+      "lat": 66.35,
+      "lng": -23.0,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:40Z",
+      "duration_seconds": 74.7
+    },
+    {
+      "lat": 66.35,
+      "lng": -22.85,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:36Z",
+      "duration_seconds": 70.3
+    },
+    {
+      "lat": 66.35,
+      "lng": -22.7,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:30Z",
+      "duration_seconds": 64.7
+    },
+    {
+      "lat": 66.35,
+      "lng": -22.55,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:24Z",
+      "duration_seconds": 57.9
+    },
+    {
+      "lat": 66.35,
+      "lng": -22.4,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:16Z",
+      "duration_seconds": 50.0
+    },
+    {
+      "lat": 66.35,
+      "lng": -22.25,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:07Z",
+      "duration_seconds": 40.9
+    },
+    {
+      "lat": 66.35,
+      "lng": -22.1,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:43:56Z",
+      "duration_seconds": 30.7
+    },
+    {
+      "lat": 66.35,
+      "lng": -21.95,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:43:45Z",
+      "duration_seconds": 19.3
+    },
+    {
+      "lat": 66.35,
+      "lng": -21.8,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:43:33Z",
+      "duration_seconds": 6.8
+    },
+    {
+      "lat": 66.35,
+      "lng": -21.65,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.35,
+      "lng": -21.5,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.35,
+      "lng": -21.35,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.35,
+      "lng": -21.2,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.35,
+      "lng": -21.05,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.35,
+      "lng": -20.9,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.35,
+      "lng": -20.75,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.35,
+      "lng": -20.6,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.5,
+      "lng": -24.5,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:02Z",
+      "duration_seconds": 122.7
+    },
+    {
+      "lat": 66.5,
+      "lng": -24.35,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:02Z",
+      "duration_seconds": 122.1
+    },
+    {
+      "lat": 66.5,
+      "lng": -24.2,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:45:00Z",
+      "duration_seconds": 120.2
+    },
+    {
+      "lat": 66.5,
+      "lng": -24.05,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:57Z",
+      "duration_seconds": 117.2
+    },
+    {
+      "lat": 66.5,
+      "lng": -23.9,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:52Z",
+      "duration_seconds": 112.9
+    },
+    {
+      "lat": 66.5,
+      "lng": -23.75,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:47Z",
+      "duration_seconds": 107.4
+    },
+    {
+      "lat": 66.5,
+      "lng": -23.6,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:40Z",
+      "duration_seconds": 100.7
+    },
+    {
+      "lat": 66.5,
+      "lng": -23.45,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:32Z",
+      "duration_seconds": 92.8
+    },
+    {
+      "lat": 66.5,
+      "lng": -23.3,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:23Z",
+      "duration_seconds": 83.7
+    },
+    {
+      "lat": 66.5,
+      "lng": -23.15,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:13Z",
+      "duration_seconds": 73.3
+    },
+    {
+      "lat": 66.5,
+      "lng": -23.0,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:44:01Z",
+      "duration_seconds": 61.7
+    },
+    {
+      "lat": 66.5,
+      "lng": -22.85,
+      "sun_altitude": 23.5,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:00Z",
+      "totality_end": "2026-08-12T17:43:48Z",
+      "duration_seconds": 48.9
+    },
+    {
+      "lat": 66.5,
+      "lng": -22.7,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:44:01Z",
+      "duration_seconds": 34.9
+    },
+    {
+      "lat": 66.5,
+      "lng": -22.55,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:43:54Z",
+      "duration_seconds": 28.2
+    },
+    {
+      "lat": 66.5,
+      "lng": -22.4,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:43:46Z",
+      "duration_seconds": 20.4
+    },
+    {
+      "lat": 66.5,
+      "lng": -22.25,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:43:37Z",
+      "duration_seconds": 11.4
+    },
+    {
+      "lat": 66.5,
+      "lng": -22.1,
+      "sun_altitude": 23.7,
+      "sun_azimuth": 285.0,
+      "totality_start": "2026-08-12T17:43:26Z",
+      "totality_end": "2026-08-12T17:43:27Z",
+      "duration_seconds": 1.3
+    },
+    {
+      "lat": 66.5,
+      "lng": -21.95,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.5,
+      "lng": -21.8,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.5,
+      "lng": -21.65,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.5,
+      "lng": -21.5,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.5,
+      "lng": -21.35,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.5,
+      "lng": -21.2,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.5,
+      "lng": -21.05,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.5,
+      "lng": -20.9,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.5,
+      "lng": -20.75,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    },
+    {
+      "lat": 66.5,
+      "lng": -20.6,
+      "sun_altitude": 24.0,
+      "sun_azimuth": 285.0,
+      "totality_start": null,
+      "totality_end": null,
+      "duration_seconds": 0
+    }
+  ]
+}

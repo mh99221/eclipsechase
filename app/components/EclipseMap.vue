@@ -300,6 +300,8 @@ onMounted(() => {
   map.on('zoom', applyZoomVisibility)
 })
 
+defineExpose({ map: computed(() => map) })
+
 onUnmounted(() => {
   markers.forEach(({ marker }) => marker.remove())
   spotMarkers.forEach(({ marker }) => marker.remove())

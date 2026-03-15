@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
 
   await supabase
     .from('weather_observations')
-    .upsert(rows, { onConflict: 'station_id,timestamp' })
+    .upsert(rows as any, { onConflict: 'station_id,timestamp' })
 
   // Return fresh observations joined with station metadata
   return {

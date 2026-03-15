@@ -2,6 +2,10 @@
 const { t } = useI18n()
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
+const { data: page } = await useAsyncData('guide', () =>
+  queryCollection('content').path('/guide').first(),
+)
+
 useHead(() => ({
   title: t('guide.title'),
   meta: [
@@ -55,7 +59,7 @@ useHead(() => ({
     <!-- Article -->
     <main class="pt-24 pb-20">
       <article class="section-container max-w-2xl guide-content">
-        <ContentDoc path="/guide" />
+        <ContentRenderer v-if="page" :value="page" />
       </article>
     </main>
 

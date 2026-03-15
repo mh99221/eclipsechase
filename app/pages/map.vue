@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ middleware: ['pro-gate'] })
+
 import { CLOUD_COVER_LEVELS, CLOUD_COVER_NO_DATA } from '~/utils/eclipse'
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId } from '~/composables/useRecommendation'
@@ -114,6 +116,70 @@ const legendItems = [
   ...CLOUD_COVER_LEVELS.map(l => ({ label: l.label, cloudCover: l.max })),
   { label: CLOUD_COVER_NO_DATA.label, cloudCover: null as number | null },
 ]
+
+// Traffic / road conditions layer
+const showTraffic = ref(false)
+const trafficData = ref<{ conditions: any[] } | null>(null)
+
+const trafficMarkers = ref<any[]>([])
+
+function getTrafficColor(condition: string): string {
+  switch (condition) {
+    case 'good': return '#22c55e'
+    case 'difficult': return '#f97316'
+    case 'closed': return '#ef4444'
+    default: return '#6b7280'
+  }
+}
+
+function addTrafficMarkers(map: any) {
+  removeTrafficMarkers()
+  const conditions = trafficData.value?.conditions || []
+  for (const c of conditions) {
+    const el = document.createElement('div')
+    el.className = 'traffic-marker'
+    el.style.width = '10px'
+    el.style.height = '10px'
+    el.style.borderRadius = '50%'
+    el.style.backgroundColor = getTrafficColor(c.condition)
+    el.style.border = '1px solid rgba(0,0,0,0.3)'
+    el.title = `${c.roadName || c.roadNumber}: ${c.description}`
+
+    // @ts-expect-error mapboxgl available at runtime via EclipseMap
+    const marker = new mapboxgl.Marker({ element: el })
+      .setLngLat([c.lng, c.lat])
+      .addTo(map)
+    trafficMarkers.value.push(marker)
+  }
+}
+
+function removeTrafficMarkers() {
+  for (const m of trafficMarkers.value) {
+    m.remove()
+  }
+  trafficMarkers.value = []
+}
+
+// We need access to the map instance — watch for it via the EclipseMap component ref
+const eclipseMapRef = ref<any>(null)
+
+watch(showTraffic, async (val) => {
+  const mapInstance = eclipseMapRef.value?.map
+  if (!mapInstance) return
+  if (val) {
+    if (!trafficData.value) {
+      const data = await $fetch<{ conditions: any[] }>('/api/traffic/conditions')
+      trafficData.value = data
+    }
+    addTrafficMarkers(mapInstance)
+  } else {
+    removeTrafficMarkers()
+  }
+})
+
+onUnmounted(() => {
+  removeTrafficMarkers()
+})
 </script>
 
 <template>
@@ -123,6 +189,7 @@ const legendItems = [
     <!-- Map -->
     <ClientOnly>
       <EclipseMap
+        ref="eclipseMapRef"
         :stations="stations"
         :spots="spotsData?.spots || []"
         :ranked-spots="rankedForMap"
@@ -199,6 +266,19 @@ const legendItems = [
           </span>
         </div>
       </div>
+    </div>
+
+    <!-- Traffic toggle -->
+    <div class="absolute bottom-20 sm:bottom-6 right-4 sm:right-6 z-10">
+      <button
+        class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
+        :class="showTraffic
+          ? 'text-corona bg-void-deep/90 border-corona/40'
+          : 'text-slate-400 bg-void-deep/90 border-void-border/50 hover:text-slate-200'"
+        @click="showTraffic = !showTraffic"
+      >
+        Roads {{ showTraffic ? 'ON' : 'OFF' }}
+      </button>
     </div>
 
     <!-- Legend panel -->

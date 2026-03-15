@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
       if (forecasts.length > 0) {
         const { error: upsertError } = await supabase
           .from('weather_forecasts')
-          .upsert(forecastsToRows(forecasts), { onConflict: 'station_id,forecast_time,valid_time' })
+          .upsert(forecastsToRows(forecasts) as any, { onConflict: 'station_id,forecast_time,valid_time' })
         if (upsertError) {
           console.error('[cloud-cover] Upsert failed:', upsertError.message)
           refreshFailed = true

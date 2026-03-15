@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ middleware: ['pro-gate'] })
+
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId } from '~/composables/useRecommendation'
 import { formatDuration, REGION_LABELS, SPOT_TYPE_LABELS } from '~/utils/eclipse'
