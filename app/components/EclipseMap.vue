@@ -40,9 +40,63 @@ const router = useRouter()
 const config = useRuntimeConfig()
 const mapContainer = ref<HTMLElement | null>(null)
 let map: mapboxgl.Map | null = null
-const markers: mapboxgl.Marker[] = []
-const spotMarkers: mapboxgl.Marker[] = []
+interface ZoomMarker {
+  marker: mapboxgl.Marker
+  minZoom: number
+}
+
+const markers: ZoomMarker[] = []
+const spotMarkers: ZoomMarker[] = []
 const spotMarkersBySlug = new Map<string, mapboxgl.Marker>()
+
+// Assign a minZoom to each point based on nearest-neighbor distance.
+// Isolated points appear at low zoom; clustered ones only when zoomed in.
+function computeMinZooms(points: Array<{ lat: number; lng: number }>): number[] {
+  if (!points.length) return []
+  const dists = points.map((p, i) => {
+    let min = Infinity
+    for (let j = 0; j < points.length; j++) {
+      if (i === j) continue
+      const d = Math.sqrt((p.lat - points[j]!.lat) ** 2 + (p.lng - points[j]!.lng) ** 2)
+      if (d < min) min = d
+    }
+    return { idx: i, dist: min }
+  })
+  const sorted = [...dists].sort((a, b) => b.dist - a.dist)
+  const zooms = new Array<number>(points.length)
+  const total = sorted.length
+  for (let i = 0; i < total; i++) {
+    const pct = i / total
+    let z: number
+    if (pct < 0.30) z = 5        // top 30% visible from zoom 5
+    else if (pct < 0.55) z = 6   // next 25% from zoom 6
+    else if (pct < 0.80) z = 7   // next 25% from zoom 7
+    else z = 8                    // last 20% from zoom 8
+    zooms[sorted[i]!.idx] = z
+  }
+  return zooms
+}
+
+function setMarkerVisibility(items: ZoomMarker[], zoom: number) {
+  for (const { marker, minZoom } of items) {
+    const visible = zoom >= minZoom
+    const el = marker.getElement()
+    el.style.visibility = visible ? '' : 'hidden'
+    el.style.pointerEvents = visible ? '' : 'none'
+  }
+}
+
+let lastZoomBucket = -1
+
+function applyZoomVisibility() {
+  if (!map) return
+  const zoom = map.getZoom()
+  const bucket = Math.floor(zoom)
+  if (bucket === lastZoomBucket) return
+  lastZoomBucket = bucket
+  setMarkerVisibility(markers, zoom)
+  setMarkerVisibility(spotMarkers, zoom)
+}
 
 function addEclipsePath() {
   if (!map) return
@@ -92,22 +146,26 @@ function addEclipsePath() {
   })
 }
 
+function resetZoomBucket() { lastZoomBucket = -1 }
+
 function updateMarkers() {
-  // Remove existing markers
-  markers.forEach(m => m.remove())
+  markers.forEach(({ marker }) => marker.remove())
   markers.length = 0
 
   if (!map || !props.stations) return
 
-  for (const station of props.stations) {
+  const minZooms = computeMinZooms(props.stations.map(s => ({ lat: s.lat, lng: s.lng })))
+
+  for (let i = 0; i < props.stations.length; i++) {
+    const station = props.stations[i]!
     const color = cloudColor(station.cloud_cover)
 
     const el = document.createElement('div')
     el.className = 'station-marker'
     el.setAttribute('role', 'button')
     el.setAttribute('aria-label', `${station.name} weather station${station.cloud_cover != null ? `, ${station.cloud_cover}% cloud cover` : ''}`)
-    el.style.cssText = 'cursor: pointer; line-height: 0;'
-    el.innerHTML = weatherSvgHtml(station.cloud_cover, 18)
+    el.style.cssText = `cursor: pointer; line-height: 0; opacity: 0.6; z-index: 0; filter: drop-shadow(0 0 6px ${color}55) drop-shadow(0 0 14px ${color}30);`
+    el.innerHTML = weatherSvgHtml(station.cloud_cover, 42)
 
     const popup = new mapboxgl.Popup({
       offset: 12,
@@ -127,16 +185,20 @@ function updateMarkers() {
       .setPopup(popup)
       .addTo(map)
 
-    markers.push(marker)
+    markers.push({ marker, minZoom: minZooms[i]! })
   }
+  resetZoomBucket()
+  applyZoomVisibility()
 }
 
 function updateSpotMarkers() {
-  spotMarkers.forEach(m => m.remove())
+  spotMarkers.forEach(({ marker }) => marker.remove())
   spotMarkers.length = 0
   spotMarkersBySlug.clear()
 
   if (!map || !props.spots) return
+
+  const minZooms = computeMinZooms(props.spots.map(s => ({ lat: s.lat, lng: s.lng })))
 
   // Build rank lookup
   const rankMap = new Map<string, { rank: number; score: number; filtered: boolean }>()
@@ -147,7 +209,8 @@ function updateSpotMarkers() {
   }
   const hasRanking = rankMap.size > 0
 
-  for (const spot of props.spots) {
+  for (let i = 0; i < props.spots.length; i++) {
+    const spot = props.spots[i]!
     const rankInfo = rankMap.get(spot.slug)
     const isFiltered = hasRanking && rankInfo?.filtered
     const isTop3 = hasRanking && rankInfo && !rankInfo.filtered && rankInfo.rank <= 3
@@ -213,13 +276,10 @@ function updateSpotMarkers() {
       </div>
     `)
 
-    popup.on('open', () => {
-      const popupEl = popup.getElement()
-      popupEl?.addEventListener('click', () => {
-        const center = map!.getCenter()
-        const zoom = map!.getZoom().toFixed(1)
-        router.push(`/spots/${spot.slug}?mlat=${center.lat.toFixed(4)}&mlng=${center.lng.toFixed(4)}&mzoom=${zoom}`)
-      }, { once: true })
+    popup.getElement()?.addEventListener('click', () => {
+      const center = map!.getCenter()
+      const zoom = map!.getZoom().toFixed(1)
+      router.push(`/spots/${spot.slug}?mlat=${center.lat.toFixed(4)}&mlng=${center.lng.toFixed(4)}&mzoom=${zoom}`)
     })
 
     const marker = new mapboxgl.Marker({ element: el })
@@ -227,9 +287,13 @@ function updateSpotMarkers() {
       .setPopup(popup)
       .addTo(map)
 
-    spotMarkers.push(marker)
+    // Top-3 ranked spots always visible; others use computed minZoom
+    const spotMinZoom = (hasRanking && isTop3) ? 5 : minZooms[i]!
+    spotMarkers.push({ marker, minZoom: spotMinZoom })
     spotMarkersBySlug.set(spot.slug, marker)
   }
+  resetZoomBucket()
+  applyZoomVisibility()
 }
 
 function focusOnSpot(slug: string) {
@@ -274,11 +338,13 @@ onMounted(() => {
       focusOnSpot(props.focusSpot)
     }
   })
+
+  map.on('zoom', applyZoomVisibility)
 })
 
 onUnmounted(() => {
-  markers.forEach(m => m.remove())
-  spotMarkers.forEach(m => m.remove())
+  markers.forEach(({ marker }) => marker.remove())
+  spotMarkers.forEach(({ marker }) => marker.remove())
   map?.remove()
   map = null
 })
