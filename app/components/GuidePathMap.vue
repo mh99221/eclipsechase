@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import mapboxgl from 'mapbox-gl'
+import { addEclipsePathLayers } from '~/utils/mapLayers'
+import { REGION_LABELS } from '~/utils/eclipse'
 
 const config = useRuntimeConfig()
 const mapContainer = ref<HTMLElement | null>(null)
 let map: mapboxgl.Map | null = null
 
-const REGION_MARKERS = [
-  { label: 'Westfjords', lng: -22.8, lat: 65.8 },
-  { label: 'Snæfellsnes', lng: -23.5, lat: 64.85 },
-  { label: 'Borgarfjörður', lng: -21.5, lat: 64.7 },
-  { label: 'Reykjanes', lng: -22.2, lat: 63.95 },
-  { label: 'Reykjavík', lng: -21.9, lat: 64.15 },
+const REGION_MARKERS: { key: string; lng: number; lat: number }[] = [
+  { key: 'westfjords', lng: -22.8, lat: 65.8 },
+  { key: 'snaefellsnes', lng: -23.5, lat: 64.85 },
+  { key: 'borgarfjordur', lng: -21.5, lat: 64.7 },
+  { key: 'reykjanes', lng: -22.2, lat: 63.95 },
+  { key: 'reykjavik', lng: -21.9, lat: 64.15 },
 ]
 
 onMounted(() => {
@@ -30,56 +32,13 @@ onMounted(() => {
   map.on('load', () => {
     if (!map) return
 
-    // Eclipse path GeoJSON (same source as EclipseMap)
-    map.addSource('eclipse-path', {
-      type: 'geojson',
-      data: '/eclipse-data/path.geojson',
-    })
-
-    // Totality fill
-    map.addLayer({
-      id: 'totality-fill',
-      type: 'fill',
-      source: 'eclipse-path',
-      filter: ['==', ['get', 'type'], 'totality_path'],
-      paint: {
-        'fill-color': '#f59e0b',
-        'fill-opacity': 0.08,
-      },
-    })
-
-    // Totality border
-    map.addLayer({
-      id: 'totality-border',
-      type: 'line',
-      source: 'eclipse-path',
-      filter: ['==', ['get', 'type'], 'totality_path'],
-      paint: {
-        'line-color': '#f59e0b',
-        'line-opacity': 0.4,
-        'line-width': 1,
-        'line-dasharray': [4, 3],
-      },
-    })
-
-    // Centerline
-    map.addLayer({
-      id: 'centerline',
-      type: 'line',
-      source: 'eclipse-path',
-      filter: ['==', ['get', 'type'], 'centerline'],
-      paint: {
-        'line-color': '#fbbf24',
-        'line-width': 2,
-        'line-opacity': 0.8,
-      },
-    })
+    addEclipsePathLayers(map, { borderWidth: 1, centerlineOpacity: 0.8 })
 
     // Region labels as markers
     for (const region of REGION_MARKERS) {
       const el = document.createElement('div')
       el.className = 'guide-map-label'
-      el.textContent = region.label
+      el.textContent = REGION_LABELS[region.key] || region.key
 
       new mapboxgl.Marker({ element: el, anchor: 'center' })
         .setLngLat([region.lng, region.lat])

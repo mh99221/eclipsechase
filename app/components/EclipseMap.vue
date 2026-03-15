@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import mapboxgl from 'mapbox-gl'
 import { cloudColor, formatDuration, weatherSvgHtml } from '~/utils/eclipse'
+import { addEclipsePathLayers } from '~/utils/mapLayers'
 
 const props = defineProps<{
   stations?: Array<{
@@ -100,50 +101,7 @@ function applyZoomVisibility() {
 
 function addEclipsePath() {
   if (!map) return
-
-  map.addSource('eclipse-path', {
-    type: 'geojson',
-    data: '/eclipse-data/path.geojson',
-  })
-
-  // Totality path fill
-  map.addLayer({
-    id: 'totality-fill',
-    type: 'fill',
-    source: 'eclipse-path',
-    filter: ['==', ['get', 'type'], 'totality_path'],
-    paint: {
-      'fill-color': '#f59e0b',
-      'fill-opacity': 0.08,
-    },
-  })
-
-  // Totality path border
-  map.addLayer({
-    id: 'totality-border',
-    type: 'line',
-    source: 'eclipse-path',
-    filter: ['==', ['get', 'type'], 'totality_path'],
-    paint: {
-      'line-color': '#f59e0b',
-      'line-opacity': 0.4,
-      'line-width': 1.5,
-      'line-dasharray': [4, 3],
-    },
-  })
-
-  // Centerline
-  map.addLayer({
-    id: 'centerline',
-    type: 'line',
-    source: 'eclipse-path',
-    filter: ['==', ['get', 'type'], 'centerline'],
-    paint: {
-      'line-color': '#fbbf24',
-      'line-opacity': 0.6,
-      'line-width': 2,
-    },
-  })
+  addEclipsePathLayers(map)
 }
 
 function resetZoomBucket() { lastZoomBucket = -1 }
