@@ -11,6 +11,7 @@ useHead(() => ({
     { property: 'og:url', content: `${siteUrl}/guide` },
     { property: 'og:title', content: t('guide.title') },
     { property: 'og:description', content: t('guide.description') },
+    { property: 'og:image', content: `${siteUrl}/og-image.jpg` },
   ],
   link: [
     { rel: 'canonical', href: `${siteUrl}/guide` },
@@ -21,11 +22,11 @@ useHead(() => ({
       innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'Article',
-        'headline': 'Complete Guide to the 2026 Total Solar Eclipse in Iceland',
+        'headline': t('guide.title'),
         'datePublished': '2026-03-15',
         'author': { '@type': 'Organization', 'name': 'EclipseChase.is', 'url': siteUrl },
         'publisher': { '@type': 'Organization', 'name': 'EclipseChase.is' },
-        'description': 'Everything you need to plan your trip to see the August 12, 2026 total solar eclipse in Iceland — path of totality, best viewing spots, weather, and what to bring.',
+        'description': t('guide.description'),
         'image': `${siteUrl}/og-image.jpg`,
         'url': `${siteUrl}/guide`,
       }),
@@ -94,7 +95,7 @@ useHead(() => ({
   border-bottom: 1px solid rgba(26, 37, 64, 0.6);
 }
 
-.guide-content :deep(h2:first-child) {
+.guide-content :deep(h2:first-of-type) {
   margin-top: 0;
 }
 
