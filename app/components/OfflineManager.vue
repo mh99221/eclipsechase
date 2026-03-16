@@ -8,6 +8,7 @@ const totalTiles = ref(0)
 const loadedTiles = ref(0)
 const isDone = ref(false)
 const isCancelled = ref(false)
+const isDismissed = ref(false)
 const progress = computed(() => totalTiles.value > 0 ? Math.round((loadedTiles.value / totalTiles.value) * 100) : 0)
 
 // Western Iceland bounding box (eclipse path region)
@@ -95,7 +96,19 @@ function cancel() {
 </script>
 
 <template>
-  <div class="bg-void-surface border border-void-border/40 rounded px-4 py-3">
+  <div v-if="!isDismissed" class="bg-void-surface border border-void-border/40 rounded px-4 py-3 relative">
+    <!-- Close button -->
+    <button
+      v-if="!isDownloading"
+      class="absolute top-2 right-2 text-slate-600 hover:text-slate-400 transition-colors"
+      aria-label="Close"
+      @click="isDismissed = true"
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" d="M18 6L6 18M6 6l12 12" />
+      </svg>
+    </button>
+
     <!-- Idle state -->
     <div v-if="!isDownloading && !isDone">
       <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">

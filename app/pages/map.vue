@@ -122,7 +122,8 @@ const legendItems = [
 const showTraffic = ref(false)
 const trafficData = ref<{ conditions: any[] } | null>(null)
 
-const trafficMarkers = ref<any[]>([])
+const trafficMarkers = ref<OverlayMarker[]>([])
+let trafficZoomHandler: (() => void) | null = null
 
 function getTrafficColor(condition: string): string {
   switch (condition) {
@@ -130,6 +131,38 @@ function getTrafficColor(condition: string): string {
     case 'difficult': return '#f97316'
     case 'closed': return '#ef4444'
     default: return '#6b7280'
+  }
+}
+
+// Zoom-based visibility for overlay markers (traffic, cameras)
+interface OverlayMarker { marker: any; minZoom: number }
+
+function computeOverlayMinZooms(points: Array<{ lat: number; lng: number }>): number[] {
+  if (!points.length) return []
+  const dists = points.map((p, i) => {
+    let min = Infinity
+    for (let j = 0; j < points.length; j++) {
+      if (i === j) continue
+      const d = Math.sqrt((p.lat - points[j].lat) ** 2 + (p.lng - points[j].lng) ** 2)
+      if (d < min) min = d
+    }
+    return { idx: i, dist: min }
+  })
+  const sorted = [...dists].sort((a, b) => b.dist - a.dist)
+  const zooms = new Array<number>(points.length)
+  for (let i = 0; i < sorted.length; i++) {
+    const pct = i / sorted.length
+    zooms[sorted[i].idx] = pct < 0.25 ? 6 : pct < 0.50 ? 7 : pct < 0.75 ? 8 : 9
+  }
+  return zooms
+}
+
+function applyOverlayVisibility(items: OverlayMarker[], zoom: number) {
+  for (const { marker, minZoom } of items) {
+    const el = marker.getElement()
+    const visible = zoom >= minZoom
+    el.style.visibility = visible ? '' : 'hidden'
+    el.style.pointerEvents = visible ? '' : 'none'
   }
 }
 
@@ -143,7 +176,9 @@ const TRAFFIC_LABELS: Record<string, string> = {
 function addTrafficMarkers(map: any) {
   removeTrafficMarkers()
   const conditions = trafficData.value?.conditions || []
-  for (const c of conditions) {
+  const minZooms = computeOverlayMinZooms(conditions.map((c: any) => ({ lat: c.lat, lng: c.lng })))
+  for (let ci = 0; ci < conditions.length; ci++) {
+    const c = conditions[ci]
     const color = getTrafficColor(c.condition)
     const el = document.createElement('div')
     el.className = 'traffic-marker'
@@ -179,13 +214,20 @@ function addTrafficMarkers(map: any) {
       .setLngLat([c.lng, c.lat])
       .setPopup(popup)
       .addTo(map)
-    trafficMarkers.value.push(marker)
+    trafficMarkers.value.push({ marker, minZoom: minZooms[ci] })
   }
+  applyOverlayVisibility(trafficMarkers.value, map.getZoom())
+  trafficZoomHandler = () => applyOverlayVisibility(trafficMarkers.value, map.getZoom())
+  map.on('zoom', trafficZoomHandler)
 }
 
 function removeTrafficMarkers() {
-  for (const m of trafficMarkers.value) {
-    m.remove()
+  if (trafficZoomHandler && eclipseMapRef.value?.map) {
+    eclipseMapRef.value.map.off('zoom', trafficZoomHandler)
+    trafficZoomHandler = null
+  }
+  for (const { marker } of trafficMarkers.value) {
+    marker.remove()
   }
   trafficMarkers.value = []
 }
@@ -269,8 +311,8 @@ if (import.meta.client) {
         <div style="position:relative;max-width:90vw;max-height:70vh;">
           <img src="${cur.url}" alt="${cur.description}" style="max-width:90vw;max-height:70vh;border-radius:4px;border:1px solid #1a2540;object-fit:contain;display:block;" />
           ${imgs.length > 1 ? `
-            <button id="lb-prev" style="position:absolute;left:-56px;top:50%;transform:translateY(-50%);background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;width:40px;height:40px;font-size:20px;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s;">&#8249;</button>
-            <button id="lb-next" style="position:absolute;right:-56px;top:50%;transform:translateY(-50%);background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;width:40px;height:40px;font-size:20px;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s;">&#8250;</button>
+            <button id="lb-prev" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(5,8,16,0.8);backdrop-filter:blur(4px);border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;width:40px;height:40px;font-size:20px;display:flex;align-items:center;justify-content:center;">&#8249;</button>
+            <button id="lb-next" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(5,8,16,0.8);backdrop-filter:blur(4px);border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;width:40px;height:40px;font-size:20px;display:flex;align-items:center;justify-content:center;">&#8250;</button>
           ` : ''}
         </div>
 
@@ -307,12 +349,15 @@ if (import.meta.client) {
 
 const showCameras = ref(false)
 const cameraData = ref<{ cameras: any[] } | null>(null)
-const cameraMarkers = ref<any[]>([])
+const cameraMarkers = ref<OverlayMarker[]>([])
+let cameraZoomHandler: (() => void) | null = null
 
 function addCameraMarkers(map: any) {
   removeCameraMarkers()
   const cameras = cameraData.value?.cameras || []
-  for (const cam of cameras) {
+  const camMinZooms = computeOverlayMinZooms(cameras.map((c: any) => ({ lat: c.lat, lng: c.lng })))
+  for (let ci = 0; ci < cameras.length; ci++) {
+    const cam = cameras[ci]
     // Camera pin: circle matching spot marker style, with camera lens icon
     const el = document.createElement('div')
     el.className = 'camera-marker'
@@ -391,13 +436,20 @@ function addCameraMarkers(map: any) {
       .setLngLat([cam.lng, cam.lat])
       .setPopup(popup)
       .addTo(map)
-    cameraMarkers.value.push(marker)
+    cameraMarkers.value.push({ marker, minZoom: camMinZooms[ci] })
   }
+  applyOverlayVisibility(cameraMarkers.value, map.getZoom())
+  cameraZoomHandler = () => applyOverlayVisibility(cameraMarkers.value, map.getZoom())
+  map.on('zoom', cameraZoomHandler)
 }
 
 function removeCameraMarkers() {
-  for (const m of cameraMarkers.value) {
-    m.remove()
+  if (cameraZoomHandler && eclipseMapRef.value?.map) {
+    eclipseMapRef.value.map.off('zoom', cameraZoomHandler)
+    cameraZoomHandler = null
+  }
+  for (const { marker } of cameraMarkers.value) {
+    marker.remove()
   }
   cameraMarkers.value = []
 }
@@ -501,15 +553,12 @@ onUnmounted(() => {
               </button>
             </div>
           </div>
-          <span class="text-xs font-mono text-corona/70 tracking-wider hidden sm:inline">
-            AUG 12 2026
-          </span>
         </div>
       </div>
     </div>
 
     <!-- Map layer toggles -->
-    <div class="absolute bottom-20 sm:bottom-6 right-4 sm:right-6 z-10 flex gap-2">
+    <div class="absolute bottom-20 sm:bottom-6 right-16 sm:right-20 z-10 flex gap-2">
       <button
         class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
         :class="showCameras
@@ -531,7 +580,7 @@ onUnmounted(() => {
     </div>
 
     <!-- Legend panel -->
-    <div class="absolute bottom-20 sm:bottom-6 left-4 sm:left-6 z-10 bg-void-deep/90 backdrop-blur-sm border border-void-border/50 rounded px-3 py-2.5 sm:px-4 sm:py-3 max-h-[calc(100dvh-160px)] overflow-y-auto text-[11px] sm:text-xs">
+    <div class="absolute bottom-20 sm:bottom-10 left-4 sm:left-6 z-10 bg-void-deep/90 backdrop-blur-sm border border-void-border/50 rounded px-3 py-2.5 sm:px-4 sm:py-3 max-h-[calc(100dvh-160px)] overflow-y-auto text-[11px] sm:text-xs">
       <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2.5">Cloud Cover</p>
       <div class="flex flex-col gap-1 sm:gap-1.5">
         <div
@@ -563,14 +612,10 @@ onUnmounted(() => {
 
       <!-- Road conditions legend (shown when Roads ON) -->
       <div v-if="showTraffic" class="mt-3 pt-2.5 border-t border-void-border/40">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">Roads</p>
-        <div class="flex items-center gap-2 mb-1">
-          <span class="w-3 h-3 rounded-full border-2 border-green-500 bg-void-deep shrink-0" />
-          <span class="text-xs font-mono text-slate-400">Passable</span>
-        </div>
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">Road Warnings</p>
         <div class="flex items-center gap-2 mb-1">
           <span class="w-3 h-3 rounded-full border-2 border-orange-500 bg-void-deep shrink-0" />
-          <span class="text-xs font-mono text-slate-400">Difficult</span>
+          <span class="text-xs font-mono text-slate-400">Hazard / repairs</span>
         </div>
         <div class="flex items-center gap-2 mb-1">
           <span class="w-3 h-3 rounded-full border-2 border-red-500 bg-void-deep shrink-0" />
@@ -578,15 +623,18 @@ onUnmounted(() => {
         </div>
         <div class="flex items-center gap-2">
           <span class="w-3 h-3 rounded-full border-2 border-gray-500 bg-void-deep shrink-0" />
-          <span class="text-xs font-mono text-slate-400">Unknown</span>
+          <span class="text-xs font-mono text-slate-400">Other</span>
         </div>
       </div>
 
       <!-- Camera legend (shown when Cams ON) -->
       <div v-if="showCameras" class="mt-3 pt-2.5 border-t border-void-border/40">
         <div class="flex items-center gap-2">
-          <span class="w-3.5 h-3.5 rounded-full border-2 border-ice bg-void-deep flex items-center justify-center shrink-0">
-            <span class="w-1.5 h-1.5 rounded-full bg-ice" />
+          <span class="w-4 h-4 rounded-full border-2 border-ice bg-void-deep flex items-center justify-center shrink-0">
+            <svg width="8" height="8" viewBox="0 0 16 16" fill="none" class="shrink-0">
+              <circle cx="8" cy="8" r="5" stroke="#7dd3fc" stroke-width="1.5" fill="none" />
+              <circle cx="8" cy="8" r="2" fill="#7dd3fc" />
+            </svg>
           </span>
           <span class="text-xs font-mono text-slate-400">Road camera</span>
         </div>
@@ -594,7 +642,7 @@ onUnmounted(() => {
     </div>
 
     <!-- Offline download manager -->
-    <div class="absolute top-20 right-4 sm:right-6 z-10 w-64 hidden sm:block">
+    <div class="absolute top-32 left-4 sm:left-6 z-10 w-64 hidden sm:block">
       <OfflineManager :map="eclipseMapRef?.map" />
     </div>
   </div>

@@ -198,38 +198,38 @@ function updateSpotMarkers() {
     if (isFiltered) {
       // Dimmed marker for filtered spots
       el.style.cssText = `
-        width: 18px; height: 18px; border-radius: 50%;
+        width: 22px; height: 22px; border-radius: 50%;
         background: #050810; border: 2px solid #475569;
-        opacity: 0.4; cursor: pointer;
+        opacity: 0.4; cursor: pointer; z-index: 10;
         display: flex; align-items: center; justify-content: center;
       `
       const inner = document.createElement('div')
-      inner.style.cssText = 'width: 5px; height: 5px; border-radius: 50%; background: #475569;'
+      inner.style.cssText = 'width: 6px; height: 6px; border-radius: 50%; background: #475569;'
       el.appendChild(inner)
     } else if (hasRanking && rankInfo) {
       // Ranked marker with number
-      const size = isTop3 ? 24 : 20
+      const size = isTop3 ? 30 : 26
       const borderColor = isTop3 ? '#f59e0b' : '#d97706'
       const shadow = isTop3 ? '0 0 14px rgba(245, 158, 11, 0.4)' : '0 0 8px rgba(245, 158, 11, 0.2)'
       el.style.cssText = `
         width: ${size}px; height: ${size}px; border-radius: 50%;
         background: #050810; border: 2px solid ${borderColor};
-        box-shadow: ${shadow}; cursor: pointer;
+        box-shadow: ${shadow}; cursor: pointer; z-index: 10;
         display: flex; align-items: center; justify-content: center;
-        font-family: 'IBM Plex Mono', monospace; font-size: ${isTop3 ? 11 : 9}px;
+        font-family: 'IBM Plex Mono', monospace; font-size: ${isTop3 ? 13 : 11}px;
         font-weight: 700; color: ${isTop3 ? '#fbbf24' : '#d97706'};
       `
       el.textContent = String(rankInfo.rank)
     } else {
       // Default amber dot (no ranking)
       el.style.cssText = `
-        width: 20px; height: 20px; border-radius: 50%;
+        width: 26px; height: 26px; border-radius: 50%;
         background: #050810; border: 2px solid #f59e0b;
-        box-shadow: 0 0 12px rgba(245, 158, 11, 0.3); cursor: pointer;
+        box-shadow: 0 0 12px rgba(245, 158, 11, 0.3); cursor: pointer; z-index: 10;
         display: flex; align-items: center; justify-content: center;
       `
       const inner = document.createElement('div')
-      inner.style.cssText = 'width: 6px; height: 6px; border-radius: 50%; background: #f59e0b;'
+      inner.style.cssText = 'width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;'
       el.appendChild(inner)
     }
 
@@ -314,7 +314,7 @@ onMounted(() => {
     attributionControl: false,
   })
 
-  map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right')
+  map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right')
   map.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right')
 
   map.on('load', () => {
@@ -348,6 +348,10 @@ onUnmounted(() => {
 
 <style>
 /* Mapbox popup overrides for dark theme */
+.eclipse-popup {
+  z-index: 20 !important;
+}
+
 .eclipse-popup .mapboxgl-popup-content {
   background: #0a1020;
   border: 1px solid rgba(26, 37, 64, 0.6);

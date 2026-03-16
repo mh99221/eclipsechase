@@ -19,13 +19,12 @@ export interface RoadCondition {
 function mapConditionCode(code: string | undefined): RoadCondition['condition'] {
   if (!code) return 'unknown'
   const c = code.toUpperCase()
+  // Closed / banned
   if (c === 'ALLUR_AKSTUR_BANN' || c === 'LOKAD' || c.includes('ÓFÆRT')) return 'closed'
-  if (c === 'VEGAVINNA' || c === 'OSLETTUR_VEGUR' || c.includes('HALK') || c.includes('SNJOR') || c.includes('KLAK')) return 'difficult'
-  if (c === 'GREIDFAERT' || c === 'THURT' || c === 'BLAUTT') return 'good'
-  // English fallbacks
-  if (c.includes('CLOSED') || c.includes('IMPASSABLE')) return 'closed'
-  if (c.includes('DIFFICULT') || c.includes('ICE') || c.includes('SNOW')) return 'difficult'
-  if (c.includes('PASSABLE') || c.includes('DRY') || c.includes('WET')) return 'good'
+  // Hazards / difficult
+  if (c === 'VEGAVINNA' || c === 'OSLETTUR_VEGUR' || c === 'HOLUR_I_VEGI'
+    || c === 'STEINKAST' || c === 'DYR_A_VEGI' || c === 'TONN_ALLS'
+    || c.includes('HALK') || c.includes('SNJOR') || c.includes('KLAK')) return 'difficult'
   return 'unknown'
 }
 
