@@ -177,8 +177,68 @@ watch(showTraffic, async (val) => {
   }
 })
 
+// Road cameras layer
+const showCameras = ref(false)
+const cameraData = ref<{ cameras: any[] } | null>(null)
+const cameraMarkers = ref<any[]>([])
+
+function addCameraMarkers(map: any) {
+  removeCameraMarkers()
+  const cameras = cameraData.value?.cameras || []
+  for (const cam of cameras) {
+    const el = document.createElement('div')
+    el.className = 'camera-marker'
+    el.style.cssText = 'width:14px;height:14px;border-radius:2px;background:#3b82f6;border:1px solid rgba(0,0,0,0.3);cursor:pointer;display:flex;align-items:center;justify-content:center;'
+    el.innerHTML = '<svg width="8" height="8" viewBox="0 0 24 24" fill="white"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10S2 17.52 2 12zm2 0a8 8 0 1016 0 8 8 0 00-16 0z" fill-opacity="0.5"/></svg>'
+
+    // @ts-expect-error mapboxgl available at runtime via EclipseMap
+    const popup = new mapboxgl.Popup({
+      offset: 10,
+      closeButton: true,
+      maxWidth: '280px',
+      className: 'eclipse-popup',
+    }).setHTML(`
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
+        <div style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 13px; margin-bottom: 6px;">${cam.name}</div>
+        <div style="color: #94a3b8; font-size: 11px; margin-bottom: 8px;">${cam.road}</div>
+        <img src="${cam.images[0]?.url}" alt="${cam.name}" style="width: 100%; border-radius: 4px; border: 1px solid #1a2540;" loading="lazy" />
+        ${cam.images.length > 1 ? `<div style="color: #475569; font-size: 10px; margin-top: 4px;">${cam.images.length} camera angles available</div>` : ''}
+      </div>
+    `)
+
+    // @ts-expect-error mapboxgl available at runtime via EclipseMap
+    const marker = new mapboxgl.Marker({ element: el })
+      .setLngLat([cam.lng, cam.lat])
+      .setPopup(popup)
+      .addTo(map)
+    cameraMarkers.value.push(marker)
+  }
+}
+
+function removeCameraMarkers() {
+  for (const m of cameraMarkers.value) {
+    m.remove()
+  }
+  cameraMarkers.value = []
+}
+
+watch(showCameras, async (val) => {
+  const mapInstance = eclipseMapRef.value?.map
+  if (!mapInstance) return
+  if (val) {
+    if (!cameraData.value) {
+      const data = await $fetch<{ cameras: any[] }>('/api/cameras')
+      cameraData.value = data
+    }
+    addCameraMarkers(mapInstance)
+  } else {
+    removeCameraMarkers()
+  }
+})
+
 onUnmounted(() => {
   removeTrafficMarkers()
+  removeCameraMarkers()
 })
 </script>
 
@@ -268,8 +328,17 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Traffic toggle -->
-    <div class="absolute bottom-20 sm:bottom-6 right-4 sm:right-6 z-10">
+    <!-- Map layer toggles -->
+    <div class="absolute bottom-20 sm:bottom-6 right-4 sm:right-6 z-10 flex gap-2">
+      <button
+        class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
+        :class="showCameras
+          ? 'text-blue-400 bg-void-deep/90 border-blue-400/40'
+          : 'text-slate-400 bg-void-deep/90 border-void-border/50 hover:text-slate-200'"
+        @click="showCameras = !showCameras"
+      >
+        Cams {{ showCameras ? 'ON' : 'OFF' }}
+      </button>
       <button
         class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
         :class="showTraffic

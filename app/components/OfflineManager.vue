@@ -4,11 +4,11 @@ const props = defineProps<{
 }>()
 
 const isDownloading = ref(false)
-const progress = ref(0)
 const totalTiles = ref(0)
 const loadedTiles = ref(0)
 const isDone = ref(false)
 const isCancelled = ref(false)
+const progress = computed(() => totalTiles.value > 0 ? Math.round((loadedTiles.value / totalTiles.value) * 100) : 0)
 
 // Western Iceland bounding box (eclipse path region)
 const BOUNDS = { west: -24.5, east: -20.5, south: 63.5, north: 66.5 }
@@ -53,7 +53,6 @@ async function downloadTiles() {
   isCancelled.value = false
   loadedTiles.value = 0
   totalTiles.value = countTiles()
-  progress.value = 0
 
   for (let z = ZOOM_MIN; z <= ZOOM_MAX; z++) {
     if (isCancelled.value) break
@@ -77,7 +76,6 @@ async function downloadTiles() {
         await new Promise(r => setTimeout(r, 80))
 
         loadedTiles.value++
-        progress.value = Math.round((loadedTiles.value / totalTiles.value) * 100)
       }
     }
   }
