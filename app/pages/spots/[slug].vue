@@ -18,10 +18,37 @@ if (error.value || !data.value?.spot) {
 
 const spot = computed(() => data.value!.spot)
 
+const siteUrl = useRuntimeConfig().public.siteUrl as string
+
 useHead({
   title: () => spot.value.name,
   meta: [
-    { name: 'description', content: () => spot.value.description },
+    { name: 'description', content: () => `${spot.value.name} — eclipse viewing spot in ${REGION_LABELS[spot.value.region] || spot.value.region}. ${formatDuration(spot.value.totality_duration_seconds)} of totality.` },
+    { property: 'og:title', content: () => `${spot.value.name} — Eclipse Viewing Spot` },
+    { property: 'og:description', content: () => spot.value.description },
+    { property: 'og:url', content: () => `${siteUrl}/spots/${slug}` },
+    { property: 'og:type', content: 'place' },
+  ],
+  link: [
+    { rel: 'canonical', href: `${siteUrl}/spots/${slug}` },
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: () => JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'TouristAttraction',
+        'name': spot.value.name,
+        'description': spot.value.description,
+        'geo': {
+          '@type': 'GeoCoordinates',
+          'latitude': spot.value.lat,
+          'longitude': spot.value.lng,
+        },
+        'isAccessibleForFree': true,
+        'url': `${siteUrl}/spots/${slug}`,
+      }),
+    },
   ],
 })
 

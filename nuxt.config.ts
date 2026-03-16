@@ -8,7 +8,12 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     '@nuxtjs/supabase',
     '@nuxt/content',
+    '@nuxtjs/sitemap',
   ],
+
+  site: {
+    url: 'https://eclipsechase.is',
+  },
 
   app: {
     head: {

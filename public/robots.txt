@@ -1,2 +1,6 @@
 User-Agent: *
-Disallow:
+Disallow: /map
+Disallow: /recommend
+Disallow: /api/
+
+Sitemap: https://eclipsechase.is/sitemap.xml

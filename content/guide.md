@@ -48,21 +48,31 @@ The further northwest you go, the longer totality lasts — but the harder it is
 
 The longest totality in Iceland — over 2 minutes. Remote, dramatic fjord landscapes, but requires a 4–5 hour drive from Reykjavík. Weather can be variable. Best for dedicated eclipse chasers willing to commit to the journey.
 
+Top spots: [Látrabjarg Cliffs](/spots/latrabjarg-cliffs) · [Patreksfjörður](/spots/patreksfjordur-beach) · [Bíldudalur](/spots/bildudalur-harbour) · [Breiðavík Beach](/spots/breidavik-beach) · [Dynjandi](/spots/dynjandi-arnarfjordur)
+
 ### Snæfellsnes
 
 Excellent balance of duration (~2 minutes), scenery, and accessibility. About 2 hours from Reykjavík. The iconic Snæfellsjökull glacier provides a stunning backdrop. Moderate road access.
+
+Top spots: [Kirkjufell](/spots/kirkjufell-viewpoint) · [Arnarstapi](/spots/arnarstapi-coastal-platform) · [Djúpalónssandur](/spots/djupalonssandur-beach) · [Búðir Black Church](/spots/budir-black-church) · [Saxhóll Crater](/spots/saxholl-crater)
 
 ### Borgarfjörður
 
 Easy drive from Reykjavík (under 1.5 hours), but shorter totality around 1.5 minutes. Good services and infrastructure. A solid choice if you want convenience without giving up too much eclipse time.
 
+Top spots: [Reykholt](/spots/reykholt-snorrastofa) · [Borgarnes](/spots/borgarnes-foreshore) · [Glymur Waterfall](/spots/glymur-waterfall)
+
 ### Reykjanes
 
 Closest to Keflavík Airport — only 45 minutes from Reykjavík. Shortest totality in the path (~1 minute), but the most accessible for last-minute decisions. Volcanic landscape adds character.
 
+Top spots: [Reykjanestá Lighthouse](/spots/reykjanesta-lighthouse) · [Garður Lighthouse](/spots/gardur-lighthouse) · [Sandgerði](/spots/sandgerdi-shore)
+
 ### Reykjavík
 
 The capital only catches the **very edge** of the path. You'll see a deep partial eclipse, but totality will last seconds at best — or not at all depending on your exact position. Don't rely on seeing totality from Reykjavík.
+
+[Grotta Lighthouse](/spots/grotta-lighthouse-reykjavik) is the best option if you're staying in the city.
 
 [Find your perfect spot →](/recommend)
 
