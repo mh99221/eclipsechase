@@ -2,6 +2,11 @@
 const { t } = useI18n()
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
+defineOgImage({
+  title: 'Find Clear Skies on Eclipse Day',
+  subtitle: 'Real-time weather tracking for the 2026 total solar eclipse in Iceland.',
+})
+
 useHead(() => ({
   title: t('meta.title'),
   titleTemplate: '%s',

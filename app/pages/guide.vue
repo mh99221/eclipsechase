@@ -14,7 +14,6 @@ useHead(() => ({
     { property: 'og:url', content: `${siteUrl}/guide` },
     { property: 'og:title', content: t('guide.title') },
     { property: 'og:description', content: t('guide.description') },
-    { property: 'og:image', content: `${siteUrl}/og-image.jpg` },
   ],
   link: [
     { rel: 'canonical', href: `${siteUrl}/guide` },
@@ -30,7 +29,7 @@ useHead(() => ({
         'author': { '@type': 'Organization', 'name': 'EclipseChase.is', 'url': siteUrl },
         'publisher': { '@type': 'Organization', 'name': 'EclipseChase.is' },
         'description': t('guide.description'),
-        'image': `${siteUrl}/og-image.jpg`,
+        'image': `${siteUrl}/__og-image__/image/guide/og.png`,
         'url': `${siteUrl}/guide`,
       }),
     },

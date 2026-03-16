@@ -9,10 +9,19 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase',
     '@nuxt/content',
     '@nuxtjs/sitemap',
+    'nuxt-og-image',
   ],
 
   site: {
     url: 'https://eclipsechase.is',
+  },
+
+  ogImage: {
+    zeroRuntime: false,
+    defaults: {
+      title: 'Find Clear Skies on Eclipse Day',
+      subtitle: 'Real-time weather tracking for the 2026 total solar eclipse in Iceland.',
+    },
   },
 
   app: {
@@ -31,14 +40,12 @@ export default defineNuxtConfig({
         { property: 'og:site_name', content: 'EclipseChase.is' },
         { property: 'og:title', content: 'EclipseChase.is — Find Clear Skies on Eclipse Day' },
         { property: 'og:description', content: 'Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland.' },
-        { property: 'og:image', content: 'https://eclipsechase.is/og-image.jpg' },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://eclipsechase.is' },
         // Twitter
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: 'EclipseChase.is — Find Clear Skies on Eclipse Day' },
         { name: 'twitter:description', content: 'Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland.' },
-        { name: 'twitter:image', content: 'https://eclipsechase.is/og-image.jpg' },
       ],
       script: [
         ...(process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID
