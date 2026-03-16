@@ -41,6 +41,7 @@ const router = useRouter()
 const config = useRuntimeConfig()
 const mapContainer = ref<HTMLElement | null>(null)
 let map: mapboxgl.Map | null = null
+const mapExposed = shallowRef<mapboxgl.Map | null>(null)
 interface ZoomMarker {
   marker: mapboxgl.Marker
   minZoom: number
@@ -327,15 +328,17 @@ onMounted(() => {
   })
 
   map.on('zoom', applyZoomVisibility)
+  mapExposed.value = map
 })
 
-defineExpose({ map: computed(() => map) })
+defineExpose({ map: mapExposed })
 
 onUnmounted(() => {
   markers.forEach(({ marker }) => marker.remove())
   spotMarkers.forEach(({ marker }) => marker.remove())
   map?.remove()
   map = null
+  mapExposed.value = null
 })
 </script>
 

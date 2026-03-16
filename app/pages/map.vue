@@ -133,21 +133,51 @@ function getTrafficColor(condition: string): string {
   }
 }
 
+const TRAFFIC_LABELS: Record<string, string> = {
+  good: 'Passable',
+  difficult: 'Difficult',
+  closed: 'Closed',
+  unknown: 'Unknown',
+}
+
 function addTrafficMarkers(map: any) {
   removeTrafficMarkers()
   const conditions = trafficData.value?.conditions || []
   for (const c of conditions) {
+    const color = getTrafficColor(c.condition)
     const el = document.createElement('div')
     el.className = 'traffic-marker'
-    el.style.width = '10px'
-    el.style.height = '10px'
-    el.style.borderRadius = '50%'
-    el.style.backgroundColor = getTrafficColor(c.condition)
-    el.style.border = '1px solid rgba(0,0,0,0.3)'
-    el.title = `${c.roadName}: ${c.description}`
+    el.setAttribute('role', 'button')
+    el.setAttribute('aria-label', `${c.roadName}: ${c.description}`)
+    el.style.cssText = `
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #050810; border: 2px solid ${color};
+      box-shadow: 0 0 8px ${color}40;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    `
+    // Warning triangle icon
+    el.innerHTML = `<svg width="9" height="9" viewBox="0 0 16 16" fill="${color}">
+      <path d="M8 1L15 14H1L8 1Z" fill="none" stroke="${color}" stroke-width="1.5"/>
+      <circle cx="8" cy="11" r="1" fill="${color}"/>
+      <rect x="7.25" y="5.5" width="1.5" height="3.5" rx="0.75" fill="${color}"/>
+    </svg>`
+
+    const popup = new mapboxgl.Popup({
+      offset: 14,
+      closeButton: false,
+      maxWidth: '220px',
+      className: 'eclipse-popup',
+    }).setHTML(`
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
+        <div style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; margin-bottom: 4px; color: ${color};">${TRAFFIC_LABELS[c.condition] || 'Road condition'}</div>
+        ${c.roadName ? `<div style="color: #94a3b8; margin-bottom: 4px;">${c.roadName}</div>` : ''}
+        <div style="color: #cbd5e1;">${c.description}</div>
+      </div>
+    `)
 
     const marker = new mapboxgl.Marker({ element: el })
       .setLngLat([c.lng, c.lat])
+      .setPopup(popup)
       .addTo(map)
     trafficMarkers.value.push(marker)
   }
@@ -177,7 +207,104 @@ watch(showTraffic, async (val) => {
   }
 })
 
-// Road cameras layer
+// Road cameras — global carousel nav + lightbox
+const camCurrentIndex: Record<string, number> = {}
+const camImageRegistry: Record<string, { name: string; images: Array<{ url: string; description: string }> }> = {}
+if (import.meta.client) {
+  // Carousel navigation
+  ;(window as any).__camNav = (uid: string, total: number, dir: number) => {
+    const prev = camCurrentIndex[uid] || 0
+    const next = ((prev + dir) % total + total) % total
+    camCurrentIndex[uid] = next
+
+    for (let i = 0; i < total; i++) {
+      const img = document.getElementById(`${uid}-img-${i}`)
+      const desc = document.getElementById(`${uid}-desc-${i}`)
+      const dot = document.getElementById(`${uid}-dot-${i}`)
+      if (img) img.style.display = i === next ? 'block' : 'none'
+      if (desc) desc.style.display = i === next ? 'inline' : 'none'
+      if (dot) dot.style.background = i === next ? '#7dd3fc' : '#1a2540'
+    }
+    const counter = document.getElementById(`${uid}-counter`)
+    if (counter) counter.textContent = `${next + 1}/${total}`
+  }
+
+  // Fullscreen lightbox
+  ;(window as any).__camOpen = (uid: string) => {
+    const reg = camImageRegistry[uid]
+    if (!reg?.images?.length) return
+    const imgs = reg.images
+    const idx = camCurrentIndex[uid] || 0
+
+    // Create overlay
+    const overlay = document.createElement('div')
+    overlay.id = 'cam-lightbox'
+    overlay.style.cssText = `
+      position:fixed;inset:0;z-index:99999;
+      background:radial-gradient(ellipse at 50% 0%, #0a1628 0%, #050810 70%);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      cursor:default;padding:20px;
+    `
+
+    let currentLb = idx
+    function renderLightbox() {
+      const cur = imgs[currentLb]
+      overlay.innerHTML = `
+        <!-- Top bar -->
+        <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="5" stroke="#7dd3fc" stroke-width="1.5" fill="none"/>
+              <circle cx="8" cy="8" r="2" fill="#7dd3fc"/>
+            </svg>
+            <span style="font-family:'Syne',sans-serif;font-weight:600;font-size:16px;color:#f1f5f9;">${reg.name}</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#475569;">Road camera</span>
+          </div>
+          <button id="lb-close" style="background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#94a3b8;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:6px 14px;transition:color 0.2s;">
+            Close
+          </button>
+        </div>
+
+        <!-- Image -->
+        <div style="position:relative;max-width:90vw;max-height:70vh;">
+          <img src="${cur.url}" alt="${cur.description}" style="max-width:90vw;max-height:70vh;border-radius:4px;border:1px solid #1a2540;object-fit:contain;display:block;" />
+          ${imgs.length > 1 ? `
+            <button id="lb-prev" style="position:absolute;left:-56px;top:50%;transform:translateY(-50%);background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;width:40px;height:40px;font-size:20px;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s;">&#8249;</button>
+            <button id="lb-next" style="position:absolute;right:-56px;top:50%;transform:translateY(-50%);background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;width:40px;height:40px;font-size:20px;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s;">&#8250;</button>
+          ` : ''}
+        </div>
+
+        <!-- Bottom info -->
+        <div style="margin-top:16px;text-align:center;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#94a3b8;">${cur.description || ''}</div>
+          ${imgs.length > 1 ? `
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;">
+              ${imgs.map((_: any, i: number) => `
+                <span style="width:8px;height:8px;border-radius:50%;background:${i === currentLb ? '#7dd3fc' : '#1a2540'};transition:background 0.2s;"></span>
+              `).join('')}
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;margin-left:6px;">${currentLb + 1}/${imgs.length}</span>
+            </div>
+          ` : ''}
+        </div>
+      `
+      overlay.querySelector('#lb-close')?.addEventListener('click', (e) => { e.stopPropagation(); closeLightbox() })
+      overlay.querySelector('#lb-prev')?.addEventListener('click', (e) => { e.stopPropagation(); currentLb = (currentLb - 1 + imgs.length) % imgs.length; renderLightbox() })
+      overlay.querySelector('#lb-next')?.addEventListener('click', (e) => { e.stopPropagation(); currentLb = (currentLb + 1) % imgs.length; renderLightbox() })
+    }
+
+    renderLightbox()
+    function closeLightbox() { overlay.remove(); document.removeEventListener('keydown', keyHandler) }
+    function keyHandler(e: KeyboardEvent) {
+      if (e.key === 'Escape') closeLightbox()
+      if (e.key === 'ArrowLeft') { currentLb = (currentLb - 1 + imgs.length) % imgs.length; renderLightbox() }
+      if (e.key === 'ArrowRight') { currentLb = (currentLb + 1) % imgs.length; renderLightbox() }
+    }
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeLightbox() })
+    document.addEventListener('keydown', keyHandler)
+    document.body.appendChild(overlay)
+  }
+}
+
 const showCameras = ref(false)
 const cameraData = ref<{ cameras: any[] } | null>(null)
 const cameraMarkers = ref<any[]>([])
@@ -203,24 +330,60 @@ function addCameraMarkers(map: any) {
       <circle cx="8" cy="8" r="2" fill="#7dd3fc"/>
     </svg>`
 
-    // Popup matching spot/station style
+    // Popup with carousel + lightbox
+    const uid = `cam-${cam.id}`
+    const imgs = cam.images as Array<{ url: string; description: string }>
+    const hasMultiple = imgs.length > 1
+    camImageRegistry[uid] = { name: cam.name, images: imgs }
+
+    const imagesHtml = imgs.map((img: { url: string; description: string }, i: number) => `
+      <img
+        id="${uid}-img-${i}"
+        src="${img.url}"
+        alt="${img.description || cam.name}"
+        style="width:100%;border-radius:3px;border:1px solid #1a2540;display:${i === 0 ? 'block' : 'none'};aspect-ratio:4/3;object-fit:cover;cursor:zoom-in;"
+        loading="lazy"
+        onclick="window.__camOpen('${uid}')"
+        onerror="this.style.display='none'"
+      />
+    `).join('')
+
+    const descHtml = imgs.map((img: { url: string; description: string }, i: number) => `
+      <span id="${uid}-desc-${i}" style="display:${i === 0 ? 'inline' : 'none'};">${img.description || ''}</span>
+    `).join('')
+
+    // Navigation: prev/next buttons flanking the image, sized for touch
+    const navHtml = !hasMultiple ? '' : `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+        <button onclick="window.__camNav('${uid}',${imgs.length},-1)" style="background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;font-size:16px;padding:4px 12px;font-family:'IBM Plex Mono',monospace;line-height:1.2;">&#8249;</button>
+        <div style="display:flex;align-items:center;gap:5px;">
+          ${imgs.map((_: any, i: number) => `
+            <span id="${uid}-dot-${i}" style="width:7px;height:7px;border-radius:50%;background:${i === 0 ? '#7dd3fc' : '#1a2540'};transition:background 0.2s;"></span>
+          `).join('')}
+        </div>
+        <button onclick="window.__camNav('${uid}',${imgs.length},1)" style="background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;font-size:16px;padding:4px 12px;font-family:'IBM Plex Mono',monospace;line-height:1.2;">&#8250;</button>
+      </div>
+    `
+
     const popup = new mapboxgl.Popup({
       offset: 14,
       closeButton: false,
-      maxWidth: '260px',
+      maxWidth: '300px',
       className: 'eclipse-popup',
     }).setHTML(`
-      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
-        <div style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; margin-bottom: 2px; color: #7dd3fc;">${cam.name}</div>
-        <div style="color: #475569; font-size: 11px; margin-bottom: 8px;">${cam.road}</div>
-        <img
-          src="${cam.images[0]?.url}"
-          alt="${cam.name}"
-          style="width: 100%; border-radius: 3px; border: 1px solid #1a2540; display: block;"
-          loading="lazy"
-          onerror="this.style.display='none'"
-        />
-        ${cam.images.length > 1 ? `<div style="color: #475569; font-size: 10px; margin-top: 6px;">${cam.images.length} angles at this location</div>` : ''}
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#e2e8f0;padding:4px;">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:6px;margin-bottom:2px;">
+          <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:14px;color:#7dd3fc;">${cam.name}</div>
+          ${hasMultiple ? `<span id="${uid}-counter" style="font-size:11px;color:#475569;white-space:nowrap;">1/${imgs.length}</span>` : ''}
+        </div>
+        <div style="color:#475569;font-size:11px;margin-bottom:6px;">${descHtml}</div>
+        <div style="position:relative;overflow:hidden;border-radius:3px;">
+          ${imagesHtml}
+        </div>
+        ${navHtml}
+        <div style="text-align:center;margin-top:4px;">
+          <span onclick="window.__camOpen('${uid}')" style="color:#475569;font-size:10px;cursor:pointer;border-bottom:1px solid #1a2540;">Click image to enlarge</span>
+        </div>
       </div>
     `)
 
@@ -395,6 +558,37 @@ onUnmounted(() => {
         <div class="flex items-center gap-2">
           <span class="w-4 h-0 border-t-2 border-corona-bright/60" />
           <span class="text-xs font-mono text-slate-400">Centerline</span>
+        </div>
+      </div>
+
+      <!-- Road conditions legend (shown when Roads ON) -->
+      <div v-if="showTraffic" class="mt-3 pt-2.5 border-t border-void-border/40">
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">Roads</p>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-3 h-3 rounded-full border-2 border-green-500 bg-void-deep shrink-0" />
+          <span class="text-xs font-mono text-slate-400">Passable</span>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-3 h-3 rounded-full border-2 border-orange-500 bg-void-deep shrink-0" />
+          <span class="text-xs font-mono text-slate-400">Difficult</span>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-3 h-3 rounded-full border-2 border-red-500 bg-void-deep shrink-0" />
+          <span class="text-xs font-mono text-slate-400">Closed</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full border-2 border-gray-500 bg-void-deep shrink-0" />
+          <span class="text-xs font-mono text-slate-400">Unknown</span>
+        </div>
+      </div>
+
+      <!-- Camera legend (shown when Cams ON) -->
+      <div v-if="showCameras" class="mt-3 pt-2.5 border-t border-void-border/40">
+        <div class="flex items-center gap-2">
+          <span class="w-3.5 h-3.5 rounded-full border-2 border-ice bg-void-deep flex items-center justify-center shrink-0">
+            <span class="w-1.5 h-1.5 rounded-full bg-ice" />
+          </span>
+          <span class="text-xs font-mono text-slate-400">Road camera</span>
         </div>
       </div>
     </div>
