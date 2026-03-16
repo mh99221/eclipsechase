@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import mapboxgl from 'mapbox-gl'
-import { cloudColor, formatDuration, weatherSvgHtml } from '~/utils/eclipse'
+import { cloudColor, cloudLevel, formatDuration, weatherSvgHtml } from '~/utils/eclipse'
 import { addEclipsePathLayers } from '~/utils/mapLayers'
 
 const props = defineProps<{
@@ -76,6 +76,22 @@ function computeMinZooms(points: Array<{ lat: number; lng: number }>): number[] 
     zooms[sorted[i]!.idx] = z
   }
   return zooms
+}
+
+/** Find nearest station's cloud cover for a given lat/lng */
+function nearestCloudCover(lat: number, lng: number): number | null {
+  if (!props.stations?.length) return null
+  let best: number | null = null
+  let bestDist = Infinity
+  for (const s of props.stations) {
+    if (s.cloud_cover == null) continue
+    const d = (s.lat - lat) ** 2 + (s.lng - lng) ** 2
+    if (d < bestDist) {
+      bestDist = d
+      best = s.cloud_cover
+    }
+  }
+  return best
 }
 
 function setMarkerVisibility(items: ZoomMarker[], zoom: number) {
@@ -216,7 +232,12 @@ function updateSpotMarkers() {
       el.appendChild(inner)
     }
 
-    // Build popup HTML
+    // Build popup HTML with weather icon
+    const spotCloud = nearestCloudCover(spot.lat, spot.lng)
+    const weatherIcon = weatherSvgHtml(spotCloud, 28)
+    const weatherLabel = cloudLevel(spotCloud).label
+    const weatherColor = cloudColor(spotCloud)
+
     const scoreHtml = hasRanking && rankInfo && !rankInfo.filtered
       ? `<div style="margin-top: 4px; color: ${rankInfo.score >= 80 ? '#22c55e' : rankInfo.score >= 50 ? '#fbbf24' : '#ef4444'};">Score: ${rankInfo.score}/100</div>`
       : ''
@@ -227,17 +248,25 @@ function updateSpotMarkers() {
       className: 'eclipse-popup',
     }).setHTML(`
       <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px; cursor: pointer;" data-slug="${spot.slug}">
-        <div style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; margin-bottom: 4px; color: #fbbf24;">${spot.name}</div>
-        <div>Totality: ${formatDuration(spot.totality_duration_seconds)}</div>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+          <div style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; color: #fbbf24;">${spot.name}</div>
+          <div style="flex-shrink: 0; line-height: 0;">${weatherIcon}</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span>Totality: ${formatDuration(spot.totality_duration_seconds)}</span>
+          <span style="color: ${weatherColor}; font-size: 11px;">${weatherLabel}</span>
+        </div>
         ${scoreHtml}
         <div style="margin-top: 6px; color: #f59e0b; font-size: 11px;">Click for details →</div>
       </div>
     `)
 
-    popup.getElement()?.addEventListener('click', () => {
-      const center = map!.getCenter()
-      const zoom = map!.getZoom().toFixed(1)
-      router.push(`/spots/${spot.slug}?mlat=${center.lat.toFixed(4)}&mlng=${center.lng.toFixed(4)}&mzoom=${zoom}`)
+    popup.on('open', () => {
+      popup.getElement()?.addEventListener('click', () => {
+        const center = map!.getCenter()
+        const zoom = map!.getZoom().toFixed(1)
+        router.push(`/spots/${spot.slug}?mlat=${center.lat.toFixed(4)}&mlng=${center.lng.toFixed(4)}&mzoom=${zoom}`)
+      })
     })
 
     const marker = new mapboxgl.Marker({ element: el })

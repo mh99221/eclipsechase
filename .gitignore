@@ -26,3 +26,6 @@ logs
 # Superpowers
 .superpowers/
 de421.bsp
+
+.vercel
+.env*.local

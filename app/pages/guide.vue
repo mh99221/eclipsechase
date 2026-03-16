@@ -10,7 +10,6 @@ useHead(() => ({
   title: t('guide.title'),
   meta: [
     { name: 'description', content: t('guide.description') },
-    // Open Graph overrides for article type
     { property: 'og:type', content: 'article' },
     { property: 'og:url', content: `${siteUrl}/guide` },
     { property: 'og:title', content: t('guide.title') },
@@ -40,63 +39,105 @@ useHead(() => ({
 </script>
 
 <template>
-  <div class="min-h-screen bg-void text-slate-300">
+  <div class="relative noise min-h-screen">
     <!-- Nav -->
-    <nav class="fixed top-0 inset-x-0 z-50 border-b border-void-border bg-void/80 backdrop-blur-md">
-      <div class="section-container flex items-center justify-between h-14">
-        <NuxtLink to="/" class="font-display font-bold text-white tracking-tight text-lg">
-          EclipseChase<span class="text-corona">.is</span>
-        </NuxtLink>
-        <NuxtLink
-          to="/map"
-          class="font-mono text-xs tracking-widest uppercase text-slate-400 hover:text-corona transition-colors"
-        >
-          Map
-        </NuxtLink>
-      </div>
+    <nav class="flex items-center justify-between px-6 sm:px-10 py-5">
+      <NuxtLink to="/" class="flex items-center gap-3 group">
+        <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none">
+          <circle cx="64" cy="64" r="36" fill="#050810" />
+          <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
+          <circle cx="96" cy="48" r="4" fill="#f59e0b" />
+        </svg>
+        <span class="font-display font-semibold text-base tracking-wide text-slate-300 group-hover:text-white transition-colors">
+          ECLIPSECHASE
+        </span>
+      </NuxtLink>
+      <NuxtLink
+        to="/map"
+        class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider"
+      >
+        VIEW ON MAP
+      </NuxtLink>
     </nav>
 
     <!-- Article -->
-    <main class="pt-24 pb-20">
-      <article class="section-container max-w-2xl guide-content">
+    <main class="pb-20">
+      <article class="section-container max-w-3xl py-8 sm:py-16 guide-content">
         <ContentRenderer v-if="page" :value="page" />
       </article>
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-void-border py-12">
-      <div class="section-container max-w-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500 font-mono">
-        <div class="flex gap-6">
-          <NuxtLink to="/map" class="hover:text-corona transition-colors">
-            Map
-          </NuxtLink>
-          <NuxtLink to="/recommend" class="hover:text-corona transition-colors">
-            Find Your Spot
-          </NuxtLink>
-          <NuxtLink to="/" class="hover:text-corona transition-colors">
-            Home
-          </NuxtLink>
-        </div>
-        <span class="text-slate-600">
-          EclipseChase.is
-        </span>
+    <footer class="border-t border-void-border/30 py-8">
+      <div class="section-container text-center">
+        <NuxtLink to="/" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
+          &larr; Back to home
+        </NuxtLink>
       </div>
     </footer>
   </div>
 </template>
 
 <style scoped>
-/* --- Markdown content styles via :deep() --- */
+/* ═══════════════════════════════════════════════════
+   Guide content — matches /spots design system:
+   - Syne for headings (font-display)
+   - Default body font for prose (not monospace)
+   - Mono only for labels, metadata, code
+   - Cards use bg-void-surface + border-void-border/40
+   ═══════════════════════════════════════════════════ */
 
+/* --- Main heading (rendered from # in markdown) --- */
+.guide-content :deep(h1) {
+  font-family: 'Syne', system-ui, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 640px) {
+  .guide-content :deep(h1) {
+    font-size: 2.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .guide-content :deep(h1) {
+    font-size: 3rem;
+  }
+}
+
+/* Subtitle — first paragraph after h1 */
+.guide-content :deep(h1 + p) {
+  color: #94a3b8;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .guide-content :deep(h1 + p) {
+    font-size: 1.125rem;
+  }
+}
+
+/* --- Section headings --- */
 .guide-content :deep(h2) {
   font-family: 'Syne', system-ui, sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #f1f5f9;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
   margin-top: 3rem;
   margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(26, 37, 64, 0.6);
+  padding-bottom: 0.625rem;
+  border-bottom: 1px solid rgba(26, 37, 64, 0.5);
+}
+
+@media (min-width: 640px) {
+  .guide-content :deep(h2) {
+    font-size: 1.5rem;
+  }
 }
 
 .guide-content :deep(h2:first-of-type) {
@@ -107,15 +148,15 @@ useHead(() => ({
   font-family: 'Syne', system-ui, sans-serif;
   font-size: 1.125rem;
   font-weight: 600;
-  color: #cbd5e1;
+  color: #e2e8f0;
   margin-top: 2rem;
   margin-bottom: 0.75rem;
 }
 
+/* --- Body text — use default Syne, NOT monospace --- */
 .guide-content :deep(p) {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.875rem;
-  line-height: 1.75;
+  font-size: 0.9375rem;
+  line-height: 1.8;
   color: #94a3b8;
   margin-bottom: 1rem;
 }
@@ -126,15 +167,17 @@ useHead(() => ({
   }
 }
 
+/* --- Links --- */
 .guide-content :deep(a) {
-  color: #f59e0b;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  transition: color 0.2s;
+  color: var(--corona);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+  transition: color 0.2s, border-color 0.2s;
 }
 
 .guide-content :deep(a:hover) {
-  color: #fbbf24;
+  color: var(--corona-bright);
+  border-bottom-color: var(--corona-bright);
 }
 
 .guide-content :deep(strong) {
@@ -142,11 +185,11 @@ useHead(() => ({
   font-weight: 600;
 }
 
+/* --- Lists --- */
 .guide-content :deep(ul),
 .guide-content :deep(ol) {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.875rem;
-  line-height: 1.75;
+  font-size: 0.9375rem;
+  line-height: 1.8;
   color: #94a3b8;
   margin-bottom: 1rem;
   padding-left: 1.5rem;
@@ -168,114 +211,173 @@ useHead(() => ({
 }
 
 .guide-content :deep(li) {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.375rem;
 }
 
 .guide-content :deep(li::marker) {
-  color: #475569;
+  color: rgba(245, 158, 11, 0.4);
 }
 
-/* Table styling */
+/* --- Tables — card style matching /spots stat cards --- */
 .guide-content :deep(table) {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin-bottom: 1.5rem;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
+  background: rgba(10, 16, 32, 0.5);
+  border: 1px solid rgba(26, 37, 64, 0.4);
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 .guide-content :deep(thead th) {
   text-align: left;
-  padding: 0.625rem 0.75rem;
-  font-weight: 600;
-  color: #f59e0b;
-  border-bottom: 1px solid #1a2540;
-  background: rgba(10, 16, 32, 0.6);
-  font-size: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 500;
+  color: var(--corona);
+  font-size: 0.6875rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.15em;
+  background: rgba(10, 16, 32, 0.8);
+  border-bottom: 1px solid rgba(26, 37, 64, 0.5);
 }
 
 .guide-content :deep(tbody td) {
-  padding: 0.5rem 0.75rem;
+  padding: 0.625rem 1rem;
   color: #94a3b8;
-  border-bottom: 1px solid rgba(26, 37, 64, 0.4);
+  border-bottom: 1px solid rgba(26, 37, 64, 0.25);
+}
+
+.guide-content :deep(tbody tr:last-child td) {
+  border-bottom: none;
 }
 
 .guide-content :deep(tbody tr:hover) {
-  background: rgba(10, 16, 32, 0.4);
+  background: rgba(245, 158, 11, 0.03);
 }
 
-/* FAQ details/summary styling */
+/* --- FAQ details/summary — card style --- */
 .guide-content :deep(details) {
   background: rgba(10, 16, 32, 0.5);
-  border: 1px solid #1a2540;
-  border-radius: 4px;
+  border: 1px solid rgba(26, 37, 64, 0.4);
+  border-radius: 6px;
   margin-bottom: 0.5rem;
   overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.guide-content :deep(details:hover) {
+  border-color: rgba(26, 37, 64, 0.7);
 }
 
 .guide-content :deep(summary) {
-  padding: 0.75rem 1rem;
+  padding: 0.875rem 1.25rem;
   cursor: pointer;
+  font-family: 'Syne', system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  transition: background 0.2s;
+  list-style: none;
+}
+
+.guide-content :deep(summary::-webkit-details-marker) {
+  display: none;
+}
+
+.guide-content :deep(summary::before) {
+  content: '+';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.75rem;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.875rem;
-  color: #f59e0b;
-  font-weight: 500;
-  transition: background 0.2s;
+  color: var(--corona);
+  opacity: 0.6;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 3px;
+  transition: opacity 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+.guide-content :deep(details[open] summary::before) {
+  content: '−';
+  opacity: 1;
 }
 
 .guide-content :deep(summary:hover) {
-  background: rgba(245, 158, 11, 0.05);
+  background: rgba(245, 158, 11, 0.03);
 }
 
 .guide-content :deep(details[open] summary) {
-  border-bottom: 1px solid #1a2540;
+  border-bottom: 1px solid rgba(26, 37, 64, 0.4);
 }
 
 .guide-content :deep(details > p),
 .guide-content :deep(details > :not(summary)) {
-  padding: 0.75rem 1rem;
+  padding: 1rem 1.25rem;
 }
 
-/* Inline code */
+/* --- Inline code — mono badge style --- */
 .guide-content :deep(code) {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.8125rem;
   background: rgba(10, 16, 32, 0.6);
-  padding: 0.125rem 0.375rem;
-  border-radius: 2px;
+  padding: 0.125rem 0.5rem;
+  border-radius: 3px;
   color: #cbd5e1;
+  border: 1px solid rgba(26, 37, 64, 0.3);
 }
 
-/* Horizontal rule */
+/* --- Horizontal rule --- */
 .guide-content :deep(hr) {
   border: none;
   height: 1px;
-  background: linear-gradient(to right, transparent, #1a2540, transparent);
-  margin: 2.5rem 0;
+  background: linear-gradient(to right, transparent, rgba(26, 37, 64, 0.6), transparent);
+  margin: 3rem 0;
 }
 
-/* TOC list at top (first ul) — style as nav links */
+/* --- TOC — styled as a proper nav card --- */
 .guide-content :deep(> ul:first-of-type) {
   list-style: none;
-  padding-left: 0;
-  border: 1px solid #1a2540;
-  border-radius: 4px;
-  padding: 1rem 1.25rem;
-  background: rgba(10, 16, 32, 0.4);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+  background: rgba(10, 16, 32, 0.5);
+  border: 1px solid rgba(26, 37, 64, 0.4);
+  border-radius: 6px;
 }
 
 .guide-content :deep(> ul:first-of-type li) {
-  margin-bottom: 0.375rem;
+  margin-bottom: 0.5rem;
+  padding-left: 0;
+}
+
+.guide-content :deep(> ul:first-of-type li::before) {
+  content: '→';
+  color: rgba(245, 158, 11, 0.4);
+  margin-right: 0.75rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+}
+
+.guide-content :deep(> ul:first-of-type li::marker) {
+  content: '';
 }
 
 .guide-content :deep(> ul:first-of-type a) {
   text-decoration: none;
+  border-bottom: none;
   color: #94a3b8;
+  font-size: 0.9375rem;
+  transition: color 0.2s;
 }
 
 .guide-content :deep(> ul:first-of-type a:hover) {
-  color: #f59e0b;
+  color: var(--corona);
 }
 </style>

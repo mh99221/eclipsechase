@@ -1,50 +1,65 @@
 <script setup lang="ts">
-import mapboxgl from 'mapbox-gl'
-import { addEclipsePathLayers } from '~/utils/mapLayers'
-import { REGION_LABELS } from '~/utils/eclipse'
-
 const config = useRuntimeConfig()
 const mapContainer = ref<HTMLElement | null>(null)
-let map: mapboxgl.Map | null = null
+const mapError = ref('')
+let map: any = null
 
-const REGION_MARKERS: { key: string; lng: number; lat: number }[] = [
-  { key: 'westfjords', lng: -22.8, lat: 65.8 },
-  { key: 'snaefellsnes', lng: -23.5, lat: 64.85 },
-  { key: 'borgarfjordur', lng: -21.5, lat: 64.7 },
-  { key: 'reykjanes', lng: -22.2, lat: 63.95 },
-  { key: 'reykjavik', lng: -21.9, lat: 64.15 },
-]
+watch(mapContainer, async (el) => {
+  if (!el || map) return
 
-onMounted(() => {
-  if (!mapContainer.value) return
+  const token = config.public.mapboxToken as string
+  if (!token) {
+    mapError.value = 'No Mapbox token configured'
+    return
+  }
 
-  mapboxgl.accessToken = config.public.mapboxToken as string
+  try {
+    const mapboxgl = (await import('mapbox-gl')).default
+    const { addEclipsePathLayers } = await import('~/utils/mapLayers')
+    const { REGION_LABELS } = await import('~/utils/eclipse')
 
-  map = new mapboxgl.Map({
-    container: mapContainer.value,
-    style: 'mapbox://styles/mapbox/dark-v11',
-    center: [-22.5, 65.0],
-    zoom: 5.5,
-    interactive: false,
-    attributionControl: false,
-  })
+    mapboxgl.accessToken = token
 
-  map.on('load', () => {
-    if (!map) return
+    map = new mapboxgl.Map({
+      container: el,
+      style: 'mapbox://styles/mapbox/dark-v11',
+      center: [-22.5, 65.0],
+      zoom: 5.5,
+      interactive: false,
+      attributionControl: false,
+    })
 
-    addEclipsePathLayers(map, { borderWidth: 1, centerlineOpacity: 0.8 })
+    map.on('load', () => {
+      if (!map) return
 
-    // Region labels as markers
-    for (const region of REGION_MARKERS) {
-      const el = document.createElement('div')
-      el.className = 'guide-map-label'
-      el.textContent = REGION_LABELS[region.key] || region.key
+      addEclipsePathLayers(map, { borderWidth: 1, centerlineOpacity: 0.8 })
 
-      new mapboxgl.Marker({ element: el, anchor: 'center' })
-        .setLngLat([region.lng, region.lat])
-        .addTo(map)
-    }
-  })
+      const REGION_MARKERS = [
+        { key: 'westfjords', lng: -22.8, lat: 65.8 },
+        { key: 'snaefellsnes', lng: -23.5, lat: 64.85 },
+        { key: 'borgarfjordur', lng: -21.5, lat: 64.7 },
+        { key: 'reykjanes', lng: -22.2, lat: 63.95 },
+      ]
+
+      for (const region of REGION_MARKERS) {
+        const el = document.createElement('div')
+        el.className = 'guide-map-label'
+        el.textContent = REGION_LABELS[region.key] || region.key
+
+        new mapboxgl.Marker({ element: el, anchor: 'center' })
+          .setLngLat([region.lng, region.lat])
+          .addTo(map!)
+      }
+    })
+
+    map.on('error', (e: any) => {
+      console.error('[GuidePathMap] Mapbox error:', e)
+      mapError.value = 'Map failed to load'
+    })
+  } catch (err: any) {
+    console.error('[GuidePathMap]', err)
+    mapError.value = err.message || 'Map failed to load'
+  }
 })
 
 onUnmounted(() => {
@@ -54,17 +69,18 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <ClientOnly>
+  <ClientOnly class="my-8">
+    <div v-if="mapError" class="w-full rounded border border-void-border bg-void-surface flex items-center justify-center text-slate-500 font-mono text-sm" style="height: 400px;">
+      {{ mapError }}
+    </div>
     <div
+      v-else
       ref="mapContainer"
       class="w-full rounded border border-void-border"
       style="height: 400px;"
     />
     <template #fallback>
-      <div
-        class="w-full rounded border border-void-border bg-void-surface flex items-center justify-center text-slate-500 font-mono text-sm"
-        style="height: 400px;"
-      >
+      <div class="w-full rounded border border-void-border bg-void-surface flex items-center justify-center text-slate-500 font-mono text-sm" style="height: 400px;">
         Loading map…
       </div>
     </template>

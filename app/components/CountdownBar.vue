@@ -15,7 +15,7 @@ const units = computed(() => [
 </script>
 
 <template>
-  <div class="countdown-row">
+  <div class="countdown-row my-8">
     <template v-for="(unit, idx) in units" :key="idx">
       <!-- Dot separator -->
       <span v-if="idx > 0" class="countdown-dot" />
