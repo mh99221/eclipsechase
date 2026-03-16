@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
           stripe_session_id: session.id,
           purchased_at: new Date().toISOString(),
           is_active: true,
-        } as any,
+        },
         { onConflict: 'email' },
       )
 

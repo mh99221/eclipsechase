@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   // Upsert into Supabase (batch)
   await supabase
     .from('weather_forecasts')
-    .upsert(forecastsToRows(forecasts) as any, { onConflict: 'station_id,forecast_time,valid_time' })
+    .upsert(forecastsToRows(forecasts), { onConflict: 'station_id,forecast_time,valid_time' })
 
   // Return forecasts grouped by station
   return {

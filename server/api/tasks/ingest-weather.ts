@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
   if (observationRows.length > 0) {
     const { error: obsError } = await supabase
       .from('weather_observations')
-      .upsert(observationRows as any, { onConflict: 'station_id,timestamp' })
+      .upsert(observationRows, { onConflict: 'station_id,timestamp' })
 
     if (obsError) {
       console.error('Failed to upsert observations:', obsError.message)
@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
   if (forecastRows.length > 0) {
     const { error: fcError } = await supabase
       .from('weather_forecasts')
-      .upsert(forecastRows as any, { onConflict: 'station_id,forecast_time,valid_time' })
+      .upsert(forecastRows, { onConflict: 'station_id,forecast_time,valid_time' })
 
     if (fcError) {
       console.error('Failed to upsert forecasts:', fcError.message)
