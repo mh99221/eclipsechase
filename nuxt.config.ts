@@ -76,6 +76,10 @@ export default defineNuxtConfig({
     redirect: false,
   },
 
+  routeRules: {
+    '/guide': { prerender: true },
+  },
+
   runtimeConfig: {
     stripeSecretKey: '',
     stripeWebhookSecret: '',
