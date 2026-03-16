@@ -1,8 +1,12 @@
-const VEGAGERDIN_BASE = 'https://gis.vegagerdin.is/arcgis/rest/services/road_conditions/MapServer/0/query'
-const VEGAGERDIN_FETCH_TIMEOUT_MS = 10_000
+// Vegagerðin road conditions API
+// Docs: https://www.vegagerdin.is/gagnasafn/vefthjonustur/
+// Point warnings (closures, repairs, hazards) with lat/lng
+const POINTS_API = 'https://gagnaveita.vegagerdin.is/api/faerdpunktar2017_1'
+// Route segment conditions (condition codes + English descriptions)
+const SEGMENTS_API = 'https://gagnaveita.vegagerdin.is/api/faerd2017_1'
+const FETCH_TIMEOUT_MS = 10_000
 
 export interface RoadCondition {
-  roadNumber: string
   roadName: string
   section: string
   condition: 'good' | 'difficult' | 'closed' | 'unknown'
@@ -12,112 +16,68 @@ export interface RoadCondition {
   updatedAt: string
 }
 
-/**
- * Map raw condition strings from the API to our simplified condition type.
- * Field names and values are best guesses from the ArcGIS endpoint — may need
- * adjustment once we can inspect a real response.
- */
-function mapCondition(raw: string | undefined): RoadCondition['condition'] {
-  if (!raw) return 'unknown'
-  const lower = raw.toLowerCase()
-  if (lower.includes('closed') || lower.includes('impassable')) return 'closed'
-  if (lower.includes('difficult') || lower.includes('slippery') || lower.includes('ice') || lower.includes('snow')) return 'difficult'
-  if (lower.includes('good') || lower.includes('dry') || lower.includes('clear') || lower.includes('wet')) return 'good'
+function mapConditionCode(code: string | undefined): RoadCondition['condition'] {
+  if (!code) return 'unknown'
+  const c = code.toUpperCase()
+  if (c === 'ALLUR_AKSTUR_BANN' || c === 'LOKAD' || c.includes('ÓFÆRT')) return 'closed'
+  if (c === 'VEGAVINNA' || c === 'OSLETTUR_VEGUR' || c.includes('HALK') || c.includes('SNJOR') || c.includes('KLAK')) return 'difficult'
+  if (c === 'GREIDFAERT' || c === 'THURT' || c === 'BLAUTT') return 'good'
+  // English fallbacks
+  if (c.includes('CLOSED') || c.includes('IMPASSABLE')) return 'closed'
+  if (c.includes('DIFFICULT') || c.includes('ICE') || c.includes('SNOW')) return 'difficult'
+  if (c.includes('PASSABLE') || c.includes('DRY') || c.includes('WET')) return 'good'
   return 'unknown'
 }
 
 export async function fetchRoadConditions(): Promise<RoadCondition[]> {
-  const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), VEGAGERDIN_FETCH_TIMEOUT_MS)
+  const results: RoadCondition[] = []
 
   try {
-    // Filter to western Iceland bounding box (eclipse path region)
-    const params = new URLSearchParams({
-      where: '1=1',
-      geometry: JSON.stringify({ xmin: -25, xmax: -20, ymin: 63.5, ymax: 66.5 }),
-      geometryType: 'esriGeometryEnvelope',
-      spatialRel: 'esriSpatialRelIntersects',
-      outFields: '*',
-      f: 'json',
-      outSR: '4326',
-    })
+    // Fetch point warnings (closures, repairs, hazards) — these have lat/lng
+    const pointsRes = await fetch(POINTS_API, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
+    if (pointsRes.ok) {
+      const points: any[] = await pointsRes.json()
+      for (const p of points) {
+        const lat = p.Breidd || 0
+        const lng = p.Lengd || 0
+        if (!lat || !lng) continue
+        // Filter to eclipse region
+        if (lat < 63.0 || lat > 67.0 || lng < -25.0 || lng > -20.0) continue
 
-    const response = await fetch(`${VEGAGERDIN_BASE}?${params.toString()}`, {
-      signal: controller.signal,
-    })
-
-    if (!response.ok) {
-      console.error(`[vegagerdin] HTTP ${response.status}`)
-      return []
+        results.push({
+          roadName: p.FulltNafn || p.StuttNafn || '',
+          section: '',
+          condition: mapConditionCode(p.Astand),
+          description: p.LysingEn || p.Lysing || p.Astand || '',
+          lat,
+          lng,
+          updatedAt: p.DagsSkrad ? new Date(p.DagsSkrad).toISOString() : new Date().toISOString(),
+        })
+      }
     }
+  } catch (err: any) {
+    console.error('[vegagerdin] Points fetch failed:', err.message || err)
+  }
 
-    const json = await response.json()
-    const features = json?.features
-    if (!Array.isArray(features)) {
-      console.warn('[vegagerdin] No features array in response')
-      return []
-    }
-
-    const results: RoadCondition[] = []
-
-    for (const feature of features) {
-      const attrs = feature.attributes || {}
-      const geom = feature.geometry
-
-      // Field names are best guesses from typical Vegagerdin ArcGIS schemas.
-      // Common field names: ROAD_NUMBER / VEGUR, ROAD_NAME / NAFN,
-      // SECTION / KAFLI, CONDITION / ASTAND, DESCRIPTION / LYSING,
-      // LAST_UPDATED / DAGS
-      const roadNumber = String(attrs.ROAD_NUMBER ?? attrs.VEGUR ?? attrs.RoadNumber ?? '')
-      const roadName = String(attrs.ROAD_NAME ?? attrs.NAFN ?? attrs.RoadName ?? '')
-      const section = String(attrs.SECTION ?? attrs.KAFLI ?? attrs.Section ?? '')
-      const conditionRaw = String(attrs.CONDITION ?? attrs.ASTAND ?? attrs.Condition ?? '')
-      const description = String(attrs.DESCRIPTION ?? attrs.LYSING ?? attrs.Description ?? conditionRaw)
-      const updatedAt = attrs.LAST_UPDATED ?? attrs.DAGS ?? attrs.LastUpdated ?? ''
-
-      // Geometry: point or centroid of polyline
-      let lat = 0
-      let lng = 0
-      if (geom) {
-        if (geom.y !== undefined && geom.x !== undefined) {
-          // Point geometry
-          lat = geom.y
-          lng = geom.x
-        } else if (Array.isArray(geom.paths) && geom.paths.length > 0) {
-          // Polyline — use midpoint of first path
-          const path = geom.paths[0]
-          if (Array.isArray(path) && path.length > 0) {
-            const mid = path[Math.floor(path.length / 2)]
-            lng = mid[0]
-            lat = mid[1]
-          }
+  try {
+    // Fetch route segment conditions — no lat/lng but useful status info
+    // We skip these from the map markers (no coords) but could display in a list
+    const segRes = await fetch(SEGMENTS_API, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
+    if (segRes.ok) {
+      const segments: any[] = await segRes.json()
+      for (const s of segments) {
+        // Segments don't have lat/lng coordinates — skip for map markers
+        // They use route segment IDs (IdButur) that would need to be joined
+        // with the WFS geometry service for coordinates
+        // For now, log count for debugging
+        if (results.length === 0 && segments.length > 0) {
+          console.log(`[vegagerdin] ${segments.length} route segments loaded (no coords, not mapped)`)
         }
       }
-
-      // Skip features with no usable coordinates
-      if (lat === 0 && lng === 0) continue
-
-      results.push({
-        roadNumber,
-        roadName,
-        section,
-        condition: mapCondition(conditionRaw),
-        description,
-        lat,
-        lng,
-        updatedAt: updatedAt ? new Date(updatedAt).toISOString() : new Date().toISOString(),
-      })
     }
-
-    return results
   } catch (err: any) {
-    if (err.name === 'AbortError') {
-      console.error('[vegagerdin] Request timed out')
-    } else {
-      console.error('[vegagerdin] Fetch failed:', err.message || err)
-    }
-    return []
-  } finally {
-    clearTimeout(timeout)
+    console.error('[vegagerdin] Segments fetch failed:', err.message || err)
   }
+
+  return results
 }

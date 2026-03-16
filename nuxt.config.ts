@@ -63,11 +63,12 @@ export default defineNuxtConfig({
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap' },
+        { rel: 'stylesheet', href: 'https://api.mapbox.com/mapbox-gl-js/v3.20.0/mapbox-gl.css' },
       ],
     },
   },
 
-  css: ['~/assets/css/main.css', 'mapbox-gl/dist/mapbox-gl.css'],
+  css: ['~/assets/css/main.css'],
 
   tailwindcss: {
     cssPath: '~/assets/css/main.css',

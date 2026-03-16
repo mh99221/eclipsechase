@@ -1,6 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ middleware: ['pro-gate'] })
 
+import mapboxgl from 'mapbox-gl'
 import { CLOUD_COVER_LEVELS, CLOUD_COVER_NO_DATA } from '~/utils/eclipse'
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId } from '~/composables/useRecommendation'
@@ -143,9 +144,8 @@ function addTrafficMarkers(map: any) {
     el.style.borderRadius = '50%'
     el.style.backgroundColor = getTrafficColor(c.condition)
     el.style.border = '1px solid rgba(0,0,0,0.3)'
-    el.title = `${c.roadName || c.roadNumber}: ${c.description}`
+    el.title = `${c.roadName}: ${c.description}`
 
-    // @ts-expect-error mapboxgl available at runtime via EclipseMap
     const marker = new mapboxgl.Marker({ element: el })
       .setLngLat([c.lng, c.lat])
       .addTo(map)
@@ -186,27 +186,44 @@ function addCameraMarkers(map: any) {
   removeCameraMarkers()
   const cameras = cameraData.value?.cameras || []
   for (const cam of cameras) {
+    // Camera pin: circle matching spot marker style, with camera lens icon
     const el = document.createElement('div')
     el.className = 'camera-marker'
-    el.style.cssText = 'width:14px;height:14px;border-radius:2px;background:#3b82f6;border:1px solid rgba(0,0,0,0.3);cursor:pointer;display:flex;align-items:center;justify-content:center;'
-    el.innerHTML = '<svg width="8" height="8" viewBox="0 0 24 24" fill="white"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10S2 17.52 2 12zm2 0a8 8 0 1016 0 8 8 0 00-16 0z" fill-opacity="0.5"/></svg>'
+    el.setAttribute('role', 'button')
+    el.setAttribute('aria-label', `${cam.name} road camera`)
+    el.style.cssText = `
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #050810; border: 2px solid #7dd3fc;
+      box-shadow: 0 0 8px rgba(125, 211, 252, 0.25);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    `
+    // Camera lens SVG — simple aperture icon
+    el.innerHTML = `<svg width="10" height="10" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="8" r="5" stroke="#7dd3fc" stroke-width="1.5" fill="none"/>
+      <circle cx="8" cy="8" r="2" fill="#7dd3fc"/>
+    </svg>`
 
-    // @ts-expect-error mapboxgl available at runtime via EclipseMap
+    // Popup matching spot/station style
     const popup = new mapboxgl.Popup({
-      offset: 10,
-      closeButton: true,
-      maxWidth: '280px',
+      offset: 14,
+      closeButton: false,
+      maxWidth: '260px',
       className: 'eclipse-popup',
     }).setHTML(`
       <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
-        <div style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 13px; margin-bottom: 6px;">${cam.name}</div>
-        <div style="color: #94a3b8; font-size: 11px; margin-bottom: 8px;">${cam.road}</div>
-        <img src="${cam.images[0]?.url}" alt="${cam.name}" style="width: 100%; border-radius: 4px; border: 1px solid #1a2540;" loading="lazy" />
-        ${cam.images.length > 1 ? `<div style="color: #475569; font-size: 10px; margin-top: 4px;">${cam.images.length} camera angles available</div>` : ''}
+        <div style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; margin-bottom: 2px; color: #7dd3fc;">${cam.name}</div>
+        <div style="color: #475569; font-size: 11px; margin-bottom: 8px;">${cam.road}</div>
+        <img
+          src="${cam.images[0]?.url}"
+          alt="${cam.name}"
+          style="width: 100%; border-radius: 3px; border: 1px solid #1a2540; display: block;"
+          loading="lazy"
+          onerror="this.style.display='none'"
+        />
+        ${cam.images.length > 1 ? `<div style="color: #475569; font-size: 10px; margin-top: 6px;">${cam.images.length} angles at this location</div>` : ''}
       </div>
     `)
 
-    // @ts-expect-error mapboxgl available at runtime via EclipseMap
     const marker = new mapboxgl.Marker({ element: el })
       .setLngLat([cam.lng, cam.lat])
       .setPopup(popup)
