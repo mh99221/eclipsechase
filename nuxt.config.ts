@@ -78,6 +78,9 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/guide': { prerender: true },
+    '/pro': { prerender: true },
+    '/privacy': { prerender: true },
+    '/spots/**': { isr: 3600 },
   },
 
   runtimeConfig: {
