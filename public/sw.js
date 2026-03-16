@@ -1,7 +1,7 @@
 const CACHE_NAME = 'eclipsechase-v1'
 const API_CACHE = 'eclipsechase-api-v1'
 const TILE_CACHE = 'eclipsechase-tiles-v1'
-const MAX_TILE_CACHE = 2000
+const MAX_TILE_CACHE = 5000
 
 const PRECACHE_URLS = [
   '/guide',

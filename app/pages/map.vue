@@ -312,5 +312,10 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
+
+    <!-- Offline download manager -->
+    <div class="absolute top-20 right-4 sm:right-6 z-10 w-64 hidden sm:block">
+      <OfflineManager :map="eclipseMapRef?.map" />
+    </div>
   </div>
 </template>
