@@ -52,51 +52,56 @@ const features = [
 </script>
 
 <template>
-  <div class="min-h-screen bg-void text-slate-300">
+  <div class="relative noise min-h-screen">
     <!-- Nav -->
-    <nav class="fixed top-0 inset-x-0 z-50 border-b border-void-border bg-void/80 backdrop-blur-md">
-      <div class="section-container flex items-center justify-between h-14">
-        <NuxtLink to="/" class="font-display font-bold text-white tracking-tight text-lg">
-          EclipseChase<span class="text-corona">.is</span>
-        </NuxtLink>
-        <NuxtLink
-          to="/guide"
-          class="font-mono text-xs tracking-widest uppercase text-slate-400 hover:text-corona transition-colors"
-        >
-          Guide
-        </NuxtLink>
-      </div>
+    <nav class="flex items-center justify-between px-6 sm:px-10 py-5">
+      <NuxtLink to="/" class="flex items-center gap-3 group">
+        <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
+          <circle cx="64" cy="64" r="36" fill="#050810" />
+          <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
+          <circle cx="96" cy="48" r="4" fill="#f59e0b" />
+        </svg>
+        <span class="font-display font-semibold text-base tracking-wide text-slate-300 group-hover:text-white transition-colors">
+          ECLIPSECHASE
+        </span>
+      </NuxtLink>
+      <NuxtLink
+        to="/guide"
+        class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider"
+      >
+        GUIDE
+      </NuxtLink>
     </nav>
 
-    <main class="pt-24 pb-20">
-      <div class="section-container max-w-2xl">
+    <main class="pb-20">
+      <div class="section-container max-w-3xl py-8 sm:py-16">
         <!-- Cancelled banner -->
         <div
           v-if="cancelled"
-          class="mb-8 px-4 py-3 rounded bg-amber-900/20 border border-amber-700/30 text-sm font-mono text-amber-400"
+          class="mb-8 px-4 py-3 rounded bg-amber-900/15 border border-amber-700/20 text-sm font-mono text-amber-400/80"
         >
           Payment was cancelled. No worries — you can try again when you're ready.
         </div>
 
         <!-- Header -->
-        <div class="text-center mb-12">
+        <div class="mb-12">
           <span class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase">
             Unlock Everything
           </span>
-          <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-3 mb-4">
+          <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-2 mb-4">
             EclipseChase Pro
           </h1>
-          <p class="text-base sm:text-lg text-slate-400 max-w-lg mx-auto">
+          <p class="text-base sm:text-lg text-slate-400 max-w-xl">
             One payment. Full access. Everything you need to find clear skies on August 12, 2026.
           </p>
         </div>
 
         <!-- Feature list -->
-        <div class="grid gap-4 mb-12">
+        <div class="grid gap-3 mb-12">
           <div
             v-for="feature in features"
             :key="feature.label"
-            class="flex items-start gap-3 bg-void-surface border border-void-border/40 rounded-lg px-4 py-3.5"
+            class="flex items-start gap-3 bg-void-surface border border-void-border/40 rounded px-4 py-4"
           >
             <svg
               class="w-5 h-5 text-corona shrink-0 mt-0.5"
@@ -112,7 +117,7 @@ const features = [
               <p class="font-display font-semibold text-white text-sm sm:text-base">
                 {{ feature.label }}
               </p>
-              <p class="text-xs sm:text-sm text-slate-500 font-mono mt-0.5">
+              <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
                 {{ feature.description }}
               </p>
             </div>
@@ -120,12 +125,12 @@ const features = [
         </div>
 
         <!-- Price card -->
-        <div class="bg-void-surface border border-corona/30 rounded-xl p-6 sm:p-8 text-center">
+        <div class="bg-void-surface border border-corona/20 rounded-lg p-6 sm:p-8 text-center">
           <div class="mb-6">
             <div class="font-display text-5xl sm:text-6xl font-bold text-white">
               &euro;9.99
             </div>
-            <p class="font-mono text-sm text-slate-500 mt-2">
+            <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mt-3">
               One-time payment &middot; No subscription
             </p>
           </div>
@@ -139,7 +144,7 @@ const features = [
               type="email"
               placeholder="you@example.com"
               required
-              class="w-full px-4 py-3 rounded-lg bg-void border border-void-border text-white placeholder-slate-600 font-mono text-sm focus:outline-none focus:border-corona/60 focus:ring-1 focus:ring-corona/30 transition-colors"
+              class="w-full px-4 py-3 rounded bg-void border border-void-border text-white placeholder-slate-600 font-mono text-sm focus:outline-none focus:border-corona/50 transition-colors"
               @keydown.enter="handleCheckout"
             >
           </div>
@@ -160,16 +165,25 @@ const features = [
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
-              Processing...
+              <span>Processing...</span>
             </span>
             <span v-else>Get Pro Access</span>
           </button>
 
-          <p class="font-mono text-xs text-slate-600 mt-4">
-            Secure payment via Stripe. Instant access after payment.
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-600 mt-4">
+            Secure payment via Stripe
           </p>
         </div>
       </div>
     </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-void-border/30 py-8">
+      <div class="section-container text-center">
+        <NuxtLink to="/" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
+          &larr; Back to home
+        </NuxtLink>
+      </div>
+    </footer>
   </div>
 </template>
