@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatDuration, REGION_LABELS, SPOT_TYPE_LABELS } from '~/utils/eclipse'
+import type { SpotPhoto } from '~/types/spots'
 
 const route = useRoute()
 const slug = route.params.slug as string
@@ -18,6 +19,20 @@ if (error.value || !data.value?.spot) {
 
 const spot = computed(() => data.value!.spot)
 
+// Parse photos JSONB — may come as string from API or already parsed
+const spotPhotos = computed<SpotPhoto[]>(() => {
+  const raw = spot.value.photos
+  if (!raw) return []
+  if (typeof raw === 'string') {
+    try { return JSON.parse(raw) } catch { return [] }
+  }
+  return Array.isArray(raw) ? raw : []
+})
+
+const heroPhoto = computed<SpotPhoto | null>(() =>
+  spotPhotos.value.find(p => p.is_hero) || spotPhotos.value[0] || null,
+)
+
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
 defineOgImage({
@@ -34,6 +49,12 @@ useHead({
     { property: 'og:description', content: () => spot.value.description },
     { property: 'og:url', content: () => `${siteUrl}/spots/${slug}` },
     { property: 'og:type', content: 'place' },
+    ...(heroPhoto.value ? [
+      { property: 'og:image', content: `${siteUrl}/images/spots/${heroPhoto.value.filename}` },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '675' },
+      { name: 'twitter:card', content: 'summary_large_image' },
+    ] : []),
   ],
   link: [
     { rel: 'canonical', href: `${siteUrl}/spots/${slug}` },
@@ -53,6 +74,9 @@ useHead({
         },
         'isAccessibleForFree': true,
         'url': `${siteUrl}/spots/${slug}`,
+        ...(heroPhoto.value ? {
+          'image': `${siteUrl}/images/spots/${heroPhoto.value.filename}`,
+        } : {}),
       }),
     },
   ],
@@ -101,6 +125,13 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
         <span>/</span>
         <span class="text-slate-400">{{ spot.name }}</span>
       </div>
+
+      <!-- Photo Gallery -->
+      <SpotPhotoGallery
+        v-if="spotPhotos.length > 0"
+        :photos="spotPhotos"
+        :spot-name="spot.name"
+      />
 
       <!-- Header -->
       <div class="mb-10">
