@@ -10,6 +10,14 @@ const props = withDefaults(defineProps<{
   variant: 'overlay',
 })
 
+const fallbackUrls: Partial<Record<PhotoLicense, string>> = {
+  unsplash: 'https://unsplash.com',
+  pixabay: 'https://pixabay.com',
+  'nasa-pd': 'https://images.nasa.gov',
+}
+
+const resolvedUrl = computed(() => props.creditUrl || fallbackUrls[props.license] || undefined)
+
 const licenseLabels: Record<PhotoLicense, string> = {
   unsplash: 'Unsplash License',
   pixabay: 'Pixabay License',
@@ -37,8 +45,8 @@ const licenseLabels: Record<PhotoLicense, string> = {
       <circle cx="8" cy="8.5" r="2.25" />
     </svg>
     <component
-      :is="creditUrl ? 'a' : 'span'"
-      v-bind="creditUrl ? { href: creditUrl, target: '_blank', rel: 'noopener noreferrer' } : {}"
+      :is="resolvedUrl ? 'a' : 'span'"
+      v-bind="resolvedUrl ? { href: resolvedUrl, target: '_blank', rel: 'noopener noreferrer' } : {}"
       class="hover:text-slate-300 transition-colors truncate"
     >
       {{ credit }}
