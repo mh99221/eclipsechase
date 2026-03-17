@@ -36,12 +36,6 @@ const heroPhoto = computed<SpotPhoto | null>(() =>
 
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
-defineOgImage({
-  title: spot.value.name,
-  subtitle: `${formatDuration(spot.value.totality_duration_seconds)} of totality in ${REGION_LABELS[spot.value.region] || spot.value.region}`,
-  label: 'Viewing Spot',
-})
-
 useHead({
   title: () => spot.value.name,
   meta: [

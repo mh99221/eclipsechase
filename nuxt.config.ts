@@ -9,19 +9,10 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase',
     '@nuxt/content',
     '@nuxtjs/sitemap',
-    'nuxt-og-image',
   ],
 
   site: {
     url: 'https://eclipsechase.is',
-  },
-
-  ogImage: {
-    zeroRuntime: false,
-    defaults: {
-      title: 'Find Clear Skies on Eclipse Day',
-      subtitle: 'Real-time weather tracking for the 2026 total solar eclipse in Iceland.',
-    },
   },
 
   app: {
