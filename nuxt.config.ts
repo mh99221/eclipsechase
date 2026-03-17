@@ -41,7 +41,6 @@ export default defineNuxtConfig({
         { property: 'og:title', content: 'EclipseChase.is — Find Clear Skies on Eclipse Day' },
         { property: 'og:description', content: 'Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland.' },
         { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: 'https://eclipsechase.is' },
         // Twitter
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: 'EclipseChase.is — Find Clear Skies on Eclipse Day' },
@@ -57,7 +56,6 @@ export default defineNuxtConfig({
           : []),
       ],
       link: [
-        { rel: 'canonical', href: 'https://eclipsechase.is' },
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'manifest', href: '/manifest.json' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
