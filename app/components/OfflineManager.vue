@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 const props = defineProps<{
   map: any
 }>()
@@ -112,16 +114,16 @@ function cancel() {
     <!-- Idle state -->
     <div v-if="!isDownloading && !isDone">
       <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">
-        Offline Maps
+        {{ t('offline.title') }}
       </p>
       <p class="text-sm text-slate-400 mb-3">
-        Download map tiles for western Iceland so you can navigate without signal on eclipse day.
+        {{ t('offline.description') }}
       </p>
       <button
         class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-corona/40 text-corona bg-corona/5 hover:bg-corona/10 transition-colors"
         @click="downloadTiles"
       >
-        Download (~{{ countTiles() }} tiles)
+        {{ t('offline.download', { count: countTiles() }) }}
       </button>
     </div>
 
@@ -129,13 +131,13 @@ function cancel() {
     <div v-else-if="isDownloading">
       <div class="flex items-center justify-between mb-2">
         <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-corona/70">
-          Downloading tiles...
+          {{ t('offline.downloading') }}
         </p>
         <button
           class="font-mono text-[10px] text-slate-500 hover:text-slate-300 transition-colors"
           @click="cancel"
         >
-          Cancel
+          {{ t('offline.cancel') }}
         </button>
       </div>
       <!-- Progress bar -->
@@ -146,7 +148,7 @@ function cancel() {
         />
       </div>
       <p class="font-mono text-xs text-slate-500">
-        {{ loadedTiles }} / {{ totalTiles }} tiles ({{ progress }}%)
+        {{ t('offline.tiles_progress', { loaded: loadedTiles, total: totalTiles, progress }) }}
       </p>
     </div>
 
@@ -157,11 +159,11 @@ function cancel() {
           <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
         </svg>
         <p class="text-sm text-green-400 font-mono">
-          Offline maps ready
+          {{ t('offline.done') }}
         </p>
       </div>
       <p class="text-xs text-slate-500 font-mono mt-1">
-        {{ loadedTiles }} tiles cached. Map will work without internet.
+        {{ t('offline.done_detail', { count: loadedTiles }) }}
       </p>
     </div>
   </div>

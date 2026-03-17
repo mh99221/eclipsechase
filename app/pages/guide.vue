@@ -55,7 +55,7 @@ useHead(() => ({
         to="/map"
         class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider"
       >
-        VIEW ON MAP
+        {{ t('nav.view_on_map') }}
       </NuxtLink>
     </nav>
 
@@ -70,7 +70,7 @@ useHead(() => ({
     <footer class="border-t border-void-border/30 py-8">
       <div class="section-container text-center">
         <NuxtLink to="/" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
-          &larr; Back to home
+          &larr; {{ t('nav.back_home') }}
         </NuxtLink>
       </div>
     </footer>

@@ -18,9 +18,9 @@ const restoreCenter = route.query.mlat && route.query.mlng
 const restoreZoom = route.query.mzoom ? parseFloat(route.query.mzoom as string) : null
 
 useHead({
-  title: 'Weather Map',
+  title: () => t('map.title'),
   meta: [
-    { name: 'description', content: 'Live weather conditions across western Iceland for the 2026 total solar eclipse.' },
+    { name: 'description', content: () => t('map.description') },
   ],
 })
 
@@ -492,7 +492,7 @@ onUnmounted(() => {
       />
       <template #fallback>
         <div class="absolute inset-0 flex items-center justify-center">
-          <p class="text-sm font-mono text-slate-500 animate-pulse">Loading map...</p>
+          <p class="text-sm font-mono text-slate-500 animate-pulse">{{ t('map.loading') }}</p>
         </div>
       </template>
     </ClientOnly>
@@ -524,7 +524,7 @@ onUnmounted(() => {
               aria-controls="profile-menu"
               @click="profileMenuOpen = !profileMenuOpen"
             >
-              {{ activeProfileName || 'Profile' }}
+              {{ activeProfileName || t('map.profile') }}
               <span class="ml-1 text-[10px]" aria-hidden="true">{{ profileMenuOpen ? '▲' : '▼' }}</span>
             </button>
             <div
@@ -549,7 +549,7 @@ onUnmounted(() => {
                 class="w-full text-left px-3 py-1.5 text-xs font-mono text-slate-500 hover:text-slate-300 border-t border-void-border/40 mt-1 pt-1.5 transition-colors"
                 @click="selectedProfile = null; profileMenuOpen = false"
               >
-                Clear profile
+                {{ t('map.clear_profile') }}
               </button>
             </div>
           </div>
@@ -566,7 +566,7 @@ onUnmounted(() => {
           : 'text-slate-400 bg-void-deep/90 border-void-border/50 hover:text-slate-200'"
         @click="showCameras = !showCameras"
       >
-        Cams {{ showCameras ? 'ON' : 'OFF' }}
+        {{ showCameras ? t('map.cams_on') : t('map.cams_off') }}
       </button>
       <button
         class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
@@ -575,13 +575,13 @@ onUnmounted(() => {
           : 'text-slate-400 bg-void-deep/90 border-void-border/50 hover:text-slate-200'"
         @click="showTraffic = !showTraffic"
       >
-        Roads {{ showTraffic ? 'ON' : 'OFF' }}
+        {{ showTraffic ? t('map.roads_on') : t('map.roads_off') }}
       </button>
     </div>
 
     <!-- Legend panel -->
     <div class="absolute bottom-20 sm:bottom-10 left-4 sm:left-6 z-10 bg-void-deep/90 backdrop-blur-sm border border-void-border/50 rounded px-3 py-2.5 sm:px-4 sm:py-3 max-h-[calc(100dvh-160px)] overflow-y-auto text-[11px] sm:text-xs">
-      <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2.5">Cloud Cover</p>
+      <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2.5">{{ t('map.cloud_cover') }}</p>
       <div class="flex flex-col gap-1 sm:gap-1.5">
         <div
           v-for="item in legendItems"
@@ -598,32 +598,32 @@ onUnmounted(() => {
           <span class="w-3.5 h-3.5 rounded-full border-2 border-corona bg-void-deep flex items-center justify-center shrink-0">
             <span class="w-1.5 h-1.5 rounded-full bg-corona" />
           </span>
-          <span class="text-xs font-mono text-slate-400">Viewing spot</span>
+          <span class="text-xs font-mono text-slate-400">{{ t('map.viewing_spot') }}</span>
         </div>
         <div class="flex items-center gap-2 mb-1">
           <span class="w-4 h-0 border-t border-dashed border-corona/40" />
-          <span class="text-xs font-mono text-slate-400">Totality path</span>
+          <span class="text-xs font-mono text-slate-400">{{ t('map.totality_path') }}</span>
         </div>
         <div class="flex items-center gap-2">
           <span class="w-4 h-0 border-t-2 border-corona-bright/60" />
-          <span class="text-xs font-mono text-slate-400">Centerline</span>
+          <span class="text-xs font-mono text-slate-400">{{ t('map.centerline') }}</span>
         </div>
       </div>
 
       <!-- Road conditions legend (shown when Roads ON) -->
       <div v-if="showTraffic" class="mt-3 pt-2.5 border-t border-void-border/40">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">Road Warnings</p>
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">{{ t('map.road_warnings') }}</p>
         <div class="flex items-center gap-2 mb-1">
           <span class="w-3 h-3 rounded-full border-2 border-orange-500 bg-void-deep shrink-0" />
-          <span class="text-xs font-mono text-slate-400">Hazard / repairs</span>
+          <span class="text-xs font-mono text-slate-400">{{ t('map.hazard') }}</span>
         </div>
         <div class="flex items-center gap-2 mb-1">
           <span class="w-3 h-3 rounded-full border-2 border-red-500 bg-void-deep shrink-0" />
-          <span class="text-xs font-mono text-slate-400">Closed</span>
+          <span class="text-xs font-mono text-slate-400">{{ t('map.closed') }}</span>
         </div>
         <div class="flex items-center gap-2">
           <span class="w-3 h-3 rounded-full border-2 border-gray-500 bg-void-deep shrink-0" />
-          <span class="text-xs font-mono text-slate-400">Other</span>
+          <span class="text-xs font-mono text-slate-400">{{ t('map.other') }}</span>
         </div>
       </div>
 
@@ -636,7 +636,7 @@ onUnmounted(() => {
               <circle cx="8" cy="8" r="2" fill="#7dd3fc" />
             </svg>
           </span>
-          <span class="text-xs font-mono text-slate-400">Road camera</span>
+          <span class="text-xs font-mono text-slate-400">{{ t('map.road_camera') }}</span>
         </div>
       </div>
     </div>

@@ -1,8 +1,10 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 useHead({
-  title: 'Go Pro',
+  title: () => t('pro.title'),
   meta: [
-    { name: 'description', content: 'Unlock the live weather map, personalized recommendations, and offline maps for the 2026 Iceland eclipse.' },
+    { name: 'description', content: () => t('pro.description') },
   ],
 })
 
@@ -15,7 +17,7 @@ const error = ref('')
 
 async function handleCheckout() {
   if (!email.value || !email.value.includes('@')) {
-    error.value = 'Please enter a valid email address.'
+    error.value = t('pro.email_invalid')
     return
   }
 
@@ -32,11 +34,11 @@ async function handleCheckout() {
       navigateTo(url, { external: true })
     }
     else {
-      error.value = 'Could not create checkout session. Please try again.'
+      error.value = t('pro.checkout_error')
     }
   }
   catch (err: any) {
-    error.value = err?.data?.statusMessage || 'Something went wrong. Please try again.'
+    error.value = err?.data?.statusMessage || t('pro.generic_error')
   }
   finally {
     isSubmitting.value = false
@@ -44,10 +46,10 @@ async function handleCheckout() {
 }
 
 const features = [
-  { label: 'Live Weather Map', description: 'Real-time cloud cover from 55 weather stations across western Iceland' },
-  { label: 'Personalized Recommendations', description: 'AI-powered spot scoring based on your viewing style and live conditions' },
-  { label: 'Offline Maps', description: 'Download map tiles for use without internet on eclipse day' },
-  { label: 'Road Conditions', description: 'Live road status overlay so you can plan your route safely' },
+  { label: t('pro.feature_map'), description: t('pro.feature_map_desc') },
+  { label: t('pro.feature_recs'), description: t('pro.feature_recs_desc') },
+  { label: t('pro.feature_offline'), description: t('pro.feature_offline_desc') },
+  { label: t('pro.feature_roads'), description: t('pro.feature_roads_desc') },
 ]
 </script>
 
@@ -69,7 +71,7 @@ const features = [
         to="/guide"
         class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider"
       >
-        GUIDE
+        {{ t('nav.guide') }}
       </NuxtLink>
     </nav>
 
@@ -80,19 +82,19 @@ const features = [
           v-if="cancelled"
           class="mb-8 px-4 py-3 rounded bg-amber-900/15 border border-amber-700/20 text-sm font-mono text-amber-400/80"
         >
-          Payment was cancelled. No worries — you can try again when you're ready.
+          {{ t('pro.cancelled') }}
         </div>
 
         <!-- Header -->
         <div class="mb-12">
           <span class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase">
-            Unlock Everything
+            {{ t('pro.unlock') }}
           </span>
           <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-2 mb-4">
-            EclipseChase Pro
+            {{ t('pro.heading') }}
           </h1>
           <p class="text-base sm:text-lg text-slate-400 max-w-xl">
-            One payment. Full access. Everything you need to find clear skies on August 12, 2026.
+            {{ t('pro.subtitle') }}
           </p>
         </div>
 
@@ -131,7 +133,7 @@ const features = [
               &euro;9.99
             </div>
             <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mt-3">
-              One-time payment &middot; No subscription
+              {{ t('pro.price') }}
             </p>
           </div>
 
@@ -142,7 +144,7 @@ const features = [
               id="pro-email"
               v-model="email"
               type="email"
-              placeholder="you@example.com"
+              :placeholder="t('pro.email_placeholder')"
               required
               class="w-full px-4 py-3 rounded bg-void border border-void-border text-white placeholder-slate-600 font-mono text-sm focus:outline-none focus:border-corona/50 transition-colors"
               @keydown.enter="handleCheckout"
@@ -165,13 +167,13 @@ const features = [
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
-              <span>Processing...</span>
+              <span>{{ t('pro.processing') }}</span>
             </span>
-            <span v-else>Get Pro Access</span>
+            <span v-else>{{ t('pro.get_access') }}</span>
           </button>
 
           <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-600 mt-4">
-            Secure payment via Stripe
+            {{ t('pro.stripe_note') }}
           </p>
         </div>
       </div>
@@ -181,7 +183,7 @@ const features = [
     <footer class="border-t border-void-border/30 py-8">
       <div class="section-container text-center">
         <NuxtLink to="/" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
-          &larr; Back to home
+          &larr; {{ t('nav.back_home') }}
         </NuxtLink>
       </div>
     </footer>

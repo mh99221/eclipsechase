@@ -2,6 +2,7 @@
 import { formatDuration, REGION_LABELS, SPOT_TYPE_LABELS } from '~/utils/eclipse'
 import type { SpotPhoto } from '~/types/spots'
 
+const { t } = useI18n()
 const route = useRoute()
 const slug = route.params.slug as string
 
@@ -113,7 +114,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
         </span>
       </NuxtLink>
       <NuxtLink :to="`/map?spot=${slug}`" class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider">
-        VIEW ON MAP
+        {{ t('nav.view_on_map') }}
       </NuxtLink>
     </nav>
 
@@ -121,7 +122,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
     <article class="section-container max-w-3xl py-8 sm:py-16">
       <!-- Breadcrumb -->
       <div class="flex items-center gap-2 text-xs font-mono text-slate-500 mb-8">
-        <NuxtLink to="/map" class="hover:text-slate-300 transition-colors">Map</NuxtLink>
+        <NuxtLink to="/map" class="hover:text-slate-300 transition-colors">{{ t('nav.map') }}</NuxtLink>
         <span>/</span>
         <span class="text-slate-400">{{ spot.name }}</span>
       </div>
@@ -149,25 +150,25 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
       <!-- Key stats -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
         <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">Totality</p>
+          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">{{ t('spot.totality') }}</p>
           <p class="font-display text-2xl font-bold text-white">
             {{ formatDuration(spot.totality_duration_seconds) }}
           </p>
         </div>
         <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">Sun altitude</p>
+          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">{{ t('spot.sun_altitude') }}</p>
           <p class="font-display text-2xl font-bold text-white">
             {{ spot.sun_altitude }}°
           </p>
         </div>
         <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">Services</p>
+          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">{{ t('spot.services') }}</p>
           <p class="font-display text-lg font-semibold" :class="spot.has_services ? 'text-green-400' : 'text-slate-500'">
-            {{ spot.has_services ? 'Available' : 'None nearby' }}
+            {{ spot.has_services ? t('spot.available') : t('spot.none_nearby') }}
           </p>
         </div>
         <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">Cell coverage</p>
+          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">{{ t('spot.cell_coverage') }}</p>
           <p class="font-display text-lg font-semibold" :class="coverageBadge[spot.cell_coverage]?.color || 'text-slate-400'">
             {{ coverageBadge[spot.cell_coverage]?.label || spot.cell_coverage }}
           </p>
@@ -180,7 +181,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
           <svg class="w-5 h-5 text-corona/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
           </svg>
-          Trail Info
+          {{ t('spot.trail_info') }}
           <span
             v-if="spot.difficulty && difficultyBadge[spot.difficulty]"
             class="ml-2 text-[10px] font-mono tracking-wider px-2 py-0.5 rounded border"
@@ -192,26 +193,26 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
           <div v-if="spot.spot_type">
-            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">Type</p>
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">{{ t('spot.type') }}</p>
             <p class="text-sm font-mono text-slate-300">{{ SPOT_TYPE_LABELS[spot.spot_type] || spot.spot_type }}</p>
           </div>
           <div v-if="spot.trail_distance_km">
-            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">Distance</p>
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">{{ t('spot.distance') }}</p>
             <p class="text-sm font-mono text-slate-300">{{ spot.trail_distance_km }} km</p>
           </div>
           <div v-if="spot.trail_time_minutes">
-            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">Est. time</p>
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">{{ t('spot.est_time') }}</p>
             <p class="text-sm font-mono text-slate-300">{{ spot.trail_time_minutes < 60 ? `${spot.trail_time_minutes} min` : `${Math.floor(spot.trail_time_minutes / 60)}h ${spot.trail_time_minutes % 60}min` }}</p>
           </div>
           <div v-if="spot.elevation_gain_m">
-            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">Elevation gain</p>
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">{{ t('spot.elevation_gain') }}</p>
             <p class="text-sm font-mono text-slate-300">{{ spot.elevation_gain_m }} m</p>
           </div>
         </div>
 
         <!-- Trailhead coordinates -->
         <div v-if="spot.trailhead_lat && spot.trailhead_lng" class="pt-3 border-t border-void-border/30">
-          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1.5">Trailhead</p>
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1.5">{{ t('spot.trailhead') }}</p>
           <p class="font-mono text-sm text-slate-400">
             {{ spot.trailhead_lat.toFixed(4) }}°N, {{ Math.abs(spot.trailhead_lng).toFixed(4) }}°W
           </p>
@@ -221,7 +222,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
             rel="noopener"
             class="inline-flex items-center gap-1.5 mt-1.5 text-sm text-corona hover:text-corona-bright transition-colors"
           >
-            Navigate to trailhead
+            {{ t('spot.navigate_trailhead') }}
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
@@ -230,7 +231,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
 
         <!-- Timing warning -->
         <div class="mt-4 px-3 py-2.5 rounded bg-amber-900/15 border border-amber-700/20 text-xs font-mono text-amber-400/80">
-          Totality begins around 17:45 UTC — plan to arrive at the viewing point well before then.
+          {{ t('spot.timing_warning') }}
         </div>
       </div>
 
@@ -241,7 +242,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
             <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h.01M12 7h.01M16 7h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Parking
+            {{ t('spot.parking') }}
           </h2>
           <p class="text-slate-300 text-base leading-relaxed">{{ spot.parking_info }}</p>
         </section>
@@ -251,7 +252,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
             <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
             </svg>
-            Terrain
+            {{ t('spot.terrain') }}
           </h2>
           <p class="text-slate-300 text-base leading-relaxed">{{ spot.terrain_notes }}</p>
         </section>
@@ -263,7 +264,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            Location
+            {{ t('spot.location') }}
           </h2>
           <p class="font-mono text-sm text-slate-400">
             {{ spot.lat.toFixed(4) }}°N, {{ Math.abs(spot.lng).toFixed(4) }}°W
@@ -274,7 +275,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
             rel="noopener"
             class="inline-flex items-center gap-1.5 mt-2 text-sm text-corona hover:text-corona-bright transition-colors"
           >
-            Open in Google Maps
+            {{ t('spot.open_gmaps') }}
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
@@ -287,7 +288,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
     <footer class="border-t border-void-border/30 py-8">
       <div class="section-container text-center">
         <NuxtLink :to="backToMapUrl" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
-          &larr; Back to map
+          &larr; {{ t('nav.back_map') }}
         </NuxtLink>
       </div>
     </footer>
