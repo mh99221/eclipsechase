@@ -20,6 +20,7 @@
     "mapbox-gl": "^3.20.0",
     "nuxt": "^4.4.2",
     "nuxt-og-image": "^6.0.1",
+    "resend": "^6.9.4",
     "satori": "^0.25.0",
     "stripe": "^20.4.1",
     "vue": "^3.5.30",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@types/mapbox-gl": "^3.4.1",
-    "@types/xml2js": "^0.4.14"
+    "@types/xml2js": "^0.4.14",
+    "sharp": "^0.34.5"
   }
 }

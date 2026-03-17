@@ -97,6 +97,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     stripeSecretKey: '',
     stripeWebhookSecret: '',
+    resendApiKey: '',
     public: {
       siteUrl: 'https://eclipsechase.is',
       mapboxToken: '',

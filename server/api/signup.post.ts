@@ -1,4 +1,5 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
+import { sendWelcomeEmail } from '../utils/email'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -21,6 +22,13 @@ export default defineEventHandler(async (event) => {
 
   const supabase = await serverSupabaseServiceRole(event)
 
+  // Check if already signed up (don't re-send welcome email)
+  const { data: existing } = await supabase
+    .from('email_signups')
+    .select('email')
+    .eq('email', email)
+    .maybeSingle()
+
   const { error } = await supabase
     .from('email_signups')
     .upsert(
@@ -34,6 +42,11 @@ export default defineEventHandler(async (event) => {
       statusCode: 500,
       message: 'Failed to save signup. Please try again.',
     })
+  }
+
+  // Send welcome email only for new signups (not re-submissions)
+  if (!existing) {
+    sendWelcomeEmail(email)
   }
 
   return { success: true }
