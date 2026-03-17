@@ -119,6 +119,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
     </nav>
 
     <!-- Content -->
+    <main>
     <article class="section-container max-w-3xl py-8 sm:py-16">
       <!-- Breadcrumb -->
       <div class="flex items-center gap-2 text-xs font-mono text-slate-500 mb-8">
@@ -150,25 +151,25 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
       <!-- Key stats -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
         <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">{{ t('spot.totality') }}</p>
+          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.totality') }}</p>
           <p class="font-display text-2xl font-bold text-white">
             {{ formatDuration(spot.totality_duration_seconds) }}
           </p>
         </div>
         <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">{{ t('spot.sun_altitude') }}</p>
+          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.sun_altitude') }}</p>
           <p class="font-display text-2xl font-bold text-white">
             {{ spot.sun_altitude }}°
           </p>
         </div>
         <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">{{ t('spot.services') }}</p>
+          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.services') }}</p>
           <p class="font-display text-lg font-semibold" :class="spot.has_services ? 'text-green-400' : 'text-slate-500'">
             {{ spot.has_services ? t('spot.available') : t('spot.none_nearby') }}
           </p>
         </div>
         <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">{{ t('spot.cell_coverage') }}</p>
+          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.cell_coverage') }}</p>
           <p class="font-display text-lg font-semibold" :class="coverageBadge[spot.cell_coverage]?.color || 'text-slate-400'">
             {{ coverageBadge[spot.cell_coverage]?.label || spot.cell_coverage }}
           </p>
@@ -212,7 +213,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
 
         <!-- Trailhead coordinates -->
         <div v-if="spot.trailhead_lat && spot.trailhead_lng" class="pt-3 border-t border-void-border/30">
-          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1.5">{{ t('spot.trailhead') }}</p>
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-400 mb-1.5">{{ t('spot.trailhead') }}</p>
           <p class="font-mono text-sm text-slate-400">
             {{ spot.trailhead_lat.toFixed(4) }}°N, {{ Math.abs(spot.trailhead_lng).toFixed(4) }}°W
           </p>
@@ -283,6 +284,7 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
         </section>
       </div>
     </article>
+    </main>
 
     <!-- Footer -->
     <footer class="border-t border-void-border/30 py-8">

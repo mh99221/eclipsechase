@@ -143,6 +143,7 @@ const features = computed(() => [
   <div class="relative noise">
     <Starfield />
 
+    <main>
     <!-- ═══════════════════════════════════════════ -->
     <!-- HERO -->
     <!-- ═══════════════════════════════════════════ -->
@@ -325,6 +326,8 @@ const features = computed(() => [
     </section>
 
     <!-- ═══════════════════════════════════════════ -->
+    </main>
+
     <!-- FOOTER -->
     <!-- ═══════════════════════════════════════════ -->
     <footer class="border-t border-void-border/30 py-12">
