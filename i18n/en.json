@@ -122,6 +122,8 @@
     "closed": "Closed",
     "other": "Other",
     "road_camera": "Road camera",
+    "map_legend": "Map Legend",
+    "viewer_profile": "Viewer Profile",
     "click_details": "Click for details",
     "click_enlarge": "Click image to enlarge",
     "close": "Close"
