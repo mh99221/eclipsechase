@@ -472,6 +472,64 @@ onUnmounted(() => {
   removeTrafficMarkers()
   removeCameraMarkers()
 })
+
+// ─── Mobile Peek Sheet ───
+const sheetSnapPoints = [64, 400] // peek (controls visible), full (legend visible)
+const sheetHeight = ref(sheetSnapPoints[0])
+const sheetDragging = ref(false)
+const sheetStartY = ref(0)
+const sheetStartHeight = ref(0)
+
+function sheetTouchStart(e: TouchEvent) {
+  sheetDragging.value = true
+  sheetStartY.value = e.touches[0].clientY
+  sheetStartHeight.value = sheetHeight.value
+}
+function sheetTouchMove(e: TouchEvent) {
+  if (!sheetDragging.value) return
+  const dy = sheetStartY.value - e.touches[0].clientY
+  sheetHeight.value = Math.max(sheetSnapPoints[0], Math.min(sheetSnapPoints[1] + 40, sheetStartHeight.value + dy))
+}
+function sheetTouchEnd() {
+  sheetDragging.value = false
+  const mid = (sheetSnapPoints[0] + sheetSnapPoints[1]) / 2
+  sheetHeight.value = sheetHeight.value > mid ? sheetSnapPoints[1] : sheetSnapPoints[0]
+}
+
+// End drag even if finger moves off the handle element
+onMounted(() => {
+  document.addEventListener('touchend', sheetTouchEnd)
+  document.addEventListener('touchcancel', sheetTouchEnd)
+})
+onUnmounted(() => {
+  document.removeEventListener('touchend', sheetTouchEnd)
+  document.removeEventListener('touchcancel', sheetTouchEnd)
+})
+function sheetToggle() {
+  sheetHeight.value = sheetHeight.value <= sheetSnapPoints[0] ? sheetSnapPoints[1] : sheetSnapPoints[0]
+}
+
+const profileIds = PROFILES.map(p => p.id)
+
+function cycleProfile() {
+  const idx = selectedProfile.value ? profileIds.indexOf(selectedProfile.value) : -1
+  if (idx < profileIds.length - 1) {
+    selectedProfile.value = profileIds[idx + 1]
+    if (selectedProfile.value) requestGps()
+  } else {
+    selectedProfile.value = null
+  }
+}
+
+// Profile icons for mobile sheet
+const PROFILE_ICON_DEFAULT = 'M8 4a2 2 0 110 4 2 2 0 010-4zm-4 8c0-1.5 1.8-3 4-3s4 1.5 4 3v1H4v-1z'
+const profileIcons: Record<ProfileId, string> = {
+  photographer: 'M3 5h2l1-2h4l1 2h2a1 1 0 011 1v6a1 1 0 01-1 1H3a1 1 0 01-1-1V6a1 1 0 011-1zm5 7a3 3 0 100-6 3 3 0 000 6z',
+  family: 'M9 5a2 2 0 11-4 0 2 2 0 014 0zm3 1a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM7 9c-2.2 0-4 1-4 2.5V13h8v-1.5C11 10 9.2 9 7 9zm4.5.5c-0.6 0-1.2.2-1.7.5.8.6 1.2 1.4 1.2 2.5V13H14v-1c0-1.2-1.1-2.5-2.5-2.5z',
+  hiker: 'M7 3a2 2 0 110 4 2 2 0 010-4zm2 5H5l-1 5h1.5l.5-3 1.5 3h1.5l1.5-3 .5 3H13l-1-5h-3zm-5 6l-1 2h1l1-2H4zm6 0l1 2h1l-1-2h-1z',
+  skychaser: 'M8 2l1.5 3.5L13 7l-3.5 1.5L8 12l-1.5-3.5L3 7l3.5-1.5L8 2z',
+  firsttimer: 'M8 2a6 6 0 100 12A6 6 0 008 2zm0 2a1.5 1.5 0 011.5 1.5c0 .5-.2.9-.5 1.2-.3.3-.5.5-.5 1.1H6.5c0-1 .4-1.4.7-1.7.2-.2.3-.4.3-.6A.5.5 0 007 5.5 1.5 1.5 0 018 4zm-.5 7h1v1h-1v-1z',
+}
 </script>
 
 <template>
@@ -511,8 +569,8 @@ onUnmounted(() => {
           </span>
         </NuxtLink>
 
-        <div class="pointer-events-auto flex items-center gap-3">
-          <!-- Profile selector -->
+        <!-- Desktop profile selector (hidden on mobile — moved to bottom sheet) -->
+        <div class="pointer-events-auto hidden sm:flex items-center gap-3">
           <div class="relative" @click.stop>
             <button
               class="text-xs font-mono tracking-wider px-2.5 py-1.5 rounded transition-all"
@@ -557,8 +615,8 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Map layer toggles -->
-    <div class="absolute bottom-20 sm:bottom-6 right-16 sm:right-20 z-10 flex gap-2">
+    <!-- ═══ Desktop: layer toggles + legend (hidden on mobile) ═══ -->
+    <div class="hidden sm:flex absolute bottom-6 right-20 z-10 gap-2">
       <button
         class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
         :class="showCameras
@@ -579,20 +637,14 @@ onUnmounted(() => {
       </button>
     </div>
 
-    <!-- Legend panel -->
-    <div class="absolute bottom-20 sm:bottom-10 left-4 sm:left-6 z-10 bg-void-deep/90 backdrop-blur-sm border border-void-border/50 rounded px-3 py-2.5 sm:px-4 sm:py-3 max-h-[calc(100dvh-160px)] overflow-y-auto text-[11px] sm:text-xs">
+    <div class="hidden sm:block absolute bottom-10 left-6 z-10 bg-void-deep/90 backdrop-blur-sm border border-void-border/50 rounded px-4 py-3 max-h-[calc(100dvh-160px)] overflow-y-auto text-xs">
       <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2.5">{{ t('map.cloud_cover') }}</p>
-      <div class="flex flex-col gap-1 sm:gap-1.5">
-        <div
-          v-for="item in legendItems"
-          :key="item.label"
-          class="flex items-center gap-2"
-        >
+      <div class="flex flex-col gap-1.5">
+        <div v-for="item in legendItems" :key="item.label" class="flex items-center gap-2">
           <WeatherIcon :cloud-cover="item.cloudCover" :size="20" class="shrink-0" />
           <span class="text-xs font-mono text-slate-400">{{ item.label }}</span>
         </div>
       </div>
-
       <div class="mt-3 pt-2.5 border-t border-void-border/40">
         <div class="flex items-center gap-2 mb-1">
           <span class="w-3.5 h-3.5 rounded-full border-2 border-corona bg-void-deep flex items-center justify-center shrink-0">
@@ -609,8 +661,6 @@ onUnmounted(() => {
           <span class="text-xs font-mono text-slate-400">{{ t('map.centerline') }}</span>
         </div>
       </div>
-
-      <!-- Road conditions legend (shown when Roads ON) -->
       <div v-if="showTraffic" class="mt-3 pt-2.5 border-t border-void-border/40">
         <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">{{ t('map.road_warnings') }}</p>
         <div class="flex items-center gap-2 mb-1">
@@ -626,8 +676,6 @@ onUnmounted(() => {
           <span class="text-xs font-mono text-slate-400">{{ t('map.other') }}</span>
         </div>
       </div>
-
-      <!-- Camera legend (shown when Cams ON) -->
       <div v-if="showCameras" class="mt-3 pt-2.5 border-t border-void-border/40">
         <div class="flex items-center gap-2">
           <span class="w-4 h-4 rounded-full border-2 border-ice bg-void-deep flex items-center justify-center shrink-0">
@@ -637,6 +685,145 @@ onUnmounted(() => {
             </svg>
           </span>
           <span class="text-xs font-mono text-slate-400">{{ t('map.road_camera') }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Mobile: Peek Sheet (bottom drawer with pull-up) ═══ -->
+    <div
+      class="sm:hidden absolute left-0 right-0 bottom-0 z-10"
+      :style="{ height: sheetHeight + 'px' }"
+      :class="sheetDragging ? '' : 'transition-[height] duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]'"
+    >
+      <div class="h-full bg-void-deep/95 backdrop-blur-md border-t border-void-border/40 rounded-t-xl flex flex-col overflow-hidden">
+        <!-- Drag handle -->
+        <div
+          class="flex flex-col items-center pt-2 pb-1 cursor-grab active:cursor-grabbing shrink-0"
+          @touchstart="sheetTouchStart"
+          @touchmove.prevent="sheetTouchMove"
+          @click="sheetToggle"
+        >
+          <div class="w-10 h-1 rounded-full bg-slate-600/60" />
+        </div>
+
+        <!-- Always-visible controls row: Profile (left) + Cams/Roads (right) -->
+        <div class="flex items-center gap-2 px-3 pb-2 shrink-0">
+          <!-- Profile cycle button -->
+          <button
+            class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded border font-mono text-[11px] tracking-wider transition-all"
+            :class="selectedProfile
+              ? 'border-corona/30 bg-corona/8 text-corona'
+              : 'border-void-border/30 bg-void/40 text-slate-500'"
+            @click="cycleProfile"
+          >
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <path :d="selectedProfile ? profileIcons[selectedProfile] : PROFILE_ICON_DEFAULT" :fill="selectedProfile ? '#f59e0b' : '#475569'" />
+            </svg>
+            {{ activeProfileName || t('map.profile') }}
+          </button>
+          <!-- Cams toggle -->
+          <button
+            class="flex items-center justify-center gap-1.5 py-2 px-3 rounded border font-mono text-[11px] tracking-wider transition-all"
+            :class="showCameras
+              ? 'border-ice/30 bg-ice/8 text-ice'
+              : 'border-void-border/30 bg-void/40 text-slate-500'"
+            @click="showCameras = !showCameras"
+          >
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" :stroke="showCameras ? '#7dd3fc' : '#475569'" stroke-width="1.5" fill="none" /><circle cx="8" cy="8" r="2" :fill="showCameras ? '#7dd3fc' : '#475569'" /></svg>
+            {{ showCameras ? t('map.cams_on') : t('map.cams_off') }}
+          </button>
+          <!-- Roads toggle -->
+          <button
+            class="flex items-center justify-center gap-1.5 py-2 px-3 rounded border font-mono text-[11px] tracking-wider transition-all"
+            :class="showTraffic
+              ? 'border-corona/30 bg-corona/8 text-corona'
+              : 'border-void-border/30 bg-void/40 text-slate-500'"
+            @click="showTraffic = !showTraffic"
+          >
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 1L15 14H1L8 1Z" :stroke="showTraffic ? '#f59e0b' : '#475569'" stroke-width="1.5" fill="none" /></svg>
+            {{ showTraffic ? t('map.roads_on') : t('map.roads_off') }}
+          </button>
+        </div>
+
+        <!-- Expanded content (visible when pulled up) -->
+        <div v-show="sheetHeight > sheetSnapPoints[0] + 20" class="flex-1 overflow-y-auto px-4 pb-4 border-t border-void-border/30 pt-3">
+          <!-- Profile selector (full chip list) -->
+          <div class="mb-3 pb-3 border-b border-void-border/30">
+            <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">{{ t('map.viewer_profile') }}</p>
+            <div class="flex flex-wrap gap-1.5">
+              <button
+                v-for="profile in PROFILES"
+                :key="profile.id"
+                class="flex items-center gap-1.5 px-2.5 py-1.5 rounded border font-mono text-[11px] transition-all"
+                :class="selectedProfile === profile.id
+                  ? 'border-corona/40 bg-corona/10 text-corona'
+                  : 'border-void-border/30 bg-void/40 text-slate-500'"
+                @click="selectedProfile = selectedProfile === profile.id ? null : profile.id as ProfileId; if (selectedProfile) requestGps()"
+              >
+                <svg width="12" height="12" viewBox="0 0 16 16" class="shrink-0">
+                  <path :d="profileIcons[profile.id]" :fill="selectedProfile === profile.id ? '#f59e0b' : '#475569'" />
+                </svg>
+                {{ profile.name }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Two-column layout: Cloud cover (left) + Map legend (right) -->
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Left column: Cloud cover -->
+            <div>
+              <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2.5">{{ t('map.cloud_cover') }}</p>
+              <div class="flex flex-col gap-1.5">
+                <div v-for="item in legendItems" :key="item.label" class="flex items-center gap-2">
+                  <WeatherIcon :cloud-cover="item.cloudCover" :size="18" class="shrink-0" />
+                  <span class="text-[11px] font-mono text-slate-400">{{ item.label }}</span>
+                </div>
+              </div>
+            </div>
+            <!-- Right column: Map legend -->
+            <div>
+              <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2.5">{{ t('map.map_legend') }}</p>
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full border-2 border-corona bg-void-deep shrink-0" />
+                  <span class="text-[11px] font-mono text-slate-400">{{ t('map.viewing_spot') }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="w-4 h-0 border-t border-dashed border-corona/40" />
+                  <span class="text-[11px] font-mono text-slate-400">{{ t('map.totality_path') }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="w-4 h-0 border-t-2 border-corona-bright/60" />
+                  <span class="text-[11px] font-mono text-slate-400">{{ t('map.centerline') }}</span>
+                </div>
+                <!-- Conditional: road warnings -->
+                <template v-if="showTraffic">
+                  <div class="mt-1.5 pt-1.5 border-t border-void-border/30">
+                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">{{ t('map.road_warnings') }}</p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full border-2 border-orange-500 bg-void-deep shrink-0" />
+                    <span class="text-[11px] font-mono text-slate-400">{{ t('map.hazard') }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full border-2 border-red-500 bg-void-deep shrink-0" />
+                    <span class="text-[11px] font-mono text-slate-400">{{ t('map.closed') }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full border-2 border-gray-500 bg-void-deep shrink-0" />
+                    <span class="text-[11px] font-mono text-slate-400">{{ t('map.other') }}</span>
+                  </div>
+                </template>
+                <!-- Conditional: camera -->
+                <div v-if="showCameras" class="flex items-center gap-2" :class="{ 'mt-1.5 pt-1.5 border-t border-void-border/30': !showTraffic }">
+                  <span class="w-3.5 h-3.5 rounded-full border-2 border-ice bg-void-deep flex items-center justify-center shrink-0">
+                    <svg width="7" height="7" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" stroke="#7dd3fc" stroke-width="1.5" fill="none" /><circle cx="8" cy="8" r="2" fill="#7dd3fc" /></svg>
+                  </span>
+                  <span class="text-[11px] font-mono text-slate-400">{{ t('map.road_camera') }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

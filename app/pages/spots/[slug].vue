@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { formatDuration, REGION_LABELS, SPOT_TYPE_LABELS } from '~/utils/eclipse'
 import type { SpotPhoto } from '~/types/spots'
+import type { HorizonCheck, HorizonProfileData } from '~/types/horizon'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -91,6 +92,35 @@ const difficultyBadge: Record<string, { label: string; color: string }> = {
 }
 
 const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 'drive-up')
+
+// Parse horizon_check JSONB
+const horizonCheck = computed<HorizonCheck | null>(() => {
+  const raw = spot.value.horizon_check
+  if (!raw) return null
+  if (typeof raw === 'string') {
+    try { return JSON.parse(raw) } catch { return null }
+  }
+  return raw as HorizonCheck
+})
+
+const horizonProfileData = computed<HorizonProfileData | null>(() => {
+  const hc = horizonCheck.value
+  if (!hc?.sweep?.length) return null
+  return {
+    sun_azimuth: hc.sun_azimuth,
+    sun_altitude: hc.sun_altitude,
+    sweep: hc.sweep,
+    verdict: hc.verdict,
+    clearance_degrees: hc.clearance_degrees,
+  }
+})
+
+// Compass direction from azimuth
+function compassDirection(azimuth: number): string {
+  const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
+  const index = Math.round(azimuth / 22.5) % 16
+  return dirs[index]!
+}
 </script>
 
 <template>
@@ -170,6 +200,14 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
         </div>
       </div>
 
+      <!-- Horizon Check Badge -->
+      <div v-if="horizonCheck" class="mb-12">
+        <HorizonBadge
+          :verdict="horizonCheck.verdict"
+          :clearance="horizonCheck.clearance_degrees"
+        />
+      </div>
+
       <!-- Trail info (hiking spots only) -->
       <div v-if="isTrail" class="mb-12 bg-void-surface border border-void-border/40 rounded-lg p-5 sm:p-6">
         <h2 class="font-display text-lg font-semibold text-white mb-4 flex items-center gap-2">
@@ -229,6 +267,42 @@ const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 
           {{ t('spot.timing_warning') }}
         </div>
       </div>
+
+      <!-- Horizon View -->
+      <section v-if="horizonProfileData" class="mb-12">
+        <h2 class="font-display text-xl font-semibold text-white mb-3 flex items-center gap-2">
+          <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15l5.12-5.12A3 3 0 0110.24 9H13a2 2 0 012 2v.76a3 3 0 01-.88 2.12L9 19" />
+          </svg>
+          {{ t('horizon.section_title') }}
+        </h2>
+        <p class="text-sm text-slate-400 mb-4">
+          {{ t('horizon.sun_position', { altitude: horizonCheck!.sun_altitude.toFixed(0), direction: compassDirection(horizonCheck!.sun_azimuth) }) }}
+        </p>
+
+        <!-- Blocked warning banner -->
+        <div
+          v-if="horizonCheck!.verdict === 'blocked'"
+          class="mb-4 px-4 py-3 rounded bg-red-900/20 border border-red-700/30 text-sm text-red-400"
+        >
+          {{ t('horizon.blocked_warning', {
+            height: horizonCheck!.blocking_elevation_m ?? '?',
+            distance: horizonCheck!.blocking_distance_m ?? '?',
+          }) }}
+        </div>
+
+        <HorizonProfile :data="horizonProfileData" />
+
+        <div class="mt-4">
+          <PeakFinderLink
+            :lat="spot.lat"
+            :lng="spot.lng"
+            :elevation="horizonCheck!.observer_elevation_m"
+            :sun-azimuth="horizonCheck!.sun_azimuth"
+            :spot-name="spot.name"
+          />
+        </div>
+      </section>
 
       <!-- Details -->
       <div class="space-y-8">
