@@ -9,12 +9,13 @@ export interface Profile {
   id: ProfileId
   name: string
   descriptionKey: string
-  weights: { weather: number; duration: number; services: number; accessibility: number; distance: number }
+  weights: { weather: number; duration: number; services: number; accessibility: number; distance: number; horizon: number }
   floors: {
     hasServices?: boolean
     cellCoverageNot?: string
     difficultyNot?: string
     spotTypeNot?: string
+    horizonBlocked?: boolean
   }
   invertAccessibility?: boolean
 }
@@ -24,37 +25,37 @@ export const PROFILES: Profile[] = [
     id: 'photographer',
     name: 'Photographer',
     descriptionKey: 'recommend.profiles.photographer',
-    weights: { weather: 0.35, duration: 0.35, services: 0.05, accessibility: 0.10, distance: 0.15 },
-    floors: {},
+    weights: { weather: 0.2625, duration: 0.2625, services: 0.0375, accessibility: 0.075, distance: 0.1125, horizon: 0.25 },
+    floors: { horizonBlocked: true },
   },
   {
     id: 'family',
     name: 'Family',
     descriptionKey: 'recommend.profiles.family',
-    weights: { weather: 0.25, duration: 0.10, services: 0.30, accessibility: 0.25, distance: 0.10 },
-    floors: { hasServices: true, cellCoverageNot: 'none', difficultyNot: 'challenging' },
+    weights: { weather: 0.1875, duration: 0.075, services: 0.225, accessibility: 0.1875, distance: 0.075, horizon: 0.25 },
+    floors: { hasServices: true, cellCoverageNot: 'none', difficultyNot: 'challenging', horizonBlocked: true },
   },
   {
     id: 'hiker',
     name: 'Hiker',
     descriptionKey: 'recommend.profiles.hiker',
-    weights: { weather: 0.25, duration: 0.20, services: 0.05, accessibility: 0.35, distance: 0.15 },
-    floors: { spotTypeNot: 'drive-up' },
+    weights: { weather: 0.1875, duration: 0.15, services: 0.0375, accessibility: 0.2625, distance: 0.1125, horizon: 0.25 },
+    floors: { spotTypeNot: 'drive-up', horizonBlocked: true },
     invertAccessibility: true,
   },
   {
     id: 'skychaser',
     name: 'Sky Chaser',
     descriptionKey: 'recommend.profiles.skychaser',
-    weights: { weather: 0.50, duration: 0.15, services: 0.05, accessibility: 0.05, distance: 0.25 },
-    floors: {},
+    weights: { weather: 0.375, duration: 0.1125, services: 0.0375, accessibility: 0.0375, distance: 0.1875, horizon: 0.25 },
+    floors: { horizonBlocked: true },
   },
   {
     id: 'firsttimer',
     name: 'First-Timer',
     descriptionKey: 'recommend.profiles.firsttimer',
-    weights: { weather: 0.30, duration: 0.15, services: 0.20, accessibility: 0.20, distance: 0.15 },
-    floors: { difficultyNot: 'challenging' },
+    weights: { weather: 0.225, duration: 0.1125, services: 0.15, accessibility: 0.15, distance: 0.1125, horizon: 0.25 },
+    floors: { difficultyNot: 'challenging', horizonBlocked: true },
   },
 ]
 
@@ -102,13 +103,24 @@ const CELL_COVERAGE_SCORES: Record<string, number> = {
   none: 0.0,
 }
 
+function computeHorizonScore(horizonCheck: any): number {
+  if (!horizonCheck?.verdict) return 0.5
+  switch (horizonCheck.verdict) {
+    case 'clear': return 1.0
+    case 'marginal': return 0.7
+    case 'risky': return 0.3
+    case 'blocked': return 0.0
+    default: return 0.5
+  }
+}
+
 // --- Main composable ---
 
 export interface RankedSpot {
   spot: any
   score: number // 0-100, or -1 when no profile selected
   filtered: boolean
-  factors: { weather: number; duration: number; services: number; accessibility: number; distance: number }
+  factors: { weather: number; duration: number; services: number; accessibility: number; distance: number; horizon: number }
   distanceKm: number
   weatherStatus: string | null
   cloudCover: number | null
@@ -124,7 +136,7 @@ export function useRecommendation(
   userCoords: Ref<[number, number]>,
   profileId: Ref<ProfileId | null>,
 ) {
-  const emptyFactors = { weather: 0, duration: 0, services: 0, accessibility: 0, distance: 0 }
+  const emptyFactors = { weather: 0, duration: 0, services: 0, accessibility: 0, distance: 0, horizon: 0 }
 
   const ranked = computed<RankedSpot[]>(() => {
     if (!spots.value?.length) return []
@@ -150,6 +162,7 @@ export function useRecommendation(
     }
     const stationList = stations.value || []
     const allWeatherMissing = stationList.length === 0 || weatherByStation.size === 0
+    const allHorizonMissing = allSpots.every(s => !s.horizon_check?.verdict)
 
     return allSpots.map((spot) => {
       // Floor checks
@@ -159,6 +172,7 @@ export function useRecommendation(
       if (floors.cellCoverageNot && spot.cell_coverage === floors.cellCoverageNot) filtered = true
       if (floors.difficultyNot && spot.difficulty === floors.difficultyNot) filtered = true
       if (floors.spotTypeNot && spot.spot_type === floors.spotTypeNot) filtered = true
+      if (floors.horizonBlocked && spot.horizon_check?.verdict === 'blocked') filtered = true
 
       if (filtered) {
         return { spot, score: 0, filtered: true, factors: { ...emptyFactors }, distanceKm: 0, weatherStatus: null, cloudCover: null }
@@ -176,27 +190,38 @@ export function useRecommendation(
       const distKm = haversineKm(userCoords.value[0], userCoords.value[1], spot.lat, spot.lng)
       const distanceFactor = Math.max(0, Math.min(1, 1 - distKm / DISTANCE_CAP_KM))
 
+      const horizonFactor = computeHorizonScore(spot.horizon_check)
+
       const factors = {
         weather: weatherFactor,
         duration: durationFactor,
         services: servicesFactor,
         accessibility: accessFactor,
         distance: distanceFactor,
+        horizon: horizonFactor,
       }
 
       // Weighted sum
       let score: number
-      if (allWeatherMissing) {
-        const wTotal = 1 - profile.weights.weather
-        score = (profile.weights.duration / wTotal) * durationFactor
-          + (profile.weights.services / wTotal) * servicesFactor
-          + (profile.weights.accessibility / wTotal) * accessFactor
-          + (profile.weights.distance / wTotal) * distanceFactor
+      let excludedWeight = 0
+      if (allWeatherMissing) excludedWeight += profile.weights.weather
+      if (allHorizonMissing) excludedWeight += profile.weights.horizon
+      const wScale = excludedWeight > 0 ? 1 / (1 - excludedWeight) : 1
+
+      if (allWeatherMissing || allHorizonMissing) {
+        score = 0
+        if (!allWeatherMissing) score += profile.weights.weather * wScale * weatherFactor
+        score += profile.weights.duration * wScale * durationFactor
+        score += profile.weights.services * wScale * servicesFactor
+        score += profile.weights.accessibility * wScale * accessFactor
+        score += profile.weights.distance * wScale * distanceFactor
+        if (!allHorizonMissing) score += profile.weights.horizon * wScale * horizonFactor
       }
       else {
         const w = profile.weights
         score = w.weather * weatherFactor + w.duration * durationFactor
-          + w.services * servicesFactor + w.accessibility * accessFactor + w.distance * distanceFactor
+          + w.services * servicesFactor + w.accessibility * accessFactor
+          + w.distance * distanceFactor + w.horizon * horizonFactor
       }
 
       score = Math.round(Math.min(1, Math.max(0, score)) * 100)
