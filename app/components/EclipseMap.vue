@@ -25,6 +25,7 @@ const props = defineProps<{
     totality_duration_seconds: number
     has_services: boolean
     cell_coverage: string
+    horizon_check?: { verdict: string; clearance_degrees?: number } | null
   }>
   rankedSpots?: Array<{
     slug: string
@@ -190,6 +191,15 @@ function updateSpotMarkers() {
     const isFiltered = hasRanking && rankInfo?.filtered
     const isTop3 = hasRanking && rankInfo && !rankInfo.filtered && rankInfo.rank <= 3
 
+    const verdictColors: Record<string, string> = {
+      clear: '#22c55e',
+      marginal: '#eab308',
+      risky: '#f97316',
+      blocked: '#ef4444',
+    }
+    const verdict = spot.horizon_check?.verdict
+    const ringColor = verdict ? (verdictColors[verdict] || '#f59e0b') : '#f59e0b'
+
     const el = document.createElement('div')
     el.className = 'spot-marker'
     el.setAttribute('role', 'button')
@@ -209,7 +219,7 @@ function updateSpotMarkers() {
     } else if (hasRanking && rankInfo) {
       // Ranked marker with number
       const size = isTop3 ? 30 : 26
-      const borderColor = isTop3 ? '#f59e0b' : '#d97706'
+      const borderColor = verdict ? ringColor : (isTop3 ? '#f59e0b' : '#d97706')
       const shadow = isTop3 ? '0 0 14px rgba(245, 158, 11, 0.4)' : '0 0 8px rgba(245, 158, 11, 0.2)'
       el.style.cssText = `
         width: ${size}px; height: ${size}px; border-radius: 50%;
@@ -221,15 +231,15 @@ function updateSpotMarkers() {
       `
       el.textContent = String(rankInfo.rank)
     } else {
-      // Default amber dot (no ranking)
+      // Default dot (no ranking), color by horizon verdict
       el.style.cssText = `
         width: 26px; height: 26px; border-radius: 50%;
-        background: #050810; border: 2px solid #f59e0b;
-        box-shadow: 0 0 12px rgba(245, 158, 11, 0.3); cursor: pointer; z-index: 10;
+        background: #050810; border: 2px solid ${ringColor};
+        box-shadow: 0 0 12px ${ringColor}30; cursor: pointer; z-index: 10;
         display: flex; align-items: center; justify-content: center;
       `
       const inner = document.createElement('div')
-      inner.style.cssText = 'width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;'
+      inner.style.cssText = `width: 8px; height: 8px; border-radius: 50%; background: ${ringColor};`
       el.appendChild(inner)
     }
 
@@ -362,5 +372,11 @@ onUnmounted(() => {
 
 .eclipse-popup .mapboxgl-popup-tip {
   border-top-color: #0a1020;
+}
+
+@media (max-width: 639px) {
+  .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl-group {
+    margin-bottom: 10px;
+  }
 }
 </style>
