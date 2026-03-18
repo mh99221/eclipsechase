@@ -85,6 +85,13 @@ export default defineNuxtConfig({
     '/spots/**': { isr: 3600 },
   },
 
+  nitro: {
+    serverAssets: [{
+      baseName: 'dem',
+      dir: './server/data/dem',
+    }],
+  },
+
   runtimeConfig: {
     stripeSecretKey: '',
     stripeWebhookSecret: '',
