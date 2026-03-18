@@ -162,7 +162,10 @@ Add a `"horizon"` section to `i18n/en.json` at the top level:
   "attribution": "Elevation data: ÍslandsDEM v1.0 © National Land Survey of Iceland (CC BY 4.0)",
   "tooltip_terrain": "Terrain at {azimuth}°: {angle}° high, {distance}m away",
   "tooltip_sun": "Sun at totality: {altitude}° altitude, {azimuth}° {direction}",
-  "tooltip_blocked": "Terrain blocks the sun here by {degrees}°"
+  "tooltip_blocked": "Terrain blocks the sun here by {degrees}°",
+  "outside_path": "This location is outside the path of totality.",
+  "navigate_here": "Navigate here",
+  "upgrade_button": "Upgrade to Pro"
 }
 ```
 
@@ -197,7 +200,10 @@ Add the same `"horizon"` section to `i18n/is.json` with Icelandic translations. 
   "attribution": "Hæðargögn: ÍslandsDEM v1.0 © Landmælingar Íslands (CC BY 4.0)",
   "tooltip_terrain": "Landslagið við {azimuth}°: {angle}° hátt, {distance}m í burtu",
   "tooltip_sun": "Sól í myrkva: {altitude}° hæð, {azimuth}° {direction}",
-  "tooltip_blocked": "Landslagið lokar á sól hér um {degrees}°"
+  "tooltip_blocked": "Landslagið lokar á sól hér um {degrees}°",
+  "outside_path": "Þessi staður er utan myrkvabálks.",
+  "navigate_here": "Sigla hingað",
+  "upgrade_button": "Uppfæra í Pro"
 }
 ```
 
