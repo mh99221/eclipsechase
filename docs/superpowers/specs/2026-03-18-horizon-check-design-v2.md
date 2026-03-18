@@ -2,7 +2,7 @@
 
 ## Problem
 
-The sun during totality on August 12, 2026 will be at approximately **24° altitude** and **265° azimuth** (WSW) across western Iceland. Many curated viewing spots — especially in the Westfjords — sit inside deep fjords surrounded by 400–700m flat-topped basalt mountains. A mountain at 600m height blocks a 24° sun if it's within ~1,350m of the observer.
+The sun during totality on August 12, 2026 will be at approximately **24° altitude** at an azimuth that varies per spot (stored in `viewing_spots.sun_azimuth`, computed via Skyfield) across western Iceland. Many curated viewing spots — especially in the Westfjords — sit inside deep fjords surrounded by 400–700m flat-topped basalt mountains. A mountain at 600m height blocks a 24° sun if it's within ~1,350m of the observer.
 
 Without a horizon check, we risk sending users to spots where they physically cannot see the eclipse because mountains are in the way. No other eclipse resource currently validates viewing spots against terrain obstruction.
 
@@ -14,8 +14,8 @@ Without a horizon check, we risk sending users to spots where they physically ca
 |----------|--------|-----------|
 | Implementation approach | Python pre-compute + TypeScript server port | Python/rasterio for DEM work, TS port for dynamic checks. Keeps Pro upsell feature |
 | DEM source | ÍslandsDEM 10m (primary), ViewfinderPanoramas 90m (fallback) | 10m for pre-compute accuracy, downsampled 30m for server |
-| DEM storage | Committed to repo directly | ~50-80MB binary files. Simple, no external dependencies |
-| Azimuth sweep | ±30° at 1° steps (61 points) | Rich terrain profile for SVG visualization |
+| DEM storage | Committed to repo directly | ~50-80MB binary files. Simple, no external dependencies. Accepted tradeoff: permanently inflates repo clone size. Git LFS is an alternative if this becomes a problem |
+| Azimuth sweep | ±30° at 1° steps (61 points) | Rich terrain profile for SVG visualization. ~6,100 DEM lookups per check (61 rays × ~100 samples) — well under 500ms for in-memory Float32Array |
 | SVG rendering | Client-side only (Vue component) | Single rendering path, sweep data is tiny, avoids maintaining Python SVG generation |
 | Recommendation weight | 0.25 with uniform scale-down | All existing weights × 0.75, horizon gets 0.25 |
 | Caching (dynamic checks) | None for MVP | <500ms computation, rate-limited, small Pro user base |
@@ -30,7 +30,7 @@ Without a horizon check, we risk sending users to spots where they physically ca
 1. Download ÍslandsDEM v1.0 10m GeoTIFF from LMI open data portal
 2. Python script crops to western Iceland bounding box (63.8–66.2°N, -24.5 to -18.0°W)
 3. Downsample to 30m resolution for server-side binary tiles
-4. Export as raw Float32 row-major binary + metadata JSON (bounding box, dimensions, cell size)
+4. Export as raw Float32 row-major binary in **south-to-north** row order (row 0 = southernmost latitude) + metadata JSON (bounding box, dimensions, cell size)
 5. Commit binary tiles to `server/data/dem/`
 
 File structure:
@@ -51,9 +51,13 @@ Metadata format:
   "maxLng": -18.0,
   "width": 3394,
   "height": 2960,
-  "cellSize": 0.00027
+  "cellSizeLat": 0.00027,
+  "cellSizeLng": 0.00027,
+  "rowOrder": "south-to-north"
 }
 ```
+
+Note: At 65°N latitude, `cellSizeLng` of 0.00027° ≈ 12.7m (E-W) while `cellSizeLat` of 0.00027° ≈ 30m (N-S) due to meridian convergence. The "30m" label refers to the latitude resolution. Actual values are computed by the DEM preparation script.
 
 ### Pre-computation Script (`scripts/compute-horizon-checks.py`)
 
@@ -127,12 +131,14 @@ export interface HorizonCheck {
   max_horizon_angle: number
   blocking_distance_m: number | null
   blocking_elevation_m: number | null
+  observer_elevation_m: number  // DEM elevation + 1.7m eye height; used by PeakFinderLink
   sun_altitude: number
   sun_azimuth: number
   checked_at: string
   sweep: HorizonSweepPoint[]  // 61 points, ±30°
 }
 
+// View-model subset of HorizonCheck, used as props for HorizonProfile component
 export interface HorizonProfileData {
   sun_azimuth: number
   sun_altitude: number
@@ -175,16 +181,25 @@ export interface HorizonCheckResponse extends HorizonCheck {
 7. Generate PeakFinder external URL
 8. Return `HorizonCheckResponse`
 
-If DEM fails to load: HTTP 503 `{ error: 'Horizon check temporarily unavailable' }`
+**Error responses**:
+- DEM fails to load: HTTP 503 `{ error: 'Horizon check temporarily unavailable' }`
+- lat/lng outside bounding box: HTTP 422 `{ error: 'Location outside coverage area' }`
+- Not Pro user: HTTP 403 `{ error: 'Pro subscription required' }`
+- Rate limited: HTTP 429 `{ error: 'Too many requests, try again in a minute' }`
 
 ### DEM Loading (TypeScript)
 
-Pure array index math on Float32Array — no rasterio dependency:
+Pure array index math on Float32Array — no rasterio dependency. Binary file uses south-to-north row order (row 0 = minLat), matching the index formula:
+
 ```typescript
-// Pseudocode
-const index = Math.floor((lat - minLat) / cellSize) * width + Math.floor((lng - minLng) / cellSize)
+// Pseudocode — south-to-north row order
+const row = Math.floor((lat - minLat) / cellSizeLat)
+const col = Math.floor((lng - minLng) / cellSizeLng)
+const index = row * width + col
 const elevation = demData[index]
 ```
+
+**Important**: If the DEM export uses standard GeoTIFF north-to-south order instead, the row formula must be `Math.floor((maxLat - lat) / cellSizeLat)`. The `rowOrder` field in the metadata JSON specifies which convention is used.
 
 Bilinear interpolation for sub-cell accuracy. Module-level variable caches the loaded array across requests.
 
@@ -265,7 +280,7 @@ Map tap-to-check for Pro users, integrated with EclipseMap.
 1. Long-press/tap a point on the map
 2. Loading indicator at tapped point
 3. `POST /api/horizon/check { lat, lng }`
-4. Result shown as slide-up panel: HorizonBadge + HorizonProfile + PeakFinderLink + "Navigate here"
+4. Result shown as slide-up panel: HorizonBadge + HorizonProfile + PeakFinderLink + "Navigate here" (opens Google Maps directions to the tapped coordinates)
 5. Free users who try: upgrade prompt "Unlock horizon checking — Eclipse Pro €9.99"
 
 Gated by `useProStatus` composable.
@@ -276,7 +291,11 @@ Gated by `useProStatus` composable.
 
 ### Recommendation Engine (`useRecommendation.ts`)
 
-Add `horizon` as 6th scoring factor:
+Add `horizon` as 6th scoring factor.
+
+**Type change**: Add `horizon: number` to `Profile.weights` interface. All profile definitions updated.
+
+Weight redistribution:
 - All existing profile weights × 0.75
 - Horizon weight = 0.25 for all profiles
 - Example (photographer): weather 0.2625, duration 0.2625, services 0.0375, accessibility 0.075, distance 0.1125, horizon 0.25
@@ -290,7 +309,7 @@ blocked  → 0.0
 null     → 0.5 (unknown, neutral)
 ```
 
-**Hard filter**: All profiles get `horizonNot: 'blocked'` in their floors. Blocked spots are excluded before scoring — they never appear as top recommendations.
+**Hard filter**: All profiles exclude blocked spots. Add `horizonBlocked?: boolean` to `Profile.floors`. The floor check reads into the JSONB-parsed field: `spot.horizon_check?.verdict === 'blocked'`. This is different from the existing flat-field floor checks — the implementation must access the nested `horizon_check` object.
 
 **Missing data**: When all spots lack horizon data, redistribute horizon weight across other factors (same pattern as existing weather-missing logic).
 
@@ -322,6 +341,20 @@ HorizonBadge in compact mode added to card layout.
 - HorizonProfile SVG: works (sweep data in cached spot JSON)
 - PeakFinderLink: requires internet (opens browser)
 - Dynamic horizon check: shows "Connect to internet for horizon checking"
+
+---
+
+## i18n
+
+New keys needed in `en.json` and `is.json`:
+- Verdict labels: "Clear", "Marginal", "Risky", "Blocked"
+- Full verdict descriptions (4 strings with `{clearance}` interpolation)
+- Section headers: "Horizon View", "View on PeakFinder"
+- Explanatory text: "The sun will be at {altitude}° above the horizon, looking {direction}."
+- Compass directions: "W", "WNW", "WSW", "NW", etc.
+- Offline fallback messages
+- Error messages for dynamic check
+- Upgrade prompt text
 
 ---
 
