@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatDuration, REGION_LABELS, SPOT_TYPE_LABELS } from '~/utils/eclipse'
+import { formatDuration, REGION_LABELS, SPOT_TYPE_LABELS, compassDirection } from '~/utils/eclipse'
 import type { SpotPhoto } from '~/types/spots'
 import type { HorizonCheck, HorizonProfileData } from '~/types/horizon'
 
@@ -115,12 +115,6 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
   }
 })
 
-// Compass direction from azimuth
-function compassDirection(azimuth: number): string {
-  const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
-  const index = Math.round(azimuth / 22.5) % 16
-  return dirs[index]!
-}
 </script>
 
 <template>

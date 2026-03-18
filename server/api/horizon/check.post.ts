@@ -2,19 +2,28 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
 import type { HorizonCheckResponse } from '~/types/horizon'
 
-// Rate limiting: 10 req/min per IP
+// Rate limiting: 10 req/min per IP, with eviction to prevent memory leak
 const rateLimits = new Map<string, { count: number; resetAt: number }>()
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now()
   const entry = rateLimits.get(ip)
   if (!entry || now > entry.resetAt) {
+    // Evict expired entries when map grows large
+    if (rateLimits.size > 1000) {
+      for (const [k, v] of rateLimits) {
+        if (now > v.resetAt) rateLimits.delete(k)
+      }
+    }
     rateLimits.set(ip, { count: 1, resetAt: now + 60_000 })
     return true
   }
   entry.count++
   return entry.count <= 10
 }
+
+// Cache eclipse grid in module scope — it never changes
+let eclipseGridCache: Array<{ lat: number; lng: number; sun_altitude: number | null; sun_azimuth: number | null; duration_seconds: number | null }> | null = null
 
 export default defineEventHandler(async (event) => {
   // Rate limit
@@ -29,20 +38,20 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'lat and lng are required numbers' })
   }
 
+  const supabase = await serverSupabaseServiceRole(event)
+
   // Check Pro status
   const email = getHeader(event, 'x-pro-email')
-  if (email) {
-    const supabase = await serverSupabaseServiceRole(event)
-    const { data: proUser } = await supabase
-      .from('pro_users')
-      .select('is_active')
-      .eq('email', email)
-      .single()
+  if (!email) {
+    throw createError({ statusCode: 403, message: 'Pro subscription required' })
+  }
+  const { data: proUser } = await supabase
+    .from('pro_users')
+    .select('is_active')
+    .eq('email', email)
+    .single()
 
-    if (!proUser?.is_active) {
-      throw createError({ statusCode: 403, message: 'Pro subscription required' })
-    }
-  } else {
+  if (!proUser?.is_active) {
     throw createError({ statusCode: 403, message: 'Pro subscription required' })
   }
 
@@ -57,22 +66,24 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 422, message: 'Location outside coverage area' })
   }
 
-  // Get sun position from eclipse_grid (nearest neighbor)
-  const supabase = await serverSupabaseServiceRole(event)
-  const { data: gridPoints } = await supabase
-    .from('eclipse_grid')
-    .select('lat, lng, sun_altitude, sun_azimuth, duration_seconds')
-    .not('totality_start', 'is', null)
-    .order('lat', { ascending: true })
+  // Get sun position from eclipse_grid (cached — grid is static)
+  if (!eclipseGridCache) {
+    const { data: gridPoints } = await supabase
+      .from('eclipse_grid')
+      .select('lat, lng, sun_altitude, sun_azimuth, duration_seconds')
+      .not('totality_start', 'is', null)
+      .order('lat', { ascending: true })
 
-  if (!gridPoints?.length) {
-    throw createError({ statusCode: 503, message: 'Eclipse data not available' })
+    if (!gridPoints?.length) {
+      throw createError({ statusCode: 503, message: 'Eclipse data not available' })
+    }
+    eclipseGridCache = gridPoints
   }
 
   // Find nearest grid point
-  let nearest = gridPoints[0]!
+  let nearest = eclipseGridCache[0]!
   let minDist = Infinity
-  for (const gp of gridPoints) {
+  for (const gp of eclipseGridCache) {
     const d = (gp.sun_altitude != null && gp.sun_azimuth != null)
       ? Math.sqrt((body.lat - gp.lat) ** 2 + (body.lng - gp.lng) ** 2)
       : Infinity
@@ -83,7 +94,7 @@ export default defineEventHandler(async (event) => {
   }
 
   if (nearest.sun_altitude == null || nearest.sun_azimuth == null) {
-    return { in_totality_path: false } as any
+    return { in_totality_path: false as const }
   }
 
   // Run horizon check

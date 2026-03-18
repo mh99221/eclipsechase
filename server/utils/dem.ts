@@ -15,28 +15,30 @@ export interface DEMMeta {
 
 let demData: Float32Array | null = null
 let demMeta: DEMMeta | null = null
-let loadError: string | null = null
 
 export async function loadDEM(): Promise<{ data: Float32Array; meta: DEMMeta } | { error: string }> {
-  if (loadError) return { error: loadError }
   if (demData && demMeta) return { data: demData, meta: demMeta }
 
+  // Don't cache transient errors — allow retry on next request
   try {
     const storage = useStorage('assets:dem')
 
     // Load metadata
     const metaRaw = await storage.getItem('west-iceland-30m.meta.json')
     if (!metaRaw) {
-      loadError = 'DEM metadata not found'
-      return { error: loadError }
+      return { error: 'DEM metadata not found' }
     }
-    demMeta = (typeof metaRaw === 'string' ? JSON.parse(metaRaw) : metaRaw) as DEMMeta
+    const meta = (typeof metaRaw === 'string' ? JSON.parse(metaRaw) : metaRaw) as DEMMeta
+
+    // Reject placeholder metadata (width/height = 0 means DEM hasn't been generated yet)
+    if (meta.width === 0 || meta.height === 0) {
+      return { error: 'DEM not yet generated — run scripts/prepare-dem-binary.py first' }
+    }
 
     // Load binary DEM
     const binBuffer = await storage.getItemRaw('west-iceland-30m.bin')
     if (!binBuffer) {
-      loadError = 'DEM binary not found'
-      return { error: loadError }
+      return { error: 'DEM binary not found' }
     }
 
     // Convert to Float32Array
@@ -46,19 +48,18 @@ export async function loadDEM(): Promise<{ data: Float32Array; meta: DEMMeta } |
           (binBuffer as Buffer).byteOffset,
           (binBuffer as Buffer).byteOffset + (binBuffer as Buffer).byteLength,
         )
-    demData = new Float32Array(arrayBuffer)
+    const data = new Float32Array(arrayBuffer)
 
-    if (demData.length !== demMeta.width * demMeta.height) {
-      loadError = `DEM size mismatch: expected ${demMeta.width * demMeta.height}, got ${demData.length}`
-      demData = null
-      demMeta = null
-      return { error: loadError }
+    if (data.length !== meta.width * meta.height) {
+      return { error: `DEM size mismatch: expected ${meta.width * meta.height}, got ${data.length}` }
     }
 
+    // Cache successfully loaded data
+    demData = data
+    demMeta = meta
     return { data: demData, meta: demMeta }
   } catch (e) {
-    loadError = `Failed to load DEM: ${e}`
-    return { error: loadError }
+    return { error: `Failed to load DEM: ${e}` }
   }
 }
 

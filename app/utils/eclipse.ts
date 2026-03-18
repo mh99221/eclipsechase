@@ -128,3 +128,18 @@ export const SPOT_TYPE_LABELS: Record<string, string> = {
   'moderate-hike': 'Moderate hike',
   'serious-hike': 'Serious hike',
 }
+
+// Horizon verdict colors — shared across HorizonBadge, HorizonProfile, EclipseMap
+export const HORIZON_VERDICT_COLORS: Record<string, string> = {
+  clear: '#22c55e',
+  marginal: '#eab308',
+  risky: '#f97316',
+  blocked: '#ef4444',
+}
+
+// 16-point compass direction from azimuth degrees
+export function compassDirection(azimuth: number): string {
+  const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
+  const index = Math.round(azimuth / 22.5) % 16
+  return dirs[index]!
+}

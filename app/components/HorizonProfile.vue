@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HorizonProfileData, HorizonSweepPoint } from '~/types/horizon'
+import { HORIZON_VERDICT_COLORS } from '~/utils/eclipse'
 
 const props = withDefaults(defineProps<{
   data: HorizonProfileData
@@ -91,13 +92,7 @@ const compassLabels = computed(() => {
   ]
 })
 
-// Verdict badge colors
-const verdictColors: Record<string, string> = {
-  clear: '#22c55e',
-  marginal: '#eab308',
-  risky: '#f97316',
-  blocked: '#ef4444',
-}
+const verdictColors = HORIZON_VERDICT_COLORS
 
 // Tooltip state
 const tooltip = ref<{ x: number; y: number; text: string } | null>(null)

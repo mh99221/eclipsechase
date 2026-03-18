@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import mapboxgl from 'mapbox-gl'
-import { cloudColor, cloudLevel, formatDuration, weatherSvgHtml } from '~/utils/eclipse'
+import { cloudColor, cloudLevel, formatDuration, weatherSvgHtml, HORIZON_VERDICT_COLORS } from '~/utils/eclipse'
 import { addEclipsePathLayers } from '~/utils/mapLayers'
 
 const props = defineProps<{
@@ -191,14 +191,8 @@ function updateSpotMarkers() {
     const isFiltered = hasRanking && rankInfo?.filtered
     const isTop3 = hasRanking && rankInfo && !rankInfo.filtered && rankInfo.rank <= 3
 
-    const verdictColors: Record<string, string> = {
-      clear: '#22c55e',
-      marginal: '#eab308',
-      risky: '#f97316',
-      blocked: '#ef4444',
-    }
     const verdict = spot.horizon_check?.verdict
-    const ringColor = verdict ? (verdictColors[verdict] || '#f59e0b') : '#f59e0b'
+    const ringColor = verdict ? (HORIZON_VERDICT_COLORS[verdict] || '#f59e0b') : '#f59e0b'
 
     const el = document.createElement('div')
     el.className = 'spot-marker'
