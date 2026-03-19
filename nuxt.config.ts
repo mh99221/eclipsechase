@@ -37,15 +37,6 @@ export default defineNuxtConfig({
         { name: 'twitter:title', content: 'EclipseChase.is — Find Clear Skies on Eclipse Day' },
         { name: 'twitter:description', content: 'Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland.' },
       ],
-      script: [
-        ...(process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID
-          ? [{
-            src: `${process.env.NUXT_PUBLIC_UMAMI_HOST || 'https://cloud.umami.is'}/script.js`,
-            async: true,
-            'data-website-id': process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID,
-          }]
-          : []),
-      ],
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'manifest', href: '/manifest.json' },
