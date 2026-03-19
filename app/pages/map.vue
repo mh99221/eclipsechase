@@ -617,6 +617,10 @@ const profileIcons: Record<ProfileId, string> = {
           </div>
         </div>
       </div>
+      <!-- Offline banner (only visible when offline or stale) -->
+      <div class="pointer-events-auto px-4 sm:px-6">
+        <OfflineBanner />
+      </div>
     </div>
 
     <!-- ═══ Desktop: layer toggles + legend (hidden on mobile) ═══ -->

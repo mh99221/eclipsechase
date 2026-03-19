@@ -5,13 +5,21 @@ const props = defineProps<{
   map: any
 }>()
 
+const { tileCount, lastWeatherUpdate, lastForecastUpdate, cacheAges, precacheApiData, refreshCacheStatus } = useOfflineStatus()
+
 const isDownloading = ref(false)
 const totalTiles = ref(0)
 const loadedTiles = ref(0)
 const isDone = ref(false)
 const isCancelled = ref(false)
 const isDismissed = ref(false)
+const isCachingData = ref(false)
+const dataCached = ref(false)
 const progress = computed(() => totalTiles.value > 0 ? Math.round((loadedTiles.value / totalTiles.value) * 100) : 0)
+const estimatedTileCount = countTiles() // Cache since bounds are constant
+
+const hasCachedWeather = computed(() => !!cacheAges.value['/api/weather/cloud-cover'])
+const hasCachedSpots = computed(() => !!cacheAges.value['/api/spots'])
 
 // Western Iceland bounding box (eclipse path region)
 const BOUNDS = { west: -24.5, east: -20.5, south: 63.5, north: 66.5 }
@@ -88,8 +96,47 @@ async function downloadTiles() {
 
   if (!isCancelled.value) {
     isDone.value = true
+    refreshCacheStatus()
   }
   isDownloading.value = false
+}
+
+async function cacheData() {
+  isCachingData.value = true
+  precacheApiData()
+
+  // Listen for completion
+  const onMessage = (event: MessageEvent) => {
+    if (event.data?.type === 'PRECACHE_API_DONE') {
+      isCachingData.value = false
+      dataCached.value = true
+      refreshCacheStatus()
+      navigator.serviceWorker?.removeEventListener('message', onMessage)
+    }
+  }
+  navigator.serviceWorker?.addEventListener('message', onMessage)
+
+  // Timeout fallback — don't claim success on timeout (data may not be cached)
+  setTimeout(() => {
+    if (isCachingData.value) {
+      isCachingData.value = false
+      refreshCacheStatus()
+      navigator.serviceWorker?.removeEventListener('message', onMessage)
+    }
+  }, 15000)
+}
+
+async function clearCache() {
+  // Get cache names from the browser and delete all eclipsechase-related caches
+  const names = await caches.keys()
+  await Promise.all(
+    names
+      .filter(n => n.startsWith('eclipsechase'))
+      .map(n => caches.delete(n)),
+  )
+  dataCached.value = false
+  isDone.value = false
+  refreshCacheStatus()
 }
 
 function cancel() {
@@ -106,7 +153,7 @@ function cancel() {
       aria-label="Close"
       @click="isDismissed = true"
     >
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path stroke-linecap="round" d="M18 6L6 18M6 6l12 12" />
       </svg>
     </button>
@@ -119,12 +166,53 @@ function cancel() {
       <p class="text-sm text-slate-400 mb-3">
         {{ t('offline.description') }}
       </p>
-      <button
-        class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-corona/40 text-corona bg-corona/5 hover:bg-corona/10 transition-colors"
-        @click="downloadTiles"
-      >
-        {{ t('offline.download', { count: countTiles() }) }}
-      </button>
+      <div class="flex flex-col gap-2">
+        <button
+          class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-corona/40 text-corona bg-corona/5 hover:bg-corona/10 transition-colors"
+          @click="downloadTiles"
+        >
+          {{ t('offline.download', { count: estimatedTileCount }) }}
+        </button>
+        <button
+          v-if="!dataCached"
+          :disabled="isCachingData"
+          class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-void-border text-slate-400 hover:text-slate-300 hover:border-slate-500 transition-colors disabled:opacity-50"
+          @click="cacheData"
+        >
+          <span v-if="isCachingData">{{ t('offline.caching_data') }}</span>
+          <span v-else>{{ t('offline.cache_weather') }}</span>
+        </button>
+        <div v-if="dataCached" class="flex items-center gap-1.5 text-green-400 font-mono text-xs">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          {{ t('offline.data_ready') }}
+        </div>
+      </div>
+
+      <!-- Cache status -->
+      <div class="mt-3 pt-3 border-t border-void-border/30 space-y-1">
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-600">
+          {{ t('offline.cache_status') }}
+        </p>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[11px] font-mono text-slate-500">
+          <span>Map tiles</span>
+          <span>{{ tileCount > 0 ? t('offline.tiles_cached', { count: tileCount }) : t('offline.not_cached') }}</span>
+          <span>Weather</span>
+          <span>{{ hasCachedWeather ? lastWeatherUpdate : t('offline.not_cached') }}</span>
+          <span>Forecast</span>
+          <span>{{ lastForecastUpdate || t('offline.not_cached') }}</span>
+          <span>Spots</span>
+          <span>{{ hasCachedSpots ? t('offline.cached') : t('offline.not_cached') }}</span>
+        </div>
+        <button
+          v-if="tileCount > 0 || hasCachedWeather"
+          class="font-mono text-[10px] text-slate-600 hover:text-slate-400 transition-colors mt-1"
+          @click="clearCache"
+        >
+          {{ t('offline.clear_cache') }}
+        </button>
+      </div>
     </div>
 
     <!-- Downloading -->
@@ -155,7 +243,7 @@ function cancel() {
     <!-- Done -->
     <div v-else-if="isDone">
       <div class="flex items-center gap-2">
-        <svg class="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <svg class="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
         </svg>
         <p class="text-sm text-green-400 font-mono">
@@ -165,6 +253,21 @@ function cancel() {
       <p class="text-xs text-slate-500 font-mono mt-1">
         {{ t('offline.done_detail', { count: loadedTiles }) }}
       </p>
+      <button
+        v-if="!dataCached"
+        :disabled="isCachingData"
+        class="mt-2 font-mono text-xs tracking-wider px-3 py-2 rounded border border-void-border text-slate-400 hover:text-slate-300 hover:border-slate-500 transition-colors disabled:opacity-50"
+        @click="cacheData"
+      >
+        <span v-if="isCachingData">{{ t('offline.caching_data') }}</span>
+        <span v-else>{{ t('offline.cache_weather') }}</span>
+      </button>
+      <div v-if="dataCached" class="mt-2 flex items-center gap-1.5 text-green-400 font-mono text-xs">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+        {{ t('offline.data_ready') }}
+      </div>
     </div>
   </div>
 </template>

@@ -1,5 +1,5 @@
-const CACHE_NAME = 'eclipsechase-v1'
-const API_CACHE = 'eclipsechase-api-v1'
+const CACHE_NAME = 'eclipsechase-v2'
+const API_CACHE = 'eclipsechase-api-v2'
 const TILE_CACHE = 'eclipsechase-tiles-v1'
 const MAX_TILE_CACHE = 5000
 
@@ -8,7 +8,16 @@ const PRECACHE_URLS = [
   '/pro',
   '/manifest.json',
   '/favicon.svg',
-  '/eclipse-data/path.geojson'
+  '/eclipse-data/path.geojson',
+  '/eclipse-data/grid.json'
+]
+
+// API endpoints to precache for offline use
+const API_PRECACHE_URLS = [
+  '/api/spots',
+  '/api/weather/stations',
+  '/api/weather/cloud-cover',
+  '/api/weather/forecast-timeline?hours=24'
 ]
 
 function offlineResponse() {
@@ -16,6 +25,28 @@ function offlineResponse() {
     JSON.stringify({ error: 'Offline and no cached data available' }),
     { status: 503, headers: { 'Content-Type': 'application/json' } }
   )
+}
+
+/** Clone a response and add a timestamp header for cache-age tracking */
+function stampResponse(response) {
+  const headers = new Headers(response.headers)
+  headers.set('X-Cached-At', new Date().toISOString())
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers
+  })
+}
+
+/** Mark a cached response so client knows it came from SW cache */
+function markAsCached(response) {
+  const headers = new Headers(response.headers)
+  headers.set('X-Cache-Source', 'sw')
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers
+  })
 }
 
 // Install: pre-cache static assets
@@ -43,6 +74,62 @@ self.addEventListener('activate', (event) => {
   self.clients.claim()
 })
 
+// Message handler for API precaching and cache status queries
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'PRECACHE_API') {
+    event.waitUntil(
+      caches.open(API_CACHE).then(async (cache) => {
+        const entries = await Promise.allSettled(
+          API_PRECACHE_URLS.map(async (url) => {
+            const response = await fetch(url)
+            if (response.ok) {
+              await cache.put(new Request(url), stampResponse(response))
+              return { url, status: 'cached' }
+            }
+            return { url, status: 'failed' }
+          })
+        )
+        const results = {}
+        for (const entry of entries) {
+          if (entry.status === 'fulfilled') {
+            results[entry.value.url] = entry.value.status
+          } else {
+            results['unknown'] = 'failed'
+          }
+        }
+        if (event.source) {
+          event.source.postMessage({ type: 'PRECACHE_API_DONE', results })
+        }
+      })
+    )
+  }
+
+  if (event.data?.type === 'GET_CACHE_STATUS') {
+    event.waitUntil(
+      caches.open(API_CACHE).then(async (cache) => {
+        const status = {}
+        for (const url of API_PRECACHE_URLS) {
+          const cached = await cache.match(new Request(url))
+          if (cached) {
+            const cachedAt = cached.headers.get('X-Cached-At')
+            status[url] = cachedAt ? new Date(cachedAt).getTime() : null
+          } else {
+            status[url] = null
+          }
+        }
+        // Also check tile cache count
+        const tileCache = await caches.open(TILE_CACHE)
+        const tileKeys = await tileCache.keys()
+        status._tileCount = tileKeys.length
+
+        if (event.source) {
+          event.source.postMessage({ type: 'CACHE_STATUS', status })
+        }
+      })
+    )
+  }
+})
+
 // Fetch: route requests to appropriate caching strategy
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url)
@@ -58,7 +145,7 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // API cache: network-first with cache fallback
+  // API cache: network-first with cache fallback + timestamp
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(networkFirstWithCacheFallback(event.request))
     return
@@ -74,19 +161,19 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(cacheFirstDefault(event.request))
 })
 
-// Network-first strategy for API requests
+// Network-first strategy for API requests (with timestamp tracking)
 async function networkFirstWithCacheFallback(request) {
   try {
     const response = await fetch(request)
     if (response.ok) {
       const cache = await caches.open(API_CACHE)
-      cache.put(request, response.clone())
+      cache.put(request, stampResponse(response.clone()))
     }
     return response
   } catch (err) {
     const cached = await caches.match(request)
     if (cached) {
-      return cached
+      return markAsCached(cached)
     }
     return offlineResponse()
   }
@@ -100,17 +187,17 @@ async function cacheFirstApi(request) {
     fetch(request).then(async (response) => {
       if (response.ok) {
         const cache = await caches.open(API_CACHE)
-        cache.put(request, response)
+        cache.put(request, stampResponse(response))
       }
     }).catch(() => {})
-    return cached
+    return markAsCached(cached)
   }
 
   try {
     const response = await fetch(request)
     if (response.ok) {
       const cache = await caches.open(API_CACHE)
-      cache.put(request, response.clone())
+      cache.put(request, stampResponse(response.clone()))
     }
     return response
   } catch (err) {

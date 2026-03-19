@@ -136,3 +136,42 @@ export async function fetchForecasts(stationIds: string[] = STATION_IDS): Promis
 
   return results
 }
+
+const STALE_THRESHOLD_MS = 15 * 60 * 1000
+
+/**
+ * Ensure forecast data is fresh. If stale (>15min), fetches from vedur.is and upserts.
+ */
+export async function ensureFreshForecasts(supabase: any, logPrefix = 'weather'): Promise<{ isStale: boolean; refreshFailed: boolean }> {
+  const { data: latestRow } = await supabase
+    .from('weather_forecasts')
+    .select('forecast_time')
+    .order('forecast_time', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  const latestTime = latestRow?.forecast_time ? new Date(latestRow.forecast_time).getTime() : 0
+  const isStale = (Date.now() - latestTime) >= STALE_THRESHOLD_MS
+
+  let refreshFailed = false
+  if (isStale) {
+    try {
+      const forecasts = await fetchForecasts(STATION_IDS)
+      if (forecasts.length > 0) {
+        const { error: upsertError } = await supabase
+          .from('weather_forecasts')
+          .upsert(forecastsToRows(forecasts), { onConflict: 'station_id,forecast_time,valid_time' })
+        if (upsertError) {
+          console.error(`[${logPrefix}] Upsert failed:`, upsertError.message)
+          refreshFailed = true
+        }
+      }
+    }
+    catch (err) {
+      console.error(`[${logPrefix}] Failed to refresh from vedur.is:`, err)
+      refreshFailed = true
+    }
+  }
+
+  return { isStale, refreshFailed }
+}

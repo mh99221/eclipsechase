@@ -228,6 +228,23 @@
     "cancel": "Hætta við",
     "tiles_progress": "{loaded} / {total} flísar ({progress}%)",
     "done": "Ónettengd kort tilbúin",
-    "done_detail": "{count} flísar vistaðar. Kort virkar án internets."
+    "done_detail": "{count} flísar vistaðar. Kort virkar án internets.",
+    "banner_offline": "Þú ert án nets — sýni vistuð gögn",
+    "banner_stale": "Veðurgögn gætu verið úrelt",
+    "last_updated": "Uppfært {time}",
+    "cache_weather": "Vista veður- og staðagögn",
+    "cache_status": "Staða vistunar",
+    "cached": "Vistað",
+    "not_cached": "Ekki vistað",
+    "clear_cache": "Hreinsa vistuð gögn",
+    "data_ready": "Öll gögn vistuð fyrir notkun án nets",
+    "tiles_cached": "{count} flísar vistaðar",
+    "caching_data": "Vista gögn..."
+  },
+  "forecast": {
+    "timeline_title": "Skýjaspá",
+    "no_data": "Engin spágögn tiltæk",
+    "eclipse_window": "Myrkvi",
+    "cloud_cover_at": "{cover}% skýjahula kl. {time}"
   }
 }

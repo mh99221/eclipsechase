@@ -106,6 +106,11 @@ function scoreColor(score: number): string {
       </div>
     </nav>
 
+    <!-- Offline banner -->
+    <div class="section-container max-w-3xl pt-2">
+      <OfflineBanner />
+    </div>
+
     <!-- Content -->
     <div class="section-container max-w-3xl py-6 sm:py-12">
       <!-- Header -->

@@ -228,6 +228,23 @@
     "cancel": "Cancel",
     "tiles_progress": "{loaded} / {total} tiles ({progress}%)",
     "done": "Offline maps ready",
-    "done_detail": "{count} tiles cached. Map will work without internet."
+    "done_detail": "{count} tiles cached. Map will work without internet.",
+    "banner_offline": "You're offline — showing cached data",
+    "banner_stale": "Weather data may be outdated",
+    "last_updated": "Updated {time}",
+    "cache_weather": "Cache weather & spots",
+    "cache_status": "Cache status",
+    "cached": "Cached",
+    "not_cached": "Not cached",
+    "clear_cache": "Clear cached data",
+    "data_ready": "All data cached for offline use",
+    "tiles_cached": "{count} tiles cached",
+    "caching_data": "Caching data..."
+  },
+  "forecast": {
+    "timeline_title": "Cloud Forecast",
+    "no_data": "No forecast data available",
+    "eclipse_window": "Eclipse",
+    "cloud_cover_at": "{cover}% cloud cover at {time}"
   }
 }

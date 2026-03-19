@@ -136,6 +136,11 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
       </NuxtLink>
     </nav>
 
+    <!-- Offline banner -->
+    <div class="section-container max-w-3xl pt-2">
+      <OfflineBanner />
+    </div>
+
     <!-- Content -->
     <main>
     <article class="section-container max-w-3xl py-8 sm:py-16">
