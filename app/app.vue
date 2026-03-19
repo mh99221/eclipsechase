@@ -1,9 +1,6 @@
 <script setup lang="ts">
-const { hasConsent, loadUmami } = useAnalyticsConsent()
-
-onMounted(() => {
-  if (hasConsent.value) loadUmami()
-})
+// Initialize analytics consent — auto-loads Umami if user previously consented
+useAnalyticsConsent()
 </script>
 
 <template>

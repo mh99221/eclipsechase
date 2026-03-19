@@ -6,19 +6,35 @@ const CONSENT_KEY = 'eclipsechase-consent'
 const consentState = ref<'all' | 'essential' | null>(null)
 const umamiLoaded = ref(false)
 
-export function useAnalyticsConsent() {
-  const config = useRuntimeConfig()
+const hasConsent = computed(() => consentState.value === 'all')
+const consentGiven = computed(() => consentState.value !== null)
 
-  function readConsent(): 'all' | 'essential' | null {
-    if (!import.meta.client) return null
+function readConsent(): 'all' | 'essential' | null {
+  try {
     const value = localStorage.getItem(CONSENT_KEY)
     if (value === 'all' || value === 'essential') return value
-    return null
   }
+  catch {
+    // localStorage may be unavailable (private browsing, sandboxed iframe)
+  }
+  return null
+}
 
+// Initialize consent state once on first client-side module load.
+// Also auto-loads Umami for returning users who previously consented.
+if (import.meta.client) {
+  consentState.value = readConsent()
+}
+
+export function useAnalyticsConsent() {
   function setConsent(value: 'all' | 'essential') {
     if (!import.meta.client) return
-    localStorage.setItem(CONSENT_KEY, value)
+    try {
+      localStorage.setItem(CONSENT_KEY, value)
+    }
+    catch {
+      // localStorage may be unavailable
+    }
     consentState.value = value
     if (value === 'all') loadUmami()
   }
@@ -26,6 +42,7 @@ export function useAnalyticsConsent() {
   function loadUmami() {
     if (!import.meta.client) return
     if (umamiLoaded.value) return
+    const config = useRuntimeConfig()
     const host = config.public.umamiHost || 'https://cloud.umami.is'
     const websiteId = config.public.umamiWebsiteId
     if (!websiteId) return
@@ -38,19 +55,15 @@ export function useAnalyticsConsent() {
     umamiLoaded.value = true
   }
 
-  // Initialize state on first use (client-side only)
-  if (import.meta.client && consentState.value === null) {
-    consentState.value = readConsent()
+  // Auto-load Umami for returning users who previously consented
+  if (import.meta.client && hasConsent.value && !umamiLoaded.value) {
+    loadUmami()
   }
-
-  const hasConsent = computed(() => consentState.value === 'all')
-  const consentGiven = computed(() => consentState.value !== null)
 
   return {
     consentState: readonly(consentState),
     hasConsent,
     consentGiven,
     setConsent,
-    loadUmami,
   }
 }

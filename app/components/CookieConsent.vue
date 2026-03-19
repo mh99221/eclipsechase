@@ -2,21 +2,12 @@
 const { t } = useI18n()
 const { consentGiven, setConsent } = useAnalyticsConsent()
 
-const visible = ref(false)
+// Client-only visibility to avoid SSR hydration mismatch.
+// Once consent is given, consentGiven becomes true and the banner hides reactively.
+const mounted = ref(false)
+onMounted(() => { mounted.value = true })
 
-onMounted(() => {
-  visible.value = !consentGiven.value
-})
-
-function accept() {
-  setConsent('all')
-  visible.value = false
-}
-
-function decline() {
-  setConsent('essential')
-  visible.value = false
-}
+const visible = computed(() => mounted.value && !consentGiven.value)
 </script>
 
 <template>
@@ -34,13 +25,13 @@ function decline() {
       <div class="flex gap-2 shrink-0">
         <button
           class="border border-void-border text-slate-400 font-mono text-xs uppercase tracking-wider px-4 py-2 rounded hover:border-slate-500 hover:text-slate-300 transition-colors"
-          @click="decline"
+          @click="setConsent('essential')"
         >
           {{ t('cookie.essential_only') }}
         </button>
         <button
           class="bg-corona text-void font-mono text-xs uppercase tracking-wider px-4 py-2 rounded hover:bg-corona-bright transition-colors"
-          @click="accept"
+          @click="setConsent('all')"
         >
           {{ t('cookie.accept_all') }}
         </button>

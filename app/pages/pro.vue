@@ -58,7 +58,7 @@ const waiverAccepted = ref(false)
 
 async function handleCheckout() {
   if (!waiverAccepted.value) {
-    checkoutError.value = 'Please accept the terms before proceeding.'
+    checkoutError.value = t('pro.waiver_required')
     return
   }
 
