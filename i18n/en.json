@@ -105,7 +105,7 @@
     "view_on_map": "View on Map",
     "from_location": "from your location",
     "from_reykjavik": "from Reykjavík",
-    "thin_results": "Only {count} spots match — consider switching to First-Timer for more options.",
+    "thin_results": "Only {count} spots match — consider switching to {suggested} for more options.",
     "score": "SCORE",
     "score_explanation": "Score combines weather, totality duration, distance, accessibility, services, and horizon visibility — weighted for your profile.",
     "filtered": "Doesn't match profile",

@@ -136,7 +136,9 @@ const features = computed(() => [
 
 <template>
   <div class="relative noise">
-    <Starfield />
+    <ClientOnly>
+      <Starfield />
+    </ClientOnly>
 
     <main>
     <!-- ═══════════════════════════════════════════ -->
@@ -150,7 +152,7 @@ const features = computed(() => [
       <!-- Top bar — minimal nav -->
       <nav class="absolute top-0 left-0 right-0 flex items-center justify-between px-6 sm:px-10 py-5 z-10">
         <div class="flex items-center gap-3">
-          <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none">
+          <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
             <circle cx="64" cy="64" r="36" fill="#050810" />
             <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
             <circle cx="96" cy="48" r="4" fill="#f59e0b" />
@@ -198,11 +200,22 @@ const features = computed(() => [
         <p class="font-display text-xs uppercase tracking-[0.3em] text-slate-500 mb-4 text-center">
           {{ t('countdown.title') }}
         </p>
-        <CountdownBar />
+        <ClientOnly>
+          <CountdownBar />
+          <template #fallback>
+            <div class="countdown-row my-8" style="display:flex;align-items:center;justify-content:center;gap:20px;">
+              <div style="text-align:center;">
+                <span class="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-slate-100">---</span>
+                <span class="block font-mono text-[11px] uppercase tracking-[0.25em] text-slate-500 mt-1.5">{{ t('countdown.days') }}</span>
+              </div>
+            </div>
+          </template>
+        </ClientOnly>
       </div>
 
       <!-- Scroll indicator -->
       <div
+        aria-hidden="true"
         class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 transition-opacity duration-1000"
         :class="countdownReady ? 'opacity-100' : 'opacity-0'"
         style="transition-delay: 600ms"
@@ -215,15 +228,15 @@ const features = computed(() => [
     <!-- ═══════════════════════════════════════════ -->
     <!-- ECLIPSE DATA STRIP -->
     <!-- ═══════════════════════════════════════════ -->
-    <div class="border-y border-void-border/50 bg-void-deep/50 backdrop-blur-sm">
-      <div class="section-container py-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs sm:text-sm md:flex-nowrap md:justify-between font-mono tracking-wider">
+    <section aria-label="Eclipse statistics" class="border-y border-void-border/50 bg-void-deep/50 backdrop-blur-sm">
+      <dl class="section-container py-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs sm:text-sm md:flex-nowrap md:justify-between font-mono tracking-wider">
         <div v-for="item in dataStripItems" :key="item.label" class="flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full" :class="item.color" />
-          <span class="text-slate-500">{{ t(item.label) }}</span>
-          <span class="text-slate-300">{{ t(item.value) }}</span>
+          <span class="w-1.5 h-1.5 rounded-full" :class="item.color" aria-hidden="true" />
+          <dt class="text-slate-500">{{ t(item.label) }}</dt>
+          <dd class="text-slate-300 ml-0">{{ t(item.value) }}</dd>
         </div>
-      </div>
-    </div>
+      </dl>
+    </section>
 
     <!-- ═══════════════════════════════════════════ -->
     <!-- FEATURES -->
@@ -330,7 +343,7 @@ const features = computed(() => [
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
           <!-- Brand -->
           <div class="flex items-center gap-3">
-            <svg class="w-5 h-5" viewBox="0 0 128 128" fill="none">
+            <svg class="w-5 h-5" viewBox="0 0 128 128" fill="none" aria-hidden="true">
               <circle cx="64" cy="64" r="36" fill="#050810" />
               <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.6" />
               <circle cx="96" cy="48" r="3" fill="#f59e0b" opacity="0.8" />

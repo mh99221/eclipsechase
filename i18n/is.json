@@ -105,7 +105,7 @@
     "view_on_map": "Skoða á korti",
     "from_location": "frá þinni staðsetningu",
     "from_reykjavik": "frá Reykjavík",
-    "thin_results": "Aðeins {count} staðir passa — íhugaðu að skipta yfir í Fyrsta-sinn fyrir fleiri valkosti.",
+    "thin_results": "Aðeins {count} staðir passa — íhugaðu að skipta yfir í {suggested} fyrir fleiri valkosti.",
     "score": "STIG",
     "score_explanation": "Stig sameinar veður, lengd myrkvans, fjarlægð, aðgengi, þjónustu og sjóndeildarhringsútsýn — vegið eftir prófílnum þínum.",
     "filtered": "Passar ekki við prófíl",

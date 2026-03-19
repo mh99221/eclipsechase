@@ -32,7 +32,7 @@ async function handleSubmit() {
       class="text-center animate-fade-in"
     >
       <div class="inline-flex items-center justify-center w-16 h-16 rounded-full border border-green-500/20 mb-4">
-        <svg class="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg class="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7" />
         </svg>
       </div>
@@ -53,6 +53,7 @@ async function handleSubmit() {
             v-model="email"
             type="email"
             required
+            aria-label="Email address"
             :placeholder="t('signup.placeholder')"
             :disabled="status === 'loading'"
             class="w-full px-5 py-4 bg-void-surface border border-void-border
@@ -70,6 +71,8 @@ async function handleSubmit() {
           <span class="flex items-center gap-2">
             <svg
               v-if="status === 'loading'"
+              role="status"
+              aria-label="Submitting"
               class="animate-spin h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -80,6 +83,7 @@ async function handleSubmit() {
             {{ t('signup.button') }}
             <svg
               v-if="status !== 'loading'"
+              aria-hidden="true"
               class="w-4 h-4 transition-transform group-hover:translate-x-1"
               fill="none"
               viewBox="0 0 24 24"

@@ -15,11 +15,14 @@ useHead({
 })
 
 // Fetch data in parallel
-const [{ data: spotsData }, { data: stationsData }, { data: cloudData }] = await Promise.all([
+const [{ data: spotsData, status: spotsStatus, error: spotsError }, { data: stationsData }, { data: cloudData }] = await Promise.all([
   useFetch('/api/spots'),
   useFetch('/api/weather/stations'),
   useFetch('/api/weather/cloud-cover'),
 ])
+
+const isLoading = computed(() => spotsStatus.value === 'pending')
+const hasError = computed(() => !!spotsError.value)
 
 // Location
 const { coords, isGps, request: requestGps } = useLocation()
@@ -52,6 +55,14 @@ const hiddenCount = computed(() => Math.max(0, ranked.value.length - 3))
 
 const unfilteredCount = computed(() => ranked.value.filter(r => !r.filtered).length)
 const activeProfile = computed(() => PROFILES.find(p => p.id === selectedProfile.value) || null)
+
+// Suggest a different profile when thin results — never suggest the currently selected one
+const suggestedProfile = computed(() => {
+  if (!selectedProfile.value) return 'First-Timer'
+  const fallback = selectedProfile.value === 'firsttimer' ? 'skychaser' : 'firsttimer'
+  const profile = PROFILES.find(p => p.id === fallback)
+  return profile?.name || 'First-Timer'
+})
 const scoreTooltipOpen = ref<string | null>(null)
 
 function closeTooltip() { scoreTooltipOpen.value = null }
@@ -140,7 +151,7 @@ function scoreColor(score: number): string {
         v-if="selectedProfile && thinResults"
         class="mb-6 px-4 py-3 rounded bg-amber-900/20 border border-amber-700/30 text-xs font-mono text-amber-400"
       >
-        {{ t('recommend.thin_results', { count: unfilteredCount }) }}
+        {{ t('recommend.thin_results', { count: unfilteredCount, suggested: suggestedProfile }) }}
       </div>
 
       <!-- Location indicator -->
@@ -159,16 +170,35 @@ function scoreColor(score: number): string {
         </p>
       </div>
 
+      <!-- Error state -->
+      <div
+        v-if="hasError"
+        class="mb-6 px-4 py-3 rounded bg-red-900/20 border border-red-700/30 text-xs font-mono text-red-400"
+      >
+        Could not load viewing spots. Please try refreshing the page.
+      </div>
+
+      <!-- Loading skeleton -->
+      <template v-if="isLoading">
+        <div class="flex flex-col gap-3">
+          <div v-for="i in 3" :key="i" class="bg-void-surface border border-void-border/40 rounded-lg p-4 animate-pulse">
+            <div class="h-3 w-24 bg-slate-700/50 rounded mb-2" />
+            <div class="h-5 w-48 bg-slate-700/50 rounded mb-2" />
+            <div class="h-3 w-64 bg-slate-700/50 rounded" />
+          </div>
+        </div>
+      </template>
+
       <!-- No profile prompt -->
       <p
-        v-if="!selectedProfile"
+        v-if="!selectedProfile && !isLoading && !hasError"
         class="mb-6 text-sm text-slate-500 font-mono"
       >
         {{ t('recommend.no_profile') }}
       </p>
 
       <!-- Spot cards -->
-      <div class="flex flex-col gap-3">
+      <div v-if="!isLoading && !hasError" class="flex flex-col gap-3">
         <article
           v-for="(item, index) in visibleSpots"
           :key="item.spot.id"

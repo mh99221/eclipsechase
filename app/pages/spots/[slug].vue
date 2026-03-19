@@ -121,8 +121,8 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
   <div class="relative noise min-h-screen">
     <!-- Nav -->
     <nav class="flex items-center justify-between px-6 sm:px-10 py-5">
-      <NuxtLink to="/" class="flex items-center gap-3 group">
-        <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none">
+      <NuxtLink to="/" aria-label="EclipseChase — Home" class="flex items-center gap-3 group">
+        <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
           <circle cx="64" cy="64" r="36" fill="#050810" />
           <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
           <circle cx="96" cy="48" r="4" fill="#f59e0b" />
@@ -140,11 +140,13 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
     <main>
     <article class="section-container max-w-3xl py-8 sm:py-16">
       <!-- Breadcrumb -->
-      <div class="flex items-center gap-2 text-xs font-mono text-slate-500 mb-8">
-        <NuxtLink to="/map" class="hover:text-slate-300 transition-colors">{{ t('nav.map') }}</NuxtLink>
-        <span>/</span>
-        <span class="text-slate-400">{{ spot.name }}</span>
-      </div>
+      <nav aria-label="Breadcrumb" class="mb-8">
+        <ol class="flex items-center gap-2 text-xs font-mono text-slate-500">
+          <li><NuxtLink to="/map" class="hover:text-slate-300 transition-colors">{{ t('nav.map') }}</NuxtLink></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page" class="text-slate-400">{{ spot.name }}</li>
+        </ol>
+      </nav>
 
       <!-- Photo Gallery -->
       <SpotPhotoGallery
@@ -167,32 +169,32 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
       </div>
 
       <!-- Key stats -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
+      <dl class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
         <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.totality') }}</p>
-          <p class="font-display text-2xl font-bold text-white">
+          <dt class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.totality') }}</dt>
+          <dd class="font-display text-2xl font-bold text-white ml-0">
             {{ formatDuration(spot.totality_duration_seconds) }}
-          </p>
+          </dd>
         </div>
         <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.sun_altitude') }}</p>
-          <p class="font-display text-2xl font-bold text-white">
+          <dt class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.sun_altitude') }}</dt>
+          <dd class="font-display text-2xl font-bold text-white ml-0">
             {{ spot.sun_altitude }}°
-          </p>
+          </dd>
         </div>
         <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.services') }}</p>
-          <p class="font-display text-lg font-semibold" :class="spot.has_services ? 'text-green-400' : 'text-slate-500'">
+          <dt class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.services') }}</dt>
+          <dd class="font-display text-lg font-semibold ml-0" :class="spot.has_services ? 'text-green-400' : 'text-slate-500'">
             {{ spot.has_services ? t('spot.available') : t('spot.none_nearby') }}
-          </p>
+          </dd>
         </div>
         <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.cell_coverage') }}</p>
-          <p class="font-display text-lg font-semibold" :class="coverageBadge[spot.cell_coverage]?.color || 'text-slate-400'">
+          <dt class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.cell_coverage') }}</dt>
+          <dd class="font-display text-lg font-semibold ml-0" :class="coverageBadge[spot.cell_coverage]?.color || 'text-slate-400'">
             {{ coverageBadge[spot.cell_coverage]?.label || spot.cell_coverage }}
-          </p>
+          </dd>
         </div>
-      </div>
+      </dl>
 
       <!-- Horizon Check Badge -->
       <div v-if="horizonCheck" class="mb-12">
@@ -205,7 +207,7 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
       <!-- Trail info (hiking spots only) -->
       <div v-if="isTrail" class="mb-12 bg-void-surface border border-void-border/40 rounded-lg p-5 sm:p-6">
         <h2 class="font-display text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <svg class="w-5 h-5 text-corona/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-5 h-5 text-corona/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
           </svg>
           {{ t('spot.trail_info') }}
@@ -250,7 +252,7 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
             class="inline-flex items-center gap-1.5 mt-1.5 text-sm text-corona hover:text-corona-bright transition-colors"
           >
             {{ t('spot.navigate_trailhead') }}
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
           </a>
@@ -265,7 +267,7 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
       <!-- Horizon View -->
       <section v-if="horizonProfileData" class="mb-12">
         <h2 class="font-display text-xl font-semibold text-white mb-3 flex items-center gap-2">
-          <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15l5.12-5.12A3 3 0 0110.24 9H13a2 2 0 012 2v.76a3 3 0 01-.88 2.12L9 19" />
           </svg>
           {{ t('horizon.section_title') }}
@@ -302,7 +304,7 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
       <div class="space-y-8">
         <section v-if="spot.parking_info">
           <h2 class="font-display text-xl font-semibold text-white mb-3 flex items-center gap-2">
-            <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h.01M12 7h.01M16 7h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             {{ t('spot.parking') }}
@@ -312,7 +314,7 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
 
         <section v-if="spot.terrain_notes">
           <h2 class="font-display text-xl font-semibold text-white mb-3 flex items-center gap-2">
-            <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
             </svg>
             {{ t('spot.terrain') }}
@@ -323,7 +325,7 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
         <!-- Coordinates -->
         <section>
           <h2 class="font-display text-xl font-semibold text-white mb-3 flex items-center gap-2">
-            <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -339,7 +341,7 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
             class="inline-flex items-center gap-1.5 mt-2 text-sm text-corona hover:text-corona-bright transition-colors"
           >
             {{ t('spot.open_gmaps') }}
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
           </a>

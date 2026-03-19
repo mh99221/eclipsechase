@@ -139,6 +139,7 @@ function updateMarkers() {
     const el = document.createElement('div')
     el.className = 'station-marker'
     el.setAttribute('role', 'button')
+    el.setAttribute('tabindex', '0')
     el.setAttribute('aria-label', `${station.name} weather station${station.cloud_cover != null ? `, ${station.cloud_cover}% cloud cover` : ''}`)
     el.style.cssText = `cursor: pointer; line-height: 0; opacity: 0.6; z-index: 0; filter: drop-shadow(0 0 6px ${color}55) drop-shadow(0 0 14px ${color}30);`
     el.innerHTML = weatherSvgHtml(station.cloud_cover, 42)
@@ -146,13 +147,16 @@ function updateMarkers() {
     const popup = new mapboxgl.Popup({
       offset: 12,
       closeButton: false,
+      maxWidth: 'min(220px, 85vw)',
       className: 'eclipse-popup',
     }).setHTML(`
       <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
-        <div style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; margin-bottom: 6px;">${station.name}</div>
-        ${station.cloud_cover != null ? `<div style="color: ${color};">Cloud cover: ${station.cloud_cover}%</div>` : ''}
-        ${station.temp != null ? `<div>Temp: ${station.temp}°C</div>` : ''}
-        ${station.wind_speed != null ? `<div>Wind: ${station.wind_speed} m/s ${station.wind_dir || ''}</div>` : ''}
+        <h3 style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 6px;">${station.name}</h3>
+        <dl style="margin: 0; display: flex; flex-direction: column; gap: 2px;">
+          ${station.cloud_cover != null ? `<div><dt style="display:inline;color:#94a3b8;">Cloud cover:</dt> <dd style="display:inline;color:${color};margin:0;">${station.cloud_cover}%</dd></div>` : ''}
+          ${station.temp != null ? `<div><dt style="display:inline;color:#94a3b8;">Temp:</dt> <dd style="display:inline;margin:0;">${station.temp}°C</dd></div>` : ''}
+          ${station.wind_speed != null ? `<div><dt style="display:inline;color:#94a3b8;">Wind:</dt> <dd style="display:inline;margin:0;">${station.wind_speed} m/s ${station.wind_dir || ''}</dd></div>` : ''}
+        </dl>
       </div>
     `)
 
@@ -197,6 +201,7 @@ function updateSpotMarkers() {
     const el = document.createElement('div')
     el.className = 'spot-marker'
     el.setAttribute('role', 'button')
+    el.setAttribute('tabindex', '0')
     el.setAttribute('aria-label', `${spot.name} viewing spot, ${formatDuration(spot.totality_duration_seconds)} totality${hasRanking && rankInfo && !rankInfo.filtered ? `, rank ${rankInfo.rank}` : ''}`)
 
     if (isFiltered) {
@@ -250,19 +255,20 @@ function updateSpotMarkers() {
     const popup = new mapboxgl.Popup({
       offset: 14,
       closeButton: false,
+      maxWidth: 'min(260px, 85vw)',
       className: 'eclipse-popup',
     }).setHTML(`
       <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px; cursor: pointer;" data-slug="${spot.slug}">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
-          <div style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; color: #fbbf24;">${spot.name}</div>
-          <div style="flex-shrink: 0; line-height: 0;">${weatherIcon}</div>
+          <h3 style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; color: #fbbf24; margin: 0;">${spot.name}</h3>
+          <div style="flex-shrink: 0; line-height: 0;" aria-hidden="true">${weatherIcon}</div>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span>Totality: ${formatDuration(spot.totality_duration_seconds)}</span>
-          <span style="color: ${weatherColor}; font-size: 11px;">${weatherLabel}</span>
-        </div>
+        <dl style="margin: 0; display: flex; align-items: center; gap: 10px;">
+          <div><dt style="display:inline;color:#94a3b8;">Totality:</dt> <dd style="display:inline;margin:0;">${formatDuration(spot.totality_duration_seconds)}</dd></div>
+          <dd style="color: ${weatherColor}; font-size: 11px; margin: 0;">${weatherLabel}</dd>
+        </dl>
         ${scoreHtml}
-        <div style="margin-top: 6px; color: #f59e0b; font-size: 11px;">Click for details →</div>
+        <p style="margin: 6px 0 0; color: #f59e0b; font-size: 11px;">Click for details →</p>
       </div>
     `)
 
