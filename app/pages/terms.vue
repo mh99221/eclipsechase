@@ -1,6 +1,9 @@
 <script setup lang="ts">
 useHead({
   title: 'Terms of Service',
+  meta: [
+    { name: 'description', content: 'Terms of service for EclipseChase.is — usage rules, Pro tier terms, and governing law.' },
+  ],
 })
 </script>
 
@@ -31,21 +34,21 @@ useHead({
 
       <div class="space-y-8 text-base text-slate-300 leading-relaxed">
         <section>
-          <h2 class="font-display text-xl font-semibold text-white mb-3">Agreement to terms</h2>
+          <h2 class="font-display text-xl font-semibold text-white mb-3">2.1 Agreement to terms</h2>
           <p>
             By accessing or using EclipseChase.is, you agree to these terms. If you do not agree, do not use the service. You must be at least 18 years old or have parental/guardian consent.
           </p>
         </section>
 
         <section>
-          <h2 class="font-display text-xl font-semibold text-white mb-3">Description of service</h2>
+          <h2 class="font-display text-xl font-semibold text-white mb-3">2.2 Description of service</h2>
           <p>
             EclipseChase.is provides weather forecasts, location recommendations, and eclipse information to help users plan viewing of the August 12, 2026 total solar eclipse in Iceland. All information is for general guidance only and should not be relied upon as professional advice.
           </p>
         </section>
 
         <section>
-          <h2 class="font-display text-xl font-semibold text-white mb-3">Pro tier</h2>
+          <h2 class="font-display text-xl font-semibold text-white mb-3">2.3 Pro tier</h2>
           <ul class="list-disc list-outside ml-5 space-y-2">
             <li>One-time payment of €9.99 via Stripe for access to premium features (live weather map, recommendation engine)</li>
             <li>Digital content — by completing purchase, you expressly consent to immediate access and acknowledge that you waive your right of withdrawal under EU Consumer Rights Directive (Article 16(m))</li>
@@ -56,7 +59,7 @@ useHead({
         </section>
 
         <section>
-          <h2 class="font-display text-xl font-semibold text-white mb-3">Safety and liability disclaimer</h2>
+          <h2 class="font-display text-xl font-semibold text-white mb-3">2.4 Safety and liability disclaimer</h2>
           <p class="mb-3">
             EclipseChase.is provides informational guidance only, not professional meteorological, navigation, or safety advice.
           </p>
@@ -80,7 +83,7 @@ useHead({
         </section>
 
         <section>
-          <h2 class="font-display text-xl font-semibold text-white mb-3">Acceptable use</h2>
+          <h2 class="font-display text-xl font-semibold text-white mb-3">2.5 Acceptable use</h2>
           <ul class="list-disc list-outside ml-5 space-y-2">
             <li>Do not scrape, crawl, or systematically extract data from the service</li>
             <li>Do not attempt to bypass Pro tier access controls</li>
@@ -90,14 +93,14 @@ useHead({
         </section>
 
         <section>
-          <h2 class="font-display text-xl font-semibold text-white mb-3">Intellectual property</h2>
+          <h2 class="font-display text-xl font-semibold text-white mb-3">2.6 Intellectual property</h2>
           <p>
             All content, design, code, eclipse computations, and data compilations on EclipseChase.is are the property of Elite Consulting, s.r.o. or its licensors. You may not reproduce, distribute, or create derivative works without written permission.
           </p>
         </section>
 
         <section>
-          <h2 class="font-display text-xl font-semibold text-white mb-3">Service availability</h2>
+          <h2 class="font-display text-xl font-semibold text-white mb-3">2.7 Service availability</h2>
           <ul class="list-disc list-outside ml-5 space-y-2">
             <li>The service is provided "as is" and "as available" without warranties of any kind, express or implied</li>
             <li>We do not guarantee uninterrupted or error-free operation</li>
@@ -107,7 +110,7 @@ useHead({
         </section>
 
         <section>
-          <h2 class="font-display text-xl font-semibold text-white mb-3">Limitation of liability</h2>
+          <h2 class="font-display text-xl font-semibold text-white mb-3">2.8 Limitation of liability</h2>
           <p class="mb-3">To the maximum extent permitted by applicable law:</p>
           <ul class="list-disc list-outside ml-5 space-y-2">
             <li>Our total liability for any claims arising from your use of the service is limited to the amount you paid (€9.99 for Pro, or €0 for free tier)</li>
@@ -117,21 +120,21 @@ useHead({
         </section>
 
         <section>
-          <h2 class="font-display text-xl font-semibold text-white mb-3">Governing law and jurisdiction</h2>
+          <h2 class="font-display text-xl font-semibold text-white mb-3">2.9 Governing law and jurisdiction</h2>
           <p>
             These terms are governed by the laws of the Slovak Republic. Any disputes shall be resolved by the courts of Bratislava, Slovakia. This does not affect your mandatory consumer rights under the laws of your country of residence.
           </p>
         </section>
 
         <section>
-          <h2 class="font-display text-xl font-semibold text-white mb-3">Changes to terms</h2>
+          <h2 class="font-display text-xl font-semibold text-white mb-3">2.10 Changes to terms</h2>
           <p>
             We may update these terms. Material changes will be notified via email to Pro users and posted on the website. Continued use after changes constitutes acceptance.
           </p>
         </section>
 
         <section>
-          <h2 class="font-display text-xl font-semibold text-white mb-3">Contact</h2>
+          <h2 class="font-display text-xl font-semibold text-white mb-3">2.11 Contact</h2>
           <p>
             For questions about these terms, contact us at <a href="mailto:privacy@eclipsechase.is" class="text-corona hover:text-corona-bright transition-colors">privacy@eclipsechase.is</a>.
           </p>
