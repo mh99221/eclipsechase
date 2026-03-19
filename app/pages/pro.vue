@@ -54,8 +54,14 @@ async function handleLogin() {
 const checkoutEmail = ref('')
 const checkoutSubmitting = ref(false)
 const checkoutError = ref('')
+const waiverAccepted = ref(false)
 
 async function handleCheckout() {
+  if (!waiverAccepted.value) {
+    checkoutError.value = 'Please accept the terms before proceeding.'
+    return
+  }
+
   if (!isValidEmail(checkoutEmail.value)) {
     checkoutError.value = t('pro.email_invalid')
     return
@@ -245,6 +251,31 @@ const features = [
             >
           </div>
 
+          <!-- Withdrawal waiver checkbox -->
+          <div class="max-w-sm mx-auto mb-4 text-left">
+            <label class="flex items-start gap-2.5 cursor-pointer">
+              <input
+                v-model="waiverAccepted"
+                type="checkbox"
+                class="mt-1 shrink-0 accent-corona"
+              >
+              <span class="text-xs text-slate-400 leading-relaxed">
+                <i18n-t path="pro.withdrawal_waiver" tag="span">
+                  <template #terms_link>
+                    <NuxtLink to="/terms" class="text-corona hover:text-corona-bright transition-colors">
+                      {{ t('pro.terms_link_text') }}
+                    </NuxtLink>
+                  </template>
+                  <template #privacy_link>
+                    <NuxtLink to="/privacy" class="text-corona hover:text-corona-bright transition-colors">
+                      {{ t('pro.privacy_link_text') }}
+                    </NuxtLink>
+                  </template>
+                </i18n-t>
+              </span>
+            </label>
+          </div>
+
           <!-- Error -->
           <p v-if="checkoutError" class="text-sm font-mono text-red-400 mb-4">
             {{ checkoutError }}
@@ -252,7 +283,7 @@ const features = [
 
           <!-- Checkout button -->
           <button
-            :disabled="checkoutSubmitting"
+            :disabled="checkoutSubmitting || !waiverAccepted"
             class="btn-corona w-full max-w-sm text-base py-3.5 disabled:opacity-50 disabled:cursor-not-allowed"
             @click="handleCheckout"
           >
