@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
     metadata: {
       product: 'eclipse_pro',
     },
-    success_url: `${config.public.siteUrl}/map?pro=activated`,
+    success_url: `${config.public.siteUrl}/map?pro=activated&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${config.public.siteUrl}/pro?cancelled=true`,
   })
 

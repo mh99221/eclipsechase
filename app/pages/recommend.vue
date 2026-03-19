@@ -98,9 +98,12 @@ function scoreColor(score: number): string {
           ECLIPSECHASE
         </span>
       </NuxtLink>
-      <NuxtLink to="/map" class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider">
-        MAP
-      </NuxtLink>
+      <div class="flex items-center gap-4">
+        <UserMenu />
+        <NuxtLink to="/map" class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider">
+          MAP
+        </NuxtLink>
+      </div>
     </nav>
 
     <!-- Content -->

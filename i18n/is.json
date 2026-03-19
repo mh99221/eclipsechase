@@ -178,6 +178,28 @@
     "get_access": "Fá Pro aðgang",
     "stripe_note": "Örugg greiðsla í gegnum Stripe"
   },
+  "auth": {
+    "logout": "Útskrá",
+    "already_pro": "Ertu nú þegar með Pro?",
+    "login_subtitle": "Sláðu inn netfangið þitt til að fá innskráningarhlekk.",
+    "new_user": "Fá Pro aðgang",
+    "send_link": "Senda hlekk",
+    "check_email": "Innskráningarhlekkur sendur! Athugaðu tölvupóstinn þinn og smelltu á hlekkinn til að skrá þig inn.",
+    "email_label": "Netfang",
+    "no_subscription_banner": "Þú ert innskráð/ur en ekkert virkt Pro áskrift fannst. Kauptu hér að neðan til að opna alla eiginleika."
+  },
+  "confirm": {
+    "title": "Staðfesti...",
+    "verifying": "Staðfesti reikninginn þinn...",
+    "welcome": "Velkomin í EclipseChase Pro!",
+    "redirecting": "Beini á kort...",
+    "logged_in": "Þú ert innskráð/ur",
+    "no_subscription": "Ekkert virkt Pro áskrift fannst fyrir þetta netfang. Þú verður vísað á uppfærslusíðu.",
+    "redirecting_pro": "Beini...",
+    "error_title": "Eitthvað fór úrskeiðis",
+    "error_desc": "Við gátum ekki staðfest innskráninguna þína. Hlekkurinn gæti hafa runnið út.",
+    "try_again": "Reyna aftur"
+  },
   "spot": {
     "totality": "Myrkvinn",
     "sun_altitude": "Sólhæð",

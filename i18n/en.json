@@ -178,6 +178,28 @@
     "get_access": "Get Pro Access",
     "stripe_note": "Secure payment via Stripe"
   },
+  "auth": {
+    "logout": "Log out",
+    "already_pro": "Already have Pro?",
+    "login_subtitle": "Enter your email to receive a login link.",
+    "new_user": "Get Pro Access",
+    "send_link": "Send link",
+    "check_email": "Login link sent! Check your email and click the link to sign in.",
+    "email_label": "Email address",
+    "no_subscription_banner": "You're logged in, but no active Pro subscription was found. Purchase below to unlock all features."
+  },
+  "confirm": {
+    "title": "Confirming...",
+    "verifying": "Verifying your account...",
+    "welcome": "Welcome to EclipseChase Pro!",
+    "redirecting": "Redirecting to map...",
+    "logged_in": "You're logged in",
+    "no_subscription": "No active Pro subscription found for this email. You'll be redirected to the upgrade page.",
+    "redirecting_pro": "Redirecting...",
+    "error_title": "Something went wrong",
+    "error_desc": "We couldn't verify your login. The link may have expired.",
+    "try_again": "Try again"
+  },
   "spot": {
     "totality": "Totality",
     "sun_altitude": "Sun altitude",

@@ -76,11 +76,15 @@ export default defineNuxtConfig({
 
   supabase: {
     redirect: false,
+    redirectOptions: {
+      login: '/pro',
+      callback: '/confirm',
+    },
   },
 
   routeRules: {
     '/guide': { prerender: true },
-    '/pro': { prerender: true },
+    '/pro': { ssr: true },
     '/privacy': { prerender: true },
     '/spots/**': { isr: 3600 },
   },

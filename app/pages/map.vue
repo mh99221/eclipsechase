@@ -572,8 +572,9 @@ const profileIcons: Record<ProfileId, string> = {
           </span>
         </NuxtLink>
 
-        <!-- Desktop profile selector (hidden on mobile — moved to bottom sheet) -->
+        <!-- User menu + Desktop profile selector (hidden on mobile — moved to bottom sheet) -->
         <div class="pointer-events-auto hidden sm:flex items-center gap-3">
+          <UserMenu />
           <div class="relative" @click.stop>
             <button
               class="text-xs font-mono tracking-wider px-2.5 py-1.5 rounded transition-all"

@@ -1,5 +1,5 @@
 // server/api/horizon/check.post.ts
-import { serverSupabaseServiceRole } from '#supabase/server'
+import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import type { HorizonCheckResponse } from '~/types/horizon'
 
 // Rate limiting: 10 req/min per IP, with eviction to prevent memory leak
@@ -40,18 +40,12 @@ export default defineEventHandler(async (event) => {
 
   const supabase = await serverSupabaseServiceRole(event)
 
-  // Check Pro status
-  const email = getHeader(event, 'x-pro-email')
-  if (!email) {
-    throw createError({ statusCode: 403, message: 'Pro subscription required' })
+  // Require authenticated Pro user
+  const user = await serverSupabaseUser(event)
+  if (!user?.email) {
+    throw createError({ statusCode: 401, message: 'Authentication required' })
   }
-  const { data: proUser } = await supabase
-    .from('pro_users')
-    .select('is_active')
-    .eq('email', email)
-    .single()
-
-  if (!proUser?.is_active) {
+  if (!(await isProUser(supabase, user))) {
     throw createError({ statusCode: 403, message: 'Pro subscription required' })
   }
 

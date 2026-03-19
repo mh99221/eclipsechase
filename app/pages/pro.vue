@@ -10,38 +10,78 @@ useHead({
 
 const route = useRoute()
 const cancelled = computed(() => route.query.cancelled === 'true')
+const noSubscription = computed(() => route.query.no_subscription === 'true')
 
-const email = ref('')
-const isSubmitting = ref(false)
-const error = ref('')
+const { isLoggedIn, isPro, sendMagicLink } = useProStatus()
 
-async function handleCheckout() {
-  if (!email.value || !email.value.includes('@')) {
-    error.value = t('pro.email_invalid')
+function isValidEmail(email: string): boolean {
+  return !!email && email.includes('@') && email.includes('.')
+}
+
+// Redirect if already logged in and Pro (client-only to avoid SSR navigation)
+watch([isLoggedIn, isPro], ([loggedIn, pro]) => {
+  if (import.meta.client && loggedIn && pro) navigateTo('/map')
+}, { immediate: true })
+
+// --- Login (magic link) state ---
+const loginEmail = ref('')
+const loginSubmitting = ref(false)
+const loginError = ref('')
+const loginSent = ref(false)
+
+async function handleLogin() {
+  if (!isValidEmail(loginEmail.value)) {
+    loginError.value = t('pro.email_invalid')
     return
   }
 
-  error.value = ''
-  isSubmitting.value = true
+  loginError.value = ''
+  loginSubmitting.value = true
+
+  try {
+    await sendMagicLink(loginEmail.value)
+    loginSent.value = true
+  }
+  catch (err: any) {
+    loginError.value = err?.message || t('pro.generic_error')
+  }
+  finally {
+    loginSubmitting.value = false
+  }
+}
+
+// --- Checkout (Stripe) state ---
+const checkoutEmail = ref('')
+const checkoutSubmitting = ref(false)
+const checkoutError = ref('')
+
+async function handleCheckout() {
+  if (!isValidEmail(checkoutEmail.value)) {
+    checkoutError.value = t('pro.email_invalid')
+    return
+  }
+
+  checkoutError.value = ''
+  checkoutSubmitting.value = true
 
   try {
     const { url } = await $fetch<{ url: string }>('/api/stripe/checkout', {
       method: 'POST',
-      body: { email: email.value },
+      body: { email: checkoutEmail.value },
     })
 
     if (url) {
       navigateTo(url, { external: true })
     }
     else {
-      error.value = t('pro.checkout_error')
+      checkoutError.value = t('pro.checkout_error')
     }
   }
   catch (err: any) {
-    error.value = err?.data?.statusMessage || t('pro.generic_error')
+    checkoutError.value = err?.data?.statusMessage || t('pro.generic_error')
   }
   finally {
-    isSubmitting.value = false
+    checkoutSubmitting.value = false
   }
 }
 
@@ -85,6 +125,14 @@ const features = [
           {{ t('pro.cancelled') }}
         </div>
 
+        <!-- No subscription banner -->
+        <div
+          v-if="noSubscription"
+          class="mb-8 px-4 py-3 rounded bg-blue-900/15 border border-blue-700/20 text-sm font-mono text-blue-400/80"
+        >
+          {{ t('auth.no_subscription_banner') }}
+        </div>
+
         <!-- Header -->
         <div class="mb-12">
           <span class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase">
@@ -126,8 +174,54 @@ const features = [
           </div>
         </div>
 
-        <!-- Price card -->
+        <!-- Already have Pro? Login section -->
+        <div class="mb-8 bg-void-surface border border-void-border/40 rounded p-6">
+          <h2 class="font-display text-lg font-semibold text-white mb-1">
+            {{ t('auth.already_pro') }}
+          </h2>
+          <p class="text-sm text-slate-500 mb-4">
+            {{ t('auth.login_subtitle') }}
+          </p>
+
+          <!-- Magic link sent confirmation -->
+          <div v-if="loginSent" class="px-4 py-3 rounded bg-green-900/15 border border-green-700/20 text-sm text-green-400">
+            {{ t('auth.check_email') }}
+          </div>
+
+          <!-- Login form -->
+          <div v-else>
+            <div class="flex gap-2">
+              <label for="login-email" class="sr-only">{{ t('auth.email_label') }}</label>
+              <input
+                id="login-email"
+                v-model="loginEmail"
+                type="email"
+                :placeholder="t('pro.email_placeholder')"
+                required
+                class="flex-1 px-4 py-2.5 rounded bg-void border border-void-border text-white placeholder-slate-600 font-mono text-sm focus:outline-none focus:border-corona/50 transition-colors"
+                @keydown.enter="handleLogin"
+              >
+              <button
+                :disabled="loginSubmitting"
+                class="px-4 py-2.5 rounded bg-void border border-void-border text-white font-mono text-sm hover:border-corona/50 transition-colors disabled:opacity-50 whitespace-nowrap"
+                @click="handleLogin"
+              >
+                <span v-if="loginSubmitting">...</span>
+                <span v-else>{{ t('auth.send_link') }}</span>
+              </button>
+            </div>
+            <p v-if="loginError" class="text-xs font-mono text-red-400 mt-2">
+              {{ loginError }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Price card + Checkout -->
         <div class="bg-void-surface border border-corona/20 rounded-lg p-6 sm:p-8 text-center">
+          <h2 class="font-display text-lg font-semibold text-white mb-4">
+            {{ t('auth.new_user') }}
+          </h2>
+
           <div class="mb-6">
             <div class="font-display text-5xl sm:text-6xl font-bold text-white">
               &euro;9.99
@@ -139,10 +233,10 @@ const features = [
 
           <!-- Email input -->
           <div class="max-w-sm mx-auto mb-4">
-            <label for="pro-email" class="sr-only">Email address</label>
+            <label for="pro-email" class="sr-only">{{ t('auth.email_label') }}</label>
             <input
               id="pro-email"
-              v-model="email"
+              v-model="checkoutEmail"
               type="email"
               :placeholder="t('pro.email_placeholder')"
               required
@@ -152,17 +246,17 @@ const features = [
           </div>
 
           <!-- Error -->
-          <p v-if="error" class="text-sm font-mono text-red-400 mb-4">
-            {{ error }}
+          <p v-if="checkoutError" class="text-sm font-mono text-red-400 mb-4">
+            {{ checkoutError }}
           </p>
 
           <!-- Checkout button -->
           <button
-            :disabled="isSubmitting"
+            :disabled="checkoutSubmitting"
             class="btn-corona w-full max-w-sm text-base py-3.5 disabled:opacity-50 disabled:cursor-not-allowed"
             @click="handleCheckout"
           >
-            <span v-if="isSubmitting" class="inline-flex items-center gap-2">
+            <span v-if="checkoutSubmitting" class="inline-flex items-center gap-2">
               <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
