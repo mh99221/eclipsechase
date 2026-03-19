@@ -19,7 +19,7 @@ Full rewrite of the existing `app/pages/privacy.vue`. Same page design patterns 
 #### Sections
 
 **1.1 Who we are**
-Elite Consulting, s.r.o., registered in Slovakia (IČO to be added). Contact: privacy@eclipsechase.is. Operates EclipseChase.is to help visitors find clear skies for the August 12, 2026 total solar eclipse in Iceland.
+Elite Consulting, s.r.o., registered in Slovakia (IČO and registered address to be added by the developer). Contact: privacy@eclipsechase.is. Operates EclipseChase.is to help visitors find clear skies for the August 12, 2026 total solar eclipse in Iceland.
 
 **1.2 What data we collect**
 
@@ -53,7 +53,7 @@ Note: Umami analytics does NOT set any cookies. It collects anonymous page view 
 | **Stripe** (US) | Email, payment card details | Payment processing for Pro tier | stripe.com/privacy |
 | **Resend** (US) | Email address | Transactional email delivery (welcome email) | resend.com/legal/privacy-policy |
 | **Mapbox** (US) | Tile requests (no personal data) | Map rendering | mapbox.com/legal/privacy |
-| **Umami** (EU, self-hosted equivalent) | Anonymous page views, referrer, user agent | Privacy-friendly analytics | umami.is/privacy |
+| **Umami Cloud** (EU) | Anonymous page views, referrer, user agent | Privacy-friendly analytics (hosted by Umami, cloud.umami.is) | umami.is/privacy |
 | **PeakFinder** (external link) | Coordinates passed in URL (user-initiated) | Horizon obstruction visualization | User navigates to peakfinder.com voluntarily |
 
 **1.5 How we use your data**
@@ -68,6 +68,7 @@ Note: Umami analytics does NOT set any cookies. It collects anonymous page view 
 - Authentication sessions: expire automatically, cleared on logout
 - Weather/road data: transient server-side cache, refreshed every 15 minutes, no personal data
 - Analytics: aggregated anonymous data, no personal data retained
+- Server logs: retained by Vercel per their data processing agreement (typically 30 days). We do not independently store server logs.
 
 **1.7 Your rights (GDPR)**
 - Access the personal data we hold about you
@@ -242,7 +243,7 @@ Exception: On the landing page (`index.vue`), the footer may have different layo
 - Cookie settings/preferences page (overkill — users can clear localStorage)
 - Separate safety disclaimer page (embedded in ToS section 2.4)
 - Cookie categories/granular controls (only two categories: essential + analytics)
-- "Manage cookies" footer link to re-show banner (fast-follow: EDPB recommends withdrawal of consent should be as easy as giving it — consider adding a small footer link that clears `eclipsechase-consent` from localStorage and re-shows the banner)
+- "Manage cookies" footer link to re-show banner (planned fast-follow, implement before launch: EDPB recommends withdrawal of consent should be as easy as giving it — add a small footer link that clears `eclipsechase-consent` from localStorage and re-shows the banner)
 
 ## Files Changed
 
