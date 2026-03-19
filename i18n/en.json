@@ -116,7 +116,14 @@
     "tagline": "Built for the once-in-170-years eclipse.",
     "eclipse_date": "August 12, 2026 · Iceland",
     "privacy": "Privacy",
-    "about": "About"
+    "about": "About",
+    "terms": "Terms"
+  },
+  "cookie": {
+    "banner_text": "We use essential cookies for authentication. We also use Umami for anonymous analytics, which requires your consent.",
+    "learn_more": "Learn more",
+    "accept_all": "Accept all",
+    "essential_only": "Essential only"
   },
   "guide": {
     "title": "Complete Guide to the 2026 Total Solar Eclipse in Iceland",
@@ -176,7 +183,10 @@
     "generic_error": "Something went wrong. Please try again.",
     "processing": "Processing...",
     "get_access": "Get Pro Access",
-    "stripe_note": "Secure payment via Stripe"
+    "stripe_note": "Secure payment via Stripe",
+    "withdrawal_waiver": "I agree that my Pro access begins immediately and I waive my 14-day right of withdrawal. I have read the {terms_link} and {privacy_link}.",
+    "terms_link_text": "Terms of Service",
+    "privacy_link_text": "Privacy Policy"
   },
   "auth": {
     "logout": "Log out",

@@ -116,7 +116,14 @@
     "tagline": "Gert fyrir sólmyrkvann sem kemur einu sinni á 170 árum.",
     "eclipse_date": "12. ágúst 2026 · Ísland",
     "privacy": "Persónuvernd",
-    "about": "Um okkur"
+    "about": "Um okkur",
+    "terms": "Skilmálar"
+  },
+  "cookie": {
+    "banner_text": "Við notum nauðsynleg vefkökur fyrir auðkenningu. Við notum einnig Umami fyrir nafnlausar greiningar, sem krefst samþykkis þíns.",
+    "learn_more": "Nánar",
+    "accept_all": "Samþykkja allt",
+    "essential_only": "Aðeins nauðsynlegt"
   },
   "guide": {
     "title": "Heildarleiðbeiningar um sólmyrkvann 2026 á Íslandi",
@@ -176,7 +183,10 @@
     "generic_error": "Eitthvað fór úrskeiðis. Vinsamlegast reyndu aftur.",
     "processing": "Vinnur...",
     "get_access": "Fá Pro aðgang",
-    "stripe_note": "Örugg greiðsla í gegnum Stripe"
+    "stripe_note": "Örugg greiðsla í gegnum Stripe",
+    "withdrawal_waiver": "Ég samþykki að Pro aðgangur minn hefjist strax og ég afsala mér 14 daga endurgreiðslurétti. Ég hef lesið {terms_link} og {privacy_link}.",
+    "terms_link_text": "Skilmála",
+    "privacy_link_text": "Persónuverndarstefnu"
   },
   "auth": {
     "logout": "Útskrá",
