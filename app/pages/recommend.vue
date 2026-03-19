@@ -352,10 +352,18 @@ function scoreColor(score: number): string {
 
     <!-- Footer -->
     <footer class="border-t border-void-border/30 py-8 mt-12 sm:mb-0 mb-16">
-      <div class="section-container text-center">
+      <div class="section-container flex items-center justify-between">
         <NuxtLink to="/map" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
           &larr; Back to map
         </NuxtLink>
+        <div class="flex gap-4">
+          <NuxtLink to="/privacy" class="font-mono text-xs text-slate-500 hover:text-slate-300 transition-colors">
+            Privacy
+          </NuxtLink>
+          <NuxtLink to="/terms" class="font-mono text-xs text-slate-500 hover:text-slate-300 transition-colors">
+            Terms
+          </NuxtLink>
+        </div>
       </div>
     </footer>
   </div>

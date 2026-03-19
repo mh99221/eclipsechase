@@ -364,6 +364,10 @@ const features = computed(() => [
               {{ t('footer.privacy') }}
             </NuxtLink>
             <div class="w-px h-3 bg-void-border" />
+            <NuxtLink to="/terms" class="hover:text-slate-300 transition-colors">
+              {{ t('footer.terms') }}
+            </NuxtLink>
+            <div class="w-px h-3 bg-void-border" />
             <span>{{ t('footer.eclipse_date') }}</span>
           </div>
         </div>

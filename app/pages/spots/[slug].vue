@@ -357,10 +357,18 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
 
     <!-- Footer -->
     <footer class="border-t border-void-border/30 py-8">
-      <div class="section-container text-center">
+      <div class="section-container flex items-center justify-between">
         <NuxtLink :to="backToMapUrl" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
           &larr; {{ t('nav.back_map') }}
         </NuxtLink>
+        <div class="flex gap-4">
+          <NuxtLink to="/privacy" class="font-mono text-xs text-slate-500 hover:text-slate-300 transition-colors">
+            {{ t('footer.privacy') }}
+          </NuxtLink>
+          <NuxtLink to="/terms" class="font-mono text-xs text-slate-500 hover:text-slate-300 transition-colors">
+            {{ t('footer.terms') }}
+          </NuxtLink>
+        </div>
       </div>
     </footer>
   </div>
