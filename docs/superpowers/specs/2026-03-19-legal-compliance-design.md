@@ -14,21 +14,24 @@ This spec covers four deliverables to bring the site into full EU commercial com
 
 ### 1. Privacy Policy Rewrite (`/privacy`)
 
-Full rewrite of the existing `app/pages/privacy.vue`. Same page design patterns (noise wrapper, nav, section-container, footer). Update the "Last updated" date.
+Full rewrite of the existing `app/pages/privacy.vue`. Same page design patterns (noise wrapper, nav, `section-container max-w-2xl`, footer). Update the "Last updated" date. Both legal pages use `max-w-2xl` (narrower than the usual `max-w-3xl` for better readability of legal text).
 
 #### Sections
 
 **1.1 Who we are**
-Elite Consulting, s.r.o., registered in Slovakia. Operates EclipseChase.is to help visitors find clear skies for the August 12, 2026 total solar eclipse in Iceland.
+Elite Consulting, s.r.o., registered in Slovakia (IČO to be added). Contact: privacy@eclipsechase.is. Operates EclipseChase.is to help visitors find clear skies for the August 12, 2026 total solar eclipse in Iceland.
 
 **1.2 What data we collect**
 
-| Data | When collected | Purpose |
-|------|---------------|---------|
-| Email address | Signup, Pro purchase, Magic Link auth | Notifications, purchase confirmation, authentication |
-| Payment data | Pro purchase | Processed entirely by Stripe — we store only email + Stripe session ID |
-| Anonymous usage data | Every page visit (if consented) | Umami analytics — page views, referrer, user agent, browser language. No IP addresses stored, no cookies set by Umami |
-| Device location | Only if user grants GPS permission | Show user's position on the map. Never stored server-side, never transmitted to us |
+| Data | When collected | Purpose | Legal basis (GDPR Art. 6) |
+|------|---------------|---------|--------------------------|
+| Email address | Signup for notifications | Launch notifications, eclipse updates | Consent (Art. 6(1)(a)) |
+| Email address | Pro purchase, Magic Link auth | Purchase confirmation, authentication | Contract performance (Art. 6(1)(b)) |
+| Payment data | Pro purchase | Processed entirely by Stripe — we store only email + Stripe session ID | Contract performance (Art. 6(1)(b)) |
+| Pro purchase records | Pro purchase | Tax/accounting compliance (Slovak law, 10-year retention) | Legal obligation (Art. 6(1)(c)) |
+| Anonymous usage data | Every page visit (if consented) | Umami analytics — page views, referrer, user agent, browser language. No IP addresses stored, no cookies set by Umami | Consent (Art. 6(1)(a)) |
+| Device location | Only if user grants GPS permission | Show user's position on the map. Never stored server-side, never transmitted to us | Consent (Art. 6(1)(a)) |
+| Server logs (IP, user agent) | Every HTTP request | Collected automatically by Vercel as part of hosting infrastructure. Not accessed or processed by the operator. Governed by Vercel's DPA. | Legitimate interest (Art. 6(1)(f)) |
 
 **1.3 Cookies & local storage**
 
@@ -70,6 +73,8 @@ Note: Umami analytics does NOT set any cookies. It collects anonymous page view 
 - Access the personal data we hold about you
 - Request correction of inaccurate data
 - Request deletion of your data (subject to legal retention requirements)
+- Restrict processing of your data
+- Object to processing of your data
 - Data portability — receive your data in a structured, machine-readable format
 - Withdraw consent for analytics at any time (via cookie banner)
 - Lodge a complaint with your local data protection authority
@@ -101,6 +106,11 @@ EclipseChase.is provides weather forecasts, location recommendations, and eclips
 - No refunds once access is granted
 - Pricing may change for future purchases; existing purchases are unaffected
 - Pro access is linked to your email address and is non-transferable
+
+**UI requirement for `/pro` page**: Before the checkout button, display a mandatory checkbox:
+> "I agree that my Pro access begins immediately and I waive my 14-day right of withdrawal. I have read the [Terms of Service](/terms) and [Privacy Policy](/privacy)."
+
+The checkout button must be disabled until this checkbox is ticked. This is required under EU Consumer Rights Directive (Article 16(m)) to make the no-refund policy legally enforceable.
 
 **2.4 Safety and liability disclaimer**
 - EclipseChase.is provides informational guidance only, not professional meteorological, navigation, or safety advice
@@ -165,7 +175,7 @@ New component at `app/components/CookieConsent.vue`.
 - Fixed to bottom of viewport (`fixed bottom-0 inset-x-0 z-50`)
 - `bg-void-surface border-t border-void-border/40`
 - Single row on desktop, stacked on mobile
-- Text: `"We use essential cookies for authentication and anonymous analytics (Umami) to understand how the site is used."` + link to `/privacy`
+- Text: `"We use essential cookies for authentication. We also use Umami for anonymous analytics, which requires your consent."` + link to `/privacy`
 - Two buttons:
   - "Accept all" — `bg-corona text-void font-mono text-xs uppercase tracking-wider px-4 py-2 rounded`
   - "Essential only" — `border border-void-border text-slate-400 font-mono text-xs uppercase tracking-wider px-4 py-2 rounded`
@@ -177,7 +187,7 @@ Currently Umami is loaded unconditionally in `nuxt.config.ts` via the `head.scri
 - Remove Umami from the static `head.script` config in `nuxt.config.ts`
 - Create a composable `useAnalyticsConsent.ts` that:
   - Reads consent state from localStorage
-  - Provides a `loadUmami()` function that dynamically injects the Umami script tag
+  - Provides a `loadUmami()` function that dynamically injects the Umami script tag using `runtimeConfig.public.umamiHost` and `runtimeConfig.public.umamiWebsiteId` (already configured in nuxt.config.ts)
   - Provides a reactive `hasConsent` ref
 - In `app.vue`, call `loadUmami()` on mount if consent is `"all"`
 - The CookieConsent component calls `loadUmami()` immediately when user clicks "Accept all"
@@ -232,6 +242,7 @@ Exception: On the landing page (`index.vue`), the footer may have different layo
 - Cookie settings/preferences page (overkill — users can clear localStorage)
 - Separate safety disclaimer page (embedded in ToS section 2.4)
 - Cookie categories/granular controls (only two categories: essential + analytics)
+- "Manage cookies" footer link to re-show banner (fast-follow: EDPB recommends withdrawal of consent should be as easy as giving it — consider adding a small footer link that clears `eclipsechase-consent` from localStorage and re-shows the banner)
 
 ## Files Changed
 
@@ -242,10 +253,10 @@ Exception: On the landing page (`index.vue`), the footer may have different layo
 | `app/components/CookieConsent.vue` | New |
 | `app/composables/useAnalyticsConsent.ts` | New |
 | `app/app.vue` | Add CookieConsent component |
-| `nuxt.config.ts` | Remove static Umami script |
+| `nuxt.config.ts` | Remove static Umami script, add `/terms` to `routeRules` with `prerender: true` |
 | `app/pages/index.vue` | Footer update |
 | `app/pages/guide.vue` | Footer update |
-| `app/pages/pro.vue` | Footer update |
+| `app/pages/pro.vue` | Footer update + add withdrawal waiver checkbox before checkout button |
 | `app/pages/spots/[slug].vue` | Footer update |
 | `app/pages/map.vue` | Footer update |
 | `app/pages/recommend.vue` | Footer update |
