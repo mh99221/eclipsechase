@@ -86,6 +86,7 @@ export default defineNuxtConfig({
     '/guide': { prerender: true },
     '/pro': { ssr: true },
     '/privacy': { prerender: true },
+    '/terms': { prerender: true },
     '/spots/**': { isr: 3600 },
   },
 
