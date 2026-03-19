@@ -69,11 +69,12 @@ export function useProStatus() {
   }
 
   async function sendMagicLink(email: string) {
-    const config = useRuntimeConfig()
+    // Use current origin so magic links work in both dev and production
+    const redirectBase = import.meta.client ? window.location.origin : useRuntimeConfig().public.siteUrl
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${config.public.siteUrl}/confirm`,
+        emailRedirectTo: `${redirectBase}/confirm`,
       },
     })
     if (error) throw error
