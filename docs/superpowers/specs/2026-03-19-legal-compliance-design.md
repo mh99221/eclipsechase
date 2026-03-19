@@ -232,7 +232,9 @@ Update the footer on all pages to include links to Privacy and Terms.
 </footer>
 ```
 
-Exception: On the landing page (`index.vue`), the footer may have different layout — adapt to existing structure but ensure both links are present.
+Exceptions:
+- On the landing page (`index.vue`), the footer has a different layout (branded with logo + tagline) — adapt to existing structure but ensure both links are present.
+- On the map page (`map.vue`), there is no footer (full-screen map layout). Legal links will be added to a map overlay or settings panel in a future iteration.
 
 ---
 
