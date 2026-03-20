@@ -190,7 +190,8 @@
     "processing": "Processing...",
     "get_access": "Get Pro Access",
     "stripe_note": "Secure payment via Stripe",
-    "withdrawal_waiver": "I agree that my Pro access begins immediately and I waive my 14-day right of withdrawal. I have read the {terms_link} and {privacy_link}.",
+    "withdrawal_waiver_pre": "I agree that my Pro access begins immediately and I waive my 14-day right of withdrawal. I have read the",
+    "withdrawal_waiver_and": "and",
     "terms_link_text": "Terms of Service",
     "privacy_link_text": "Privacy Policy",
     "waiver_required": "Please accept the terms before proceeding."

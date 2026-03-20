@@ -260,18 +260,10 @@ const features = [
                 class="mt-1 shrink-0 accent-corona"
               >
               <span class="text-xs text-slate-400 leading-relaxed">
-                <i18n-t path="pro.withdrawal_waiver" tag="span">
-                  <template #terms_link>
-                    <NuxtLink to="/terms" class="text-corona hover:text-corona-bright transition-colors">
-                      {{ t('pro.terms_link_text') }}
-                    </NuxtLink>
-                  </template>
-                  <template #privacy_link>
-                    <NuxtLink to="/privacy" class="text-corona hover:text-corona-bright transition-colors">
-                      {{ t('pro.privacy_link_text') }}
-                    </NuxtLink>
-                  </template>
-                </i18n-t>
+                {{ t('pro.withdrawal_waiver_pre') }}
+                <NuxtLink to="/terms" class="text-corona hover:text-corona-bright transition-colors">{{ t('pro.terms_link_text') }}</NuxtLink>
+                {{ t('pro.withdrawal_waiver_and') }}
+                <NuxtLink to="/privacy" class="text-corona hover:text-corona-bright transition-colors">{{ t('pro.privacy_link_text') }}</NuxtLink>.
               </span>
             </label>
           </div>
