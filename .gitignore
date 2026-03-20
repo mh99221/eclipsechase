@@ -27,5 +27,8 @@ logs
 .superpowers/
 de421.bsp
 
+# DEM binary (856MB, too large for git)
+server/data/dem/*.bin
+
 .vercel
 .env*.local
