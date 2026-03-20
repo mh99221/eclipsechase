@@ -75,7 +75,7 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/guide': { prerender: true },
-    '/pro': { ssr: true },
+    '/pro': { ssr: false },
     '/privacy': { prerender: true },
     '/terms': { prerender: true },
     '/spots/**': { isr: 3600 },
