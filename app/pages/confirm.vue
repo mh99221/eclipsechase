@@ -52,7 +52,14 @@ onMounted(async () => {
     return
   }
 
-  // Legacy/implicit flow: listen for access token in URL hash
+  // Check if user is already signed in (e.g. @nuxtjs/supabase exchanged code server-side)
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session) {
+    await handleAuthConfirmed()
+    return
+  }
+
+  // Implicit flow: listen for access token in URL hash
   const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
     if (event === 'SIGNED_IN') {
       subscription.unsubscribe()
