@@ -31,8 +31,28 @@ async function handleAuthConfirmed() {
   }
 }
 
-onMounted(() => {
-  // Listen for Supabase to finish parsing the access token from the URL hash
+onMounted(async () => {
+  const route = useRoute()
+  const code = route.query.code as string | undefined
+
+  // PKCE flow: exchange the ?code= parameter for a session
+  if (code) {
+    try {
+      const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+      if (exchangeError) {
+        console.error('Code exchange failed:', exchangeError.message)
+        status.value = 'error'
+        return
+      }
+      await handleAuthConfirmed()
+    }
+    catch {
+      status.value = 'error'
+    }
+    return
+  }
+
+  // Legacy/implicit flow: listen for access token in URL hash
   const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
     if (event === 'SIGNED_IN') {
       subscription.unsubscribe()
