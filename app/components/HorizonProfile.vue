@@ -81,14 +81,16 @@ const gridLines = computed(() => [10, 20, 30].map(alt => ({
   label: `${alt}°`,
 })))
 
-// Compass labels (show 3: left, center/sun, right)
+// Compass labels (show 5: edges, ±20°, center/sun)
 const compassLabels = computed(() => {
   const center = props.data.sun_azimuth
-  const offset = 25
+  const { min, max } = sweepRange.value
   return [
-    { azimuth: center - offset, label: `${Math.round(center - offset)}°` },
+    { azimuth: min + 2, label: `${Math.round(min)}°` },
+    { azimuth: center - 20, label: `${Math.round(center - 20)}°` },
     { azimuth: center, label: `${Math.round(center)}° Sun`, highlight: true },
-    { azimuth: center + offset, label: `${Math.round(center + offset)}°` },
+    { azimuth: center + 20, label: `${Math.round(center + 20)}°` },
+    { azimuth: max - 2, label: `${Math.round(max)}°` },
   ]
 })
 
