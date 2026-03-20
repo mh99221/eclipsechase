@@ -38,6 +38,10 @@ const props = defineProps<{
   initialZoom?: number | null
 }>()
 
+const emit = defineEmits<{
+  mapClick: [coords: { lat: number; lng: number }]
+}>()
+
 const router = useRouter()
 const config = useRuntimeConfig()
 const mapContainer = ref<HTMLElement | null>(null)
@@ -338,6 +342,20 @@ onMounted(() => {
   })
 
   map.on('zoom', applyZoomVisibility)
+
+  // Emit click on empty map space (not on markers/popups)
+  map.on('click', (e) => {
+    // Check if any popup is open — if so, this click closes it, don't emit
+    const openPopups = document.querySelectorAll('.mapboxgl-popup')
+    if (openPopups.length > 0) return
+
+    // Check if click target is a marker element
+    const target = e.originalEvent.target as HTMLElement
+    if (target.closest('.station-marker, .spot-marker, .traffic-marker, .camera-marker')) return
+
+    emit('mapClick', { lat: e.lngLat.lat, lng: e.lngLat.lng })
+  })
+
   mapExposed.value = map
 })
 

@@ -26,6 +26,8 @@
     "tooltip_sun": "Sól í myrkva: {altitude}° hæð, {azimuth}° {direction}",
     "tooltip_blocked": "Landslagið lokar á sól hér um {degrees}°",
     "outside_path": "Þessi staður er utan myrkvabálks.",
+    "outside_coverage": "Þessi staður er utan landupplýsingagagna.",
+    "click_hint": "Smelltu hvar sem er á kortinu til að athuga sjóndeildarhring",
     "navigate_here": "Sigla hingað",
     "upgrade_button": "Uppfæra í Pro"
   },

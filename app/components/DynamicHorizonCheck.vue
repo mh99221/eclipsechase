@@ -40,8 +40,10 @@ onMounted(async () => {
     })
     result.value = data
   } catch (e: any) {
-    if (e?.statusCode === 403) {
+    if (e?.statusCode === 401 || e?.statusCode === 403) {
       error.value = 'pro_required'
+    } else if (e?.statusCode === 422) {
+      error.value = 'outside_coverage'
     } else {
       error.value = e?.message || 'Failed to check horizon'
     }
@@ -78,6 +80,11 @@ onMounted(async () => {
       <NuxtLink to="/pro" class="inline-block px-4 py-2 bg-corona/20 border border-corona/40 rounded text-sm text-corona hover:bg-corona/30 transition-colors">
         {{ t('horizon.upgrade_button', 'Upgrade to Pro') }}
       </NuxtLink>
+    </div>
+
+    <!-- Outside DEM coverage -->
+    <div v-else-if="error === 'outside_coverage'" class="text-sm text-slate-400 py-2">
+      {{ t('horizon.outside_coverage', 'This location is outside the terrain coverage area.') }}
     </div>
 
     <!-- Error -->

@@ -623,6 +623,7 @@ watch(showCameras, async (val) => {
 onUnmounted(() => {
   removeTrafficMarkers()
   removeCameraMarkers()
+  if (horizonMarker) { horizonMarker.remove(); horizonMarker = null }
 })
 
 // ─── Mobile Peek Sheet ───
@@ -659,6 +660,52 @@ onUnmounted(() => {
 })
 function sheetToggle() {
   sheetHeight.value = sheetHeight.value <= sheetSnapPoints[0] ? sheetSnapPoints[1] : sheetSnapPoints[0]
+}
+
+// ─── Dynamic Horizon Check (Pro: click anywhere on map) ───
+const { isPro } = useProStatus()
+const horizonCheckCoords = ref<{ lat: number; lng: number } | null>(null)
+let horizonMarker: any = null
+
+function handleMapClick(coords: { lat: number; lng: number }) {
+  if (!isPro.value) return
+
+  // Place crosshair marker
+  const mapInstance = eclipseMapRef.value?.map
+  if (mapInstance) {
+    if (horizonMarker) horizonMarker.remove()
+
+    const el = document.createElement('div')
+    el.style.cssText = `
+      width: 24px; height: 24px; position: relative;
+    `
+    el.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="8" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3 2" fill="none" opacity="0.7"/>
+      <line x1="12" y1="2" x2="12" y2="7" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
+      <line x1="12" y1="17" x2="12" y2="22" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
+      <line x1="2" y1="12" x2="7" y2="12" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
+      <line x1="17" y1="12" x2="22" y2="12" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
+      <circle cx="12" cy="12" r="2" fill="#f59e0b"/>
+    </svg>`
+
+    horizonMarker = new mapboxgl.Marker({ element: el })
+      .setLngLat([coords.lng, coords.lat])
+      .addTo(mapInstance)
+  }
+
+  // Trigger panel (use a key to force re-mount when clicking new location)
+  horizonCheckCoords.value = null
+  nextTick(() => {
+    horizonCheckCoords.value = coords
+  })
+}
+
+function closeHorizonCheck() {
+  horizonCheckCoords.value = null
+  if (horizonMarker) {
+    horizonMarker.remove()
+    horizonMarker = null
+  }
 }
 
 const profileIds = PROFILES.map(p => p.id)
@@ -699,6 +746,7 @@ const profileIcons: Record<ProfileId, string> = {
         :initial-center="restoreCenter"
         :initial-zoom="restoreZoom"
         class="absolute inset-0"
+        @map-click="handleMapClick"
       />
       <template #fallback>
         <div class="absolute inset-0 flex items-center justify-center">
@@ -1032,6 +1080,31 @@ const profileIcons: Record<ProfileId, string> = {
     <div class="absolute top-32 left-4 sm:left-6 z-10 w-64 hidden sm:block">
       <OfflineManager :map="eclipseMapRef?.map" />
     </div>
+
+    <!-- Pro hint: click to check horizon -->
+    <div
+      v-if="isPro && !horizonCheckCoords"
+      class="absolute z-10 bottom-4 left-1/2 -translate-x-1/2 sm:bottom-6 pointer-events-none"
+    >
+      <div class="px-3 py-1.5 rounded bg-void-deep/80 backdrop-blur-sm border border-corona/20 text-[11px] font-mono text-corona/70">
+        {{ t('horizon.click_hint') }}
+      </div>
+    </div>
+
+    <!-- Dynamic Horizon Check panel (Pro: click anywhere on map) -->
+    <Transition name="fade">
+      <div
+        v-if="horizonCheckCoords"
+        class="absolute z-20 sm:bottom-6 sm:left-6 bottom-20 left-2 right-2 sm:right-auto sm:w-96"
+      >
+        <DynamicHorizonCheck
+          :key="`${horizonCheckCoords.lat},${horizonCheckCoords.lng}`"
+          :lat="horizonCheckCoords.lat"
+          :lng="horizonCheckCoords.lng"
+          @close="closeHorizonCheck"
+        />
+      </div>
+    </Transition>
 
     <!-- Spot data error banner -->
     <Transition name="fade">

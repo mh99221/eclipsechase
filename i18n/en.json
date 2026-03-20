@@ -26,6 +26,8 @@
     "tooltip_sun": "Sun at totality: {altitude}° altitude, {azimuth}° {direction}",
     "tooltip_blocked": "Terrain blocks the sun here by {degrees}°",
     "outside_path": "This location is outside the path of totality.",
+    "outside_coverage": "This location is outside the terrain coverage area.",
+    "click_hint": "Tap anywhere on the map to check horizon",
     "navigate_here": "Navigate here",
     "upgrade_button": "Upgrade to Pro"
   },
