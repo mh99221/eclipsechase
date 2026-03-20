@@ -10,7 +10,7 @@ const props = defineProps<{
 const { t } = useI18n()
 
 const url = computed(() =>
-  `https://www.peakfinder.com/?lat=${props.lat}&lng=${props.lng}&name=${encodeURIComponent(props.spotName)}&ele=${Math.round(props.elevation)}&azi=${Math.round(props.sunAzimuth)}`,
+  `https://www.peakfinder.com/?lat=${props.lat}&lng=${props.lng}&name=${encodeURIComponent(props.spotName)}&ele=${Math.round(props.elevation)}&azi=${Math.round(props.sunAzimuth)}&date=2026-08-12T17:40:22Z`,
 )
 </script>
 
