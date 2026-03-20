@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eclipsechase-v2'
+const CACHE_NAME = 'eclipsechase-v3'
 const API_CACHE = 'eclipsechase-api-v2'
 const TILE_CACHE = 'eclipsechase-tiles-v1'
 const MAX_TILE_CACHE = 5000
@@ -235,7 +235,7 @@ async function cacheFirstTiles(request) {
 // Cache-first strategy for default GET requests
 async function cacheFirstDefault(request) {
   const cached = await caches.match(request)
-  if (cached) {
+  if (cached && cached.ok) {
     return cached
   }
 
