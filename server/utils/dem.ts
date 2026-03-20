@@ -43,11 +43,7 @@ export async function loadDEM(): Promise<{ data: Float32Array; meta: DEMMeta } |
     const metaPath = join(demDir, 'west-iceland-30m.meta.json')
     const binPath = join(demDir, 'west-iceland-30m.bin')
 
-    // Load metadata
-    if (!existsSync(metaPath)) {
-      console.error(`[DEM] Metadata not found: ${metaPath}`)
-      return { error: 'DEM metadata not found' }
-    }
+    // Load metadata (readFileSync throws ENOENT if missing — caught below)
     const meta = JSON.parse(readFileSync(metaPath, 'utf-8')) as DEMMeta
     console.log(`[DEM] Metadata loaded: ${meta.width}x${meta.height} from ${metaPath}`)
 
@@ -57,11 +53,7 @@ export async function loadDEM(): Promise<{ data: Float32Array; meta: DEMMeta } |
 
     // Load binary DEM — readFileSync is more memory-efficient for large files
     // than going through Nitro's storage abstraction
-    if (!existsSync(binPath)) {
-      console.error(`[DEM] Binary not found: ${binPath}`)
-      return { error: 'DEM binary not found' }
-    }
-    console.log(`[DEM] Loading binary (this may take a moment for large files)...`)
+    console.log(`[DEM] Loading binary...`)
     const buf = readFileSync(binPath)
     console.log(`[DEM] Binary loaded: ${(buf.byteLength / 1e6).toFixed(0)} MB`)
 

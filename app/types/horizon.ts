@@ -16,7 +16,7 @@ export interface HorizonCheck {
   sun_altitude: number
   sun_azimuth: number
   checked_at: string
-  sweep: HorizonSweepPoint[]  // 61 points, ±30°
+  sweep: HorizonSweepPoint[]  // 91 points, ±45°
 }
 
 // View-model subset of HorizonCheck, used as props for HorizonProfile component
