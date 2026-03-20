@@ -1,5 +1,7 @@
 // server/utils/dem.ts
-// Uses Nitro's serverAssets (configured in nuxt.config.ts) to access DEM files.
+// Reads DEM binary directly from the filesystem for efficiency with large files.
+import { readFileSync, existsSync } from 'node:fs'
+import { join } from 'node:path'
 
 export interface DEMMeta {
   minLat: number
@@ -16,39 +18,55 @@ export interface DEMMeta {
 let demData: Float32Array | null = null
 let demMeta: DEMMeta | null = null
 
+/**
+ * Resolve the DEM directory. In dev mode, read from the source tree.
+ * In production, use Nitro's server assets.
+ */
+function getDemDir(): string {
+  // In dev: files live at server/data/dem/ relative to the project root
+  // process.cwd() in Nitro dev points to the project root
+  const devPath = join(process.cwd(), 'server', 'data', 'dem')
+  if (existsSync(devPath)) return devPath
+
+  // Fallback: check relative to this file (for production builds)
+  const altPath = join(__dirname, '..', '..', 'data', 'dem')
+  if (existsSync(altPath)) return altPath
+
+  return devPath // return dev path for error messaging
+}
+
 export async function loadDEM(): Promise<{ data: Float32Array; meta: DEMMeta } | { error: string }> {
   if (demData && demMeta) return { data: demData, meta: demMeta }
 
-  // Don't cache transient errors — allow retry on next request
   try {
-    const storage = useStorage('assets:dem')
+    const demDir = getDemDir()
+    const metaPath = join(demDir, 'west-iceland-30m.meta.json')
+    const binPath = join(demDir, 'west-iceland-30m.bin')
 
     // Load metadata
-    const metaRaw = await storage.getItem('west-iceland-30m.meta.json')
-    if (!metaRaw) {
+    if (!existsSync(metaPath)) {
+      console.error(`[DEM] Metadata not found: ${metaPath}`)
       return { error: 'DEM metadata not found' }
     }
-    const meta = (typeof metaRaw === 'string' ? JSON.parse(metaRaw) : metaRaw) as DEMMeta
+    const meta = JSON.parse(readFileSync(metaPath, 'utf-8')) as DEMMeta
+    console.log(`[DEM] Metadata loaded: ${meta.width}x${meta.height} from ${metaPath}`)
 
-    // Reject placeholder metadata (width/height = 0 means DEM hasn't been generated yet)
     if (meta.width === 0 || meta.height === 0) {
       return { error: 'DEM not yet generated — run scripts/prepare-dem-binary.py first' }
     }
 
-    // Load binary DEM
-    const binBuffer = await storage.getItemRaw('west-iceland-30m.bin')
-    if (!binBuffer) {
+    // Load binary DEM — readFileSync is more memory-efficient for large files
+    // than going through Nitro's storage abstraction
+    if (!existsSync(binPath)) {
+      console.error(`[DEM] Binary not found: ${binPath}`)
       return { error: 'DEM binary not found' }
     }
+    console.log(`[DEM] Loading binary (this may take a moment for large files)...`)
+    const buf = readFileSync(binPath)
+    console.log(`[DEM] Binary loaded: ${(buf.byteLength / 1e6).toFixed(0)} MB`)
 
-    // Convert to Float32Array
-    const arrayBuffer = binBuffer instanceof ArrayBuffer
-      ? binBuffer
-      : (binBuffer as Buffer).buffer.slice(
-          (binBuffer as Buffer).byteOffset,
-          (binBuffer as Buffer).byteOffset + (binBuffer as Buffer).byteLength,
-        )
-    const data = new Float32Array(arrayBuffer)
+    // Create Float32Array directly from the buffer without copying
+    const data = new Float32Array(buf.buffer, buf.byteOffset, buf.byteLength / 4)
 
     if (data.length !== meta.width * meta.height) {
       return { error: `DEM size mismatch: expected ${meta.width * meta.height}, got ${data.length}` }
@@ -57,8 +75,10 @@ export async function loadDEM(): Promise<{ data: Float32Array; meta: DEMMeta } |
     // Cache successfully loaded data
     demData = data
     demMeta = meta
+    console.log(`[DEM] Ready: ${data.length.toLocaleString()} cells`)
     return { data: demData, meta: demMeta }
   } catch (e) {
+    console.error('[DEM] Failed to load:', e)
     return { error: `Failed to load DEM: ${e}` }
   }
 }

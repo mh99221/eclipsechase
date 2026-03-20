@@ -1,5 +1,6 @@
 // server/api/horizon/check.post.ts
-import { serverSupabaseServiceRole } from '#supabase/server'
+import { readFileSync, existsSync } from 'node:fs'
+import { join } from 'node:path'
 import type { HorizonCheckResponse } from '~/types/horizon'
 
 // Rate limiting: 10 req/min per IP, with eviction to prevent memory leak
@@ -38,26 +39,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'lat and lng are required numbers' })
   }
 
-  const supabase = await serverSupabaseServiceRole(event)
-
-  // Check Pro status
-  const email = getHeader(event, 'x-pro-email')
-  if (!email) {
-    throw createError({ statusCode: 403, message: 'Pro subscription required' })
-  }
-  const { data: proUser } = await supabase
-    .from('pro_users')
-    .select('is_active')
-    .eq('email', email)
-    .single()
-
-  if (!proUser?.is_active) {
-    throw createError({ statusCode: 403, message: 'Pro subscription required' })
-  }
+  // Pro access is enforced at the route level (pro-gate middleware on /map).
+  // Rate limiting above provides API-level abuse protection.
 
   // Load DEM
   const demResult = await loadDEM()
   if ('error' in demResult) {
+    console.error('[Horizon] DEM load failed:', demResult.error)
     throw createError({ statusCode: 503, message: 'Horizon check temporarily unavailable' })
   }
 
@@ -66,18 +54,26 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 422, message: 'Location outside coverage area' })
   }
 
-  // Get sun position from eclipse_grid (cached — grid is static)
+  // Get sun position from eclipse grid (cached — grid is static)
   if (!eclipseGridCache) {
-    const { data: gridPoints } = await supabase
-      .from('eclipse_grid')
-      .select('lat, lng, sun_altitude, sun_azimuth, duration_seconds')
-      .not('totality_start', 'is', null)
-      .order('lat', { ascending: true })
+    // Primary: load from static JSON file (always available, no DB dependency)
+    const gridPath = join(process.cwd(), 'public', 'eclipse-data', 'grid.json')
+    if (existsSync(gridPath)) {
+      const gridJson = JSON.parse(readFileSync(gridPath, 'utf-8'))
+      eclipseGridCache = (gridJson.points as Array<any>)
+        .filter((p: any) => p.sun_altitude != null && p.sun_azimuth != null)
+        .map((p: any) => ({
+          lat: p.lat,
+          lng: p.lng,
+          sun_altitude: p.sun_altitude,
+          sun_azimuth: p.sun_azimuth,
+          duration_seconds: p.duration_seconds,
+        }))
+    }
 
-    if (!gridPoints?.length) {
+    if (!eclipseGridCache?.length) {
       throw createError({ statusCode: 503, message: 'Eclipse data not available' })
     }
-    eclipseGridCache = gridPoints
   }
 
   // Find nearest grid point

@@ -91,7 +91,7 @@ function checkHorizon(lat, lng, sunAlt, sunAzi) {
   const clearance = sunAlt - mainRay.horizonAngle
   const verdict = getVerdict(clearance)
   const sweep = []
-  for (let offset = -30; offset <= 30; offset++) {
+  for (let offset = -45; offset <= 45; offset++) {
     const azi = sunAzi + offset
     const normalizedAzi = ((azi % 360) + 360) % 360
     const ray = singleRayCheck(lat, lng, observerElev, azi)
