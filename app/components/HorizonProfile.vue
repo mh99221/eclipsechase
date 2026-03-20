@@ -75,10 +75,6 @@ const blockedPath = computed(() => {
   return `M ${startX},${sunY} L ${points.join(' L ')} L ${endX},${sunY} Z`
 })
 
-// Sun position
-const sunX = computed(() => azimuthToX(props.data.sun_azimuth))
-const sunY = computed(() => altitudeToY(props.data.sun_altitude))
-
 // Grid lines at 10° intervals (computed so they react to height prop changes)
 const gridLines = computed(() => [10, 20, 30].map(alt => ({
   y: altitudeToY(alt),
@@ -100,6 +96,29 @@ const compassLabels = computed(() => {
 const sunTrajectory = computed<SunTrajectoryPoint[]>(() => {
   if (props.lat == null || props.lng == null) return []
   return computeSunTrajectory(props.lat, props.lng, sweepRange.value.min, sweepRange.value.max)
+})
+
+// Snap sun marker to trajectory so it sits exactly on the arc
+const sunOnTrajectory = computed(() => {
+  const pts = sunTrajectory.value
+  if (!pts.length) return null
+  let best = pts[0]!
+  let bestDist = Math.abs(best.azimuth - props.data.sun_azimuth)
+  for (const p of pts) {
+    const d = Math.abs(p.azimuth - props.data.sun_azimuth)
+    if (d < bestDist) { best = p; bestDist = d }
+  }
+  return best
+})
+
+// Sun position — snapped to trajectory arc, fallback to API values
+const sunX = computed(() => {
+  const t = sunOnTrajectory.value
+  return t ? azimuthToX(t.azimuth) : azimuthToX(props.data.sun_azimuth)
+})
+const sunY = computed(() => {
+  const t = sunOnTrajectory.value
+  return t ? altitudeToY(t.altitude) : altitudeToY(props.data.sun_altitude)
 })
 
 // SVG path for the sun arc
@@ -280,7 +299,7 @@ const ariaLabel = computed(() => {
         font-size="10"
         text-anchor="middle"
         font-family="'IBM Plex Mono', monospace"
-      >{{ data.sun_altitude.toFixed(0) }}°</text>
+      >{{ data.sun_altitude.toFixed(0) }}° {{ sunOnTrajectory ? formatUtcTime(sunOnTrajectory.utcHours) : '' }}</text>
 
       <!-- Compass labels -->
       <text
