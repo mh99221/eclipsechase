@@ -7,23 +7,7 @@ const props = defineProps<{
 
 const { tileCount, lastWeatherUpdate, lastForecastUpdate, cacheAges, precacheApiData, refreshCacheStatus } = useOfflineStatus()
 
-const isDownloading = ref(false)
-const totalTiles = ref(0)
-const loadedTiles = ref(0)
-const isDone = ref(false)
-const isCancelled = ref(false)
-const isDismissed = ref(false)
-const isCachingData = ref(false)
-const dataCached = ref(false)
-const progress = computed(() => totalTiles.value > 0 ? Math.round((loadedTiles.value / totalTiles.value) * 100) : 0)
-const estimatedTileCount = countTiles() // Cache since bounds are constant
-
-const hasCachedWeather = computed(() => !!cacheAges.value['/api/weather/cloud-cover'])
-const hasCachedSpots = computed(() => !!cacheAges.value['/api/spots'])
-const hasCachedTraffic = computed(() => !!cacheAges.value['/api/traffic/conditions'])
-const hasCachedCameras = computed(() => !!cacheAges.value['/api/cameras'])
-
-// Western Iceland bounding box (eclipse path region)
+// Western Iceland bounding box (eclipse path region) — must be before countTiles()
 const BOUNDS = { west: -24.5, east: -20.5, south: 63.5, north: 66.5 }
 const ZOOM_MIN = 5
 const ZOOM_MAX = 11
@@ -57,6 +41,22 @@ function countTiles(): number {
   }
   return count
 }
+
+const isDownloading = ref(false)
+const totalTiles = ref(0)
+const loadedTiles = ref(0)
+const isDone = ref(false)
+const isCancelled = ref(false)
+const isDismissed = ref(false)
+const isCachingData = ref(false)
+const dataCached = ref(false)
+const progress = computed(() => totalTiles.value > 0 ? Math.round((loadedTiles.value / totalTiles.value) * 100) : 0)
+const estimatedTileCount = countTiles()
+
+const hasCachedWeather = computed(() => !!cacheAges.value['/api/weather/cloud-cover'])
+const hasCachedSpots = computed(() => !!cacheAges.value['/api/spots'])
+const hasCachedTraffic = computed(() => !!cacheAges.value['/api/traffic/conditions'])
+const hasCachedCameras = computed(() => !!cacheAges.value['/api/cameras'])
 
 async function downloadTiles() {
   if (!props.map || isDownloading.value) return
