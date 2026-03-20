@@ -327,7 +327,7 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
           <p class="text-slate-300 text-base leading-relaxed">{{ spot.terrain_notes }}</p>
         </section>
 
-        <!-- Coordinates -->
+        <!-- Location + Map -->
         <section>
           <h2 class="font-display text-xl font-semibold text-white mb-3 flex items-center gap-2">
             <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -336,6 +336,15 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
             </svg>
             {{ t('spot.location') }}
           </h2>
+
+          <SpotLocationMap
+            :lat="spot.lat"
+            :lng="spot.lng"
+            :sun-azimuth="spot.sun_azimuth ?? 249"
+            :spot-name="spot.name"
+            class="mb-4"
+          />
+
           <p class="font-mono text-sm text-slate-400">
             {{ spot.lat.toFixed(4) }}°N, {{ Math.abs(spot.lng).toFixed(4) }}°W
           </p>

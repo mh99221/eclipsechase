@@ -4,6 +4,7 @@ import type { HorizonVerdict, HorizonSweepPoint, HorizonCheck } from '~/types/ho
 const EYE_HEIGHT = 1.7 // meters
 const EARTH_RADIUS = 6371000 // meters
 const DEG_TO_RAD = Math.PI / 180
+const REFRACTION_COEFF = 0.13 // standard atmospheric refraction (k ≈ 0.13)
 
 interface DEMAccessor {
   data: Float32Array
@@ -34,13 +35,14 @@ function moveAlongBearing(lat: number, lng: number, bearing: number, distanceM: 
 }
 
 /**
- * Generate sample distances along a ray: 50m intervals to 1km, 200m to 5km, 500m to 20km.
+ * Generate sample distances along a ray: 50m to 1km (50m steps), 1-5km (200m), 5-20km (500m), 20-50km (1km).
  */
 function sampleDistances(): number[] {
   const distances: number[] = []
   for (let d = 50; d <= 1000; d += 50) distances.push(d)
   for (let d = 1200; d <= 5000; d += 200) distances.push(d)
   for (let d = 5500; d <= 20000; d += 500) distances.push(d)
+  for (let d = 21000; d <= 50000; d += 1000) distances.push(d)
   return distances
 }
 
@@ -65,7 +67,9 @@ function singleRayCheck(
     const terrainElev = getElevation(sampleLat, sampleLng, dem.data, dem.meta)
     if (terrainElev === null) continue
 
-    const elevDiff = terrainElev - observerElev
+    // Earth curvature drops terrain by dist²/(2R), atmospheric refraction lifts it back by k * that amount
+    const curvatureDrop = (dist * dist) / (2 * EARTH_RADIUS) * (1 - REFRACTION_COEFF)
+    const elevDiff = terrainElev - observerElev - curvatureDrop
     const angle = Math.atan2(elevDiff, dist) / DEG_TO_RAD
 
     if (angle > maxAngle) {
