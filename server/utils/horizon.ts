@@ -86,7 +86,7 @@ function getVerdict(clearance: number): HorizonVerdict {
 }
 
 /**
- * Run full horizon check: single ray at sun azimuth + ±30° sweep.
+ * Run full horizon check: single ray at sun azimuth + ±45° sweep.
  */
 export function checkHorizon(
   lat: number,
@@ -99,13 +99,9 @@ export function checkHorizon(
   const demElev = getElevation(lat, lng, dem.data, dem.meta)
   const observerElev = (demElev != null && demElev >= 0 ? demElev : 2) + EYE_HEIGHT
 
-  // Single ray at sun azimuth
-  const mainRay = singleRayCheck(lat, lng, observerElev, sunAzimuth, dem)
-  const clearance = sunAltitude - mainRay.horizonAngle
-  const verdict = getVerdict(clearance)
-
-  // Azimuth sweep ±45° in 1° steps
+  // Azimuth sweep ±45° in 1° steps (includes sun azimuth at offset=0)
   const sweep: HorizonSweepPoint[] = []
+  let mainRay: { horizonAngle: number; blockingDistanceM: number; blockingElevationM: number } | null = null
   for (let offset = -45; offset <= 45; offset++) {
     const azi = sunAzimuth + offset
     const normalizedAzi = ((azi % 360) + 360) % 360
@@ -115,14 +111,18 @@ export function checkHorizon(
       horizon_angle: Math.max(ray.horizonAngle, 0),
       distance_m: ray.blockingDistanceM,
     })
+    if (offset === 0) mainRay = ray
   }
+
+  const clearance = sunAltitude - mainRay!.horizonAngle
+  const verdict = getVerdict(clearance)
 
   return {
     verdict,
     clearance_degrees: Math.round(clearance * 10) / 10,
-    max_horizon_angle: Math.round(mainRay.horizonAngle * 10) / 10,
-    blocking_distance_m: verdict === 'clear' ? null : mainRay.blockingDistanceM,
-    blocking_elevation_m: verdict === 'clear' ? null : mainRay.blockingElevationM,
+    max_horizon_angle: Math.round(mainRay!.horizonAngle * 10) / 10,
+    blocking_distance_m: verdict === 'clear' ? null : mainRay!.blockingDistanceM,
+    blocking_elevation_m: verdict === 'clear' ? null : mainRay!.blockingElevationM,
     observer_elevation_m: Math.round(observerElev * 10) / 10,
     sun_altitude: sunAltitude,
     sun_azimuth: sunAzimuth,

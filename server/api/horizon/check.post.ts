@@ -1,5 +1,5 @@
 // server/api/horizon/check.post.ts
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import type { HorizonCheckResponse } from '~/types/horizon'
 
@@ -24,11 +24,12 @@ function checkRateLimit(ip: string): boolean {
 }
 
 // Cache eclipse grid in module scope — it never changes
-let eclipseGridCache: Array<{ lat: number; lng: number; sun_altitude: number | null; sun_azimuth: number | null; duration_seconds: number | null }> | null = null
+let eclipseGridCache: Array<{ lat: number; lng: number; sun_altitude: number; sun_azimuth: number; duration_seconds: number | null }> | null = null
 
 export default defineEventHandler(async (event) => {
   // Rate limit
-  const ip = getHeader(event, 'x-forwarded-for') || getHeader(event, 'x-real-ip') || 'unknown'
+  const rawIp = getHeader(event, 'x-forwarded-for') || getHeader(event, 'x-real-ip') || 'unknown'
+  const ip = rawIp.split(',')[0]!.trim()
   if (!checkRateLimit(ip)) {
     throw createError({ statusCode: 429, message: 'Too many requests, try again in a minute' })
   }
@@ -56,41 +57,36 @@ export default defineEventHandler(async (event) => {
 
   // Get sun position from eclipse grid (cached — grid is static)
   if (!eclipseGridCache) {
-    // Primary: load from static JSON file (always available, no DB dependency)
-    const gridPath = join(process.cwd(), 'public', 'eclipse-data', 'grid.json')
-    if (existsSync(gridPath)) {
+    try {
+      const gridPath = join(process.cwd(), 'public', 'eclipse-data', 'grid.json')
       const gridJson = JSON.parse(readFileSync(gridPath, 'utf-8'))
       eclipseGridCache = (gridJson.points as Array<any>)
         .filter((p: any) => p.sun_altitude != null && p.sun_azimuth != null)
         .map((p: any) => ({
-          lat: p.lat,
-          lng: p.lng,
-          sun_altitude: p.sun_altitude,
-          sun_azimuth: p.sun_azimuth,
-          duration_seconds: p.duration_seconds,
+          lat: p.lat as number,
+          lng: p.lng as number,
+          sun_altitude: p.sun_altitude as number,
+          sun_azimuth: p.sun_azimuth as number,
+          duration_seconds: p.duration_seconds as number | null,
         }))
+    } catch {
+      throw createError({ statusCode: 503, message: 'Eclipse data not available' })
     }
 
-    if (!eclipseGridCache?.length) {
+    if (!eclipseGridCache.length) {
       throw createError({ statusCode: 503, message: 'Eclipse data not available' })
     }
   }
 
-  // Find nearest grid point
+  // Find nearest grid point (filter guarantees all entries have valid sun values)
   let nearest = eclipseGridCache[0]!
   let minDist = Infinity
   for (const gp of eclipseGridCache) {
-    const d = (gp.sun_altitude != null && gp.sun_azimuth != null)
-      ? Math.sqrt((body.lat - gp.lat) ** 2 + (body.lng - gp.lng) ** 2)
-      : Infinity
+    const d = Math.sqrt((body.lat - gp.lat) ** 2 + (body.lng - gp.lng) ** 2)
     if (d < minDist) {
       minDist = d
       nearest = gp
     }
-  }
-
-  if (nearest.sun_altitude == null || nearest.sun_azimuth == null) {
-    return { in_totality_path: false as const }
   }
 
   // Run horizon check
