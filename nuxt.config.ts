@@ -71,6 +71,11 @@ export default defineNuxtConfig({
       login: '/pro',
       callback: '/confirm',
     },
+    clientOptions: {
+      auth: {
+        flowType: 'implicit',
+      },
+    },
   },
 
   routeRules: {
