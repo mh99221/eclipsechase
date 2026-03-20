@@ -292,7 +292,7 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
           }) }}
         </div>
 
-        <HorizonProfile :data="horizonProfileData" />
+        <HorizonProfile :data="horizonProfileData" :lat="spot.lat" :lng="spot.lng" />
 
         <div class="mt-4">
           <PeakFinderLink

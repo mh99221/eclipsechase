@@ -100,7 +100,7 @@ onMounted(async () => {
       <template v-else>
         <HorizonBadge :verdict="result.verdict" :clearance="result.clearance_degrees" class="mb-3" />
 
-        <HorizonProfile v-if="profileData" :data="profileData" :height="200" class="mb-3" />
+        <HorizonProfile v-if="profileData" :data="profileData" :lat="lat" :lng="lng" :height="200" class="mb-3" />
 
         <div class="flex items-center gap-3 mt-3">
           <PeakFinderLink

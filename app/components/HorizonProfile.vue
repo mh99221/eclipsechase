@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import type { HorizonProfileData, HorizonSweepPoint } from '~/types/horizon'
 import { HORIZON_VERDICT_COLORS } from '~/utils/eclipse'
+import { computeSunTrajectory, formatUtcTime } from '~/utils/solar'
+import type { SunTrajectoryPoint } from '~/utils/solar'
 
 const props = withDefaults(defineProps<{
   data: HorizonProfileData
   width?: number
   height?: number
   interactive?: boolean
+  lat?: number
+  lng?: number
 }>(), {
   width: 700,
   height: 280,
@@ -90,6 +94,43 @@ const compassLabels = computed(() => {
     { azimuth: center, label: `${Math.round(center)}° Sun`, highlight: true },
     { azimuth: center + offset, label: `${Math.round(center + offset)}°` },
   ]
+})
+
+// Sun trajectory for eclipse day
+const sunTrajectory = computed<SunTrajectoryPoint[]>(() => {
+  if (props.lat == null || props.lng == null) return []
+  return computeSunTrajectory(props.lat, props.lng, sweepRange.value.min, sweepRange.value.max)
+})
+
+// SVG path for the sun arc
+const trajectoryPath = computed(() => {
+  const pts = sunTrajectory.value
+  if (pts.length < 2) return ''
+  const segments = pts.map((p, i) => {
+    const x = azimuthToX(p.azimuth).toFixed(1)
+    const y = altitudeToY(Math.max(p.altitude, 0)).toFixed(1)
+    return i === 0 ? `M ${x},${y}` : `L ${x},${y}`
+  })
+  return segments.join(' ')
+})
+
+// Time labels along the trajectory (show full hours only)
+const trajectoryTimeLabels = computed(() => {
+  const pts = sunTrajectory.value
+  if (!pts.length) return []
+
+  const labels: Array<{ x: number; y: number; label: string }> = []
+  for (const p of pts) {
+    // Show label at each full hour
+    const minutes = Math.round(p.utcHours * 60)
+    if (minutes % 60 !== 0) continue
+    const x = azimuthToX(p.azimuth)
+    const y = altitudeToY(Math.max(p.altitude, 0))
+    // Skip if too close to edges
+    if (x < PADDING.left + 20 || x > props.width - PADDING.right - 20) continue
+    labels.push({ x, y, label: formatUtcTime(p.utcHours) })
+  }
+  return labels
 })
 
 const verdictColors = HORIZON_VERDICT_COLORS
@@ -184,6 +225,30 @@ const ariaLabel = computed(() => {
         text-anchor="end"
         font-family="'IBM Plex Mono', monospace"
       >{{ g.label }}</text>
+
+      <!-- Sun trajectory arc (eclipse day) -->
+      <path
+        v-if="trajectoryPath"
+        :d="trajectoryPath"
+        fill="none"
+        stroke="#fbbf24"
+        stroke-width="1.5"
+        stroke-dasharray="4 3"
+        opacity="0.35"
+      />
+      <!-- Time labels along trajectory -->
+      <template v-for="tl in trajectoryTimeLabels" :key="tl.label">
+        <circle :cx="tl.x" :cy="tl.y" r="2" fill="#fbbf24" opacity="0.4" />
+        <text
+          :x="tl.x"
+          :y="tl.y - 8"
+          fill="#fbbf24"
+          font-size="8"
+          text-anchor="middle"
+          font-family="'IBM Plex Mono', monospace"
+          opacity="0.5"
+        >{{ tl.label }}</text>
+      </template>
 
       <!-- Sun altitude line (dashed) -->
       <line
