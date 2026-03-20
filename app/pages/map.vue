@@ -122,6 +122,8 @@ const legendItems = [
 // Traffic / road conditions layer
 const showTraffic = ref(false)
 const trafficData = ref<{ conditions: any[] } | null>(null)
+const segmentsData = ref<{ segments: any[] } | null>(null)
+const roadsGeojson = ref<any>(null)
 
 const trafficMarkers = ref<OverlayMarker[]>([])
 let trafficZoomHandler: (() => void) | null = null
@@ -223,6 +225,146 @@ function addTrafficMarkers(map: any) {
   map.on('zoom', trafficZoomHandler)
 }
 
+/** Normalize a road name for fuzzy matching: lowercase, strip diacritics, trim */
+function normalizeRoadName(name: string): string {
+  return name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim()
+}
+
+// Cached enriched GeoJSON — rebuilt only when segments data changes
+let enrichedRoadsCache: any = null
+
+/** Build enriched GeoJSON by joining road geometry with segment condition data */
+function buildEnrichedRoads(): any {
+  if (!roadsGeojson.value || !segmentsData.value?.segments?.length) return null
+
+  // Build a lookup: normalized road name → worst condition
+  const conditionLookup = new Map<string, string>()
+  for (const seg of segmentsData.value.segments) {
+    const key = normalizeRoadName(seg.sectionName || seg.roadName)
+    const existing = conditionLookup.get(key)
+    if (!existing || conditionPriority(seg.condition) > conditionPriority(existing)) {
+      conditionLookup.set(key, seg.condition)
+    }
+  }
+
+  // Shallow-clone features array, only copying properties we mutate
+  const features = roadsGeojson.value.features.map((f: any) => {
+    const normName = normalizeRoadName(f.properties.roadName || '')
+    const normRef = f.properties.roadRef ? normalizeRoadName(f.properties.roadRef) : ''
+
+    let matched = 'unknown'
+    for (const [segKey, condition] of conditionLookup) {
+      if ((normName && (segKey.includes(normName) || normName.includes(segKey))) ||
+          (normRef && segKey.includes(normRef))) {
+        if (conditionPriority(condition) > conditionPriority(matched)) {
+          matched = condition
+        }
+      }
+    }
+
+    return {
+      ...f,
+      properties: { ...f.properties, condition: matched },
+    }
+  })
+
+  return { type: 'FeatureCollection', features }
+}
+
+// Named handlers for proper cleanup
+let roadClickHandler: ((e: any) => void) | null = null
+let roadEnterHandler: (() => void) | null = null
+let roadLeaveHandler: (() => void) | null = null
+
+/** Add road condition polylines to the map */
+function addRoadPolylines(map: any) {
+  removeRoadPolylines(map)
+
+  enrichedRoadsCache = buildEnrichedRoads()
+  if (!enrichedRoadsCache) return
+
+  map.addSource('road-conditions', { type: 'geojson', data: enrichedRoadsCache })
+
+  map.addLayer({
+    id: 'road-conditions-line',
+    type: 'line',
+    source: 'road-conditions',
+    paint: {
+      'line-color': [
+        'match', ['get', 'condition'],
+        'good', '#22c55e',
+        'difficult', '#f97316',
+        'closed', '#ef4444',
+        '#6b7280',
+      ],
+      'line-width': ['interpolate', ['linear'], ['zoom'], 5, 1.5, 8, 3, 12, 5],
+      'line-opacity': 0.6,
+    },
+    layout: { 'line-cap': 'round', 'line-join': 'round' },
+  }, 'traffic-marker') // insert below traffic markers if layer exists
+
+  // Transparent wider hitbox layer for click
+  map.addLayer({
+    id: 'road-conditions-hit',
+    type: 'line',
+    source: 'road-conditions',
+    paint: { 'line-color': 'transparent', 'line-width': 14 },
+  }, 'road-conditions-line')
+
+  // Click handler — store reference for cleanup
+  roadClickHandler = (e: any) => {
+    if (!e.features?.length) return
+    const f = e.features[0]
+    const condition = f.properties.condition || 'unknown'
+    const color = getTrafficColor(condition)
+    const name = f.properties.roadName || f.properties.roadRef || 'Road'
+
+    new mapboxgl.Popup({
+      offset: 10,
+      closeButton: false,
+      maxWidth: 'min(220px, 85vw)',
+      className: 'eclipse-popup',
+    })
+      .setLngLat(e.lngLat)
+      .setHTML(`
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
+          <h3 style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${TRAFFIC_LABELS[condition] || 'Unknown'}</h3>
+          <p style="color: #94a3b8; margin: 0;">${name}${f.properties.roadRef ? ` (${f.properties.roadRef})` : ''}</p>
+        </div>
+      `)
+      .addTo(map)
+  }
+  roadEnterHandler = () => { map.getCanvas().style.cursor = 'pointer' }
+  roadLeaveHandler = () => { map.getCanvas().style.cursor = '' }
+
+  map.on('click', 'road-conditions-hit', roadClickHandler)
+  map.on('mouseenter', 'road-conditions-hit', roadEnterHandler)
+  map.on('mouseleave', 'road-conditions-hit', roadLeaveHandler)
+}
+
+function removeRoadPolylines(map: any) {
+  if (!map) return
+  // Remove event handlers first
+  if (roadClickHandler) { map.off('click', 'road-conditions-hit', roadClickHandler); roadClickHandler = null }
+  if (roadEnterHandler) { map.off('mouseenter', 'road-conditions-hit', roadEnterHandler); roadEnterHandler = null }
+  if (roadLeaveHandler) { map.off('mouseleave', 'road-conditions-hit', roadLeaveHandler); roadLeaveHandler = null }
+  try {
+    if (map.getLayer('road-conditions-hit')) map.removeLayer('road-conditions-hit')
+    if (map.getLayer('road-conditions-line')) map.removeLayer('road-conditions-line')
+    if (map.getSource('road-conditions')) map.removeSource('road-conditions')
+  } catch { /* ignore if already removed */ }
+  enrichedRoadsCache = null
+}
+
+function conditionPriority(c: string): number {
+  switch (c) {
+    case 'closed': return 3
+    case 'difficult': return 2
+    case 'good': return 1
+    default: return 0
+  }
+}
+
 function removeTrafficMarkers() {
   if (trafficZoomHandler && eclipseMapRef.value?.map) {
     eclipseMapRef.value.map.off('zoom', trafficZoomHandler)
@@ -241,13 +383,20 @@ watch(showTraffic, async (val) => {
   const mapInstance = eclipseMapRef.value?.map
   if (!mapInstance) return
   if (val) {
-    if (!trafficData.value) {
-      const data = await $fetch<{ conditions: any[] }>('/api/traffic/conditions')
-      trafficData.value = data
-    }
+    // Fetch point conditions + segments + road geometry in parallel
+    const [conditionsRes, segmentsRes, geojsonRes] = await Promise.all([
+      trafficData.value ? Promise.resolve(trafficData.value) : $fetch<{ conditions: any[] }>('/api/traffic/conditions'),
+      segmentsData.value ? Promise.resolve(segmentsData.value) : $fetch<{ segments: any[] }>('/api/traffic/segments'),
+      roadsGeojson.value ? Promise.resolve(roadsGeojson.value) : $fetch('/eclipse-data/roads.geojson'),
+    ])
+    trafficData.value = conditionsRes
+    segmentsData.value = segmentsRes
+    roadsGeojson.value = geojsonRes
+    addRoadPolylines(mapInstance)
     addTrafficMarkers(mapInstance)
   } else {
     removeTrafficMarkers()
+    removeRoadPolylines(mapInstance)
   }
 })
 
@@ -674,7 +823,20 @@ const profileIcons: Record<ProfileId, string> = {
         </div>
       </div>
       <div v-if="showTraffic" class="mt-3 pt-2.5 border-t border-void-border/40">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2">{{ t('map.road_warnings') }}</p>
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2">{{ t('map.road_conditions') }}</p>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-4 h-0 border-t-2 border-green-500" />
+          <span class="text-xs font-mono text-slate-300">{{ t('map.road_good') }}</span>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-4 h-0 border-t-2 border-orange-500" />
+          <span class="text-xs font-mono text-slate-300">{{ t('map.road_difficult') }}</span>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-4 h-0 border-t-2 border-red-500" />
+          <span class="text-xs font-mono text-slate-300">{{ t('map.road_closed') }}</span>
+        </div>
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mt-2 mb-2">{{ t('map.road_warnings') }}</p>
         <div class="flex items-center gap-2 mb-1">
           <span class="w-3 h-3 rounded-full border-2 border-orange-500 bg-void-deep shrink-0" />
           <span class="text-xs font-mono text-slate-300">{{ t('map.hazard') }}</span>
@@ -819,9 +981,24 @@ const profileIcons: Record<ProfileId, string> = {
                   <span class="w-4 h-0 border-t-2 border-corona-bright/60" />
                   <span class="text-[11px] font-mono text-slate-300">{{ t('map.centerline') }}</span>
                 </div>
-                <!-- Conditional: road warnings -->
+                <!-- Conditional: road conditions + warnings -->
                 <template v-if="showTraffic">
                   <div class="mt-1.5 pt-1.5 border-t border-void-border/30">
+                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('map.road_conditions') }}</p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-4 h-0 border-t-2 border-green-500" />
+                    <span class="text-[11px] font-mono text-slate-300">{{ t('map.road_good') }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-4 h-0 border-t-2 border-orange-500" />
+                    <span class="text-[11px] font-mono text-slate-300">{{ t('map.road_difficult') }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-4 h-0 border-t-2 border-red-500" />
+                    <span class="text-[11px] font-mono text-slate-300">{{ t('map.road_closed') }}</span>
+                  </div>
+                  <div class="mt-1.5">
                     <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('map.road_warnings') }}</p>
                   </div>
                   <div class="flex items-center gap-2">

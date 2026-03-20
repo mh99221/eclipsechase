@@ -9,7 +9,8 @@ const PRECACHE_URLS = [
   '/manifest.json',
   '/favicon.svg',
   '/eclipse-data/path.geojson',
-  '/eclipse-data/grid.json'
+  '/eclipse-data/grid.json',
+  '/eclipse-data/roads.geojson'
 ]
 
 // API endpoints to precache for offline use
@@ -17,7 +18,10 @@ const API_PRECACHE_URLS = [
   '/api/spots',
   '/api/weather/stations',
   '/api/weather/cloud-cover',
-  '/api/weather/forecast-timeline?hours=24'
+  '/api/weather/forecast-timeline?hours=24',
+  '/api/traffic/conditions',
+  '/api/traffic/segments',
+  '/api/cameras'
 ]
 
 function offlineResponse() {

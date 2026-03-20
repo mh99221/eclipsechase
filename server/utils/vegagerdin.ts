@@ -28,6 +28,42 @@ function mapConditionCode(code: string | undefined): RoadCondition['condition'] 
   return 'unknown'
 }
 
+export interface RoadSegment {
+  roadName: string
+  sectionName: string
+  condition: RoadCondition['condition']
+  description: string
+  updatedAt: string
+}
+
+export async function fetchRoadSegments(): Promise<RoadSegment[]> {
+  try {
+    const res = await fetch(SEGMENTS_API, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
+    if (!res.ok) return []
+    const segments: any[] = await res.json()
+    return segments.map(s => ({
+      roadName: s.FulltNafnButs || s.StuttNafnButs || '',
+      sectionName: s.StuttNafnButs || '',
+      condition: mapSegmentCondition(s.AstandYfirbord),
+      description: s.AstandLysingEn || s.AstandLysing || '',
+      updatedAt: s.DagsSkrad ? new Date(s.DagsSkrad).toISOString() : new Date().toISOString(),
+    }))
+  } catch (err: any) {
+    console.error('[vegagerdin] Segments fetch failed:', err.message || err)
+    return []
+  }
+}
+
+function mapSegmentCondition(code: string | undefined): RoadCondition['condition'] {
+  if (!code) return 'unknown'
+  const c = code.toUpperCase()
+  if (c === 'GREIDFAERT') return 'good'
+  if (c === 'LOKAD' || c.includes('OFAERT')) return 'closed'
+  if (c === 'HALKA' || c === 'HALKUBLETTIR' || c === 'SNJOTHEKJA' || c === 'THUNGFAERT') return 'difficult'
+  if (c === 'EKKI_I_THJONUSTU' || c === 'OTHEKKT') return 'unknown'
+  return 'unknown'
+}
+
 export async function fetchRoadConditions(): Promise<RoadCondition[]> {
   const results: RoadCondition[] = []
 
@@ -56,26 +92,6 @@ export async function fetchRoadConditions(): Promise<RoadCondition[]> {
     }
   } catch (err: any) {
     console.error('[vegagerdin] Points fetch failed:', err.message || err)
-  }
-
-  try {
-    // Fetch route segment conditions — no lat/lng but useful status info
-    // We skip these from the map markers (no coords) but could display in a list
-    const segRes = await fetch(SEGMENTS_API, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
-    if (segRes.ok) {
-      const segments: any[] = await segRes.json()
-      for (const s of segments) {
-        // Segments don't have lat/lng coordinates — skip for map markers
-        // They use route segment IDs (IdButur) that would need to be joined
-        // with the WFS geometry service for coordinates
-        // For now, log count for debugging
-        if (results.length === 0 && segments.length > 0) {
-          console.log(`[vegagerdin] ${segments.length} route segments loaded (no coords, not mapped)`)
-        }
-      }
-    }
-  } catch (err: any) {
-    console.error('[vegagerdin] Segments fetch failed:', err.message || err)
   }
 
   return results

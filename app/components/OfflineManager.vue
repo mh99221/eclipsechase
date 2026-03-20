@@ -20,6 +20,8 @@ const estimatedTileCount = countTiles() // Cache since bounds are constant
 
 const hasCachedWeather = computed(() => !!cacheAges.value['/api/weather/cloud-cover'])
 const hasCachedSpots = computed(() => !!cacheAges.value['/api/spots'])
+const hasCachedTraffic = computed(() => !!cacheAges.value['/api/traffic/conditions'])
+const hasCachedCameras = computed(() => !!cacheAges.value['/api/cameras'])
 
 // Western Iceland bounding box (eclipse path region)
 const BOUNDS = { west: -24.5, east: -20.5, south: 63.5, north: 66.5 }
@@ -204,6 +206,10 @@ function cancel() {
           <span>{{ lastForecastUpdate || t('offline.not_cached') }}</span>
           <span>Spots</span>
           <span>{{ hasCachedSpots ? t('offline.cached') : t('offline.not_cached') }}</span>
+          <span>Traffic</span>
+          <span>{{ hasCachedTraffic ? t('offline.cached') : t('offline.not_cached') }}</span>
+          <span>Cameras</span>
+          <span>{{ hasCachedCameras ? t('offline.cached') : t('offline.not_cached') }}</span>
         </div>
         <button
           v-if="tileCount > 0 || hasCachedWeather"
