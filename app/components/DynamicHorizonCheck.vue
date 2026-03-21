@@ -102,22 +102,33 @@ onMounted(async () => {
 
         <HorizonProfile v-if="profileData" :data="profileData" :lat="lat" :lng="lng" :height="200" class="mb-3" />
 
-        <div class="flex items-center gap-3 mt-3">
-          <PeakFinderLink
-            :lat="lat"
-            :lng="lng"
-            :elevation="result.observer_elevation_m"
-            :sun-azimuth="result.sun_azimuth"
-            spot-name="Custom Location"
-          />
+        <div class="flex items-center gap-2 mt-3">
+          <a
+            :href="result.peakfinder_url"
+            target="_blank"
+            rel="noopener"
+            class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded border border-void-border/40 text-xs font-mono text-slate-400 hover:text-white hover:border-corona/40 transition-colors"
+          >
+            <svg class="w-3.5 h-3.5 text-corona/60 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            PeakFinder
+            <svg class="w-3 h-3 text-slate-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
           <a
             :href="navigateUrl"
             target="_blank"
             rel="noopener"
-            class="inline-flex items-center gap-1.5 px-3 py-2 rounded border border-void-border/40 bg-void-surface text-sm text-slate-300 hover:text-white hover:border-corona/40 transition-colors"
+            class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded border border-void-border/40 text-xs font-mono text-slate-400 hover:text-white hover:border-corona/40 transition-colors"
           >
-            {{ t('horizon.navigate_here', 'Navigate here') }}
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-3.5 h-3.5 text-corona/60 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Navigate
+            <svg class="w-3 h-3 text-slate-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
           </a>
