@@ -25,6 +25,9 @@ logs
 
 # Superpowers
 .superpowers/
+
+# RSA keys (local dev only — production keys go in Vercel env vars)
+*.pem
 de421.bsp
 
 # DEM binary (856MB, too large for git)
