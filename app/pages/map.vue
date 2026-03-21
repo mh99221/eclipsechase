@@ -301,7 +301,7 @@ function addRoadPolylines(map: any) {
       'line-opacity': 0.6,
     },
     layout: { 'line-cap': 'round', 'line-join': 'round' },
-  }, 'traffic-marker') // insert below traffic markers if layer exists
+  }, map.getLayer('traffic-marker') ? 'traffic-marker' : undefined)
 
   // Transparent wider hitbox layer for click
   map.addLayer({
@@ -309,7 +309,7 @@ function addRoadPolylines(map: any) {
     type: 'line',
     source: 'road-conditions',
     paint: { 'line-color': 'transparent', 'line-width': 14 },
-  }, 'road-conditions-line')
+  })
 
   // Click handler — store reference for cleanup
   roadClickHandler = (e: any) => {
