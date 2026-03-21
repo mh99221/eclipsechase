@@ -2,17 +2,10 @@ import Stripe from 'stripe'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
-  const { email } = await readBody<{ email: string }>(event)
-
-  if (!email || !email.includes('@')) {
-    throw createError({ statusCode: 400, statusMessage: 'Valid email is required' })
-  }
-
   const stripe = new Stripe(config.stripeSecretKey)
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
-    customer_email: email,
     line_items: [
       {
         price_data: {
@@ -27,9 +20,9 @@ export default defineEventHandler(async (event) => {
       },
     ],
     metadata: {
-      product: 'eclipse_pro',
+      product: 'eclipse_pro_2026',
     },
-    success_url: `${config.public.siteUrl}/map?pro=activated&session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${config.public.siteUrl}/pro/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${config.public.siteUrl}/pro?cancelled=true`,
   })
 
