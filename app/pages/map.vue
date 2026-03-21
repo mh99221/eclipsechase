@@ -662,6 +662,20 @@ function sheetToggle() {
   sheetHeight.value = sheetHeight.value <= sheetSnapPoints[0] ? sheetSnapPoints[1] : sheetSnapPoints[0]
 }
 
+// Horizon panel bottom offset: follows sheet on mobile, fixed on desktop
+const isMobile = ref(false)
+function updateIsMobile() { isMobile.value = window.innerWidth < 640 }
+onMounted(() => { updateIsMobile(); window.addEventListener('resize', updateIsMobile) })
+onUnmounted(() => { window.removeEventListener('resize', updateIsMobile) })
+
+const horizonBottomStyle = computed(() => {
+  if (!isMobile.value) return {}
+  return {
+    bottom: `${sheetHeight.value + 16}px`,
+    transition: sheetDragging.value ? 'none' : 'bottom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  }
+})
+
 // ─── Dynamic Horizon Check (Pro: click anywhere on map) ───
 const { isPro } = useProStatus()
 const horizonCheckCoords = ref<{ lat: number; lng: number } | null>(null)
@@ -1084,7 +1098,8 @@ const profileIcons: Record<ProfileId, string> = {
     <!-- Pro hint: click to check horizon -->
     <div
       v-if="isPro && !horizonCheckCoords"
-      class="absolute z-10 bottom-20 left-1/2 -translate-x-1/2 sm:bottom-24 pointer-events-none"
+      class="absolute z-10 left-1/2 -translate-x-1/2 sm:bottom-24 pointer-events-none"
+      :style="horizonBottomStyle"
     >
       <div class="px-3 py-1.5 rounded bg-void-deep/80 backdrop-blur-sm border border-corona/20 text-[11px] font-mono text-corona/70">
         {{ t('horizon.click_hint') }}
@@ -1095,7 +1110,8 @@ const profileIcons: Record<ProfileId, string> = {
     <Transition name="fade">
       <div
         v-if="horizonCheckCoords"
-        class="absolute z-20 sm:bottom-6 sm:left-6 bottom-20 left-2 right-2 sm:right-auto sm:w-96"
+        class="absolute z-20 sm:bottom-6 sm:left-6 left-2 right-2 sm:right-auto sm:w-96"
+        :style="horizonBottomStyle"
       >
         <DynamicHorizonCheck
           :key="`${horizonCheckCoords.lat},${horizonCheckCoords.lng}`"
@@ -1124,3 +1140,4 @@ const profileIcons: Record<ProfileId, string> = {
     </Transition>
   </div>
 </template>
+
