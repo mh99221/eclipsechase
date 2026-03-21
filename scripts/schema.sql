@@ -87,6 +87,7 @@ CREATE TABLE pro_purchases (
   activation_token TEXT NOT NULL,
   purchased_at TIMESTAMPTZ DEFAULT NOW(),
   is_active BOOLEAN DEFAULT TRUE,
+  activated BOOLEAN DEFAULT FALSE,
   restored_count INTEGER DEFAULT 0,
   last_restored_at TIMESTAMPTZ
 );

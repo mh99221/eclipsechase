@@ -15,8 +15,7 @@ async function getPrivateKey(): Promise<KeyLike> {
 
 export async function generateProToken(email: string, sessionId: string): Promise<string> {
   const privateKey = await getPrivateKey()
-  const normalizedEmail = email.toLowerCase().trim()
-  const emailHash = hashEmail(normalizedEmail)
+  const emailHash = hashEmail(email)
 
   return new SignJWT({ sub: emailHash, sid: sessionId, v: 1 })
     .setProtectedHeader({ alg: 'RS256' })
