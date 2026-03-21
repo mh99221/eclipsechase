@@ -2,15 +2,22 @@ const DB_NAME = 'eclipsechase'
 const STORE_NAME = 'pro'
 const TOKEN_KEY = 'activation_token'
 
+let dbPromise: Promise<IDBDatabase> | null = null
+
 function openDB(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
+  if (dbPromise) return dbPromise
+  dbPromise = new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1)
     request.onupgradeneeded = () => {
       request.result.createObjectStore(STORE_NAME)
     }
     request.onsuccess = () => resolve(request.result)
-    request.onerror = () => reject(request.error)
+    request.onerror = () => {
+      dbPromise = null
+      reject(request.error)
+    }
   })
+  return dbPromise
 }
 
 export async function saveTokenToIndexedDB(token: string): Promise<void> {

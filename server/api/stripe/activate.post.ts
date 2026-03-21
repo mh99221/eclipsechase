@@ -19,11 +19,5 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Purchase not found' })
   }
 
-  // Mask email: first char + *** + last char before @ + domain
-  const [local, domain] = data.email.split('@')
-  const masked = local.length > 1
-    ? local[0] + '***' + local[local.length - 1] + '@' + domain
-    : local + '***@' + domain
-
-  return { token: data.activation_token, email: masked }
+  return { token: data.activation_token, email: maskEmail(data.email) }
 })

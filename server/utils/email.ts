@@ -1,6 +1,18 @@
+import { createHash } from 'crypto'
 import { Resend } from 'resend'
 
 const FROM_EMAIL = 'EclipseChase.is <hello@eclipsechase.is>'
+
+export function maskEmail(email: string): string {
+  const [local, domain] = email.split('@')
+  return local.length > 1
+    ? local[0] + '***' + local[local.length - 1] + '@' + domain
+    : local + '***@' + domain
+}
+
+export function hashEmail(email: string): string {
+  return createHash('sha256').update(email).digest('hex')
+}
 
 function getResend(): Resend | null {
   const config = useRuntimeConfig()

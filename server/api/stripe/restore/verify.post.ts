@@ -1,4 +1,3 @@
-import { createHash } from 'crypto'
 import { serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
@@ -15,7 +14,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 429, statusMessage: 'Too many attempts. Try again later.' })
   }
 
-  const emailHash = createHash('sha256').update(normalizedEmail).digest('hex')
+  const emailHash = hashEmail(normalizedEmail)
 
   const supabase = await serverSupabaseServiceRole(event)
 
@@ -41,18 +40,18 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Code expired' })
   }
 
-  // Mark code as used
-  await supabase.from('restore_codes')
-    .update({ used: true })
-    .eq('id', restoreCode.id)
-
-  // Look up purchase
-  const { data: purchase } = await supabase
-    .from('pro_purchases')
-    .select('id, restored_count')
-    .eq('email', normalizedEmail)
-    .eq('is_active', true)
-    .maybeSingle()
+  // Mark code as used + look up purchase in parallel
+  const [, { data: purchase }] = await Promise.all([
+    supabase.from('restore_codes')
+      .update({ used: true })
+      .eq('id', restoreCode.id),
+    supabase
+      .from('pro_purchases')
+      .select('id, restored_count')
+      .eq('email', normalizedEmail)
+      .eq('is_active', true)
+      .maybeSingle(),
+  ])
 
   if (!purchase) {
     throw createError({ statusCode: 404, statusMessage: 'Purchase not found' })

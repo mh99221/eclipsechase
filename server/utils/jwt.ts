@@ -1,13 +1,22 @@
 import { SignJWT, importPKCS8 } from 'jose'
-import { createHash } from 'crypto'
+import type { KeyLike } from 'jose'
 
 const TOKEN_EXPIRY = Math.floor(new Date('2026-08-31T23:59:59Z').getTime() / 1000)
 
-export async function generateProToken(email: string, sessionId: string): Promise<string> {
+let cachedKey: KeyLike | null = null
+
+async function getPrivateKey(): Promise<KeyLike> {
+  if (cachedKey) return cachedKey
   const config = useRuntimeConfig()
   const privateKeyPem = config.proJwtPrivateKey.replace(/\\n/g, '\n')
-  const privateKey = await importPKCS8(privateKeyPem, 'RS256')
-  const emailHash = createHash('sha256').update(email.toLowerCase().trim()).digest('hex')
+  cachedKey = await importPKCS8(privateKeyPem, 'RS256') as KeyLike
+  return cachedKey
+}
+
+export async function generateProToken(email: string, sessionId: string): Promise<string> {
+  const privateKey = await getPrivateKey()
+  const normalizedEmail = email.toLowerCase().trim()
+  const emailHash = hashEmail(normalizedEmail)
 
   return new SignJWT({ sub: emailHash, sid: sessionId, v: 1 })
     .setProtectedHeader({ alg: 'RS256' })

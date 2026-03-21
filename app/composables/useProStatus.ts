@@ -1,4 +1,5 @@
 import { jwtVerify, importSPKI } from 'jose'
+import type { KeyLike } from 'jose'
 import { getTokenFromIndexedDB, saveTokenToIndexedDB, removeTokenFromIndexedDB } from '~/utils/proStorage'
 
 const PUBLIC_KEY_PEM = `-----BEGIN PUBLIC KEY-----
@@ -10,6 +11,14 @@ fSLnktNYSRomzn8BrPkNKRHzhriXlZP2gME1PtBSo2idrGYRhaHjtiZtbcvRHZLb
 G5rmvRTzwqxOg78RVRbivirocQWyDese4w9I7sGsjW7+PElJBTgA1d5gdlzecw0n
 OwIDAQAB
 -----END PUBLIC KEY-----`
+
+let cachedPublicKey: KeyLike | null = null
+
+async function getPublicKey(): Promise<KeyLike> {
+  if (cachedPublicKey) return cachedPublicKey
+  cachedPublicKey = await importSPKI(PUBLIC_KEY_PEM, 'RS256') as KeyLike
+  return cachedPublicKey
+}
 
 export function useProStatus() {
   const isPro = useState<boolean>('pro-status', () => false)
@@ -29,7 +38,7 @@ export function useProStatus() {
         return
       }
 
-      const publicKey = await importSPKI(PUBLIC_KEY_PEM, 'RS256')
+      const publicKey = await getPublicKey()
       await jwtVerify(token, publicKey)
       isPro.value = true
     }
@@ -52,7 +61,9 @@ export function useProStatus() {
     isPro.value = false
   }
 
-  onMounted(checkStatus)
+  onMounted(() => {
+    if (loading.value) checkStatus()
+  })
 
   return { isPro, loading, checkStatus, activate, clearPro }
 }

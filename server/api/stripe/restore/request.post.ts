@@ -1,4 +1,4 @@
-import { createHash, randomInt } from 'crypto'
+import { randomInt } from 'crypto'
 import { serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
@@ -15,14 +15,8 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 429, statusMessage: 'Too many requests. Try again later.' })
   }
 
-  const emailHash = createHash('sha256').update(normalizedEmail).digest('hex')
-
-  // Always return success to prevent email enumeration
-  const maskedLocal = normalizedEmail.split('@')[0]
-  const maskedDomain = normalizedEmail.split('@')[1]
-  const masked = maskedLocal.length > 1
-    ? maskedLocal[0] + '***' + maskedLocal[maskedLocal.length - 1] + '@' + maskedDomain
-    : maskedLocal + '***@' + maskedDomain
+  const emailHash = hashEmail(normalizedEmail)
+  const masked = maskEmail(normalizedEmail)
 
   const supabase = await serverSupabaseServiceRole(event)
 

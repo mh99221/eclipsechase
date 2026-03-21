@@ -1,5 +1,4 @@
 import Stripe from 'stripe'
-import { createHash } from 'crypto'
 import { serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
@@ -28,7 +27,7 @@ export default defineEventHandler(async (event) => {
     const session = stripeEvent.data.object as Stripe.Checkout.Session
     const email = session.customer_details?.email || session.customer_email
 
-    if (session.payment_status !== 'paid') {
+    if (session.payment_status !== 'paid' || session.metadata?.product !== 'eclipse_pro_2026') {
       return { received: true }
     }
 
@@ -38,7 +37,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const normalizedEmail = email.toLowerCase().trim()
-    const emailHash = createHash('sha256').update(normalizedEmail).digest('hex')
+    const emailHash = hashEmail(normalizedEmail)
     const token = await generateProToken(normalizedEmail, session.id)
 
     const supabase = await serverSupabaseServiceRole(event)
