@@ -1084,7 +1084,7 @@ const profileIcons: Record<ProfileId, string> = {
     <!-- Pro hint: click to check horizon -->
     <div
       v-if="isPro && !horizonCheckCoords"
-      class="absolute z-10 bottom-4 left-1/2 -translate-x-1/2 sm:bottom-6 pointer-events-none"
+      class="absolute z-10 bottom-20 left-1/2 -translate-x-1/2 sm:bottom-24 pointer-events-none"
     >
       <div class="px-3 py-1.5 rounded bg-void-deep/80 backdrop-blur-sm border border-corona/20 text-[11px] font-mono text-corona/70">
         {{ t('horizon.click_hint') }}
