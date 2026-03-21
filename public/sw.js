@@ -53,11 +53,17 @@ function markAsCached(response) {
   })
 }
 
-// Install: pre-cache static assets
+// Install: pre-cache static assets (skip failures gracefully)
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_URLS)
+      return Promise.all(
+        PRECACHE_URLS.map((url) =>
+          cache.add(url).catch((err) => {
+            console.warn('[SW] Failed to precache', url, err.message)
+          })
+        )
+      )
     })
   )
   self.skipWaiting()
