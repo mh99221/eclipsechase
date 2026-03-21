@@ -1,4 +1,4 @@
-import { createHash } from 'crypto'
+import { createHash, randomInt } from 'crypto'
 import { serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
@@ -9,6 +9,12 @@ export default defineEventHandler(async (event) => {
   }
 
   const normalizedEmail = email.toLowerCase().trim()
+
+  // Rate limit: 3 requests per email per hour
+  if (!checkRateLimit(`restore-request:${normalizedEmail}`, 3, 60 * 60 * 1000)) {
+    throw createError({ statusCode: 429, statusMessage: 'Too many requests. Try again later.' })
+  }
+
   const emailHash = createHash('sha256').update(normalizedEmail).digest('hex')
 
   // Always return success to prevent email enumeration
@@ -30,7 +36,7 @@ export default defineEventHandler(async (event) => {
 
   if (purchase) {
     // Generate 6-digit code
-    const code = String(Math.floor(100000 + Math.random() * 900000))
+    const code = String(randomInt(100000, 1000000))
 
     // Store code with 15 min TTL
     await supabase.from('restore_codes').insert({

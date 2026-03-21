@@ -9,6 +9,12 @@ export default defineEventHandler(async (event) => {
   }
 
   const normalizedEmail = email.toLowerCase().trim()
+
+  // Rate limit: 5 attempts per email per hour
+  if (!checkRateLimit(`restore-verify:${normalizedEmail}`, 5, 60 * 60 * 1000)) {
+    throw createError({ statusCode: 429, statusMessage: 'Too many attempts. Try again later.' })
+  }
+
   const emailHash = createHash('sha256').update(normalizedEmail).digest('hex')
 
   const supabase = await serverSupabaseServiceRole(event)
