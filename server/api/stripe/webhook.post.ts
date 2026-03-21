@@ -25,54 +25,38 @@ export default defineEventHandler(async (event) => {
 
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object as Stripe.Checkout.Session
+    const email = session.customer_details?.email || session.customer_email
 
-    if (session.metadata?.product === 'eclipse_pro' && session.customer_email) {
-      const supabase = await serverSupabaseServiceRole(event)
+    if (session.payment_status !== 'paid' || session.metadata?.product !== 'eclipse_pro_2026') {
+      return { received: true }
+    }
 
-      const { error } = await supabase.from('pro_users').upsert(
-        {
-          email: session.customer_email,
-          stripe_session_id: session.id,
-          purchased_at: new Date().toISOString(),
-          is_active: true,
-        },
-        { onConflict: 'email' },
-      )
+    if (!email) {
+      console.error('Webhook: no customer email in session', session.id)
+      return { received: true }
+    }
 
-      if (error) {
-        console.error('Failed to upsert pro user:', error)
-        throw createError({ statusCode: 500, statusMessage: 'Failed to save pro user' })
-      }
+    const normalizedEmail = email.toLowerCase().trim()
+    const emailHash = hashEmail(normalizedEmail)
+    const token = await generateProToken(normalizedEmail, session.id)
 
-      // Create or find Supabase Auth user and link to pro_users
-      let authUserId: string | undefined
+    const supabase = await serverSupabaseServiceRole(event)
 
-      const { data: authData } = await supabase.auth.admin.createUser({
-        email: session.customer_email,
-        email_confirm: true,
-      })
+    const { error } = await supabase.from('pro_purchases').upsert(
+      {
+        email: normalizedEmail,
+        email_hash: emailHash,
+        stripe_session_id: session.id,
+        activation_token: token,
+        purchased_at: new Date().toISOString(),
+        is_active: true,
+      },
+      { onConflict: 'stripe_session_id' },
+    )
 
-      if (authData?.user) {
-        authUserId = authData.user.id
-      }
-      else {
-        // User already exists — look up their ID
-        const { data: existingUsers } = await supabase.auth.admin.listUsers({
-          page: 1,
-          perPage: 1,
-        })
-        const existing = existingUsers?.users?.find(u => u.email === session.customer_email)
-        if (existing) {
-          authUserId = existing.id
-        }
-      }
-
-      // Link auth_user_id to pro_users row
-      if (authUserId) {
-        await supabase.from('pro_users')
-          .update({ auth_user_id: authUserId })
-          .eq('email', session.customer_email)
-      }
+    if (error) {
+      console.error('Failed to insert pro purchase:', error)
+      throw createError({ statusCode: 500, statusMessage: 'Failed to save purchase' })
     }
   }
 

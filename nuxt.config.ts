@@ -67,15 +67,6 @@ export default defineNuxtConfig({
 
   supabase: {
     redirect: false,
-    redirectOptions: {
-      login: '/pro',
-      callback: '/confirm',
-    },
-    clientOptions: {
-      auth: {
-        flowType: 'implicit',
-      },
-    },
   },
 
   routeRules: {
@@ -97,6 +88,7 @@ export default defineNuxtConfig({
     stripeSecretKey: '',
     stripeWebhookSecret: '',
     resendApiKey: '',
+    proJwtPrivateKey: '',
     public: {
       siteUrl: 'https://eclipsechase.is',
       mapboxToken: '',

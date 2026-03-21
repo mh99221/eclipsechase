@@ -79,17 +79,38 @@ CREATE TABLE email_signups (
 );
 
 -- Pro tier purchases
-CREATE TABLE pro_users (
+CREATE TABLE pro_purchases (
   id BIGSERIAL PRIMARY KEY,
-  email TEXT UNIQUE NOT NULL,
-  stripe_session_id TEXT,
+  email TEXT NOT NULL,
+  email_hash TEXT NOT NULL,
+  stripe_session_id TEXT UNIQUE NOT NULL,
+  activation_token TEXT NOT NULL,
   purchased_at TIMESTAMPTZ DEFAULT NOW(),
-  is_active BOOLEAN DEFAULT TRUE
+  is_active BOOLEAN DEFAULT TRUE,
+  restored_count INTEGER DEFAULT 0,
+  last_restored_at TIMESTAMPTZ
 );
+
+CREATE INDEX idx_pro_purchases_email ON pro_purchases(email);
+CREATE INDEX idx_pro_purchases_email_hash ON pro_purchases(email_hash);
+CREATE INDEX idx_pro_purchases_stripe_session ON pro_purchases(stripe_session_id);
+
+-- Restore codes (short-lived)
+CREATE TABLE restore_codes (
+  id BIGSERIAL PRIMARY KEY,
+  email_hash TEXT NOT NULL,
+  code TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  expires_at TIMESTAMPTZ NOT NULL,
+  used BOOLEAN DEFAULT FALSE
+);
+
+CREATE INDEX idx_restore_codes_lookup ON restore_codes(email_hash, code);
 
 -- Enable Row Level Security on public-facing tables
 ALTER TABLE email_signups ENABLE ROW LEVEL SECURITY;
-ALTER TABLE pro_users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pro_purchases ENABLE ROW LEVEL SECURITY;
+ALTER TABLE restore_codes ENABLE ROW LEVEL SECURITY;
 
 -- Allow anonymous inserts to email_signups (for the signup form)
 CREATE POLICY "Allow anonymous insert" ON email_signups

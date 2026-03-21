@@ -1,6 +1,18 @@
+import { createHash } from 'crypto'
 import { Resend } from 'resend'
 
 const FROM_EMAIL = 'EclipseChase.is <hello@eclipsechase.is>'
+
+export function maskEmail(email: string): string {
+  const [local, domain] = email.split('@')
+  return local.length > 1
+    ? local[0] + '***' + local[local.length - 1] + '@' + domain
+    : local + '***@' + domain
+}
+
+export function hashEmail(email: string): string {
+  return createHash('sha256').update(email).digest('hex')
+}
 
 function getResend(): Resend | null {
   const config = useRuntimeConfig()
@@ -26,6 +38,41 @@ export async function sendWelcomeEmail(to: string) {
   } catch (err: any) {
     // Don't throw — email failure shouldn't block signup
     console.error('[email] Failed to send welcome email:', err.message || err)
+  }
+}
+
+export async function sendRestoreCode(to: string, code: string): Promise<void> {
+  const resend = getResend()
+  if (!resend) {
+    console.log('[email] Resend not configured, skipping restore code to', to)
+    return
+  }
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: 'Your EclipseChase.is restore code',
+      html: `
+        <div style="font-family: sans-serif; max-width: 400px; margin: 0 auto; background: #050810; padding: 32px 24px;">
+          <h2 style="color: #f59e0b; margin: 0 0 16px;">EclipseChase.is</h2>
+          <p style="color: #94a3b8; font-size: 15px;">Your restore code is:</p>
+          <div style="font-size: 32px; font-weight: bold; letter-spacing: 8px;
+                      background: #1a2232; color: #f59e0b; padding: 16px 24px;
+                      border-radius: 8px; text-align: center; margin: 16px 0;">
+            ${code}
+          </div>
+          <p style="color: #64748b; font-size: 14px;">
+            Enter this code in the app within 15 minutes.
+            If you didn't request this, you can ignore this email.
+          </p>
+        </div>
+      `,
+    })
+    console.log('[email] Restore code sent to', to)
+  }
+  catch (err: any) {
+    console.error('[email] Failed to send restore code:', err.message || err)
   }
 }
 
