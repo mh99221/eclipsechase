@@ -67,15 +67,6 @@ export default defineNuxtConfig({
 
   supabase: {
     redirect: false,
-    redirectOptions: {
-      login: '/pro',
-      callback: '/confirm',
-    },
-    clientOptions: {
-      auth: {
-        flowType: 'implicit',
-      },
-    },
   },
 
   routeRules: {

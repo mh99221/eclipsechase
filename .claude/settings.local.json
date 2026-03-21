@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx vue-tsc:*)",
+      "Bash(npx nuxi:*)",
+      "Bash(xargs grep:*)",
+      "Bash(find D:Projectseclipsechaseeclipse-chaser -type f \\\\\\(-name *.vue -o -name *.ts -o -name *.js \\\\\\) ! -path *node_modules* ! -path *.claude*)",
+      "Bash(node -e \"require\\(''jose''\\)\")",
+      "Bash(openssl genrsa:*)",
+      "Bash(openssl rsa:*)"
+    ]
+  }
+}
