@@ -3,13 +3,13 @@ import type { KeyLike } from 'jose'
 import { getTokenFromIndexedDB, saveTokenToIndexedDB, removeTokenFromIndexedDB } from '~/utils/proStorage'
 
 const PUBLIC_KEY_PEM = `-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArqJFkSuI5RObxTWBz1JH
-fb+h9DOzcDa0VjbCrSokn1KwAuoi1hyyKJfF2pdaOuBLcIhY0johJbEHVVor0PuV
-YPfMfvxztEzd+hXV0WuAdK/bRbg2EuekHD/vq+Vxf0uEQ4A9W6rYG9lB5UwJ8BMR
-EFMw+L4SKFuycZXorze8yBQtwI0GiKhit42YLeClGluqBTT+2iRiFB9m0ZC7w3NR
-fSLnktNYSRomzn8BrPkNKRHzhriXlZP2gME1PtBSo2idrGYRhaHjtiZtbcvRHZLb
-G5rmvRTzwqxOg78RVRbivirocQWyDese4w9I7sGsjW7+PElJBTgA1d5gdlzecw0n
-OwIDAQAB
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyxe5KSWEkDbaANYrh+Rn
+eQKcuYD8JwypRZK9PocVyhdEtF5zfQuVQu5aDm3QVb24gX199/nE7MKW1Ej3y/f6
+BPki2EpKEHbi/SFmJSLXPx8MY0dJpYG7e3aeu1uytKdIYd3Qfc3GICZGkfaurAya
+tCu7r6cTEgMgpoAyvC4p9MnXB9GziGx0a1TQY3Z4+FzIwAL73MeXhKtAXdS7tPSV
+XhXJiraLHeIoieC1zdN0K86Xw3ZNQiDv8y4rLKDCmCg2m64Y4yEVqZplojcOouMp
+4wc71ehorMaEcnVjXDOaH0SWLmGI+Ek9mCFgm8d0AFFwleE17p5jVq7U1zvFSp7D
+HwIDAQAB
 -----END PUBLIC KEY-----`
 
 let cachedPublicKey: KeyLike | null = null
