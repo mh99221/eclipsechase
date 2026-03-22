@@ -1,13 +1,13 @@
 <script setup lang="ts">
 const { t } = useI18n()
-const { proEmail, isLoggedIn, logout } = useProStatus()
+const { isPro, loading, clearPro } = useProStatus()
 
 const isLoggingOut = ref(false)
 
 async function handleLogout() {
   isLoggingOut.value = true
   try {
-    await logout()
+    await clearPro()
     navigateTo('/pro')
   }
   finally {
@@ -17,9 +17,9 @@ async function handleLogout() {
 </script>
 
 <template>
-  <div v-if="isLoggedIn" class="flex items-center gap-3">
-    <span class="hidden sm:inline font-mono text-[10px] text-slate-500 tracking-wider truncate max-w-[160px]">
-      {{ proEmail }}
+  <div v-if="isPro && !loading" class="flex items-center gap-3">
+    <span class="hidden sm:inline font-mono text-[10px] text-corona/60 tracking-wider uppercase">
+      {{ t('pro.badge', 'Pro') }}
     </span>
     <button
       :disabled="isLoggingOut"

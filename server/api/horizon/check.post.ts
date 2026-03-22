@@ -52,9 +52,9 @@ async function loadGridAsync(): Promise<HorizonGrid> {
   const fromFS = loadGridFromFS()
   if (fromFS) return fromFS
 
-  // Fallback: use Nitro's useStorage to read public assets (works on Vercel)
+  // Fallback: use Nitro's serverAssets storage (works on Vercel if assets are bundled)
   try {
-    const data = await useStorage('assets:eclipse-data').getItem('horizon-grid.json')
+    const data = await useStorage('assets:server:eclipse-data').getItem('horizon-grid.json')
     if (data) {
       const grid = (typeof data === 'string' ? JSON.parse(data) : data) as HorizonGrid
       console.log(`[Horizon] Loaded grid via Nitro storage (${grid.point_count} points)`)
@@ -64,17 +64,21 @@ async function loadGridAsync(): Promise<HorizonGrid> {
     console.warn('[Horizon] Nitro storage fallback failed:', e.message)
   }
 
-  // Last resort: fetch from own public URL
+  // Last resort: fetch from own public URL (static assets are on CDN)
   try {
-    const vercelUrl = process.env.VERCEL_URL
-    const siteUrl = process.env.NUXT_PUBLIC_SITE_URL
-    const baseUrl = siteUrl || (vercelUrl ? `https://${vercelUrl}` : 'http://localhost:3000')
-    const res = await fetch(`${baseUrl}/eclipse-data/horizon-grid.json`)
+    const config = useRuntimeConfig()
+    const baseUrl = config.public.siteUrl
+      || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '')
+      || 'http://localhost:3000'
+    const url = `${baseUrl}/eclipse-data/horizon-grid.json`
+    console.log(`[Horizon] Attempting HTTP fetch from ${url}`)
+    const res = await fetch(url)
     if (res.ok) {
       const grid = await res.json() as HorizonGrid
-      console.log(`[Horizon] Loaded grid via HTTP from ${baseUrl} (${grid.point_count} points)`)
+      console.log(`[Horizon] Loaded grid via HTTP (${grid.point_count} points)`)
       return grid
     }
+    console.error(`[Horizon] HTTP fetch failed with status ${res.status}`)
   } catch (e: any) {
     console.error('[Horizon] HTTP fallback failed:', e.message)
   }
