@@ -1086,11 +1086,16 @@ const profileIcons: Record<ProfileId, string> = {
               </div>
             </div>
           </div>
+
+          <!-- Offline download (mobile) -->
+          <div class="mt-3 pt-3 border-t border-void-border/30">
+            <OfflineManager :map="eclipseMapRef?.map" />
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Offline download manager -->
+    <!-- Offline download manager (desktop) -->
     <div class="absolute top-32 left-4 sm:left-6 z-10 w-64 hidden sm:block">
       <OfflineManager :map="eclipseMapRef?.map" />
     </div>
