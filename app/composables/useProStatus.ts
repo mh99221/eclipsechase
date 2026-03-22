@@ -42,7 +42,8 @@ export function useProStatus() {
       await jwtVerify(token, publicKey)
       isPro.value = true
     }
-    catch {
+    catch (err) {
+      console.error('[Pro] JWT verification failed, removing token:', err)
       isPro.value = false
       await removeTokenFromIndexedDB()
     }
@@ -52,8 +53,12 @@ export function useProStatus() {
   }
 
   async function activate(token: string) {
+    // Verify before saving — surface key mismatches immediately
+    const publicKey = await getPublicKey()
+    await jwtVerify(token, publicKey)
     await saveTokenToIndexedDB(token)
     isPro.value = true
+    loading.value = false
   }
 
   async function clearPro() {
