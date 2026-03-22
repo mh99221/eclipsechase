@@ -29,6 +29,7 @@ export default defineEventHandler(async (event) => {
     .maybeSingle()
 
   if (purchase) {
+    console.log('[restore] Purchase found for', masked, '— generating code')
     // Generate 6-digit code
     const code = String(randomInt(100000, 1000000))
 
@@ -41,6 +42,8 @@ export default defineEventHandler(async (event) => {
 
     // Must await — Vercel kills the function after response is sent
     await sendRestoreCode(normalizedEmail, code)
+  } else {
+    console.log('[restore] No active purchase found for', masked)
   }
 
   // Always return same response regardless of whether purchase exists
