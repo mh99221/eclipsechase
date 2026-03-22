@@ -74,9 +74,9 @@ async function loadGrid(): Promise<HorizonGrid> {
 
   // Fallback: fetch from own public URL (works on Vercel where public/ is static CDN)
   try {
-    const baseUrl = process.env.NUXT_PUBLIC_SITE_URL || process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3000'
+    const vercelUrl = process.env.VERCEL_URL
+    const siteUrl = process.env.NUXT_PUBLIC_SITE_URL
+    const baseUrl = siteUrl || (vercelUrl ? `https://${vercelUrl}` : 'http://localhost:3000')
     const res = await fetch(`${baseUrl}/eclipse-data/horizon-grid.json`)
     if (res.ok) {
       gridCache = await res.json() as HorizonGrid
