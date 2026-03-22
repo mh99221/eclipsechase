@@ -683,12 +683,13 @@ const horizonBottomStyle = computed(() => {
 const { isPro } = useProStatus()
 const horizonCheckCoords = ref<{ lat: number; lng: number } | null>(null)
 
+let horizonMarker: any = null
+
 // ─── Offline tile download overlay ───
 const tileDownloading = ref(false)
 const offlineManagerMobile = ref<any>(null)
 const offlineManagerDesktop = ref<any>(null)
 const offlineManagerRef = computed(() => offlineManagerMobile.value || offlineManagerDesktop.value)
-let horizonMarker: any = null
 
 function handleMapClick(coords: { lat: number; lng: number }) {
   if (!isPro.value) return
@@ -1117,9 +1118,9 @@ const profileIcons: Record<ProfileId, string> = {
       <svg class="w-12 h-12 text-corona/40 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
       </svg>
-      <p class="font-display text-xl font-semibold text-white mb-2">Downloading Map Tiles</p>
+      <p class="font-display text-xl font-semibold text-white mb-2">{{ t('offline.downloading') }}</p>
       <p class="font-mono text-xs text-slate-400 mb-6">
-        {{ offlineManagerRef?.loadedTiles ?? 0 }} / {{ offlineManagerRef?.totalTiles ?? 0 }} tiles ({{ offlineManagerRef?.progress ?? 0 }}%)
+        {{ t('offline.tiles_progress', { loaded: offlineManagerRef?.loadedTiles ?? 0, total: offlineManagerRef?.totalTiles ?? 0, progress: offlineManagerRef?.progress ?? 0 }) }}
       </p>
       <div class="w-full max-w-xs h-2 bg-void rounded-full overflow-hidden mb-6">
         <div
@@ -1131,7 +1132,7 @@ const profileIcons: Record<ProfileId, string> = {
         class="font-mono text-xs text-slate-500 hover:text-slate-300 transition-colors"
         @click="offlineManagerRef?.cancel()"
       >
-        Cancel
+        {{ t('offline.cancel') }}
       </button>
     </div>
 
