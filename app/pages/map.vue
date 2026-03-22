@@ -785,7 +785,7 @@ const profileIcons: Record<ProfileId, string> = {
 
         <!-- User menu + Desktop profile selector (hidden on mobile — moved to bottom sheet) -->
         <div class="pointer-events-auto hidden sm:flex items-center gap-3">
-          <UserMenu />
+          <ClientOnly><UserMenu /></ClientOnly>
           <div class="relative" @click.stop>
             <button
               class="text-xs font-mono tracking-wider px-2.5 py-1.5 rounded transition-all"
@@ -1095,16 +1095,18 @@ const profileIcons: Record<ProfileId, string> = {
       <OfflineManager :map="eclipseMapRef?.map" />
     </div>
 
-    <!-- Pro hint: click to check horizon -->
-    <div
-      v-if="isPro && !horizonCheckCoords"
-      class="absolute z-10 left-1/2 -translate-x-1/2 sm:bottom-24 pointer-events-none"
-      :style="horizonBottomStyle"
-    >
-      <div class="px-3 py-1.5 rounded bg-void-deep/80 backdrop-blur-sm border border-corona/20 text-[11px] font-mono text-corona/70">
-        {{ t('horizon.click_hint') }}
+    <!-- Pro hint: click to check horizon (client-only to avoid hydration mismatch) -->
+    <ClientOnly>
+      <div
+        v-if="isPro && !horizonCheckCoords"
+        class="absolute z-10 left-1/2 -translate-x-1/2 sm:bottom-24 pointer-events-none"
+        :style="horizonBottomStyle"
+      >
+        <div class="px-3 py-1.5 rounded bg-void-deep/80 backdrop-blur-sm border border-corona/20 text-[11px] font-mono text-corona/70">
+          {{ t('horizon.click_hint') }}
+        </div>
       </div>
-    </div>
+    </ClientOnly>
 
     <!-- Dynamic Horizon Check panel (Pro: click anywhere on map) -->
     <Transition name="fade">
