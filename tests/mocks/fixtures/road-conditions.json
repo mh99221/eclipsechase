@@ -1,0 +1,65 @@
+[
+  {
+    "roadName": "Hringvegur (1)",
+    "section": "Borgarnes - Brú á Kaldadal",
+    "condition": "good",
+    "description": "Dry, good visibility",
+    "lat": 64.8100,
+    "lng": -21.9200,
+    "updatedAt": "2026-08-12T14:00:00Z"
+  },
+  {
+    "roadName": "Snæfellsnesvegur (54)",
+    "section": "Vegamót Hringvegi - Stykkishólmur",
+    "condition": "good",
+    "description": "Dry, good conditions",
+    "lat": 64.9500,
+    "lng": -22.5000,
+    "updatedAt": "2026-08-12T14:00:00Z"
+  },
+  {
+    "roadName": "Vestfjarðavegur (60)",
+    "section": "Brjánslækur - Flókalundur",
+    "condition": "difficult",
+    "description": "Gravel road, some potholes. Reduced speed recommended.",
+    "lat": 65.5200,
+    "lng": -23.2000,
+    "updatedAt": "2026-08-12T13:30:00Z"
+  },
+  {
+    "roadName": "Látrabjargsvegur (612)",
+    "section": "Flókalundur - Látrabjarg",
+    "condition": "difficult",
+    "description": "Narrow gravel road, single lane in places. Drive slowly.",
+    "lat": 65.4800,
+    "lng": -23.8500,
+    "updatedAt": "2026-08-12T13:30:00Z"
+  },
+  {
+    "roadName": "Hringvegur (1)",
+    "section": "Hvalfjörður tunnel",
+    "condition": "good",
+    "description": "Tunnel open, good conditions",
+    "lat": 64.3500,
+    "lng": -21.7800,
+    "updatedAt": "2026-08-12T14:00:00Z"
+  },
+  {
+    "roadName": "Kaldadalsvegur (550)",
+    "section": "Full route",
+    "condition": "closed",
+    "description": "Mountain road closed for the season",
+    "lat": 64.5000,
+    "lng": -21.0000,
+    "updatedAt": "2026-08-12T12:00:00Z"
+  },
+  {
+    "roadName": "Reykjanesbraut (41)",
+    "section": "Reykjavík - Keflavík",
+    "condition": "good",
+    "description": "Clear and dry",
+    "lat": 64.0200,
+    "lng": -22.2000,
+    "updatedAt": "2026-08-12T14:00:00Z"
+  }
+]

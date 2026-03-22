@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "lat": 65.0753,
+    "lng": -22.7290,
+    "totality_start": "2026-08-12T17:44:30Z",
+    "totality_end": "2026-08-12T17:46:38Z",
+    "duration_seconds": 128.5,
+    "sun_altitude": 24.8,
+    "sun_azimuth": 250.3
+  },
+  {
+    "id": 2,
+    "lat": 64.9426,
+    "lng": -23.3071,
+    "totality_start": "2026-08-12T17:44:15Z",
+    "totality_end": "2026-08-12T17:46:25Z",
+    "duration_seconds": 130.2,
+    "sun_altitude": 24.6,
+    "sun_azimuth": 250.1
+  },
+  {
+    "id": 3,
+    "lat": 65.5015,
+    "lng": -24.0665,
+    "totality_start": "2026-08-12T17:43:20Z",
+    "totality_end": "2026-08-12T17:45:35Z",
+    "duration_seconds": 135.0,
+    "sun_altitude": 25.1,
+    "sun_azimuth": 250.8
+  },
+  {
+    "id": 4,
+    "lat": 64.0822,
+    "lng": -22.6920,
+    "totality_start": "2026-08-12T17:45:45Z",
+    "totality_end": "2026-08-12T17:47:30Z",
+    "duration_seconds": 105.0,
+    "sun_altitude": 24.0,
+    "sun_azimuth": 249.5
+  },
+  {
+    "id": 5,
+    "lat": 63.5000,
+    "lng": -20.0000,
+    "totality_start": null,
+    "totality_end": null,
+    "duration_seconds": null,
+    "sun_altitude": null,
+    "sun_azimuth": null
+  }
+]

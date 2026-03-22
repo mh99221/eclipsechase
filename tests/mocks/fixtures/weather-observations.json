@@ -1,0 +1,56 @@
+[
+  {
+    "stationId": "1",
+    "name": "Reykjavík",
+    "timestamp": "2026-08-12T17:00:00",
+    "temp": 12.5,
+    "windSpeed": 4.2,
+    "windDir": "SW",
+    "precipitation": 0
+  },
+  {
+    "stationId": "990",
+    "name": "Keflavíkurflugvöllur",
+    "timestamp": "2026-08-12T17:00:00",
+    "temp": 10.8,
+    "windSpeed": 6.1,
+    "windDir": "W",
+    "precipitation": 0.2
+  },
+  {
+    "stationId": "178",
+    "name": "Stykkishólmur",
+    "timestamp": "2026-08-12T17:00:00",
+    "temp": 9.3,
+    "windSpeed": 3.5,
+    "windDir": "NW",
+    "precipitation": 0
+  },
+  {
+    "stationId": "1777",
+    "name": "Borgarnes",
+    "timestamp": "2026-08-12T17:00:00",
+    "temp": null,
+    "windSpeed": 2.8,
+    "windDir": "N",
+    "precipitation": 0
+  },
+  {
+    "stationId": "2631",
+    "name": "Ísafjörður",
+    "timestamp": "2026-08-12T17:00:00",
+    "temp": 8.1,
+    "windSpeed": 5.0,
+    "windDir": "NE",
+    "precipitation": 1.5
+  },
+  {
+    "stationId": "1924",
+    "name": "Rif",
+    "timestamp": "2026-08-12T17:00:00",
+    "temp": 9.7,
+    "windSpeed": 3.1,
+    "windDir": "S",
+    "precipitation": 0
+  }
+]

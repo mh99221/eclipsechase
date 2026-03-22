@@ -1,0 +1,50 @@
+[
+  {
+    "stationId": "1",
+    "forecastTime": "2026-08-12T12:00:00",
+    "validTime": "2026-08-12T17:00:00",
+    "cloudCover": 30,
+    "temp": 13.0,
+    "precipitation": 0
+  },
+  {
+    "stationId": "1",
+    "forecastTime": "2026-08-12T12:00:00",
+    "validTime": "2026-08-12T18:00:00",
+    "cloudCover": 40,
+    "temp": 12.5,
+    "precipitation": 0
+  },
+  {
+    "stationId": "990",
+    "forecastTime": "2026-08-12T12:00:00",
+    "validTime": "2026-08-12T17:00:00",
+    "cloudCover": 70,
+    "temp": 11.0,
+    "precipitation": 0.5
+  },
+  {
+    "stationId": "178",
+    "forecastTime": "2026-08-12T12:00:00",
+    "validTime": "2026-08-12T17:00:00",
+    "cloudCover": null,
+    "temp": 9.5,
+    "precipitation": 0
+  },
+  {
+    "stationId": "2631",
+    "forecastTime": "2026-08-12T12:00:00",
+    "validTime": "2026-08-12T17:00:00",
+    "cloudCover": 85,
+    "temp": 8.0,
+    "precipitation": 2.0
+  },
+  {
+    "stationId": "1777",
+    "forecastTime": "2026-08-12T12:00:00",
+    "validTime": "2026-08-12T17:00:00",
+    "cloudCover": 15,
+    "temp": 11.5,
+    "precipitation": 0
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "id": "evt_test_1",
+  "type": "checkout.session.completed",
+  "data": {
+    "object": {
+      "id": "cs_test_mock",
+      "payment_status": "paid",
+      "customer_email": "buyer@test.com",
+      "customer_details": {
+        "email": "buyer@test.com"
+      },
+      "metadata": {
+        "product": "eclipse_pro_2026"
+      },
+      "amount_total": 999,
+      "currency": "eur"
+    }
+  }
+}

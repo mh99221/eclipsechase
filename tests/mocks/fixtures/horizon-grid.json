@@ -1,0 +1,47 @@
+[
+  {
+    "lat": 65.0753,
+    "lng": -22.7290,
+    "sun_altitude": 24.8,
+    "sun_azimuth": 250.3,
+    "verdict": "clear",
+    "clearance_deg": 12.3,
+    "sweep": [
+      { "azimuth": 205.3, "horizon_angle": 2.1, "distance_m": 12500 },
+      { "azimuth": 227.8, "horizon_angle": 1.8, "distance_m": 9800 },
+      { "azimuth": 250.3, "horizon_angle": 0.5, "distance_m": 15200 },
+      { "azimuth": 272.8, "horizon_angle": 3.2, "distance_m": 8400 },
+      { "azimuth": 295.3, "horizon_angle": 4.0, "distance_m": 6200 }
+    ]
+  },
+  {
+    "lat": 64.9426,
+    "lng": -23.3071,
+    "sun_altitude": 24.6,
+    "sun_azimuth": 250.1,
+    "verdict": "blocked",
+    "clearance_deg": -3.2,
+    "sweep": [
+      { "azimuth": 205.1, "horizon_angle": 18.5, "distance_m": 850 },
+      { "azimuth": 227.6, "horizon_angle": 28.0, "distance_m": 700 },
+      { "azimuth": 250.1, "horizon_angle": 27.8, "distance_m": 900 },
+      { "azimuth": 272.6, "horizon_angle": 12.1, "distance_m": 2000 },
+      { "azimuth": 295.1, "horizon_angle": 5.5, "distance_m": 8500 }
+    ]
+  },
+  {
+    "lat": 65.5015,
+    "lng": -24.0665,
+    "sun_altitude": 25.1,
+    "sun_azimuth": 250.8,
+    "verdict": "clear",
+    "clearance_deg": 24.5,
+    "sweep": [
+      { "azimuth": 205.8, "horizon_angle": 0.3, "distance_m": 50000 },
+      { "azimuth": 228.3, "horizon_angle": 0.2, "distance_m": 50000 },
+      { "azimuth": 250.8, "horizon_angle": 0.1, "distance_m": 50000 },
+      { "azimuth": 273.3, "horizon_angle": 0.4, "distance_m": 50000 },
+      { "azimuth": 295.8, "horizon_angle": 0.6, "distance_m": 35000 }
+    ]
+  }
+]
