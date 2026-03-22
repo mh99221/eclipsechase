@@ -56,7 +56,8 @@ const isCachingData = ref(false)
 const dataCached = ref(false)
 const progress = computed(() => totalTiles.value > 0 ? Math.round((loadedTiles.value / totalTiles.value) * 100) : 0)
 const estimatedTileCount = countTiles()
-const hasCachedTiles = computed(() => tileCount.value > 100) // consider cached if substantial tiles exist
+// Estimated ~1338 tiles for western Iceland z5-z11; treat >10% as "has cached tiles"
+const hasCachedTiles = computed(() => tileCount.value > estimatedTileCount * 0.1)
 
 const hasCachedWeather = computed(() => !!cacheAges.value['/api/weather/cloud-cover'])
 const hasCachedSpots = computed(() => !!cacheAges.value['/api/spots'])
