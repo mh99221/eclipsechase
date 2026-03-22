@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Mark code as used + look up purchase in parallel
-  const [, { data: purchase }] = await Promise.all([
+  const [, { data: purchases }] = await Promise.all([
     supabase.from('restore_codes')
       .update({ used: true })
       .eq('id', restoreCode.id),
@@ -53,22 +53,22 @@ export default defineEventHandler(async (event) => {
       .limit(1),
   ])
 
-  const firstPurchase = purchase?.[0] ?? null
-  if (!firstPurchase) {
+  const purchase = purchases?.[0] ?? null
+  if (!purchase) {
     throw createError({ statusCode: 404, statusMessage: 'Purchase not found' })
   }
 
   // Generate fresh token
-  const token = await generateProToken(normalizedEmail, `restore_${firstPurchase.id}`)
+  const token = await generateProToken(normalizedEmail, `restore_${purchase.id}`)
 
   // Update purchase with new token and increment restored_count
   await supabase.from('pro_purchases')
     .update({
       activation_token: token,
-      restored_count: (firstPurchase.restored_count || 0) + 1,
+      restored_count: (purchase.restored_count || 0) + 1,
       last_restored_at: new Date().toISOString(),
     })
-    .eq('id', firstPurchase.id)
+    .eq('id', purchase.id)
 
   return { token }
 })

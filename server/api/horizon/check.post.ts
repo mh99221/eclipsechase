@@ -6,25 +6,6 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { HorizonCheckResponse, HorizonSweepPoint } from '~/types/horizon'
 
-// Rate limiting: 10 req/min per IP, with eviction to prevent memory leak
-const rateLimits = new Map<string, { count: number; resetAt: number }>()
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now()
-  const entry = rateLimits.get(ip)
-  if (!entry || now > entry.resetAt) {
-    if (rateLimits.size > 1000) {
-      for (const [k, v] of rateLimits) {
-        if (now > v.resetAt) rateLimits.delete(k)
-      }
-    }
-    rateLimits.set(ip, { count: 1, resetAt: now + 60_000 })
-    return true
-  }
-  entry.count++
-  return entry.count <= 10
-}
-
 // Compact grid point format from precompute script
 interface GridPoint {
   lat: number; lng: number
@@ -40,8 +21,9 @@ interface HorizonGrid {
   points: GridPoint[]
 }
 
-// Cache grid in module scope
+// Cache grid in module scope; shared promise prevents duplicate loads on cold start
 let gridCache: HorizonGrid | null = null
+let gridLoadPromise: Promise<HorizonGrid> | null = null
 
 function loadGridFromFS(): HorizonGrid | null {
   const candidates = [
@@ -65,39 +47,64 @@ function loadGridFromFS(): HorizonGrid | null {
   return null
 }
 
-async function loadGrid(): Promise<HorizonGrid> {
-  if (gridCache) return gridCache
-
+async function loadGridAsync(): Promise<HorizonGrid> {
   // Try filesystem first (works in local dev)
-  gridCache = loadGridFromFS()
-  if (gridCache) return gridCache
+  const fromFS = loadGridFromFS()
+  if (fromFS) return fromFS
 
-  // Fallback: fetch from own public URL (works on Vercel where public/ is static CDN)
+  // Fallback: use Nitro's useStorage to read public assets (works on Vercel)
+  try {
+    const data = await useStorage('assets:eclipse-data').getItem('horizon-grid.json')
+    if (data) {
+      const grid = (typeof data === 'string' ? JSON.parse(data) : data) as HorizonGrid
+      console.log(`[Horizon] Loaded grid via Nitro storage (${grid.point_count} points)`)
+      return grid
+    }
+  } catch (e: any) {
+    console.warn('[Horizon] Nitro storage fallback failed:', e.message)
+  }
+
+  // Last resort: fetch from own public URL
   try {
     const vercelUrl = process.env.VERCEL_URL
     const siteUrl = process.env.NUXT_PUBLIC_SITE_URL
     const baseUrl = siteUrl || (vercelUrl ? `https://${vercelUrl}` : 'http://localhost:3000')
     const res = await fetch(`${baseUrl}/eclipse-data/horizon-grid.json`)
     if (res.ok) {
-      gridCache = await res.json() as HorizonGrid
-      console.log(`[Horizon] Loaded grid via HTTP from ${baseUrl} (${gridCache.point_count} points)`)
-      return gridCache
+      const grid = await res.json() as HorizonGrid
+      console.log(`[Horizon] Loaded grid via HTTP from ${baseUrl} (${grid.point_count} points)`)
+      return grid
     }
   } catch (e: any) {
     console.error('[Horizon] HTTP fallback failed:', e.message)
   }
 
-  throw new Error('horizon-grid.json not found via filesystem or HTTP')
+  throw new Error('horizon-grid.json not found via filesystem, storage, or HTTP')
+}
+
+function loadGrid(): Promise<HorizonGrid> {
+  if (gridCache) return Promise.resolve(gridCache)
+  // Share a single promise across concurrent cold-start requests
+  if (!gridLoadPromise) {
+    gridLoadPromise = loadGridAsync().then((grid) => {
+      gridCache = grid
+      return grid
+    }).catch((e) => {
+      gridLoadPromise = null // allow retry on failure
+      throw e
+    })
+  }
+  return gridLoadPromise
 }
 
 // Max snap distance in degrees (~3km at 65°N)
 const MAX_SNAP_DIST_DEG = 0.035
 
 export default defineEventHandler(async (event) => {
-  // Rate limit
+  // Rate limit: 10 req/min per IP
   const rawIp = getHeader(event, 'x-forwarded-for') || getHeader(event, 'x-real-ip') || 'unknown'
   const ip = rawIp.split(',')[0]!.trim()
-  if (!checkRateLimit(ip)) {
+  if (!checkRateLimit(`horizon:${ip}`, 10, 60_000)) {
     throw createError({ statusCode: 429, message: 'Too many requests, try again in a minute' })
   }
 

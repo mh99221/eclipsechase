@@ -78,10 +78,10 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    serverAssets: [{
-      baseName: 'dem',
-      dir: './server/data/dem',
-    }],
+    serverAssets: [
+      { baseName: 'dem', dir: './server/data/dem' },
+      { baseName: 'eclipse-data', dir: './public/eclipse-data' },
+    ],
   },
 
   runtimeConfig: {

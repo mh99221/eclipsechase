@@ -5,9 +5,12 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // On server (SSR), allow the page to render unconditionally.
   if (import.meta.server) return
 
-  const { isPro, checkStatus } = useProStatus()
+  const { isPro, loading, checkStatus } = useProStatus()
 
-  // Always check on client — useState may have stale server-side values
+  // Skip if already verified in this session (fast path for inter-page navigation)
+  if (isPro.value && !loading.value) return
+
+  // Otherwise check IndexedDB — useState may have stale server-side values
   await checkStatus()
 
   if (!isPro.value) {
