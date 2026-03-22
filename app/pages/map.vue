@@ -927,8 +927,7 @@ const profileIcons: Record<ProfileId, string> = {
 
     <!-- ═══ Mobile: Peek Sheet (bottom drawer with pull-up) ═══ -->
     <div
-      class="sm:hidden absolute left-0 right-0 z-10"
-      style="bottom: env(safe-area-inset-bottom, 0px)"
+      class="sm:hidden absolute left-0 right-0 bottom-5 z-10"
       :style="{ height: sheetHeight + 'px' }"
       :class="sheetDragging ? '' : 'transition-[height] duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]'"
     >
