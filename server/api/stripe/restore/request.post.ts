@@ -20,13 +20,14 @@ export default defineEventHandler(async (event) => {
 
   const supabase = await serverSupabaseServiceRole(event)
 
-  // Check if purchase exists
-  const { data: purchase } = await supabase
+  // Check if purchase exists (limit 1 — user may have multiple purchases)
+  const { data: purchases } = await supabase
     .from('pro_purchases')
     .select('id')
     .eq('email', normalizedEmail)
     .eq('is_active', true)
-    .maybeSingle()
+    .limit(1)
+  const purchase = purchases?.[0] ?? null
 
   if (purchase) {
     console.log('[restore] Purchase found for', masked, '— generating code')

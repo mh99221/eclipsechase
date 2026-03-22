@@ -50,24 +50,25 @@ export default defineEventHandler(async (event) => {
       .select('id, restored_count')
       .eq('email', normalizedEmail)
       .eq('is_active', true)
-      .maybeSingle(),
+      .limit(1),
   ])
 
-  if (!purchase) {
+  const firstPurchase = purchase?.[0] ?? null
+  if (!firstPurchase) {
     throw createError({ statusCode: 404, statusMessage: 'Purchase not found' })
   }
 
   // Generate fresh token
-  const token = await generateProToken(normalizedEmail, `restore_${purchase.id}`)
+  const token = await generateProToken(normalizedEmail, `restore_${firstPurchase.id}`)
 
   // Update purchase with new token and increment restored_count
   await supabase.from('pro_purchases')
     .update({
       activation_token: token,
-      restored_count: (purchase.restored_count || 0) + 1,
+      restored_count: (firstPurchase.restored_count || 0) + 1,
       last_restored_at: new Date().toISOString(),
     })
-    .eq('id', purchase.id)
+    .eq('id', firstPurchase.id)
 
   return { token }
 })
