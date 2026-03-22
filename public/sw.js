@@ -169,8 +169,8 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Tile cache: cache-first for Mapbox tiles
-  if (url.hostname.includes('mapbox') && url.pathname.includes('/tiles/')) {
+  // Tile cache: cache-first for Mapbox requests (vector tiles, sprites, glyphs)
+  if (url.hostname.includes('mapbox')) {
     event.respondWith(cacheFirstTiles(event.request))
     return
   }

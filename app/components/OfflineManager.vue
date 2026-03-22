@@ -67,6 +67,14 @@ async function downloadTiles() {
   loadedTiles.value = 0
   totalTiles.value = countTiles()
 
+  // Save current view to restore later
+  const savedCenter = props.map.getCenter()
+  const savedZoom = props.map.getZoom()
+
+  // Hide map visuals during download to prevent flickering
+  const canvas = props.map.getCanvas()
+  if (canvas) canvas.style.opacity = '0'
+
   for (let z = ZOOM_MIN; z <= ZOOM_MAX; z++) {
     if (isCancelled.value) break
 
@@ -93,8 +101,9 @@ async function downloadTiles() {
     }
   }
 
-  // Restore default view
-  props.map.flyTo({ center: [-22.5, 65.0], zoom: 5.5, duration: 1000 })
+  // Restore view and show map again
+  props.map.jumpTo({ center: [savedCenter.lng, savedCenter.lat], zoom: savedZoom })
+  if (canvas) canvas.style.opacity = '1'
 
   if (!isCancelled.value) {
     isDone.value = true
