@@ -31,15 +31,19 @@ export function useProStatus() {
     }
 
     try {
+      console.log('[Pro] checkStatus: reading IndexedDB...')
       const token = await getTokenFromIndexedDB()
       if (!token) {
+        console.log('[Pro] checkStatus: no token in IndexedDB')
         isPro.value = false
         loading.value = false
         return
       }
 
+      console.log('[Pro] checkStatus: token found, verifying...')
       const publicKey = await getPublicKey()
       await jwtVerify(token, publicKey)
+      console.log('[Pro] checkStatus: verified OK')
       isPro.value = true
     }
     catch (err) {
