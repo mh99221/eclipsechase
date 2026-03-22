@@ -5,6 +5,10 @@ const props = defineProps<{
   map: any
 }>()
 
+const emit = defineEmits<{
+  downloading: [active: boolean]
+}>()
+
 const { tileCount, lastWeatherUpdate, lastForecastUpdate, cacheAges, precacheApiData, refreshCacheStatus } = useOfflineStatus()
 
 // Western Iceland bounding box (eclipse path region) — must be before countTiles()
@@ -67,6 +71,7 @@ async function downloadTiles() {
   isCancelled.value = false
   loadedTiles.value = 0
   totalTiles.value = countTiles()
+  emit('downloading', true)
 
   // Save current view to restore later
   const savedCenter = props.map.getCenter()
@@ -111,7 +116,10 @@ async function downloadTiles() {
     refreshCacheStatus()
   }
   isDownloading.value = false
+  emit('downloading', false)
 }
+
+defineExpose({ isDownloading, loadedTiles, totalTiles, progress, cancel })
 
 async function cacheData() {
   isCachingData.value = true

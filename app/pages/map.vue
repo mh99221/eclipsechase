@@ -679,6 +679,12 @@ const horizonBottomStyle = computed(() => {
 // ─── Dynamic Horizon Check (Pro: click anywhere on map) ───
 const { isPro } = useProStatus()
 const horizonCheckCoords = ref<{ lat: number; lng: number } | null>(null)
+
+// ─── Offline tile download overlay ───
+const tileDownloading = ref(false)
+const offlineManagerMobile = ref<any>(null)
+const offlineManagerDesktop = ref<any>(null)
+const offlineManagerRef = computed(() => offlineManagerMobile.value || offlineManagerDesktop.value)
 let horizonMarker: any = null
 
 function handleMapClick(coords: { lat: number; lng: number }) {
@@ -1089,7 +1095,7 @@ const profileIcons: Record<ProfileId, string> = {
 
           <!-- Offline download (mobile) -->
           <div class="mt-3 pt-3 border-t border-void-border/30">
-            <OfflineManager :map="eclipseMapRef?.map" />
+            <OfflineManager :map="eclipseMapRef?.map" @downloading="tileDownloading = $event" ref="offlineManagerMobile" />
           </div>
         </div>
       </div>
@@ -1097,7 +1103,33 @@ const profileIcons: Record<ProfileId, string> = {
 
     <!-- Offline download manager (desktop) -->
     <div class="absolute top-32 left-4 sm:left-6 z-10 w-64 hidden sm:block">
-      <OfflineManager :map="eclipseMapRef?.map" />
+      <OfflineManager :map="eclipseMapRef?.map" @downloading="tileDownloading = $event" ref="offlineManagerDesktop" />
+    </div>
+
+    <!-- Full-screen download overlay -->
+    <div
+      v-if="tileDownloading"
+      class="absolute inset-0 z-50 bg-void-deep/95 flex flex-col items-center justify-center px-8"
+    >
+      <svg class="w-12 h-12 text-corona/40 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+      </svg>
+      <p class="font-display text-xl font-semibold text-white mb-2">Downloading Map Tiles</p>
+      <p class="font-mono text-xs text-slate-400 mb-6">
+        {{ offlineManagerRef?.loadedTiles ?? 0 }} / {{ offlineManagerRef?.totalTiles ?? 0 }} tiles ({{ offlineManagerRef?.progress ?? 0 }}%)
+      </p>
+      <div class="w-full max-w-xs h-2 bg-void rounded-full overflow-hidden mb-6">
+        <div
+          class="h-full bg-corona transition-all duration-200"
+          :style="{ width: `${offlineManagerRef?.progress ?? 0}%` }"
+        />
+      </div>
+      <button
+        class="font-mono text-xs text-slate-500 hover:text-slate-300 transition-colors"
+        @click="offlineManagerRef?.cancel()"
+      >
+        Cancel
+      </button>
     </div>
 
     <!-- Pro hint: click to check horizon (client-only to avoid hydration mismatch) -->
