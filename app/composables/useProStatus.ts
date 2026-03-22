@@ -66,8 +66,18 @@ export function useProStatus() {
     isPro.value = false
   }
 
-  onMounted(() => {
-    if (loading.value) checkStatus()
+  onMounted(async () => {
+    if (loading.value) {
+      await checkStatus()
+      // After hydration check, redirect non-Pro users on gated pages
+      if (!isPro.value && !import.meta.dev) {
+        const route = useRoute()
+        const gatedPaths = ['/map', '/recommend']
+        if (gatedPaths.some(p => route.path === p || route.path.startsWith(p + '/'))) {
+          navigateTo('/pro')
+        }
+      }
+    }
   })
 
   return { isPro, loading, checkStatus, activate, clearPro }

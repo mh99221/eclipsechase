@@ -5,6 +5,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // On server (SSR), allow the page to render unconditionally.
   if (import.meta.server) return
 
+  // During hydration, skip to avoid hydration mismatches — the server already
+  // rendered the page, and onMounted in useProStatus will check + redirect.
+  if (useNuxtApp().isHydrating) return
+
   const { isPro, loading, checkStatus } = useProStatus()
 
   // Skip if already verified in this session (fast path for inter-page navigation)
