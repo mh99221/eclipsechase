@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eclipsechase-v3'
+const CACHE_NAME = 'eclipsechase-v4'
 const API_CACHE = 'eclipsechase-api-v2'
 const TILE_CACHE = 'eclipsechase-tiles-v1'
 const MAX_TILE_CACHE = 5000
@@ -149,6 +149,14 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
+  // Navigation requests (HTML pages): always network-first so new deployments load
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request) || caches.match('/'))
+    )
+    return
+  }
+
   // Pro status: cache-first (critical for offline access)
   if (url.pathname === '/api/pro/status') {
     event.respondWith(cacheFirstApi(event.request))
@@ -167,8 +175,14 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Default: cache-first for all other GET requests
-  event.respondWith(cacheFirstDefault(event.request))
+  // Hashed assets (_nuxt/*.js): cache-first (content-hashed, immutable)
+  if (url.pathname.startsWith('/_nuxt/')) {
+    event.respondWith(cacheFirstDefault(event.request))
+    return
+  }
+
+  // Other static assets: network-first with cache fallback
+  event.respondWith(networkFirstWithCacheFallback(event.request))
 })
 
 // Network-first strategy for API requests (with timestamp tracking)
