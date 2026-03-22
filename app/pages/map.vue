@@ -627,7 +627,7 @@ onUnmounted(() => {
 })
 
 // ─── Mobile Peek Sheet ───
-const sheetSnapPoints = [64, 400] // peek (controls visible), full (legend visible)
+const sheetSnapPoints = [110, 400] // peek (controls visible above gesture bar), full (legend visible)
 const sheetHeight = ref(sheetSnapPoints[0])
 const sheetDragging = ref(false)
 const sheetStartY = ref(0)
@@ -927,7 +927,7 @@ const profileIcons: Record<ProfileId, string> = {
 
     <!-- ═══ Mobile: Peek Sheet (bottom drawer with pull-up) ═══ -->
     <div
-      class="sm:hidden absolute left-0 right-0 bottom-5 z-10"
+      class="sm:hidden absolute left-0 right-0 bottom-0 z-10"
       :style="{ height: sheetHeight + 'px' }"
       :class="sheetDragging ? '' : 'transition-[height] duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]'"
     >
@@ -949,7 +949,7 @@ const profileIcons: Record<ProfileId, string> = {
         </div>
 
         <!-- Always-visible controls row: Profile (left) + Cams/Roads (right) -->
-        <div class="flex items-center gap-2 px-4 pb-2 shrink-0">
+        <div class="flex items-center gap-2 px-4 pb-6 shrink-0">
           <!-- Profile cycle button -->
           <button
             :aria-label="activeProfileName ? `Profile: ${activeProfileName}` : t('map.profile')"
