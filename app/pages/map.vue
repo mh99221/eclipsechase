@@ -627,7 +627,7 @@ onUnmounted(() => {
 })
 
 // ─── Mobile Peek Sheet ───
-const sheetSnapPoints = [110, 400] // peek (controls visible above gesture bar), full (legend visible)
+const sheetSnapPoints = [130, 400] // peek (controls visible above gesture bar), full (legend visible)
 const sheetHeight = ref(sheetSnapPoints[0])
 const sheetDragging = ref(false)
 const sheetStartY = ref(0)
