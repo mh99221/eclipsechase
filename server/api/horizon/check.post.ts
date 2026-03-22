@@ -43,16 +43,12 @@ interface HorizonGrid {
 // Cache grid in module scope
 let gridCache: HorizonGrid | null = null
 
-function loadGrid(): HorizonGrid {
-  if (gridCache) return gridCache
-
-  // Try multiple paths to find the grid file (works on local dev + Vercel)
+function loadGridFromFS(): HorizonGrid | null {
   const candidates = [
     resolve(process.cwd(), 'public', 'eclipse-data', 'horizon-grid.json'),
     resolve(process.cwd(), '.output', 'public', 'eclipse-data', 'horizon-grid.json'),
   ]
 
-  // On Vercel, __dirname resolves relative to the serverless function bundle
   try {
     const currentDir = dirname(fileURLToPath(import.meta.url))
     candidates.push(resolve(currentDir, '..', '..', 'public', 'eclipse-data', 'horizon-grid.json'))
@@ -61,13 +57,37 @@ function loadGrid(): HorizonGrid {
 
   for (const path of candidates) {
     try {
-      gridCache = JSON.parse(readFileSync(path, 'utf-8')) as HorizonGrid
-      console.log(`[Horizon] Loaded pre-computed grid from ${path}: ${gridCache.point_count} points`)
-      return gridCache
+      const grid = JSON.parse(readFileSync(path, 'utf-8')) as HorizonGrid
+      console.log(`[Horizon] Loaded grid from filesystem: ${path} (${grid.point_count} points)`)
+      return grid
     } catch { /* try next */ }
   }
+  return null
+}
 
-  throw new Error('horizon-grid.json not found in any candidate path')
+async function loadGrid(): Promise<HorizonGrid> {
+  if (gridCache) return gridCache
+
+  // Try filesystem first (works in local dev)
+  gridCache = loadGridFromFS()
+  if (gridCache) return gridCache
+
+  // Fallback: fetch from own public URL (works on Vercel where public/ is static CDN)
+  try {
+    const baseUrl = process.env.NUXT_PUBLIC_SITE_URL || process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000'
+    const res = await fetch(`${baseUrl}/eclipse-data/horizon-grid.json`)
+    if (res.ok) {
+      gridCache = await res.json() as HorizonGrid
+      console.log(`[Horizon] Loaded grid via HTTP from ${baseUrl} (${gridCache.point_count} points)`)
+      return gridCache
+    }
+  } catch (e: any) {
+    console.error('[Horizon] HTTP fallback failed:', e.message)
+  }
+
+  throw new Error('horizon-grid.json not found via filesystem or HTTP')
 }
 
 // Max snap distance in degrees (~3km at 65°N)
@@ -90,7 +110,7 @@ export default defineEventHandler(async (event) => {
   // Load pre-computed grid
   let grid: HorizonGrid
   try {
-    grid = loadGrid()
+    grid = await loadGrid()
   } catch (e) {
     console.error('[Horizon] Failed to load grid:', e)
     throw createError({ statusCode: 503, message: 'Horizon data not available' })
