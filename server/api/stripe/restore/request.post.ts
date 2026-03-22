@@ -39,8 +39,8 @@ export default defineEventHandler(async (event) => {
       expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
     })
 
-    // Send email (fire and forget — don't block response)
-    sendRestoreCode(normalizedEmail, code)
+    // Must await — Vercel kills the function after response is sent
+    await sendRestoreCode(normalizedEmail, code)
   }
 
   // Always return same response regardless of whether purchase exists
