@@ -52,6 +52,7 @@ const isCachingData = ref(false)
 const dataCached = ref(false)
 const progress = computed(() => totalTiles.value > 0 ? Math.round((loadedTiles.value / totalTiles.value) * 100) : 0)
 const estimatedTileCount = countTiles()
+const hasCachedTiles = computed(() => tileCount.value > 100) // consider cached if substantial tiles exist
 
 const hasCachedWeather = computed(() => !!cacheAges.value['/api/weather/cloud-cover'])
 const hasCachedSpots = computed(() => !!cacheAges.value['/api/spots'])
@@ -71,9 +72,9 @@ async function downloadTiles() {
   const savedCenter = props.map.getCenter()
   const savedZoom = props.map.getZoom()
 
-  // Hide map visuals during download to prevent flickering
-  const canvas = props.map.getCanvas()
-  if (canvas) canvas.style.opacity = '0'
+  // Hide entire map container during download to prevent flickering (canvas + markers)
+  const container = props.map.getContainer()
+  if (container) container.style.visibility = 'hidden'
 
   for (let z = ZOOM_MIN; z <= ZOOM_MAX; z++) {
     if (isCancelled.value) break
@@ -103,7 +104,7 @@ async function downloadTiles() {
 
   // Restore view and show map again
   props.map.jumpTo({ center: [savedCenter.lng, savedCenter.lat], zoom: savedZoom })
-  if (canvas) canvas.style.opacity = '1'
+  if (container) container.style.visibility = 'visible'
 
   if (!isCancelled.value) {
     isDone.value = true
@@ -178,7 +179,14 @@ function cancel() {
         {{ t('offline.description') }}
       </p>
       <div class="flex flex-col gap-2">
+        <div v-if="hasCachedTiles" class="flex items-center gap-1.5 text-green-400 font-mono text-xs">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          {{ t('offline.tiles_cached', { count: tileCount }) }}
+        </div>
         <button
+          v-else
           class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-corona/40 text-corona bg-corona/5 hover:bg-corona/10 transition-colors"
           @click="downloadTiles"
         >
