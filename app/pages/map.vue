@@ -314,6 +314,8 @@ function addRoadPolylines(map: any) {
   // Click handler — store reference for cleanup
   roadClickHandler = (e: any) => {
     if (!e.features?.length) return
+    // Skip if a marker popup is already open (e.g. hazard marker on the road)
+    if (document.querySelector('.mapboxgl-popup')) return
     const f = e.features[0]
     const condition = f.properties.condition || 'unknown'
     const color = getTrafficColor(condition)
