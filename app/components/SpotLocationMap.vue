@@ -61,14 +61,12 @@ function togglePOIs() {
 function queryAndAddPOIs() {
   if (!map || !mapboxgl) return
 
-  // Query rendered features from Mapbox's built-in POI layers
-  const poiLayers = map.getStyle()?.layers
-    ?.filter((l: any) => l.id.includes('poi') && l.type === 'symbol')
-    ?.map((l: any) => l.id) || []
+  // Query POIs from the composite vector source (works even if POI layers are hidden in dark-v11)
+  const features = map.querySourceFeatures('composite', {
+    sourceLayer: 'poi_label',
+  })
 
-  if (!poiLayers.length) return
-
-  const features = map.queryRenderedFeatures(undefined, { layers: poiLayers })
+  if (!features.length) return
 
   // Deduplicate by name+coordinates
   const seen = new Set<string>()
