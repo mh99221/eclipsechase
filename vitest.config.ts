@@ -10,6 +10,7 @@ export default defineVitestConfig({
       },
     },
     setupFiles: ['./tests/mocks/setup.ts', './tests/server/api/_setup.ts'],
+    exclude: ['tests/e2e/**', 'node_modules/**', '.claude/**', '.nuxt/**', '.output/**'],
     coverage: {
       provider: 'v8',
       include: ['app/**/*.ts', 'app/**/*.vue', 'server/**/*.ts'],
