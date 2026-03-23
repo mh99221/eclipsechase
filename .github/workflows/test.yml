@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
       - run: npx vitest run --reporter=verbose
         env:
           SUPABASE_URL: http://localhost:54321
@@ -39,7 +39,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         with:
