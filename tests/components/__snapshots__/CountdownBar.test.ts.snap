@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CountdownBar > matches snapshot 1`] = `
+"<div data-v-77064328="" class="countdown-row my-8">
+  <!-- Dot separator -->
+  <!--v-if-->
+  <div data-v-77064328="" class="countdown-unit"><span data-v-77064328="" class="countdown-value countdown-value--primary">142</span><span data-v-77064328="" class="countdown-label text-slate-400">Days</span></div><!-- Dot separator --><span data-v-77064328="" class="countdown-dot"></span>
+  <div data-v-77064328="" class="countdown-unit"><span data-v-77064328="" class="countdown-value">05</span><span data-v-77064328="" class="countdown-label text-slate-500">Hours</span></div><!-- Dot separator --><span data-v-77064328="" class="countdown-dot"></span>
+  <div data-v-77064328="" class="countdown-unit"><span data-v-77064328="" class="countdown-value">46</span><span data-v-77064328="" class="countdown-label text-slate-500">Minutes</span></div><!-- Dot separator --><span data-v-77064328="" class="countdown-dot"></span>
+  <div data-v-77064328="" class="countdown-unit"><span data-v-77064328="" class="countdown-value">00</span><span data-v-77064328="" class="countdown-label text-slate-500">Seconds</span></div>
+</div>"
+`;
