@@ -9,7 +9,7 @@ export default defineVitestConfig({
         domEnvironment: 'happy-dom',
       },
     },
-    setupFiles: ['./tests/mocks/setup.ts'],
+    setupFiles: ['./tests/mocks/setup.ts', './tests/server/api/_setup.ts'],
     coverage: {
       provider: 'v8',
       include: ['app/**/*.ts', 'app/**/*.vue', 'server/**/*.ts'],
@@ -22,6 +22,7 @@ export default defineVitestConfig({
   resolve: {
     alias: {
       'mapbox-gl': fileURLToPath(new URL('./tests/mocks/mapbox-gl.ts', import.meta.url)),
+      '#supabase/server': fileURLToPath(new URL('./tests/mocks/supabase-server.ts', import.meta.url)),
     },
   },
 })
