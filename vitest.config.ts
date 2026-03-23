@@ -9,6 +9,12 @@ export default defineVitestConfig({
         domEnvironment: 'happy-dom',
       },
     },
+    environmentMatchGlobs: [
+      // Unit tests use plain happy-dom (no Nuxt boot) for speed
+      ['tests/unit/**', 'happy-dom'],
+      // Server tests use node
+      ['tests/server/**', 'node'],
+    ],
     setupFiles: ['./tests/mocks/setup.ts', './tests/server/api/_setup.ts'],
     exclude: ['tests/e2e/**', 'node_modules/**', '.claude/**', '.nuxt/**', '.output/**'],
     coverage: {

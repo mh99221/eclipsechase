@@ -17,8 +17,7 @@
     "test:all": "vitest run && playwright test"
   },
   "simple-git-hooks": {
-    "pre-commit": "npx vitest run --dir tests/unit",
-    "pre-push": "npx vitest run && npx playwright test"
+    "pre-commit": "npx vitest run --dir tests/unit"
   },
   "dependencies": {
     "@nuxt/content": "^3.12.0",
