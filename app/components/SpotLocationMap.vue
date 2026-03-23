@@ -6,7 +6,6 @@ const props = defineProps<{
   spotName: string
 }>()
 
-const { t } = useI18n()
 const config = useRuntimeConfig()
 const mapContainer = ref<HTMLElement | null>(null)
 const mapError = ref('')
@@ -268,6 +267,7 @@ onUnmounted(() => {
   poiMarkers.length = 0
   map?.remove()
   map = null
+  mapboxgl = null
 })
 
 // Move a point along a bearing by a distance in meters
