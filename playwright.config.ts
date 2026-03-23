@@ -10,12 +10,18 @@ export default defineConfig<ConfigOptions>({
     },
   },
   testDir: './tests/e2e',
+  // Run serially — each test file starts a Nuxt production build + server
+  workers: 1,
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
     { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
-  reporter: 'html',
+  reporter: [['list'], ['html', { open: 'never' }]],
   retries: 1,
-  timeout: 30000,
+  // Individual test timeout
+  timeout: 60000,
+  expect: {
+    timeout: 15000,
+  },
 })
