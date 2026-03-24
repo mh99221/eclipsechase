@@ -2,6 +2,8 @@
 const route = useRoute()
 const { isPro } = useProStatus()
 
+const showNav = computed(() => isPro.value && route.path !== '/')
+
 const items = [
   { to: '/map', label: 'Map', icon: 'map' },
   { to: '/recommend', label: 'For You', icon: 'recommend' },
@@ -16,7 +18,7 @@ function isActive(to: string) {
 </script>
 
 <template>
-  <nav v-if="isPro" class="bottom-nav" aria-label="Main navigation">
+  <nav v-if="showNav" class="bottom-nav" aria-label="Main navigation">
     <NuxtLink
       v-for="item in items"
       :key="item.to"
@@ -63,6 +65,19 @@ function isActive(to: string) {
   align-items: flex-end;
   z-index: 50;
   padding: 0 4px;
+}
+
+/* Gradient scrim behind nav — fades content out */
+.bottom-nav::before {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, transparent 0%, var(--void-deep) 70%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .bottom-nav-item {
