@@ -4,7 +4,7 @@
     {
       "name": "dev",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["node_modules/.bin/nuxi", "dev"],
+      "runtimeArgs": ["node_modules/@nuxt/cli/bin/nuxi.mjs", "dev"],
       "port": 3000
     }
   ]
