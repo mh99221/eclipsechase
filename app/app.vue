@@ -7,6 +7,7 @@ useAnalyticsConsent()
   <div class="min-h-screen">
     <NuxtRouteAnnouncer />
     <NuxtPage />
+    <BottomNav />
     <CookieConsent />
   </div>
 </template>
