@@ -18,6 +18,10 @@ function isActive(to: string) {
 </script>
 
 <template>
+  <!-- Scrim: full-width gradient fade at bottom -->
+  <div v-if="showNav" class="bottom-nav-scrim" aria-hidden="true" />
+  <!-- Spacer: pushes page content above the nav -->
+  <div v-if="showNav" class="bottom-nav-spacer" aria-hidden="true" />
   <nav v-if="showNav" class="bottom-nav" aria-label="Main navigation">
     <NuxtLink
       v-for="item in items"
@@ -67,17 +71,24 @@ function isActive(to: string) {
   padding: 0 4px;
 }
 
-/* Gradient scrim behind nav — fades content out */
-.bottom-nav::before {
-  content: '';
+/* Full-width gradient scrim — fades content into void at bottom */
+.bottom-nav-scrim {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+  width: 100%;
   height: 120px;
-  background: linear-gradient(to bottom, transparent 0%, var(--void-deep) 70%);
+  background: linear-gradient(to bottom, transparent 0%, var(--void-deep) 65%);
   pointer-events: none;
-  z-index: -1;
+  z-index: 49;
+}
+
+/* Spacer pushes page content above the nav so nothing is hidden */
+.bottom-nav-spacer {
+  height: 100px;
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .bottom-nav-item {
