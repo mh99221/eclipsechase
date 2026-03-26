@@ -6,7 +6,7 @@ definePageMeta({ middleware: ['pro-gate'] })
 
 useHead({ title: 'Dashboard' })
 
-const { remaining } = useCountdown()
+useCountdown()
 
 // Weather data
 const { data: cloudData, status: cloudStatus } = await useFetch('/api/weather/cloud-cover')
@@ -23,9 +23,10 @@ const weatherBest = computed(() => {
 const weatherLoading = computed(() => cloudStatus.value === 'pending')
 
 // News updates from Nuxt Content
-const { data: updates } = await useAsyncData('dashboard-updates', () =>
+const { data: updates, status: updatesStatus } = await useAsyncData('dashboard-updates', () =>
   queryContent('updates').sort({ date: -1 }).limit(5).find(),
 )
+const updatesLoading = computed(() => updatesStatus.value === 'pending')
 
 // Checklist
 const CHECKLIST_ITEMS = [
@@ -119,7 +120,15 @@ const checkedCount = computed(() =>
       </section>
 
       <!-- 3. News / Updates -->
-      <section v-if="updates && updates.length" class="mb-8 sm:mb-12">
+      <section v-if="updatesLoading" class="mb-8 sm:mb-12">
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-3">Latest updates</p>
+        <div class="bg-void-surface border border-void-border/40 rounded px-4 py-3 animate-pulse">
+          <div class="h-3 bg-void-border/20 rounded w-1/5 mb-2" />
+          <div class="h-4 bg-void-border/30 rounded w-2/3 mb-2" />
+          <div class="h-3 bg-void-border/20 rounded w-1/2" />
+        </div>
+      </section>
+      <section v-else-if="updates && updates.length" class="mb-8 sm:mb-12">
         <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-3">Latest updates</p>
         <div class="space-y-3">
           <div
