@@ -845,7 +845,7 @@ const profileIcons: Record<ProfileId, string> = {
     </div>
 
     <!-- ═══ Desktop: layer toggles + legend (hidden on mobile) ═══ -->
-    <div class="hidden sm:flex absolute bottom-6 right-20 z-10 gap-2">
+    <div class="hidden sm:flex absolute bottom-[80px] right-20 z-10 gap-2">
       <button
         :aria-pressed="showCameras"
         :aria-label="showCameras ? t('map.cams_on') : t('map.cams_off')"
@@ -870,7 +870,7 @@ const profileIcons: Record<ProfileId, string> = {
       </button>
     </div>
 
-    <div class="hidden sm:block absolute bottom-10 left-6 z-10 bg-void-deep/90 backdrop-blur-sm border border-void-border/50 rounded px-4 py-3 max-h-[calc(100dvh-160px)] overflow-y-auto text-xs">
+    <div class="hidden sm:block absolute bottom-[84px] left-6 z-10 bg-void-deep/90 backdrop-blur-sm border border-void-border/50 rounded px-4 py-3 max-h-[calc(100dvh-220px)] overflow-y-auto text-xs">
       <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2.5">{{ t('map.cloud_cover') }}</p>
       <div class="flex flex-col gap-1.5">
         <div v-for="item in legendItems" :key="item.label" class="flex items-center gap-2">
@@ -937,7 +937,7 @@ const profileIcons: Record<ProfileId, string> = {
 
     <!-- ═══ Mobile: Peek Sheet (bottom drawer with pull-up) ═══ -->
     <div
-      class="sm:hidden absolute left-0 right-0 bottom-0 z-10"
+      class="sm:hidden absolute left-0 right-0 bottom-16 z-10"
       :style="{ height: sheetHeight + 'px' }"
       :class="sheetDragging ? '' : 'transition-[height] duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]'"
     >
@@ -1140,7 +1140,7 @@ const profileIcons: Record<ProfileId, string> = {
     <ClientOnly>
       <div
         v-if="isPro && !horizonCheckCoords"
-        class="absolute z-10 left-1/2 -translate-x-1/2 sm:bottom-24 pointer-events-none"
+        class="absolute z-10 left-1/2 -translate-x-1/2 sm:bottom-[120px] pointer-events-none"
         :style="horizonBottomStyle"
       >
         <div class="px-3 py-1.5 rounded bg-void-deep/80 backdrop-blur-sm border border-corona/20 text-[11px] font-mono text-corona/70">
@@ -1153,7 +1153,7 @@ const profileIcons: Record<ProfileId, string> = {
     <Transition name="fade">
       <div
         v-if="horizonCheckCoords"
-        class="absolute z-20 sm:bottom-6 sm:left-6 left-2 right-2 sm:right-auto sm:w-96"
+        class="absolute z-20 sm:bottom-[80px] sm:left-6 left-2 right-2 sm:right-auto sm:w-96"
         :style="horizonBottomStyle"
       >
         <DynamicHorizonCheck
