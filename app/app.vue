@@ -5,6 +5,7 @@ useAnalyticsConsent()
 
 <template>
   <div class="min-h-screen">
+    <NuxtLoadingIndicator color="#f59e0b" :height="2" :throttle="200" />
     <NuxtRouteAnnouncer />
     <NuxtPage />
     <BottomNav />

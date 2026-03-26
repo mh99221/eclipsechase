@@ -8,9 +8,9 @@ useHead({ title: 'Dashboard' })
 
 useCountdown()
 
-// Weather data
-const { data: cloudData, status: cloudStatus } = await useFetch('/api/weather/cloud-cover')
-const { data: stationsData } = await useFetch('/api/weather/stations')
+// Weather data (lazy: render page immediately, show skeleton while loading)
+const { data: cloudData, status: cloudStatus } = useLazyFetch('/api/weather/cloud-cover')
+const { data: stationsData } = useLazyFetch('/api/weather/stations')
 
 // Compute best region
 const weatherBest = computed(() => {
@@ -22,8 +22,8 @@ const weatherBest = computed(() => {
 
 const weatherLoading = computed(() => cloudStatus.value === 'pending')
 
-// News updates from Nuxt Content
-const { data: updates, status: updatesStatus } = await useAsyncData('dashboard-updates', () =>
+// News updates from Nuxt Content (lazy: don't block navigation)
+const { data: updates, status: updatesStatus } = useLazyAsyncData('dashboard-updates', () =>
   queryContent('updates').sort({ date: -1 }).limit(5).find(),
 )
 const updatesLoading = computed(() => updatesStatus.value === 'pending')
