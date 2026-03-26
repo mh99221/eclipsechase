@@ -671,10 +671,11 @@ function updateIsMobile() { isMobile.value = window.innerWidth < 640 }
 onMounted(() => { updateIsMobile(); window.addEventListener('resize', updateIsMobile) })
 onUnmounted(() => { window.removeEventListener('resize', updateIsMobile) })
 
+const NAV_HEIGHT = 64
 const horizonBottomStyle = computed(() => {
   if (!isMobile.value) return {}
   return {
-    bottom: `${sheetHeight.value + 16}px`,
+    bottom: `${sheetHeight.value + NAV_HEIGHT + 16}px`,
     transition: sheetDragging.value ? 'none' : 'bottom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
   }
 })
