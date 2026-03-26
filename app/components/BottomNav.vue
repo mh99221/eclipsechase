@@ -4,10 +4,6 @@ const { isPro } = useProStatus()
 
 const showNav = computed(() => isPro.value && route.path !== '/')
 
-// Full-screen pages manage their own layout — don't add spacer
-const fullScreenPages = ['/map']
-const showSpacer = computed(() => showNav.value && !fullScreenPages.includes(route.path))
-
 const items = [
   { to: '/map', label: 'Map', icon: 'map' },
   { to: '/recommend', label: 'For You', icon: 'recommend' },
@@ -23,8 +19,6 @@ function isActive(to: string) {
 </script>
 
 <template>
-  <!-- Spacer: pushes page content above the nav (skipped on full-screen pages) -->
-  <div v-if="showSpacer" class="bottom-nav-spacer" aria-hidden="true" />
   <nav v-if="showNav" class="bottom-nav" aria-label="Main navigation">
     <NuxtLink
       v-for="item in items"
@@ -91,15 +85,6 @@ function isActive(to: string) {
     height: calc(64px + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
   }
-  .bottom-nav-spacer {
-    height: calc(64px + env(safe-area-inset-bottom)) !important;
-  }
-}
-
-.bottom-nav-spacer {
-  height: 64px;
-  width: 100%;
-  flex-shrink: 0;
 }
 
 .bottom-nav-item {
