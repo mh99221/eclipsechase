@@ -35,6 +35,10 @@ const heroPhoto = computed<SpotPhoto | null>(() =>
   spotPhotos.value.find(p => p.is_hero) || spotPhotos.value[0] || null,
 )
 
+const otherPhotos = computed(() =>
+  spotPhotos.value.filter(p => p !== heroPhoto.value),
+)
+
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
 useHead({
@@ -118,23 +122,59 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
 </script>
 
 <template>
-  <div class="relative noise min-h-screen">
-    <!-- Nav -->
-    <nav class="flex items-center justify-between px-6 sm:px-10 py-5">
-      <NuxtLink to="/" aria-label="EclipseChase — Home" class="flex items-center gap-3 group">
-        <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
-          <circle cx="64" cy="64" r="36" fill="#050810" />
-          <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
-          <circle cx="96" cy="48" r="4" fill="#f59e0b" />
-        </svg>
-        <span class="font-display font-semibold text-base tracking-wide text-slate-300 group-hover:text-white transition-colors">
-          ECLIPSECHASE
-        </span>
-      </NuxtLink>
-      <NuxtLink :to="`/map?spot=${slug}`" class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider">
-        {{ t('nav.view_on_map') }}
-      </NuxtLink>
-    </nav>
+  <div class="relative noise min-h-screen pt-[72px]">
+    <!-- Hero (extends behind fixed nav) -->
+    <div class="spot-hero relative -mt-[72px]" :class="heroPhoto ? 'spot-hero--has-image' : 'spot-hero--no-image'">
+      <!-- Hero image -->
+      <img
+        v-if="heroPhoto"
+        :src="`/images/spots/${heroPhoto.filename}`"
+        :srcset="`/images/spots/${heroPhoto.filename.replace(/\.webp$/, '-thumb.webp')} 600w, /images/spots/${heroPhoto.filename} 1200w`"
+        sizes="100vw"
+        :alt="heroPhoto.alt"
+        loading="eager"
+        class="absolute inset-0 w-full h-full object-cover"
+      />
+      <!-- Gradient overlay -->
+      <div class="absolute inset-0 spot-hero__gradient" />
+
+      <!-- Overlaid content -->
+      <div class="relative z-10 flex flex-col justify-end px-6 sm:px-10 pb-8 sm:pb-12 spot-hero__content">
+        <!-- Badges row -->
+        <div class="flex flex-wrap items-center gap-3 mb-3">
+          <span
+            v-if="spot.spot_type"
+            class="inline-block px-2 py-0.5 text-[10px] font-mono tracking-[0.15em] uppercase rounded border"
+            :class="spot.spot_type === 'drive-up' ? 'text-green-400 border-green-400/30 bg-green-400/10' : 'text-amber-400 border-amber-400/30 bg-amber-400/10'"
+          >
+            {{ SPOT_TYPE_LABELS[spot.spot_type] || spot.spot_type }}
+          </span>
+          <span class="font-mono text-xs tracking-wider text-slate-400">
+            {{ spot.lat.toFixed(4) }}° N, {{ Math.abs(spot.lng).toFixed(4) }}° W
+          </span>
+        </div>
+
+        <!-- Title -->
+        <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-4 max-w-xl">
+          {{ spot.name }}
+        </h1>
+
+        <!-- Description -->
+        <p class="text-sm sm:text-base text-slate-300/90 leading-relaxed max-w-lg">
+          {{ spot.description }}
+        </p>
+
+        <!-- Photo credit -->
+        <PhotoCredit
+          v-if="heroPhoto"
+          :credit="heroPhoto.credit"
+          :credit-url="heroPhoto.credit_url"
+          :license="heroPhoto.license"
+          variant="overlay"
+          class="!absolute !bottom-3 !right-4 sm:!right-6"
+        />
+      </div>
+    </div>
 
     <!-- Offline banner -->
     <div class="section-container max-w-3xl pt-2">
@@ -143,34 +183,31 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
 
     <!-- Content -->
     <main>
-    <article class="section-container max-w-3xl py-8 sm:py-16">
-      <!-- Breadcrumb -->
-      <nav aria-label="Breadcrumb" class="mb-8">
-        <ol class="flex items-center gap-2 text-xs font-mono text-slate-500">
-          <li><NuxtLink to="/map" class="hover:text-slate-300 transition-colors">{{ t('nav.map') }}</NuxtLink></li>
-          <li aria-hidden="true">/</li>
-          <li aria-current="page" class="text-slate-400">{{ spot.name }}</li>
-        </ol>
-      </nav>
-
-      <!-- Photo Gallery -->
-      <SpotPhotoGallery
-        v-if="spotPhotos.length > 0"
-        :photos="spotPhotos"
-        :spot-name="spot.name"
-      />
-
-      <!-- Header -->
-      <div class="mb-10">
-        <span class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase">
-          {{ REGION_LABELS[spot.region] || spot.region }}
-        </span>
-        <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-2 mb-4">
-          {{ spot.name }}
-        </h1>
-        <p class="text-base text-slate-300 leading-relaxed max-w-2xl">
-          {{ spot.description }}
-        </p>
+    <article class="section-container max-w-3xl py-8 sm:py-12">
+      <!-- Additional photos (non-hero) -->
+      <div v-if="otherPhotos.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-10">
+        <div
+          v-for="photo in otherPhotos.slice(0, 2)"
+          :key="photo.filename"
+          class="relative overflow-hidden rounded border border-void-border/40"
+        >
+          <img
+            :src="`/images/spots/${photo.filename}`"
+            :srcset="`/images/spots/${photo.filename.replace(/\.webp$/, '-thumb.webp')} 600w, /images/spots/${photo.filename} 1200w`"
+            sizes="(max-width: 639px) 100vw, 50vw"
+            :alt="photo.alt"
+            loading="lazy"
+            width="1200"
+            height="675"
+            class="w-full aspect-video object-cover"
+          />
+          <PhotoCredit
+            :credit="photo.credit"
+            :credit-url="photo.credit_url"
+            :license="photo.license"
+            variant="overlay"
+          />
+        </div>
       </div>
 
       <!-- Key stats -->
@@ -382,3 +419,46 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
     </footer>
   </div>
 </template>
+
+<style scoped>
+.spot-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.spot-hero--has-image {
+  min-height: calc(85vh + 72px);
+  min-height: calc(85svh + 72px);
+  display: flex;
+  flex-direction: column;
+  padding-top: 72px;
+}
+
+.spot-hero--no-image {
+  padding-bottom: 2rem;
+}
+
+.spot-hero__gradient {
+  background: linear-gradient(
+    to bottom,
+    rgba(5, 8, 16, 0) 40%,
+    rgba(5, 8, 16, 0.65) 60%,
+    rgba(5, 8, 16, 0.92) 80%,
+    rgba(5, 8, 16, 1) 100%
+  );
+}
+
+
+
+.spot-hero__content {
+  flex: 1;
+  min-height: 0;
+}
+
+@media (max-width: 639px) {
+  .spot-hero--has-image {
+    min-height: 75vh;
+    min-height: 75svh;
+  }
+}
+</style>

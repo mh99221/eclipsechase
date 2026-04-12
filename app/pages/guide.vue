@@ -38,27 +38,7 @@ useHead(() => ({
 </script>
 
 <template>
-  <div class="relative noise min-h-screen">
-    <!-- Nav -->
-    <nav class="flex items-center justify-between px-6 sm:px-10 py-5">
-      <NuxtLink to="/" class="flex items-center gap-3 group">
-        <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none">
-          <circle cx="64" cy="64" r="36" fill="#050810" />
-          <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
-          <circle cx="96" cy="48" r="4" fill="#f59e0b" />
-        </svg>
-        <span class="font-display font-semibold text-base tracking-wide text-slate-300 group-hover:text-white transition-colors">
-          ECLIPSECHASE
-        </span>
-      </NuxtLink>
-      <NuxtLink
-        to="/map"
-        class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider"
-      >
-        {{ t('nav.view_on_map') }}
-      </NuxtLink>
-    </nav>
-
+  <div class="relative noise min-h-screen pt-[72px]">
     <!-- Article -->
     <main class="pb-20">
       <article class="section-container max-w-3xl py-8 sm:py-16 guide-content">

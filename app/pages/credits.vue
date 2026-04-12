@@ -41,21 +41,7 @@ const licenseBadgeColor: Record<string, string> = {
 </script>
 
 <template>
-  <div class="relative noise min-h-screen">
-    <!-- Nav -->
-    <nav class="flex items-center justify-between px-6 sm:px-10 py-5">
-      <NuxtLink to="/" class="flex items-center gap-3 group">
-        <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none">
-          <circle cx="64" cy="64" r="36" fill="#050810" />
-          <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
-          <circle cx="96" cy="48" r="4" fill="#f59e0b" />
-        </svg>
-        <span class="font-display font-semibold text-base tracking-wide text-slate-300 group-hover:text-white transition-colors">
-          ECLIPSECHASE
-        </span>
-      </NuxtLink>
-    </nav>
-
+  <div class="relative noise min-h-screen pt-[72px]">
     <!-- Content -->
     <article class="section-container max-w-3xl py-12 sm:py-20">
       <h1 class="font-display text-3xl sm:text-4xl font-bold text-white mb-2">

@@ -378,7 +378,7 @@ New keys needed in `en.json` and `is.json`:
 - [ ] Recommendation engine includes horizon factor with 0.25 weight
 - [ ] Pro users can tap any map point for dynamic horizon check (< 500ms)
 - [ ] Dynamic check returns sweep data + PeakFinder URL
-- [ ] Bíldudalur harbour correctly shows "blocked" (known test case)
+- [ ] Bíldudalur harbour correctly shows "risky" (known test case)
 - [ ] Látrabjarg cliffs correctly shows "clear" (known test case — open ocean)
 - [ ] HorizonProfile SVG works in dark theme, is responsive, renders offline
 - [ ] ÍslandsDEM CC-BY 4.0 attribution displayed

@@ -7,7 +7,32 @@
       "Bash(find D:Projectseclipsechaseeclipse-chaser -type f \\\\\\(-name *.vue -o -name *.ts -o -name *.js \\\\\\) ! -path *node_modules* ! -path *.claude*)",
       "Bash(node -e \"require\\(''jose''\\)\")",
       "Bash(openssl genrsa:*)",
-      "Bash(openssl rsa:*)"
+      "Bash(openssl rsa:*)",
+      "Skill(ralph-loop:ralph-loop)",
+      "Bash(\"C:/Users/marti/.claude/plugins/cache/claude-plugins-official/ralph-loop/61c0597779bd/scripts/setup-ralph-loop.sh\" \"Execute the test infrastructure implementation plan at docs/superpowers/plans/2026-03-22-test-infrastructure-plan.md. Follow the plan task by task \\(Tasks 1-16\\). Use superpowers:subagent-driven-development skill. Start with Task 1 \\(Foundation - Dependencies & Configuration\\), then proceed through each task sequentially. The spec is at docs/superpowers/specs/2026-03-22-test-infrastructure-design.md. Commit after each completed task.\")",
+      "Bash(mkdir:*)",
+      "Bash(node -e \":*)",
+      "Bash(find D:/Projects/eclipsechase/eclipse-chaser/tests -name *.ts -type f)",
+      "Bash(find D:/Projects/eclipsechase/eclipse-chaser/node_modules/@nuxtjs/supabase -name *.mjs -path */server*)",
+      "Bash(find D:/Projects/eclipsechase/eclipse-chaser/.nuxt -name supabase*)",
+      "Bash(find D:/Projects/eclipsechase/eclipse-chaser/node_modules/@nuxtjs/supabase -type f -name *.ts -o -name *.mjs)",
+      "Bash(find D:/Projects/eclipsechase/eclipse-chaser/.nuxt -name *supabase*server*)",
+      "Bash(find D:/Projects/eclipsechase/eclipse-chaser/.nuxt -name imports*)",
+      "Bash(SUPABASE_URL=https://test.supabase.co SUPABASE_KEY=test_anon_key SUPABASE_SERVICE_KEY=test_service_key npx vitest run tests/server/api/weather/stations.test.ts)",
+      "Bash(npx playwright:*)",
+      "Bash(gh run:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3333/spots/thingeyri-shore)",
+      "Bash(npm uninstall:*)",
+      "Bash(node -e \"console.log\\(require\\(''./node_modules/tailwindcss/package.json''\\).version\\)\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3334/)",
+      "Bash(SKIP_SIMPLE_GIT_HOOKS=1 git add package.json package-lock.json)",
+      "Bash(SKIP_SIMPLE_GIT_HOOKS=1 git commit -m \"$\\(cat <<''''EOF'''':*)",
+      "Bash(SKIP_SIMPLE_GIT_HOOKS=1 git push)",
+      "Bash(SKIP_SIMPLE_GIT_HOOKS=1 git add .github/workflows/test.yml)",
+      "Bash(SKIP_SIMPLE_GIT_HOOKS=1 git add .npmrc)",
+      "Bash(C:/Users/marti/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.5/skills/brainstorming/scripts/start-server.sh --project-dir \"D:/Projects/eclipsechase/eclipse-chaser\")",
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:stitch.withgoogle.com)"
     ]
   }
 }

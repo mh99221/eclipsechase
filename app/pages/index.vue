@@ -149,29 +149,6 @@ const features = computed(() => [
       <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-gradient-radial from-corona/[0.04] to-transparent blur-3xl pointer-events-none" />
       <div class="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-ice/[0.02] blur-[100px] pointer-events-none" />
 
-      <!-- Top bar — minimal nav -->
-      <nav class="absolute top-0 left-0 right-0 flex items-center justify-between px-6 sm:px-10 py-5 z-10">
-        <div class="flex items-center gap-3">
-          <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
-            <circle cx="64" cy="64" r="36" fill="#050810" />
-            <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
-            <circle cx="96" cy="48" r="4" fill="#f59e0b" />
-          </svg>
-          <span class="font-display font-semibold text-base tracking-wide text-slate-300">
-            ECLIPSECHASE
-          </span>
-        </div>
-        <div class="flex items-center gap-4">
-          <span class="hidden sm:inline text-xs font-mono text-slate-500 tracking-wider">
-            64.1°N 21.9°W
-          </span>
-          <div class="w-px h-4 bg-void-border hidden sm:block" />
-          <span class="text-xs font-mono text-corona/70 tracking-wider">
-            AUG 12 2026
-          </span>
-        </div>
-      </nav>
-
       <!-- Eclipse illustration -->
       <EclipseHero class="mb-5 sm:mb-7" />
 

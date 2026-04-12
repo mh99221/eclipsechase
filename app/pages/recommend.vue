@@ -85,27 +85,7 @@ function scoreColor(score: number): string {
 </script>
 
 <template>
-  <div class="relative noise min-h-screen">
-    <!-- Nav -->
-    <nav class="flex items-center justify-between px-4 sm:px-10 py-5">
-      <NuxtLink to="/" aria-label="EclipseChase — Home" class="flex items-center gap-2.5 group">
-        <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
-          <circle cx="64" cy="64" r="36" fill="#050810" />
-          <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
-          <circle cx="96" cy="48" r="4" fill="#f59e0b" />
-        </svg>
-        <span class="font-display font-semibold text-base tracking-wide text-slate-300 group-hover:text-white transition-colors">
-          ECLIPSECHASE
-        </span>
-      </NuxtLink>
-      <div class="flex items-center gap-4">
-        <ClientOnly><UserMenu /></ClientOnly>
-        <NuxtLink to="/map" class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider">
-          MAP
-        </NuxtLink>
-      </div>
-    </nav>
-
+  <div class="relative noise min-h-screen pt-[72px]">
     <!-- Offline banner -->
     <div class="section-container max-w-3xl pt-2">
       <OfflineBanner />
