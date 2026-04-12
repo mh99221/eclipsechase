@@ -30,6 +30,13 @@ export function useProStatus() {
       return
     }
 
+    // Dev bypass: treat as Pro on localhost
+    if (import.meta.dev) {
+      isPro.value = true
+      loading.value = false
+      return
+    }
+
     try {
       const token = await getTokenFromIndexedDB()
       if (!token) {

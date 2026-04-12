@@ -84,6 +84,14 @@ export default defineNuxtConfig({
     ],
   },
 
+  $development: {
+    nitro: {
+      storage: {
+        'cache:nuxt': { driver: 'lruCache' },
+      },
+    },
+  },
+
   runtimeConfig: {
     stripeSecretKey: '',
     stripeWebhookSecret: '',

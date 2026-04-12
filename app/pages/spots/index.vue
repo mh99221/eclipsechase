@@ -15,8 +15,11 @@ const rawSpots = computed(() => {
 })
 
 // Weather + stations — lazy, client-only (avoid server fetch / free-user overhead)
-const { data: weatherData } = useFetch<Array<{ station_id: string; cloud_cover: number | null }>>('/api/weather/cloud-cover', { lazy: true, server: false })
-const { data: stationsData } = useFetch<Array<{ id: string; lat: number; lng: number }>>('/api/weather/stations', { lazy: true, server: false })
+const { data: rawWeatherData } = useFetch<{ cloud_cover: Array<{ station_id: string; cloud_cover: number | null }> }>('/api/weather/cloud-cover', { lazy: true, server: false })
+const { data: rawStationsData } = useFetch<{ stations: Array<{ id: string; lat: number; lng: number }> }>('/api/weather/stations', { lazy: true, server: false })
+
+const weatherData = computed(() => rawWeatherData.value?.cloud_cover || null)
+const stationsData = computed(() => rawStationsData.value?.stations || null)
 
 // Profile selection
 const selectedProfile = ref<ProfileId | null>(null)
