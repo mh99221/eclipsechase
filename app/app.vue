@@ -32,7 +32,8 @@ const navRightLink = computed(() => {
     <NuxtRouteAnnouncer />
 
     <!-- Fixed top nav -->
-    <nav v-if="showTopNav" class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 sm:px-10 py-5 bg-void">
+    <div v-if="showTopNav" class="fixed top-0 left-0 right-0 z-50">
+    <nav class="flex items-center justify-between px-6 sm:px-10 py-5 bg-void/80 backdrop-blur-md">
       <NuxtLink to="/" aria-label="EclipseChase — Home" class="flex items-center gap-3 group">
         <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
           <circle cx="64" cy="64" r="36" fill="#050810" />
@@ -62,6 +63,8 @@ const navRightLink = computed(() => {
         VIEW ON MAP
       </NuxtLink>
     </nav>
+    <div class="h-4 bg-gradient-to-b from-void to-transparent pointer-events-none" />
+    </div>
 
     <NuxtPage />
     <BottomNav />
