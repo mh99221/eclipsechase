@@ -6,7 +6,6 @@ const showNav = computed(() => isPro.value && route.path !== '/')
 
 const items = [
   { to: '/map', label: 'Map', icon: 'map' },
-  { to: '/recommend', label: 'For You', icon: 'recommend' },
   { to: '/dashboard', label: 'Home', icon: 'home' },
   { to: '/spots', label: 'Spots', icon: 'spots' },
   { to: '/guide', label: 'Guide', icon: 'guide' },
@@ -36,10 +35,6 @@ function isActive(to: string) {
         <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
         <line x1="8" y1="2" x2="8" y2="18" />
         <line x1="16" y1="6" x2="16" y2="22" />
-      </svg>
-      <!-- Recommend / For You icon -->
-      <svg v-else-if="item.icon === 'recommend'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
       </svg>
       <!-- Home icon — eclipse motif -->
       <svg v-else-if="item.icon === 'home'" class="home-eclipse" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
