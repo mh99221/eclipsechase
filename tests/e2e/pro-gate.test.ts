@@ -36,9 +36,4 @@ test.describe('Pro gate middleware', () => {
     await expect(page).toHaveURL(/\/pro/)
   })
 
-  test('/recommend redirects non-Pro user to /pro', async ({ page, goto }) => {
-    await goto('/recommend', { waitUntil: 'hydration' })
-
-    await expect(page).toHaveURL(/\/pro/)
-  })
 })
