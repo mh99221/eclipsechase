@@ -322,7 +322,7 @@ Colors:
   ice:         #7dd3fc (sky blue)         ice-dim:      #38bdf8
 
 Fonts:
-  Display: Syne (400-800)
+  Display: Manrope (400-800)
   Mono: IBM Plex Mono (400-600)
 
 Animations:
@@ -374,7 +374,7 @@ Every page uses the `noise` class for the grain texture overlay and `relative` p
 - **Page label** (above h1): `font-mono text-xs tracking-[0.3em] text-corona/60 uppercase`
 - **Page title** (h1): `font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white`
 - **Section heading** (h2): `font-display text-xl font-semibold text-white`
-- **Body text**: default Syne font, `text-base text-slate-300 leading-relaxed` — never use monospace for body prose
+- **Body text**: default Manrope font, `text-base text-slate-300 leading-relaxed` — never use monospace for body prose
 - **Metadata/labels**: `font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500`
 - **Data values**: `font-display text-2xl font-bold text-white`
 

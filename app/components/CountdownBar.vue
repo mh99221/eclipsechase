@@ -79,7 +79,7 @@ const units = computed(() => [
 }
 
 .countdown-value {
-  font-family: 'Syne', system-ui, sans-serif;
+  font-family: 'Manrope', system-ui, sans-serif;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: #e2e8f0;

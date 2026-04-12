@@ -155,7 +155,7 @@ function updateMarkers() {
       className: 'eclipse-popup',
     }).setHTML(`
       <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
-        <h3 style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 6px;">${station.name}</h3>
+        <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 6px;">${station.name}</h3>
         <dl style="margin: 0; display: flex; flex-direction: column; gap: 2px;">
           ${station.cloud_cover != null ? `<div><dt style="display:inline;color:#94a3b8;">Cloud cover:</dt> <dd style="display:inline;color:${color};margin:0;">${station.cloud_cover}%</dd></div>` : ''}
           ${station.temp != null ? `<div><dt style="display:inline;color:#94a3b8;">Temp:</dt> <dd style="display:inline;margin:0;">${station.temp}°C</dd></div>` : ''}
@@ -264,7 +264,7 @@ function updateSpotMarkers() {
     }).setHTML(`
       <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px; cursor: pointer;" data-slug="${spot.slug}">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
-          <h3 style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; color: #fbbf24; margin: 0;">${spot.name}</h3>
+          <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; color: #fbbf24; margin: 0;">${spot.name}</h3>
           <div style="flex-shrink: 0; line-height: 0;" aria-hidden="true">${weatherIcon}</div>
         </div>
         <dl style="margin: 0; display: flex; align-items: center; gap: 10px;">

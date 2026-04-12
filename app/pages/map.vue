@@ -208,7 +208,7 @@ function addTrafficMarkers(map: any) {
       className: 'eclipse-popup',
     }).setHTML(`
       <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
-        <h3 style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${TRAFFIC_LABELS[c.condition] || 'Road condition'}</h3>
+        <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${TRAFFIC_LABELS[c.condition] || 'Road condition'}</h3>
         ${c.roadName ? `<p style="color: #94a3b8; margin: 0 0 4px;">${c.roadName}</p>` : ''}
         <p style="color: #cbd5e1; margin: 0;">${c.description}</p>
       </div>
@@ -331,7 +331,7 @@ function addRoadPolylines(map: any) {
       .setLngLat(e.lngLat)
       .setHTML(`
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
-          <h3 style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${TRAFFIC_LABELS[condition] || 'Unknown'}</h3>
+          <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${TRAFFIC_LABELS[condition] || 'Unknown'}</h3>
           <p style="color: #94a3b8; margin: 0;">${name}${f.properties.roadRef ? ` (${f.properties.roadRef})` : ''}</p>
         </div>
       `)
@@ -453,7 +453,7 @@ if (import.meta.client) {
               <circle cx="8" cy="8" r="5" stroke="#7dd3fc" stroke-width="1.5" fill="none"/>
               <circle cx="8" cy="8" r="2" fill="#7dd3fc"/>
             </svg>
-            <span style="font-family:'Syne',sans-serif;font-weight:600;font-size:16px;color:#f1f5f9;">${reg.name}</span>
+            <span style="font-family:'Manrope',sans-serif;font-weight:600;font-size:16px;color:#f1f5f9;">${reg.name}</span>
             <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#475569;">Road camera</span>
           </div>
           <button id="lb-close" style="background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#94a3b8;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:6px 14px;transition:color 0.2s;">
@@ -573,7 +573,7 @@ function addCameraMarkers(map: any) {
     }).setHTML(`
       <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#e2e8f0;padding:4px;">
         <div style="display:flex;align-items:baseline;justify-content:space-between;gap:6px;margin-bottom:2px;">
-          <h3 style="font-family:'Syne',sans-serif;font-weight:600;font-size:14px;color:#7dd3fc;margin:0;">${cam.name}</h3>
+          <h3 style="font-family:'Manrope',sans-serif;font-weight:600;font-size:14px;color:#7dd3fc;margin:0;">${cam.name}</h3>
           ${hasMultiple ? `<span id="${uid}-counter" style="font-size:11px;color:#475569;white-space:nowrap;" aria-live="polite">1/${imgs.length}</span>` : ''}
         </div>
         <p style="color:#475569;font-size:11px;margin:0 0 6px;">${descHtml}</p>

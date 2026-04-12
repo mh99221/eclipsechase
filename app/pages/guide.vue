@@ -88,7 +88,7 @@ useHead(() => ({
 <style scoped>
 /* ═══════════════════════════════════════════════════
    Guide content — matches /spots design system:
-   - Syne for headings (font-display)
+   - Manrope for headings (font-display)
    - Default body font for prose (not monospace)
    - Mono only for labels, metadata, code
    - Cards use bg-void-surface + border-void-border/40
@@ -96,7 +96,7 @@ useHead(() => ({
 
 /* --- Main heading (rendered from # in markdown) --- */
 .guide-content :deep(h1) {
-  font-family: 'Syne', system-ui, sans-serif;
+  font-family: 'Manrope', system-ui, sans-serif;
   font-size: 2rem;
   font-weight: 700;
   color: #fff;
@@ -131,7 +131,7 @@ useHead(() => ({
 
 /* --- Section headings --- */
 .guide-content :deep(h2) {
-  font-family: 'Syne', system-ui, sans-serif;
+  font-family: 'Manrope', system-ui, sans-serif;
   font-size: 1.25rem;
   font-weight: 600;
   color: #fff;
@@ -152,7 +152,7 @@ useHead(() => ({
 }
 
 .guide-content :deep(h3) {
-  font-family: 'Syne', system-ui, sans-serif;
+  font-family: 'Manrope', system-ui, sans-serif;
   font-size: 1.125rem;
   font-weight: 600;
   color: #e2e8f0;
@@ -160,7 +160,7 @@ useHead(() => ({
   margin-bottom: 0.75rem;
 }
 
-/* --- Body text — use default Syne, NOT monospace --- */
+/* --- Body text — use default Manrope, NOT monospace --- */
 .guide-content :deep(p) {
   font-size: 0.9375rem;
   line-height: 1.8;
@@ -282,7 +282,7 @@ useHead(() => ({
 .guide-content :deep(summary) {
   padding: 0.875rem 1.25rem;
   cursor: pointer;
-  font-family: 'Syne', system-ui, sans-serif;
+  font-family: 'Manrope', system-ui, sans-serif;
   font-size: 0.9375rem;
   font-weight: 600;
   color: #e2e8f0;

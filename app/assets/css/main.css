@@ -17,7 +17,7 @@
   }
 
   html {
-    font-family: 'Syne', system-ui, sans-serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     background-color: var(--void);
     color: #c8d6e5;
     scroll-behavior: smooth;
@@ -54,7 +54,7 @@
            font-semibold text-sm tracking-wide uppercase
            text-gray-900 overflow-hidden
            transition-all duration-300 focus:outline-none;
-    font-family: 'Syne', system-ui, sans-serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%);
     border-radius: 2px;
   }
@@ -83,7 +83,7 @@
            font-medium text-sm tracking-wide uppercase
            text-slate-300 border border-slate-700/50
            transition-all duration-300 focus:outline-none;
-    font-family: 'Syne', system-ui, sans-serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     border-radius: 2px;
   }
 

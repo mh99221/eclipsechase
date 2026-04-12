@@ -18,7 +18,7 @@ defineProps<{
       background: radial-gradient(ellipse at 50% 0%, #0a1628 0%, #050810 70%);
       position: relative;
       overflow: hidden;
-      font-family: 'Syne', system-ui, sans-serif;
+      font-family: 'Manrope', system-ui, sans-serif;
     "
   >
     <!-- Ambient glow -->

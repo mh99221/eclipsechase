@@ -120,7 +120,7 @@ function queryAndAddPOIs() {
       <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
         <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
           <span style="width: 16px; height: 16px; border-radius: 50%; background: ${cat.color}; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #fff; flex-shrink: 0;">${cat.icon}</span>
-          <span style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 13px;">${name || cat.label}</span>
+          <span style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 13px;">${name || cat.label}</span>
         </div>
         <p style="color: #94a3b8; margin: 0; font-size: 11px;">${cat.label}</p>
       </div>
