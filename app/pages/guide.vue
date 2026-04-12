@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { t } = useI18n()
+const { goBack } = useGoBack()
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
 const { data: page } = await useAsyncData('guide', () =>
@@ -49,9 +50,9 @@ useHead(() => ({
     <!-- Footer -->
     <footer class="border-t border-void-border/30 py-8">
       <div class="section-container flex items-center justify-between">
-        <NuxtLink to="/" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
-          &larr; {{ t('nav.back_home') }}
-        </NuxtLink>
+        <button class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors" @click="goBack">
+          &larr; {{ t('nav.back') }}
+        </button>
         <div class="flex gap-4">
           <NuxtLink to="/privacy" class="font-mono text-xs text-slate-500 hover:text-slate-300 transition-colors">
             {{ t('footer.privacy') }}

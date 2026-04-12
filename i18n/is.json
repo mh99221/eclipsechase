@@ -135,8 +135,7 @@
     "view_on_map": "SKOÐA Á KORTI",
     "map": "KORT",
     "guide": "LEIÐBEININGAR",
-    "back_home": "Til baka heim",
-    "back_map": "Til baka á kort"
+    "back": "Til baka"
   },
   "map": {
     "title": "Veðurkort",

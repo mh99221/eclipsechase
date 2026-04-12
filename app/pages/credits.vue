@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SpotPhoto } from '~/types/spots'
+const { goBack } = useGoBack()
 
 useHead({
   title: 'Photo Credits',
@@ -130,9 +131,9 @@ const licenseBadgeColor: Record<string, string> = {
     <!-- Footer -->
     <footer class="border-t border-void-border/30 py-8">
       <div class="section-container text-center">
-        <NuxtLink to="/" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
-          &larr; Back to home
-        </NuxtLink>
+        <button class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors" @click="goBack">
+          &larr; Back
+        </button>
       </div>
     </footer>
   </div>

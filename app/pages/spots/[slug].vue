@@ -4,14 +4,10 @@ import type { SpotPhoto } from '~/types/spots'
 import type { HorizonCheck, HorizonProfileData } from '~/types/horizon'
 
 const { t } = useI18n()
+const { goBack } = useGoBack()
 const route = useRoute()
 const slug = route.params.slug as string
 
-// Map state passed from the map page for "Back to map" restoration
-const mapState = route.query.mlat
-  ? `mlat=${route.query.mlat}&mlng=${route.query.mlng}&mzoom=${route.query.mzoom}`
-  : ''
-const backToMapUrl = mapState ? `/map?${mapState}` : '/map'
 
 const { data, error } = await useFetch(`/api/spots/${slug}`)
 
@@ -404,9 +400,9 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
     <!-- Footer -->
     <footer class="border-t border-void-border/30 py-8">
       <div class="section-container flex items-center justify-between">
-        <NuxtLink :to="backToMapUrl" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
-          &larr; {{ t('nav.back_map') }}
-        </NuxtLink>
+        <button class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors" @click="goBack">
+          &larr; {{ t('nav.back') }}
+        </button>
         <div class="flex gap-4">
           <NuxtLink to="/privacy" class="font-mono text-xs text-slate-500 hover:text-slate-300 transition-colors">
             {{ t('footer.privacy') }}

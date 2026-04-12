@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { bestRegion } from '~/utils/weather'
 import { REGION_LABELS, cloudColor, cloudLevel } from '~/utils/eclipse'
+const { goBack } = useGoBack()
 
 definePageMeta({ middleware: ['pro-gate'] })
 
@@ -167,9 +168,9 @@ const checkedCount = computed(() =>
     <!-- Footer -->
     <footer class="border-t border-void-border/30 py-8">
       <div class="section-container text-center">
-        <NuxtLink to="/" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
-          &larr; Back to home
-        </NuxtLink>
+        <button class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors" @click="goBack">
+          &larr; Back
+        </button>
       </div>
     </footer>
   </div>

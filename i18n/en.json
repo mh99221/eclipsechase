@@ -135,8 +135,7 @@
     "view_on_map": "VIEW ON MAP",
     "map": "MAP",
     "guide": "GUIDE",
-    "back_home": "Back to home",
-    "back_map": "Back to map"
+    "back": "Back"
   },
   "map": {
     "title": "Weather Map",
