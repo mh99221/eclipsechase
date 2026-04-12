@@ -11,19 +11,7 @@ const navPadding = computed(() => isPro.value && !fullScreenPages.includes(route
 // Fixed top nav: hide on map (full-screen), show everywhere else
 const showTopNav = computed(() => route.path !== '/map')
 const isLanding = computed(() => route.path === '/')
-const isSpot = computed(() => route.path.startsWith('/spots/'))
 const isRecommend = computed(() => route.path === '/recommend')
-
-// Extract spot slug for "VIEW ON MAP" link
-const spotSlug = computed(() => {
-  if (!isSpot.value) return ''
-  return route.params.slug as string
-})
-
-const navRightLink = computed(() => {
-  if (isSpot.value) return `/map?spot=${spotSlug.value}`
-  return '/map'
-})
 </script>
 
 <template>
@@ -33,7 +21,7 @@ const navRightLink = computed(() => {
 
     <!-- Fixed top nav -->
     <div v-if="showTopNav" class="fixed top-0 left-0 right-0 z-50">
-    <nav class="flex items-center justify-between px-6 sm:px-10 py-5 bg-void/80 backdrop-blur-md">
+    <nav class="flex items-center justify-between px-6 sm:px-10 py-5 bg-void/97 backdrop-blur-md">
       <NuxtLink to="/" aria-label="EclipseChase — Home" class="flex items-center gap-3 group">
         <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
           <circle cx="64" cy="64" r="36" fill="#050810" />
@@ -52,18 +40,11 @@ const navRightLink = computed(() => {
         <span class="text-xs font-mono text-corona/70 tracking-wider">AUG 12 2026</span>
       </div>
 
-      <!-- Recommend: UserMenu + MAP -->
-      <div v-else-if="isRecommend" class="flex items-center gap-4">
+      <!-- Recommend: UserMenu -->
+      <div v-else-if="isRecommend">
         <ClientOnly><UserMenu /></ClientOnly>
-        <NuxtLink to="/map" class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider">MAP</NuxtLink>
       </div>
-
-      <!-- All other pages: VIEW ON MAP -->
-      <NuxtLink v-else :to="navRightLink" class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider">
-        VIEW ON MAP
-      </NuxtLink>
     </nav>
-    <div class="h-4 bg-gradient-to-b from-void to-transparent pointer-events-none" />
     </div>
 
     <NuxtPage />

@@ -441,6 +441,8 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
 .spot-hero__gradient {
   background: linear-gradient(
     to bottom,
+    rgba(5, 8, 16, 0.85) 0%,
+    rgba(5, 8, 16, 0) 25%,
     rgba(5, 8, 16, 0) 40%,
     rgba(5, 8, 16, 0.65) 60%,
     rgba(5, 8, 16, 0.92) 80%,
