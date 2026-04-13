@@ -197,7 +197,8 @@
   },
   "auth": {
     "already_pro": "Already purchased?",
-    "restore_subtitle": "Restore your purchase on this device."
+    "restore_subtitle": "Restore your purchase on this device.",
+    "logout": "Log out"
   },
   "spot": {
     "totality": "Totality",
