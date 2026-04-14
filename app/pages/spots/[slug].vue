@@ -115,6 +115,26 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
   }
 })
 
+// Parse warnings JSONB
+const warnings = computed<string[]>(() => {
+  const raw = spot.value.warnings
+  if (!raw) return []
+  if (typeof raw === 'string') {
+    try { return JSON.parse(raw) } catch { return [] }
+  }
+  return Array.isArray(raw) ? raw : []
+})
+
+// Parse nearby_poi JSONB
+const nearbyPoi = computed<string[]>(() => {
+  const raw = spot.value.nearby_poi
+  if (!raw) return []
+  if (typeof raw === 'string') {
+    try { return JSON.parse(raw) } catch { return [] }
+  }
+  return Array.isArray(raw) ? raw : []
+})
+
 </script>
 
 <template>
@@ -242,6 +262,17 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
         />
       </div>
 
+      <!-- Warnings -->
+      <div v-if="warnings.length > 0" class="space-y-2 mb-12">
+        <div
+          v-for="(warning, i) in warnings"
+          :key="i"
+          class="px-3 py-2.5 rounded bg-amber-900/15 border border-amber-700/20 text-xs font-mono text-amber-400/80"
+        >
+          {{ warning }}
+        </div>
+      </div>
+
       <!-- Trail info (hiking spots only) -->
       <div v-if="isTrail" class="mb-12 bg-void-surface border border-void-border/40 rounded-lg p-5 sm:p-6">
         <h2 class="font-display text-lg font-semibold text-white mb-4 flex items-center gap-2">
@@ -358,6 +389,26 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
             {{ t('spot.terrain') }}
           </h2>
           <p class="text-slate-300 text-base leading-relaxed">{{ spot.terrain_notes }}</p>
+        </section>
+
+        <!-- Nearby points of interest -->
+        <section v-if="nearbyPoi.length > 0">
+          <h2 class="font-display text-xl font-semibold text-white mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+            Nearby
+          </h2>
+          <ul class="space-y-1.5">
+            <li
+              v-for="(poi, i) in nearbyPoi"
+              :key="i"
+              class="text-slate-300 text-sm flex items-start gap-2"
+            >
+              <span class="text-corona/50 mt-1">&#x2022;</span>
+              {{ poi }}
+            </li>
+          </ul>
         </section>
 
         <!-- Location + Map -->

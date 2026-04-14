@@ -153,7 +153,7 @@
     "terrain_notes": "Exposed cliff edge. No fences. Very windy. Not suitable for children unsupervised.",
     "has_services": false,
     "cell_coverage": "none",
-    "totality_duration_seconds": 135.0,
+    "totality_duration_seconds": 133,
     "totality_start": "2026-08-12T17:43:20Z",
     "sun_altitude": 25.1,
     "sun_azimuth": 250.8,
