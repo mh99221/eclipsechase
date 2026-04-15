@@ -4,24 +4,25 @@ useAnalyticsConsent()
 
 const route = useRoute()
 const { isPro } = useProStatus()
-// Add bottom padding for fixed nav bar — except on landing page and full-screen pages
-const fullScreenPages = ['/', '/map']
-const navPadding = computed(() => isPro.value && !fullScreenPages.includes(route.path))
+const { items: navItems, isActive: isNavActive } = useNavItems()
+// Bottom padding only on mobile — desktop swaps bottom nav for a top-bar masthead
+const mobileNavPadding = computed(() => isPro.value && !['/', '/map'].includes(route.path))
 
 // Fixed top nav: hide on map (full-screen), show everywhere else
 const showTopNav = computed(() => route.path !== '/map')
 const isLanding = computed(() => route.path === '/')
-const isRecommend = computed(() => route.path === '/recommend')
+// Show the desktop masthead links for Pro users on non-landing pages
+const showMasthead = computed(() => isPro.value && !isLanding.value)
 </script>
 
 <template>
-  <div class="min-h-screen" :class="{ 'pb-16': navPadding }">
+  <div class="min-h-screen" :class="{ 'pb-16 md:pb-0': mobileNavPadding }">
     <NuxtLoadingIndicator color="#f59e0b" :height="2" :throttle="200" />
     <NuxtRouteAnnouncer />
 
     <!-- Fixed top nav — outer bar stretches edge-to-edge, inner content aligns to reading column -->
     <div v-if="showTopNav" class="fixed top-0 left-0 right-0 z-50 bg-void/97 backdrop-blur-md">
-      <nav class="section-container max-w-3xl flex items-center justify-between py-5">
+      <nav class="section-container max-w-3xl flex items-center justify-between gap-5 py-5">
         <NuxtLink to="/" aria-label="EclipseChase — Home" class="flex items-center gap-3 group">
           <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
             <circle cx="64" cy="64" r="36" fill="#050810" />
@@ -33,15 +34,33 @@ const isRecommend = computed(() => route.path === '/recommend')
           </span>
         </NuxtLink>
 
-        <!-- Landing: coords + date -->
+        <!-- Desktop masthead links: Pro users only, not on landing -->
+        <ClientOnly>
+          <nav
+            v-if="showMasthead"
+            class="hidden md:flex items-center gap-7"
+            aria-label="Primary"
+          >
+            <NuxtLink
+              v-for="item in navItems"
+              :key="item.to"
+              :to="item.to"
+              class="masthead-link"
+              :class="{ active: isNavActive(item.to) }"
+              :aria-current="isNavActive(item.to) ? 'page' : undefined"
+            >
+              {{ item.label }}
+            </NuxtLink>
+          </nav>
+        </ClientOnly>
+
+        <!-- Right side: landing → coords+date · otherwise → UserMenu -->
         <div v-if="isLanding" class="flex items-center gap-4">
           <span class="hidden sm:inline text-xs font-mono text-slate-500 tracking-wider">64.1°N 21.9°W</span>
           <div class="w-px h-4 bg-void-border hidden sm:block" />
           <span class="text-xs font-mono text-corona/70 tracking-wider">AUG 12 2026</span>
         </div>
-
-        <!-- Recommend: UserMenu -->
-        <div v-else-if="isRecommend">
+        <div v-else>
           <ClientOnly><UserMenu /></ClientOnly>
         </div>
       </nav>
@@ -52,3 +71,35 @@ const isRecommend = computed(() => route.path === '/recommend')
     <CookieConsent />
   </div>
 </template>
+
+<style scoped>
+/* Masthead links — tracked mono caps, corona dot indicator when active */
+.masthead-link {
+  position: relative;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+}
+.masthead-link:hover {
+  color: #fbbf24;
+}
+.masthead-link.active {
+  color: #f59e0b;
+}
+.masthead-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 3px;
+  background: #f59e0b;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.6);
+}
+</style>

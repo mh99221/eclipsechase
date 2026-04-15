@@ -1,20 +1,9 @@
 <script setup lang="ts">
 const route = useRoute()
 const { isPro } = useProStatus()
+const { items, isActive } = useNavItems()
 
 const showNav = computed(() => isPro.value && route.path !== '/')
-
-const items = [
-  { to: '/map', label: 'Map', icon: 'map' },
-  { to: '/dashboard', label: 'Home', icon: 'home' },
-  { to: '/spots', label: 'Spots', icon: 'spots' },
-  { to: '/guide', label: 'Guide', icon: 'guide' },
-] as const
-
-function isActive(to: string) {
-  if (to === '/spots') return route.path.startsWith('/spots')
-  return route.path === to
-}
 </script>
 
 <template>
@@ -72,6 +61,13 @@ function isActive(to: string) {
   -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid rgba(26, 37, 64, 0.4);
   z-index: 50;
+}
+
+/* Desktop (md+): hide bottom nav — top masthead takes over */
+@media (min-width: 768px) {
+  .bottom-nav {
+    display: none;
+  }
 }
 
 /* Safe area for notched phones */
