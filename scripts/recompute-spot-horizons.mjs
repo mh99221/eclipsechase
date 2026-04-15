@@ -29,8 +29,11 @@ const argApi = process.argv.find(a => a.startsWith('--api='))
 const API_BASE = argApi ? argApi.split('=')[1] : 'https://eclipsechase.is'
 
 // ── Eclipse parameters ──────────────────────────────────────────────
+// Skyfield-computed: sun altitude 24°, azimuth ~250° WSW at totality (17:45 UTC)
+// This matches the simplified solar formula in app/utils/solar.ts for ~17:45 UTC
+// so the sun marker will correctly align with the "17:45" point on the trajectory arc.
 const SUN_ALTITUDE = 24
-const SUN_AZIMUTH = 265
+const SUN_AZIMUTH = 250
 
 // ── Per-slug overrides ──────────────────────────────────────────────
 // Known ground elevation (meters ASL). Used when DEM under-reports a peak
@@ -196,6 +199,9 @@ async function main() {
     lines.push(`UPDATE viewing_spots SET horizon_check = '${json}'::jsonb WHERE slug = '${spot.slug}';`)
   }
 
+  lines.push('')
+  lines.push('-- Also update the top-level sun_azimuth column (overrides the stale 265° from v4)')
+  lines.push(`UPDATE viewing_spots SET sun_azimuth = ${SUN_AZIMUTH};`)
   lines.push('')
   lines.push('COMMIT;')
 
