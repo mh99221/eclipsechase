@@ -38,7 +38,7 @@ const showMasthead = computed(() => isPro.value && !isLanding.value)
         <ClientOnly>
           <nav
             v-if="showMasthead"
-            class="hidden md:flex items-center gap-7"
+            class="hidden md:flex items-center gap-8"
             aria-label="Primary"
           >
             <NuxtLink
@@ -77,8 +77,8 @@ const showMasthead = computed(() => isPro.value && !isLanding.value)
 .masthead-link {
   position: relative;
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 10px;
-  letter-spacing: 0.25em;
+  font-size: 13px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: #94a3b8;
   padding: 4px 0;
@@ -93,13 +93,13 @@ const showMasthead = computed(() => isPro.value && !isLanding.value)
 .masthead-link.active::after {
   content: "";
   position: absolute;
-  bottom: -6px;
+  bottom: -8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 3px;
-  height: 3px;
+  width: 4px;
+  height: 4px;
   background: #f59e0b;
   border-radius: 50%;
-  box-shadow: 0 0 6px rgba(245, 158, 11, 0.6);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.7);
 }
 </style>
