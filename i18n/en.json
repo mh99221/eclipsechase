@@ -201,6 +201,7 @@
     "logout": "Log out"
   },
   "spot": {
+    "viewing_spot": "Viewing spot",
     "totality": "Totality",
     "sun_altitude": "Sun altitude",
     "services": "Services",

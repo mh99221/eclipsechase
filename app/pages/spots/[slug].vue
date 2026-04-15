@@ -139,61 +139,78 @@ const nearbyPoi = computed<string[]>(() => {
 
 <template>
   <div class="relative noise min-h-screen pt-[72px]">
-    <!-- Hero (extends behind fixed nav) -->
-    <div class="spot-hero relative -mt-[72px]" :class="heroPhoto ? 'spot-hero--has-image' : 'spot-hero--no-image'">
-      <!-- Hero image -->
-      <img
-        v-if="heroPhoto"
-        :src="`/images/spots/${heroPhoto.filename}`"
-        :srcset="`/images/spots/${heroPhoto.filename.replace(/\.webp$/, '-thumb.webp')} 600w, /images/spots/${heroPhoto.filename} 1200w`"
-        sizes="100vw"
-        :alt="heroPhoto.alt"
-        loading="eager"
-        class="absolute inset-0 w-full h-full object-cover"
-      />
-      <!-- Gradient overlay -->
-      <div class="absolute inset-0 spot-hero__gradient" />
-
-      <!-- Overlaid content -->
-      <div class="relative z-10 flex flex-col justify-end px-6 sm:px-10 pb-8 sm:pb-12 spot-hero__content">
-        <!-- Badges row -->
-        <div class="flex flex-wrap items-center gap-3 mb-3">
-          <span
-            v-if="spot.spot_type"
-            class="inline-block px-2 py-0.5 text-[10px] font-mono tracking-[0.15em] uppercase rounded border"
-            :class="spot.spot_type === 'drive-up' ? 'text-green-400 border-green-400/30 bg-green-400/10' : 'text-amber-400 border-amber-400/30 bg-amber-400/10'"
-          >
-            {{ SPOT_TYPE_LABELS[spot.spot_type] || spot.spot_type }}
-          </span>
-          <span class="font-mono text-xs tracking-wider text-slate-400">
-            {{ spot.lat.toFixed(4) }}° N, {{ Math.abs(spot.lng).toFixed(4) }}° W
-          </span>
+    <!-- Hero: aligned to the same 768px reading column as the content below -->
+    <header class="section-container max-w-3xl pt-8 sm:pt-10">
+      <!-- Breadcrumb / coord row -->
+      <div class="flex items-center justify-between gap-4 mb-4">
+        <div class="flex items-center gap-2 font-mono text-[10px] tracking-[0.25em] text-slate-500 uppercase min-w-0">
+          <span class="truncate">{{ REGION_LABELS[spot.region] || spot.region }}</span>
+          <span class="text-slate-700" aria-hidden="true">/</span>
+          <span class="text-corona/80 truncate">{{ t('spot.viewing_spot') }}</span>
         </div>
+        <span class="font-mono text-[10px] tracking-[0.2em] text-slate-500 uppercase whitespace-nowrap">
+          {{ spot.lat.toFixed(4) }}°N · {{ Math.abs(spot.lng).toFixed(4) }}°W
+        </span>
+      </div>
 
-        <!-- Title -->
-        <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-4 max-w-xl">
-          {{ spot.name }}
-        </h1>
+      <!-- Title -->
+      <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight mb-3">
+        {{ spot.name }}
+      </h1>
 
-        <!-- Description -->
-        <p class="text-sm sm:text-base text-slate-300/90 leading-relaxed max-w-lg">
-          {{ spot.description }}
-        </p>
+      <!-- Metadata row -->
+      <div class="flex flex-wrap items-center gap-3 mb-6">
+        <span
+          v-if="spot.spot_type"
+          class="inline-block px-2 py-0.5 text-[10px] font-mono tracking-[0.15em] uppercase rounded border"
+          :class="spot.spot_type === 'drive-up' ? 'text-green-400 border-green-400/30 bg-green-400/10' : 'text-amber-400 border-amber-400/30 bg-amber-400/10'"
+        >
+          {{ SPOT_TYPE_LABELS[spot.spot_type] || spot.spot_type }}
+        </span>
+        <span
+          v-if="isTrail && (spot.trail_distance_km || spot.trail_time_minutes)"
+          class="font-mono text-xs tracking-wider text-slate-400"
+        >
+          <template v-if="spot.trail_distance_km">{{ spot.trail_distance_km }} km</template>
+          <template v-if="spot.trail_distance_km && spot.trail_time_minutes"> · </template>
+          <template v-if="spot.trail_time_minutes">
+            {{ spot.trail_time_minutes < 60 ? `${spot.trail_time_minutes} min` : `${Math.floor(spot.trail_time_minutes / 60)}h ${spot.trail_time_minutes % 60}min` }}
+          </template>
+          <template v-if="spot.difficulty"> · {{ difficultyBadge[spot.difficulty]?.label || spot.difficulty }}</template>
+        </span>
+      </div>
 
-        <!-- Photo credit -->
+      <!-- Hero image (contained, framed) -->
+      <figure
+        v-if="heroPhoto"
+        class="relative overflow-hidden rounded border border-void-border/60 spot-hero-frame mb-5"
+      >
+        <img
+          :src="`/images/spots/${heroPhoto.filename}`"
+          :srcset="`/images/spots/${heroPhoto.filename.replace(/\.webp$/, '-thumb.webp')} 600w, /images/spots/${heroPhoto.filename} 1200w`"
+          sizes="(max-width: 767px) 100vw, 768px"
+          :alt="heroPhoto.alt"
+          loading="eager"
+          width="1200"
+          height="750"
+          class="w-full h-full object-cover spot-hero-img"
+        />
         <PhotoCredit
-          v-if="heroPhoto"
           :credit="heroPhoto.credit"
           :credit-url="heroPhoto.credit_url"
           :license="heroPhoto.license"
           variant="overlay"
-          class="!absolute !bottom-3 !right-4 sm:!right-6"
         />
-      </div>
-    </div>
+      </figure>
+
+      <!-- Description -->
+      <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+        {{ spot.description }}
+      </p>
+    </header>
 
     <!-- Offline banner -->
-    <div class="section-container max-w-3xl pt-2">
+    <div class="section-container max-w-3xl pt-6">
       <OfflineBanner />
     </div>
 
@@ -468,46 +485,22 @@ const nearbyPoi = computed<string[]>(() => {
 </template>
 
 <style scoped>
-.spot-hero {
-  position: relative;
-  overflow: hidden;
+/* Photographic "plate" framing — subtle inset shadow + drop shadow
+   so the contained hero feels lifted off the page. */
+.spot-hero-frame {
+  box-shadow:
+    0 24px 48px -24px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
-.spot-hero--has-image {
-  min-height: calc(85vh + 72px);
-  min-height: calc(85svh + 72px);
-  display: flex;
-  flex-direction: column;
-  padding-top: 72px;
-}
-
-.spot-hero--no-image {
-  padding-bottom: 2rem;
-}
-
-.spot-hero__gradient {
-  background: linear-gradient(
-    to bottom,
-    rgba(5, 8, 16, 0.85) 0%,
-    rgba(5, 8, 16, 0) 25%,
-    rgba(5, 8, 16, 0) 40%,
-    rgba(5, 8, 16, 0.65) 60%,
-    rgba(5, 8, 16, 0.92) 80%,
-    rgba(5, 8, 16, 1) 100%
-  );
-}
-
-
-
-.spot-hero__content {
-  flex: 1;
-  min-height: 0;
+/* Aspect ratio: cinematic 16:10 on desktop, 4:5 portrait on mobile */
+.spot-hero-img {
+  aspect-ratio: 16 / 10;
 }
 
 @media (max-width: 639px) {
-  .spot-hero--has-image {
-    min-height: 75vh;
-    min-height: 75svh;
+  .spot-hero-img {
+    aspect-ratio: 4 / 5;
   }
 }
 </style>
