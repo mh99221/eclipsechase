@@ -21,14 +21,14 @@ test.describe('Guide page', () => {
     await expect(logoLink.locator('text=ECLIPSECHASE')).toBeVisible()
   })
 
-  test('footer has back-to-home link', async ({ page, goto }) => {
+  test('footer has back button', async ({ page, goto }) => {
     await goto('/guide', { waitUntil: 'hydration' })
 
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
     await page.waitForTimeout(300)
 
     const footer = page.locator('footer')
-    const homeLink = footer.locator('a[href="/"]')
-    await expect(homeLink).toBeVisible()
+    const backButton = footer.locator('button', { hasText: 'Back' })
+    await expect(backButton).toBeVisible()
   })
 })
