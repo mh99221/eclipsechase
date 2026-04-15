@@ -101,7 +101,7 @@ useHead({
 
 <template>
   <div class="relative noise min-h-screen pt-[72px]">
-    <div class="section-container max-w-5xl py-8 sm:py-12">
+    <div class="section-container max-w-3xl py-8 sm:py-12">
       <p class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase mb-3">Eclipse 2026</p>
       <h1 class="font-display text-3xl sm:text-4xl font-bold text-white mb-6">Viewing Spots</h1>
 
@@ -162,7 +162,7 @@ useHead({
       </div>
 
       <!-- Spot grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <NuxtLink
           v-for="item in displayItems"
           :key="item.spot.id"
@@ -174,7 +174,7 @@ useHead({
             <img
               :src="getThumbUrl(item.spot)"
               :srcset="`${getThumbUrl(item.spot)} 600w, ${getHeroUrl(item.spot)} 1200w`"
-              sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw"
+              sizes="(max-width: 639px) 100vw, 384px"
               :alt="item.spot.name"
               loading="lazy"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
