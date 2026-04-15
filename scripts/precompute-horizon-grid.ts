@@ -47,7 +47,7 @@ function getElevation(lat: number, lng: number, data: Float32Array, meta: DEMMet
 const EYE_HEIGHT = 1.7
 const EARTH_RADIUS = 6371000
 const DEG_TO_RAD = Math.PI / 180
-const REFRACTION_COEFF = 0.13
+const REFRACTION_COEFF = 0.25 // 4/3 effective Earth radius
 
 function moveAlongBearing(lat: number, lng: number, bearing: number, distanceM: number): [number, number] {
   const bearingRad = bearing * DEG_TO_RAD

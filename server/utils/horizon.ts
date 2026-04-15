@@ -4,7 +4,7 @@ import type { HorizonVerdict, HorizonSweepPoint, HorizonCheck } from '~/types/ho
 const EYE_HEIGHT = 1.7 // meters
 const EARTH_RADIUS = 6371000 // meters
 const DEG_TO_RAD = Math.PI / 180
-const REFRACTION_COEFF = 0.13 // standard atmospheric refraction (k ≈ 0.13)
+const REFRACTION_COEFF = 0.25 // 4/3 effective Earth radius (standard atmosphere model)
 
 interface DEMAccessor {
   data: Float32Array
