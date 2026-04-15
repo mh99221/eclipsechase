@@ -301,7 +301,7 @@ const ariaLabel = computed(() => {
         font-size="10"
         text-anchor="middle"
         font-family="'IBM Plex Mono', monospace"
-      >{{ data.sun_altitude.toFixed(0) }}° {{ sunOnTrajectory ? formatUtcTime(sunOnTrajectory.utcHours) : '' }}</text>
+      >{{ data.sun_altitude.toFixed(0) }}° Sun</text>
 
       <!-- Compass labels -->
       <text
