@@ -8,6 +8,7 @@ import type { ProfileId } from '~/composables/useRecommendation'
 
 const { t } = useI18n()
 const route = useRoute()
+const { items: mapNavItems, isActive: isMapNavActive } = useNavItems()
 const focusSpot = (route.query.spot as string) || null
 const profileParam = (route.query.profile as string) || null
 
@@ -782,8 +783,11 @@ const profileIcons: Record<ProfileId, string> = {
 
     <!-- Top bar -->
     <div class="absolute top-0 left-0 right-0 z-10 pointer-events-none">
-      <div class="flex items-center justify-between px-4 sm:px-6 py-4">
-        <NuxtLink to="/" aria-label="EclipseChase — Home" class="pointer-events-auto flex items-center gap-2.5 group">
+      <!-- Top fade for legibility — keeps the overlay text readable without a hard chrome bar -->
+      <div class="map-top-fade pointer-events-none" aria-hidden="true" />
+
+      <div class="relative flex items-center justify-between gap-5 px-4 sm:px-6 py-4">
+        <NuxtLink to="/" aria-label="EclipseChase — Home" class="pointer-events-auto flex items-center gap-2.5 group flex-shrink-0">
           <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
             <circle cx="64" cy="64" r="36" fill="#050810" />
             <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
@@ -794,8 +798,25 @@ const profileIcons: Record<ProfileId, string> = {
           </span>
         </NuxtLink>
 
+        <!-- Desktop masthead nav (md+) — same pattern as global app.vue masthead -->
+        <nav
+          class="pointer-events-auto hidden md:flex items-center gap-8"
+          aria-label="Primary"
+        >
+          <NuxtLink
+            v-for="item in mapNavItems"
+            :key="item.to"
+            :to="item.to"
+            class="map-masthead-link"
+            :class="{ active: isMapNavActive(item.to) }"
+            :aria-current="isMapNavActive(item.to) ? 'page' : undefined"
+          >
+            {{ item.label }}
+          </NuxtLink>
+        </nav>
+
         <!-- User menu + Desktop profile selector (hidden on mobile — moved to bottom sheet) -->
-        <div class="pointer-events-auto hidden sm:flex items-center gap-3">
+        <div class="pointer-events-auto hidden sm:flex items-center gap-3 flex-shrink-0">
           <ClientOnly><UserMenu /></ClientOnly>
           <div class="relative" @click.stop>
             <button
@@ -1184,4 +1205,44 @@ const profileIcons: Record<ProfileId, string> = {
     </Transition>
   </div>
 </template>
+
+<style scoped>
+/* Soft top-fade above the overlay so logo + nav stay legible against bright map content */
+.map-top-fade {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 120px;
+  background: linear-gradient(to bottom, rgba(3, 5, 8, 0.7) 0%, rgba(3, 5, 8, 0.35) 50%, rgba(3, 5, 8, 0) 100%);
+}
+
+/* Masthead links (desktop overlay) — same look as the global app.vue masthead */
+.map-masthead-link {
+  position: relative;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+}
+.map-masthead-link:hover {
+  color: #fbbf24;
+}
+.map-masthead-link.active {
+  color: #f59e0b;
+}
+.map-masthead-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: #f59e0b;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.7);
+}
+</style>
 
