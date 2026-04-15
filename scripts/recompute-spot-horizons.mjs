@@ -42,6 +42,13 @@ const KNOWN_ELEVATION = {
   'snaefellsjokull-summit': 1446,
 }
 
+// Coordinate overrides (used when the live API hasn't been updated yet).
+// These let us regenerate the horizon check before the coord migration
+// SQL is applied in production.
+const COORDINATE_OVERRIDE = {
+  'saxholl-crater': { lat: 64.85161463283652, lng: -23.927598708136397 },
+}
+
 // ── Algorithm constants (match server/utils/horizon.ts) ──────────────
 const EYE_HEIGHT = 1.7
 const EARTH_RADIUS = 6371000
@@ -189,11 +196,15 @@ async function main() {
   lines.push('')
 
   for (const spot of spots) {
-    const hc = checkHorizon(spot.lat, spot.lng, spot.slug, spot.observer_height_above_ground)
+    const coordOverride = COORDINATE_OVERRIDE[spot.slug]
+    const lat = coordOverride?.lat ?? spot.lat
+    const lng = coordOverride?.lng ?? spot.lng
+    const hc = checkHorizon(lat, lng, spot.slug, spot.observer_height_above_ground)
     const status = hc.verdict.padEnd(8)
     const clear = String(hc.clearance_degrees).padStart(5)
     const elev = String(hc.observer_elevation_m).padStart(6)
-    console.log(`  ${status}  clearance=${clear}°  obs_elev=${elev}m  ${spot.slug}`)
+    const overrideTag = coordOverride ? ' [COORD-OVERRIDE]' : ''
+    console.log(`  ${status}  clearance=${clear}°  obs_elev=${elev}m  ${spot.slug}${overrideTag}`)
 
     const json = sqlEscape(JSON.stringify(hc))
     lines.push(`UPDATE viewing_spots SET horizon_check = '${json}'::jsonb WHERE slug = '${spot.slug}';`)

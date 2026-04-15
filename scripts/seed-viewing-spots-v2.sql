@@ -160,12 +160,12 @@ ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLU
 
 INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parking_info, terrain_notes, has_services, cell_coverage, totality_duration_seconds, totality_start, sun_altitude, sun_azimuth, spot_type, trail_distance_km, trail_time_minutes, difficulty, elevation_gain_m, trailhead_lat, trailhead_lng) VALUES
 ('saxholl', 'Saxhóll Crater', 'saxholl-crater',
-  64.8509, -23.9246, 'snaefellsnes',
+  64.85161463283652, -23.927598708136397, 'snaefellsnes',
   'A scoria crater with a well-maintained metal staircase (~400 steps) leading to the rim. The 360° panoramic view from the top includes Snæfellsjökull glacier, the Atlantic Ocean, and surrounding lava fields. Watching totality from inside a volcanic crater is a once-in-a-lifetime experience.',
   'Gravel parking at the base of the crater. Free.',
   'Metal staircase to rim is well-maintained. Can be windy at the top.',
   false, 'limited', 115, '2026-08-12T17:45:55Z', 24, 249,
-  'short-walk', 0.2, 10, 'easy', 100, 64.8520, -23.9260)
+  'short-walk', 0.2, 10, 'easy', 100, 64.8509, -23.9246)
 ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLUDED.lat, lng=EXCLUDED.lng, region=EXCLUDED.region, description=EXCLUDED.description, parking_info=EXCLUDED.parking_info, terrain_notes=EXCLUDED.terrain_notes, has_services=EXCLUDED.has_services, cell_coverage=EXCLUDED.cell_coverage, totality_duration_seconds=EXCLUDED.totality_duration_seconds, totality_start=EXCLUDED.totality_start, sun_altitude=EXCLUDED.sun_altitude, sun_azimuth=EXCLUDED.sun_azimuth, spot_type=EXCLUDED.spot_type, trail_distance_km=EXCLUDED.trail_distance_km, trail_time_minutes=EXCLUDED.trail_time_minutes, difficulty=EXCLUDED.difficulty, elevation_gain_m=EXCLUDED.elevation_gain_m, trailhead_lat=EXCLUDED.trailhead_lat, trailhead_lng=EXCLUDED.trailhead_lng;
 
 INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parking_info, terrain_notes, has_services, cell_coverage, totality_duration_seconds, totality_start, sun_altitude, sun_azimuth, spot_type, trail_distance_km, trail_time_minutes, difficulty, elevation_gain_m, trailhead_lat, trailhead_lng) VALUES
