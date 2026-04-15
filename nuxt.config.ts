@@ -74,7 +74,14 @@ export default defineNuxtConfig({
     '/pro': { ssr: true },
     '/privacy': { prerender: true },
     '/terms': { prerender: true },
-    '/spots': { ssr: true },
+    '/spots': {
+      ssr: true,
+      headers: {
+        'Cache-Control': 'public, max-age=0, must-revalidate',
+        'CDN-Cache-Control': 'no-store',
+        'Vercel-CDN-Cache-Control': 'no-store',
+      },
+    },
     '/spots/**': { isr: 3600 },
   },
 
