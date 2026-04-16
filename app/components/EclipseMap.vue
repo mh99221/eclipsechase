@@ -122,14 +122,18 @@ function applyZoomVisibility() {
 }
 
 /**
- * Read a CSS variable from :root and format as an rgb() color so we can
- * hand it to Mapbox (which doesn't understand CSS vars directly). Keeps
- * the eclipse path tinted consistently with the legend in both themes.
+ * Read a CSS variable from :root and return a Mapbox-compatible color.
+ * Our tokens are stored as space-separated rgb triples ("245 158 11")
+ * for use with `rgb(var(--accent) / <alpha>)`. Mapbox GL's style-spec
+ * color parser only accepts the comma-separated form, so we convert it.
  */
 function readCssVar(name: string, fallback: string): string {
   if (typeof window === 'undefined') return fallback
   const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
-  return raw ? `rgb(${raw})` : fallback
+  if (!raw) return fallback
+  const parts = raw.split(/[\s,]+/).filter(Boolean)
+  if (parts.length < 3) return fallback
+  return `rgb(${parts.slice(0, 3).join(', ')})`
 }
 
 function addEclipsePath() {
@@ -217,15 +221,10 @@ function updateSpotMarkers() {
 
     // Resolve theme-aware colors from CSS variables so markers recolor
     // cleanly when toggling dark ↔ light (matches the legend).
-    const rootStyle = getComputedStyle(document.documentElement)
-    const readVar = (name: string) => {
-      const raw = rootStyle.getPropertyValue(name).trim()
-      return raw ? `rgb(${raw})` : '#f59e0b'
-    }
-    const accent = readVar('--accent')
-    const accentStrong = readVar('--accent-strong')
-    const markerBg = readVar('--bg')
-    const mutedInk = readVar('--ink-3')
+    const accent       = readCssVar('--accent',       '#f59e0b')
+    const accentStrong = readCssVar('--accent-strong', '#fbbf24')
+    const markerBg     = readCssVar('--bg',           '#050810')
+    const mutedInk     = readCssVar('--ink-3',        '#94a3b8')
 
     const el = document.createElement('div')
     el.className = 'spot-marker'
