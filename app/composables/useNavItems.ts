@@ -12,10 +12,10 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: readonly NavItem[] = [
-  { to: '/map',       label: 'Map',   icon: 'map' },
   { to: '/dashboard', label: 'Home',  icon: 'home' },
-  { to: '/spots',     label: 'Spots', icon: 'spots' },
   { to: '/guide',     label: 'Guide', icon: 'guide' },
+  { to: '/spots',     label: 'Spots', icon: 'spots' },
+  { to: '/map',       label: 'Map',   icon: 'map' },
 ] as const
 
 export function useNavItems() {
