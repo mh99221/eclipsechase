@@ -6,6 +6,8 @@ import type { SpotPhoto } from '~/types/spots'
 
 const { isPro } = useProStatus()
 const { coords } = useLocation()
+const route = useRoute()
+const router = useRouter()
 
 const { data } = await useFetch('/api/spots')
 
@@ -21,9 +23,22 @@ const { data: rawStationsData } = useFetch<{ stations: Array<{ id: string; lat: 
 const weatherData = computed(() => rawWeatherData.value?.cloud_cover || null)
 const stationsData = computed(() => rawStationsData.value?.stations || null)
 
-// Profile selection
-const selectedProfile = ref<ProfileId | null>(null)
+// Profile selection — persisted in URL so it survives navigation
+// (e.g. click a spot detail, press back → the profile is still selected)
+const initialProfile = typeof route.query.profile === 'string' ? route.query.profile : null
+const selectedProfile = ref<ProfileId | null>(
+  PROFILES.some(p => p.id === initialProfile) ? (initialProfile as ProfileId) : null,
+)
 const showProPrompt = ref(false)
+
+// State → URL: keep the query param in sync without polluting history (replace, not push)
+watch(selectedProfile, (val) => {
+  if (!import.meta.client) return
+  const query = { ...route.query }
+  if (val) query.profile = val
+  else delete query.profile
+  router.replace({ path: route.path, query })
+})
 
 function selectProfile(id: ProfileId) {
   if (!isPro.value) {
