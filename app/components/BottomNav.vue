@@ -123,7 +123,7 @@ const showNav = computed(() => isPro.value && route.path !== '/')
 }
 
 .bottom-nav-item.active .bottom-nav-label {
-  color: var(--corona-dim);
+  color: var(--corona);
 }
 
 /* Active indicator dot */
