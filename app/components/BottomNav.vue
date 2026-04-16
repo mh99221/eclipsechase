@@ -92,7 +92,7 @@ const showNav = computed(() => isPro.value && route.path !== '/')
 }
 
 .bottom-nav-item svg {
-  color: #475569;
+  color: #94a3b8; /* slate-400 — matches desktop masthead inactive */
   transition: all 0.25s ease;
 }
 
@@ -101,7 +101,7 @@ const showNav = computed(() => isPro.value && route.path !== '/')
 }
 
 .bottom-nav-item:hover svg {
-  color: #94a3b8;
+  color: #cbd5e1; /* slate-300 */
 }
 
 .bottom-nav-item.active:hover svg {
@@ -114,8 +114,12 @@ const showNav = computed(() => isPro.value && route.path !== '/')
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #334155;
+  color: #94a3b8; /* slate-400 — matches icon */
   transition: color 0.25s;
+}
+
+.bottom-nav-item:hover .bottom-nav-label {
+  color: #cbd5e1;
 }
 
 .bottom-nav-item.active .bottom-nav-label {
