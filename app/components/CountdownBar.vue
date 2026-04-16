@@ -59,7 +59,7 @@ const units = computed(() => [
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: rgba(245, 158, 11, 0.3);
+  background: rgb(var(--accent) / 0.35);
   flex-shrink: 0;
   margin-bottom: 18px;
   animation: dot-pulse 3s ease-in-out infinite;
@@ -82,7 +82,7 @@ const units = computed(() => [
   font-family: 'Manrope', system-ui, sans-serif;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: #e2e8f0;
+  color: rgb(var(--ink-2));
   font-size: 36px;
   line-height: 1;
   letter-spacing: -0.03em;
@@ -102,8 +102,8 @@ const units = computed(() => [
 }
 
 .countdown-value--primary {
-  color: #f1f5f9;
-  text-shadow: 0 0 30px rgba(245, 158, 11, 0.12);
+  color: rgb(var(--ink-1));
+  text-shadow: 0 0 30px rgb(var(--accent) / 0.18);
 }
 
 .countdown-label {
