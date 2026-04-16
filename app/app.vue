@@ -16,7 +16,7 @@ const showMasthead = computed(() => isPro.value && !isLanding.value)
 </script>
 
 <template>
-  <div class="min-h-screen" :class="{ 'pb-16 md:pb-0': mobileNavPadding }">
+  <div class="min-h-screen" :class="{ 'pb-20 md:pb-0': mobileNavPadding }">
     <NuxtLoadingIndicator color="#f59e0b" :height="2" :throttle="200" />
     <NuxtRouteAnnouncer />
 
