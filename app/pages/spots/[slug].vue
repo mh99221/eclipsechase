@@ -134,6 +134,14 @@ const nearbyPoi = computed<string[]>(() => {
   return Array.isArray(raw) ? raw : []
 })
 
+// Historical weather — pre-computed by scripts/fetch-historical-weather.mjs
+// and served as a static JSON. Lazy + client-only so it doesn't block SSR.
+const { data: historicalData } = useFetch<{ spots: Record<string, any> }>(
+  '/eclipse-data/historical-weather.json',
+  { lazy: true, server: false, key: 'historical-weather' },
+)
+const spotHistory = computed(() => historicalData.value?.spots?.[slug] ?? null)
+
 </script>
 
 <template>
@@ -383,6 +391,11 @@ const nearbyPoi = computed<string[]>(() => {
             :spot-name="spot.name"
           />
         </div>
+      </section>
+
+      <!-- Historical weather (10-year cloud cover at totality) -->
+      <section v-if="spotHistory" class="mb-12">
+        <HistoricalWeatherChart :history="spotHistory" />
       </section>
 
       <!-- Details -->

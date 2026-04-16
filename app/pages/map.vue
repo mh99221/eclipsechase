@@ -32,6 +32,10 @@ useHead({
 const { data: stationsData } = useFetch('/api/weather/stations', { lazy: true, server: false })
 const { data: spotsData, error: spotsError } = useFetch('/api/spots', { lazy: true, server: false })
 const { data: cloudData, refresh: refreshCloud } = useFetch('/api/weather/cloud-cover', { lazy: true, server: false })
+const { data: historicalWeatherData } = useFetch<{ spots: Record<string, { clear_years: number; total_years: number; avg_cloud_cover: number | null }> }>(
+  '/eclipse-data/historical-weather.json',
+  { lazy: true, server: false, key: 'historical-weather' },
+)
 // Dismissable error banner — driven by spotsError ref but user can close it.
 const showSpotError = ref(false)
 watch(spotsError, (err) => { if (err) showSpotError.value = true })
@@ -771,6 +775,7 @@ const profileIcons: Record<ProfileId, string> = {
         :stations="stations"
         :spots="spotsData?.spots || []"
         :ranked-spots="rankedForMap"
+        :historical="historicalWeatherData?.spots || null"
         :focus-spot="focusSpot"
         :initial-center="restoreCenter"
         :initial-zoom="restoreZoom"

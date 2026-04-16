@@ -11,9 +11,46 @@ const router = useRouter()
 
 const { data } = await useFetch('/api/spots')
 
+// Historical cloud cover — pre-computed, lazy so it never blocks render
+const { data: historicalData } = useFetch<{ spots: Record<string, { clear_years: number; total_years: number; avg_cloud_cover: number | null }> }>(
+  '/eclipse-data/historical-weather.json',
+  { lazy: true, server: false, key: 'historical-weather' },
+)
+function historyFor(slug: string) {
+  return historicalData.value?.spots?.[slug] ?? null
+}
+
+// Sort mode — URL-persisted so deep links preserve it
+type SortKey = 'duration' | 'historical'
+const initialSort = typeof route.query.sort === 'string' ? route.query.sort : null
+const sortKey = ref<SortKey>(initialSort === 'historical' ? 'historical' : 'duration')
+
+watch(sortKey, (val) => {
+  if (!import.meta.client) return
+  const query = { ...route.query }
+  if (val === 'historical') query.sort = 'historical'
+  else delete query.sort
+  router.replace({ path: route.path, query })
+})
+
 const rawSpots = computed(() => {
   const list = data.value?.spots || []
-  return [...list].sort((a: any, b: any) => (b.totality_duration_seconds || 0) - (a.totality_duration_seconds || 0))
+  const copy = [...list]
+  if (sortKey.value === 'historical') {
+    return copy.sort((a: any, b: any) => {
+      const ha = historyFor(a.slug)
+      const hb = historyFor(b.slug)
+      // Primary: more clear years better; tie: fewer overcast; tie: longer totality
+      const clearA = ha?.clear_years ?? -1
+      const clearB = hb?.clear_years ?? -1
+      if (clearA !== clearB) return clearB - clearA
+      const avgA = ha?.avg_cloud_cover ?? 100
+      const avgB = hb?.avg_cloud_cover ?? 100
+      if (avgA !== avgB) return avgA - avgB
+      return (b.totality_duration_seconds || 0) - (a.totality_duration_seconds || 0)
+    })
+  }
+  return copy.sort((a: any, b: any) => (b.totality_duration_seconds || 0) - (a.totality_duration_seconds || 0))
 })
 
 // Weather + stations — lazy, client-only (avoid server fetch / free-user overhead)
@@ -118,6 +155,27 @@ useHead({
     <div class="section-container max-w-3xl py-8 sm:py-12">
       <p class="font-mono text-xs tracking-[0.3em] text-accent/60 uppercase mb-3">Eclipse 2026</p>
       <h1 class="font-display text-3xl sm:text-4xl font-bold text-ink-1 mb-6">Viewing Spots</h1>
+
+      <!-- Sort toggle -->
+      <div class="mb-6">
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-3">Sort by</p>
+        <div class="inline-flex gap-0 rounded border border-border-subtle/50 overflow-hidden">
+          <button
+            class="px-3 py-1.5 text-xs font-mono tracking-wider transition-all"
+            :class="sortKey === 'duration' ? 'bg-accent/10 text-accent' : 'text-ink-3 hover:text-ink-2'"
+            @click="sortKey = 'duration'"
+          >
+            Totality duration
+          </button>
+          <button
+            class="px-3 py-1.5 text-xs font-mono tracking-wider transition-all border-l border-border-subtle/50"
+            :class="sortKey === 'historical' ? 'bg-accent/10 text-accent' : 'text-ink-3 hover:text-ink-2'"
+            @click="sortKey = 'historical'"
+          >
+            Historical clearness
+          </button>
+        </div>
+      </div>
 
       <!-- Profile selector -->
       <div class="mb-6">
@@ -224,6 +282,25 @@ useHead({
             <div class="flex items-center justify-between">
               <span class="font-mono text-[10px] text-ink-3 uppercase tracking-wider">{{ REGION_LABELS[item.spot.region] || item.spot.region }}</span>
               <span class="font-display text-sm font-bold text-ink-1">{{ formatDuration(item.spot.totality_duration_seconds) }}</span>
+            </div>
+            <!-- Historical clearness strip: 10 tiny squares for the last 10 years -->
+            <div v-if="historyFor(item.spot.slug)" class="mt-2 flex items-center gap-1.5">
+              <span class="font-mono text-[9px] uppercase tracking-[0.15em] text-ink-3 shrink-0">10y</span>
+              <div class="flex gap-[2px] flex-1">
+                <span
+                  v-for="yr in historyFor(item.spot.slug)!.years"
+                  :key="yr.year"
+                  class="h-2 flex-1 rounded-[1px]"
+                  :class="yr.cloud_cover == null ? 'bg-ink-3/30'
+                    : yr.cloud_cover < 40 ? 'bg-green-500'
+                    : yr.cloud_cover <= 70 ? 'bg-amber-500'
+                    : 'bg-red-500'"
+                  :title="yr.cloud_cover != null ? `${yr.year}: ${yr.cloud_cover}% cloud` : `${yr.year}: no data`"
+                />
+              </div>
+              <span class="font-mono text-[10px] text-ink-2 shrink-0">
+                {{ historyFor(item.spot.slug)!.clear_years }}/{{ historyFor(item.spot.slug)!.total_years }}
+              </span>
             </div>
           </div>
         </NuxtLink>

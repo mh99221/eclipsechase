@@ -33,6 +33,8 @@ const props = defineProps<{
     score: number
     filtered: boolean
   }>
+  /** Historical weather by slug — surfaces a 10-year clearness stat in spot popups. */
+  historical?: Record<string, { clear_years: number; total_years: number; avg_cloud_cover: number | null }> | null
   focusSpot?: string | null
   initialCenter?: [number, number] | null
   initialZoom?: number | null
@@ -283,23 +285,33 @@ function updateSpotMarkers() {
       ? `<div style="margin-top: 4px; color: ${rankInfo.score >= 80 ? '#22c55e' : rankInfo.score >= 50 ? '#fbbf24' : '#ef4444'};">Score: ${rankInfo.score}/100</div>`
       : ''
 
+    // Historical clearness row — 10-year stat line, themed via CSS vars so
+    // it reads on both dark and light.
+    const spotHist = props.historical?.[spot.slug]
+    const histHtml = spotHist && spotHist.total_years > 0
+      ? `<div style="margin-top: 4px; color: ${readCssVar('--ink-3', '#94a3b8')}; font-size: 11px;">
+           10y: <span style="color: ${readCssVar('--ink-2', '#cbd5e1')}">${spotHist.clear_years}/${spotHist.total_years}</span> clear${spotHist.avg_cloud_cover != null ? ` · avg ${spotHist.avg_cloud_cover}% cloud` : ''}
+         </div>`
+      : ''
+
     const popup = new mapboxgl.Popup({
       offset: 14,
       closeButton: false,
       maxWidth: 'min(260px, 85vw)',
       className: 'eclipse-popup',
     }).setHTML(`
-      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px; cursor: pointer;" data-slug="${spot.slug}">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: ${readCssVar('--ink-1', '#e2e8f0')}; padding: 4px; cursor: pointer;" data-slug="${spot.slug}">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
-          <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; color: #fbbf24; margin: 0;">${spot.name}</h3>
+          <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; color: ${readCssVar('--accent', '#fbbf24')}; margin: 0;">${spot.name}</h3>
           <div style="flex-shrink: 0; line-height: 0;" aria-hidden="true">${weatherIcon}</div>
         </div>
         <dl style="margin: 0; display: flex; align-items: center; gap: 10px;">
-          <div><dt style="display:inline;color:#94a3b8;">Totality:</dt> <dd style="display:inline;margin:0;">${formatDuration(spot.totality_duration_seconds)}</dd></div>
+          <div><dt style="display:inline;color:${readCssVar('--ink-3', '#94a3b8')};">Totality:</dt> <dd style="display:inline;margin:0;">${formatDuration(spot.totality_duration_seconds)}</dd></div>
           <dd style="color: ${weatherColor}; font-size: 11px; margin: 0;">${weatherLabel}</dd>
         </dl>
+        ${histHtml}
         ${scoreHtml}
-        <p style="margin: 6px 0 0; color: #f59e0b; font-size: 11px;">Click for details →</p>
+        <p style="margin: 6px 0 0; color: ${readCssVar('--accent', '#f59e0b')}; font-size: 11px;">Click for details →</p>
       </div>
     `)
 
@@ -339,6 +351,7 @@ function focusOnSpot(slug: string) {
 watch(() => props.stations, updateMarkers, { deep: true })
 watch(() => props.spots, updateSpotMarkers)
 watch(() => props.rankedSpots, updateSpotMarkers, { deep: true })
+watch(() => props.historical, updateSpotMarkers, { deep: true })
 
 const colorMode = useColorMode()
 const mapboxStyleFor = (mode: string) =>

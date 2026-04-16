@@ -3,6 +3,18 @@
     "title": "EclipseChase.is — Find Clear Skies on Eclipse Day",
     "description": "Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland."
   },
+  "historical": {
+    "title": "Historical weather (last 10 years)",
+    "summary_suffix": "years clear at totality",
+    "avg": "avg {pct}% cloud",
+    "chart_aria": "Cloud cover per year at 17:45 UTC on Aug 12 — taller bars mean clearer skies",
+    "tooltip": "{year}: {pct}% cloud cover at totality",
+    "tooltip_nodata": "{year}: no data",
+    "band_clear": "Clear (< 40%)",
+    "band_partly": "Partly cloudy (40–70%)",
+    "band_overcast": "Overcast (> 70%)",
+    "caveat": "Based on ERA5 reanalysis at 17:45 UTC on Aug 12 for 2016–2025. Past years are a rough guide only — always check the day-of forecast before planning your eclipse day."
+  },
   "horizon": {
     "section_title": "Horizon View",
     "sun_position": "The sun will be at {altitude}° above the horizon, looking {direction}.",

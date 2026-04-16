@@ -3,6 +3,18 @@
     "title": "EclipseChase.is — Finndu hreint loft á sólmyrkvadaginn",
     "description": "Rauntíma veðureftirlit fyrir heilsólmyrkvann 12. ágúst 2026 á Íslandi."
   },
+  "historical": {
+    "title": "Söguleg veðurgögn (síðustu 10 ár)",
+    "summary_suffix": "ár heiðskír við myrkva",
+    "avg": "meðaltal {pct}% skýjað",
+    "chart_aria": "Skýjahula á ári kl. 17:45 UTC þann 12. ágúst — hærri stöplar merkja heiðskírara",
+    "tooltip": "{year}: {pct}% skýjahula við myrkva",
+    "tooltip_nodata": "{year}: engin gögn",
+    "band_clear": "Heiðskírt (< 40%)",
+    "band_partly": "Léttskýjað (40–70%)",
+    "band_overcast": "Alskýjað (> 70%)",
+    "caveat": "Byggt á ERA5 endurgreiningu kl. 17:45 UTC þann 12. ágúst fyrir árin 2016–2025. Fyrri ár eru eingöngu til viðmiðunar — athugaðu alltaf daglega spá fyrir myrkvadaginn."
+  },
   "horizon": {
     "section_title": "Sjóndeildarhringur",
     "sun_position": "Sólin verður í {altitude}° hæð yfir sjóndeildarhring, í átt {direction}.",
