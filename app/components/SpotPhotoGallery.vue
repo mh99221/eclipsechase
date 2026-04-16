@@ -21,7 +21,7 @@ const otherPhotos = computed(() => props.photos.filter(p => p !== heroPhoto.valu
     <template v-else-if="photos.length === 2">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         <SpotPhotoHero :photo="heroPhoto" :spot-name="spotName" loading="eager" />
-        <div class="relative overflow-hidden rounded-lg border border-void-border/40">
+        <div class="relative overflow-hidden rounded-lg border border-border-subtle/40">
           <img
             :src="`/images/spots/${otherPhotos[0].filename}`"
             :srcset="`/images/spots/${otherPhotos[0].filename.replace(/\.webp$/, '-thumb.webp')} 600w, /images/spots/${otherPhotos[0].filename} 1200w`"
@@ -51,7 +51,7 @@ const otherPhotos = computed(() => props.photos.filter(p => p !== heroPhoto.valu
         <div
           v-for="photo in otherPhotos.slice(0, 2)"
           :key="photo.filename"
-          class="relative overflow-hidden rounded-lg border border-void-border/40"
+          class="relative overflow-hidden rounded-lg border border-border-subtle/40"
         >
           <img
             :src="`/images/spots/${photo.filename}`"

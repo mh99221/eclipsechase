@@ -214,11 +214,11 @@ const ariaLabel = computed(() => {
       @mousemove="onTerrainHover"
       @mouseleave="clearTooltip"
     >
-      <!-- Sky gradient -->
+      <!-- Sky gradient — recolored per theme via .sky-* classes -->
       <defs>
         <linearGradient :id="gradientId" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#0f172a" />
-          <stop offset="100%" stop-color="#1e293b" />
+          <stop offset="0%" class="sky-top" />
+          <stop offset="100%" class="sky-bottom" />
         </linearGradient>
       </defs>
       <rect :width="width" :height="height" :fill="`url(#${gradientId})`" rx="4" />
@@ -231,7 +231,7 @@ const ariaLabel = computed(() => {
         :y1="g.y"
         :x2="width - PADDING.right"
         :y2="g.y"
-        stroke="#1e293b"
+        class="grid-line"
         stroke-width="0.5"
       />
 
@@ -241,7 +241,7 @@ const ariaLabel = computed(() => {
         :key="`label-${g.label}`"
         :x="PADDING.left - 5"
         :y="g.y + 4"
-        fill="#64748b"
+        class="altitude-label"
         font-size="10"
         text-anchor="end"
         font-family="'IBM Plex Mono', monospace"
@@ -284,7 +284,7 @@ const ariaLabel = computed(() => {
       />
 
       <!-- Terrain silhouette -->
-      <path :d="terrainPath" fill="#1a2232" stroke="#334155" stroke-width="1" />
+      <path :d="terrainPath" class="terrain" stroke-width="1" />
 
       <!-- Blocked zone overlay -->
       <path :d="blockedPath" fill="#ef444430" />
@@ -309,7 +309,7 @@ const ariaLabel = computed(() => {
         :key="c.azimuth"
         :x="azimuthToX(c.azimuth)"
         :y="height - 8"
-        :fill="c.highlight ? '#f59e0b' : '#64748b'"
+        :class="c.highlight ? 'compass-label-active' : 'compass-label'"
         font-size="10"
         text-anchor="middle"
         font-family="'IBM Plex Mono', monospace"
@@ -352,3 +352,27 @@ const ariaLabel = computed(() => {
     </p>
   </div>
 </template>
+
+<style scoped>
+/* Horizon SVG — theme-aware styling via classes on each <line>, <path>,
+   <text>, and <stop>. Dark mode keeps the deep-space sky; light mode
+   uses a soft dawn gradient. */
+.sky-top    { stop-color: #0f172a; }
+.sky-bottom { stop-color: #1e293b; }
+html.light .sky-top    { stop-color: #fde68a; }  /* warm pale yellow */
+html.light .sky-bottom { stop-color: #faf5eb; }  /* fade into the bg   */
+
+.grid-line       { stroke: #1e293b; }
+html.light .grid-line { stroke: rgba(42, 31, 20, 0.08); }
+
+.altitude-label       { fill: #64748b; }
+html.light .altitude-label { fill: #8b7d7d; }
+
+.terrain       { fill: #1a2232; stroke: #334155; }
+html.light .terrain { fill: #3d3449; stroke: #6e5d5d; }
+
+.compass-label        { fill: #64748b; }
+.compass-label-active { fill: #f59e0b; }
+html.light .compass-label        { fill: #8b7d7d; }
+html.light .compass-label-active { fill: #c2410c; }
+</style>

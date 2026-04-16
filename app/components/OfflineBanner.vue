@@ -26,7 +26,7 @@ watch(isWeatherStale, (stale) => {
       <!-- Offline -->
       <div
         v-if="isOffline"
-        class="px-3 py-2 rounded bg-amber-900/15 border border-amber-700/20 flex items-center gap-2 text-xs font-mono text-amber-400/80"
+        class="px-3 py-2 ec-banner-warn flex items-center gap-2 text-xs font-mono"
       >
         <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 010 12.728M5.636 18.364a9 9 0 010-12.728" />
@@ -34,11 +34,11 @@ watch(isWeatherStale, (stale) => {
         </svg>
         <span>
           {{ t('offline.banner_offline') }}
-          <span v-if="lastWeatherUpdate" class="text-amber-500/60">
+          <span v-if="lastWeatherUpdate" class="opacity-70">
             · {{ t('offline.last_updated', { time: lastWeatherUpdate }) }}
           </span>
         </span>
-        <button class="ml-auto text-amber-600/50 hover:text-amber-400 transition-colors" aria-label="Dismiss" @click="dismissed = true">
+        <button class="ml-auto opacity-60 hover:opacity-100 transition-opacity" aria-label="Dismiss" @click="dismissed = true">
           <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
             <path stroke-linecap="round" d="M18 6L6 18M6 6l12 12" />
           </svg>
@@ -48,15 +48,15 @@ watch(isWeatherStale, (stale) => {
       <!-- Stale data (online but old) -->
       <div
         v-else-if="isWeatherStale"
-        class="px-3 py-2 rounded bg-blue-900/10 border border-blue-700/15 flex items-center gap-2 text-xs font-mono text-blue-400/60"
+        class="px-3 py-2 ec-banner-info flex items-center gap-2 text-xs font-mono"
       >
         <span>
           {{ t('offline.banner_stale') }}
-          <span v-if="lastWeatherUpdate" class="text-blue-500/40">
+          <span v-if="lastWeatherUpdate" class="opacity-70">
             · {{ t('offline.last_updated', { time: lastWeatherUpdate }) }}
           </span>
         </span>
-        <button class="ml-auto text-blue-600/40 hover:text-blue-400 transition-colors" aria-label="Dismiss" @click="dismissed = true">
+        <button class="ml-auto opacity-60 hover:opacity-100 transition-opacity" aria-label="Dismiss" @click="dismissed = true">
           <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
             <path stroke-linecap="round" d="M18 6L6 18M6 6l12 12" />
           </svg>

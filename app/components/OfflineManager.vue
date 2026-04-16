@@ -166,11 +166,11 @@ function cancel() {
 </script>
 
 <template>
-  <div v-if="!isDismissed" class="bg-void-surface border border-void-border/40 rounded px-4 py-3 relative">
+  <div v-if="!isDismissed" class="bg-surface border border-border-subtle/40 rounded px-4 py-3 relative">
     <!-- Close button -->
     <button
       v-if="!isDownloading"
-      class="absolute top-2 right-2 text-slate-600 hover:text-slate-400 transition-colors"
+      class="absolute top-2 right-2 text-ink-3/70 hover:text-ink-3 transition-colors"
       aria-label="Close"
       @click="isDismissed = true"
     >
@@ -181,10 +181,10 @@ function cancel() {
 
     <!-- Idle state -->
     <div v-if="!isDownloading && !isDone">
-      <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">
+      <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-2">
         {{ t('offline.title') }}
       </p>
-      <p class="text-sm text-slate-400 mb-3">
+      <p class="text-sm text-ink-3 mb-3">
         {{ t('offline.description') }}
       </p>
       <div class="flex flex-col gap-2">
@@ -196,7 +196,7 @@ function cancel() {
         </div>
         <button
           v-else
-          class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-corona/40 text-corona bg-corona/5 hover:bg-corona/10 transition-colors"
+          class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-accent/40 text-accent bg-accent/5 hover:bg-accent/10 transition-colors"
           @click="downloadTiles"
         >
           {{ t('offline.download', { count: estimatedTileCount }) }}
@@ -204,7 +204,7 @@ function cancel() {
         <button
           v-if="!dataCached"
           :disabled="isCachingData"
-          class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-void-border text-slate-400 hover:text-slate-300 hover:border-slate-500 transition-colors disabled:opacity-50"
+          class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-border-subtle text-ink-3 hover:text-ink-2 hover:border-slate-500 transition-colors disabled:opacity-50"
           @click="cacheData"
         >
           <span v-if="isCachingData">{{ t('offline.caching_data') }}</span>
@@ -219,11 +219,11 @@ function cancel() {
       </div>
 
       <!-- Cache status -->
-      <div class="mt-3 pt-3 border-t border-void-border/30 space-y-1">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-600">
+      <div class="mt-3 pt-3 border-t border-border-subtle/30 space-y-1">
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3/70">
           {{ t('offline.cache_status') }}
         </p>
-        <div class="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[11px] font-mono text-slate-500">
+        <div class="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[11px] font-mono text-ink-3">
           <span>Map tiles</span>
           <span>{{ tileCount > 0 ? t('offline.tiles_cached', { count: tileCount }) : t('offline.not_cached') }}</span>
           <span>Weather</span>
@@ -239,7 +239,7 @@ function cancel() {
         </div>
         <button
           v-if="tileCount > 0 || hasCachedWeather"
-          class="font-mono text-[10px] text-slate-600 hover:text-slate-400 transition-colors mt-1"
+          class="font-mono text-[10px] text-ink-3/70 hover:text-ink-3 transition-colors mt-1"
           @click="clearCache"
         >
           {{ t('offline.clear_cache') }}
@@ -250,24 +250,24 @@ function cancel() {
     <!-- Downloading -->
     <div v-else-if="isDownloading">
       <div class="flex items-center justify-between mb-2">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-corona/70">
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-accent/70">
           {{ t('offline.downloading') }}
         </p>
         <button
-          class="font-mono text-[10px] text-slate-500 hover:text-slate-300 transition-colors"
+          class="font-mono text-[10px] text-ink-3 hover:text-ink-2 transition-colors"
           @click="cancel"
         >
           {{ t('offline.cancel') }}
         </button>
       </div>
       <!-- Progress bar -->
-      <div class="w-full h-1.5 bg-void-deep rounded-full overflow-hidden mb-2">
+      <div class="w-full h-1.5 bg-surface-raised rounded-full overflow-hidden mb-2">
         <div
-          class="h-full bg-corona transition-all duration-200"
+          class="h-full bg-accent transition-all duration-200"
           :style="{ width: `${progress}%` }"
         />
       </div>
-      <p class="font-mono text-xs text-slate-500">
+      <p class="font-mono text-xs text-ink-3">
         {{ t('offline.tiles_progress', { loaded: loadedTiles, total: totalTiles, progress }) }}
       </p>
     </div>
@@ -282,13 +282,13 @@ function cancel() {
           {{ t('offline.done') }}
         </p>
       </div>
-      <p class="text-xs text-slate-500 font-mono mt-1">
+      <p class="text-xs text-ink-3 font-mono mt-1">
         {{ t('offline.done_detail', { count: loadedTiles }) }}
       </p>
       <button
         v-if="!dataCached"
         :disabled="isCachingData"
-        class="mt-2 font-mono text-xs tracking-wider px-3 py-2 rounded border border-void-border text-slate-400 hover:text-slate-300 hover:border-slate-500 transition-colors disabled:opacity-50"
+        class="mt-2 font-mono text-xs tracking-wider px-3 py-2 rounded border border-border-subtle text-ink-3 hover:text-ink-2 hover:border-slate-500 transition-colors disabled:opacity-50"
         @click="cacheData"
       >
         <span v-if="isCachingData">{{ t('offline.caching_data') }}</span>

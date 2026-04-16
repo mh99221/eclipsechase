@@ -10,15 +10,15 @@ const { isPro, loading } = useProStatus()
 
 <template>
   <slot v-if="isPro" />
-  <div v-else-if="loading" class="animate-pulse bg-void-surface rounded h-32" />
-  <div v-else class="bg-void-surface border border-void-border/40 rounded px-6 py-8 text-center">
-    <p class="font-mono text-xs tracking-[0.2em] text-slate-500 uppercase mb-3">
+  <div v-else-if="loading" class="animate-pulse bg-surface rounded h-32" />
+  <div v-else class="bg-surface border border-border-subtle/40 rounded px-6 py-8 text-center">
+    <p class="font-mono text-xs tracking-[0.2em] text-ink-3 uppercase mb-3">
       {{ t('pro.unlock') }}
     </p>
-    <p class="font-display text-lg font-semibold text-white mb-2">
+    <p class="font-display text-lg font-semibold text-ink-1 mb-2">
       This feature requires Eclipse Pro
     </p>
-    <p class="text-sm text-slate-400 mb-6">
+    <p class="text-sm text-ink-3 mb-6">
       One-time payment. Works offline. No account needed.
     </p>
     <div class="max-w-xs mx-auto">

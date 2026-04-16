@@ -105,7 +105,7 @@ function retry() {
     <!-- Idle: just a link -->
     <div v-if="state === 'idle'" class="text-center">
       <button
-        class="text-xs font-mono text-slate-500 hover:text-slate-300 transition-colors"
+        class="text-xs font-mono text-ink-3 hover:text-ink-2 transition-colors"
         @click="startRestore"
       >
         Already purchased? Restore here
@@ -113,14 +113,14 @@ function retry() {
     </div>
 
     <!-- Restore form -->
-    <div v-else class="bg-void-surface border border-void-border/40 rounded p-6">
-      <h3 class="font-display text-lg font-semibold text-white mb-1">
+    <div v-else class="bg-surface border border-border-subtle/40 rounded p-6">
+      <h3 class="font-display text-lg font-semibold text-ink-1 mb-1">
         Restore Purchase
       </h3>
 
       <!-- Email input -->
       <div v-if="state === 'email_input'">
-        <p class="text-sm text-slate-400 mb-4">
+        <p class="text-sm text-ink-3 mb-4">
           Enter the email you used when purchasing.
         </p>
         <div class="flex gap-2">
@@ -128,12 +128,12 @@ function retry() {
             v-model="email"
             type="email"
             placeholder="you@example.com"
-            class="flex-1 px-4 py-2.5 rounded bg-void border border-void-border text-white placeholder-slate-600 font-mono text-sm focus:outline-none focus:border-corona/50 transition-colors"
+            class="flex-1 px-4 py-2.5 rounded bg-bg border border-border-subtle text-ink-1 placeholder-slate-600 font-mono text-sm focus:outline-none focus:border-accent/50 transition-colors"
             @keydown.enter="sendCode"
           >
           <button
             :disabled="submitting"
-            class="px-4 py-2.5 rounded bg-void border border-void-border text-white font-mono text-sm hover:border-corona/50 transition-colors disabled:opacity-50 whitespace-nowrap"
+            class="px-4 py-2.5 rounded bg-bg border border-border-subtle text-ink-1 font-mono text-sm hover:border-accent/50 transition-colors disabled:opacity-50 whitespace-nowrap"
             @click="sendCode"
           >
             <span v-if="submitting">...</span>
@@ -151,7 +151,7 @@ function retry() {
 
       <!-- Code input -->
       <div v-else-if="state === 'code_input'">
-        <p class="text-sm text-slate-400 mb-4">
+        <p class="text-sm text-ink-3 mb-4">
           Enter the 6-digit code sent to {{ maskedEmail }}
         </p>
         <div class="flex gap-2 justify-center mb-4">
@@ -163,7 +163,7 @@ function retry() {
             type="text"
             inputmode="numeric"
             maxlength="1"
-            class="w-11 h-13 text-center text-xl font-display font-bold rounded bg-void border border-void-border text-white focus:outline-none focus:border-corona/50 transition-colors"
+            class="w-11 h-13 text-center text-xl font-display font-bold rounded bg-bg border border-border-subtle text-ink-1 focus:outline-none focus:border-accent/50 transition-colors"
             @input="handleDigitInput(i, $event)"
             @keydown="handleKeydown(i, $event)"
           >
@@ -172,11 +172,11 @@ function retry() {
 
       <!-- Verifying -->
       <div v-else-if="state === 'verifying'" class="text-center py-4">
-        <svg class="animate-spin h-6 w-6 text-corona mx-auto mb-2" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+        <svg class="animate-spin h-6 w-6 text-accent mx-auto mb-2" fill="none" viewBox="0 0 24 24" aria-hidden="true">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
-        <p class="font-mono text-sm text-slate-400">Verifying...</p>
+        <p class="font-mono text-sm text-ink-3">Verifying...</p>
       </div>
 
       <!-- Success -->
@@ -184,17 +184,17 @@ function retry() {
         <svg class="w-8 h-8 text-green-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
         </svg>
-        <p class="font-display text-lg font-semibold text-white">
+        <p class="font-display text-lg font-semibold text-ink-1">
           Purchase restored!
         </p>
-        <p class="font-mono text-xs text-slate-500 mt-1">Redirecting to map...</p>
+        <p class="font-mono text-xs text-ink-3 mt-1">Redirecting to map...</p>
       </div>
 
       <!-- Error -->
       <div v-else-if="state === 'error'">
         <p class="text-sm text-red-400 mb-3">{{ error }}</p>
         <button
-          class="text-sm font-mono text-corona hover:text-corona-bright transition-colors"
+          class="text-sm font-mono text-accent hover:text-accent-strong transition-colors"
           @click="retry"
         >
           Try again

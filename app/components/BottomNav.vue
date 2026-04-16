@@ -56,10 +56,10 @@ const showNav = computed(() => isPro.value && route.path !== '/')
   display: flex;
   align-items: center;
   justify-content: space-around;
-  background: rgba(5, 8, 16, 0.85);
+  background: rgb(var(--bg) / 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(26, 37, 64, 0.4);
+  border-top: 1px solid rgb(var(--border-subtle) / 0.5);
   z-index: 50;
 }
 
@@ -92,20 +92,20 @@ const showNav = computed(() => isPro.value && route.path !== '/')
 }
 
 .bottom-nav-item svg {
-  color: #94a3b8; /* slate-400 — matches desktop masthead inactive */
+  color: rgb(var(--ink-3));
   transition: all 0.25s ease;
 }
 
 .bottom-nav-item.active svg {
-  color: var(--corona);
+  color: rgb(var(--accent));
 }
 
 .bottom-nav-item:hover svg {
-  color: #cbd5e1; /* slate-300 */
+  color: rgb(var(--ink-2));
 }
 
 .bottom-nav-item.active:hover svg {
-  color: var(--corona-bright);
+  color: rgb(var(--accent-strong));
 }
 
 .bottom-nav-label {
@@ -114,16 +114,16 @@ const showNav = computed(() => isPro.value && route.path !== '/')
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #94a3b8; /* slate-400 — matches icon */
+  color: rgb(var(--ink-3));
   transition: color 0.25s;
 }
 
 .bottom-nav-item:hover .bottom-nav-label {
-  color: #cbd5e1;
+  color: rgb(var(--ink-2));
 }
 
 .bottom-nav-item.active .bottom-nav-label {
-  color: var(--corona);
+  color: rgb(var(--accent));
 }
 
 /* Active indicator dot */
@@ -134,7 +134,7 @@ const showNav = computed(() => isPro.value && route.path !== '/')
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: var(--corona);
+  background: rgb(var(--accent));
 }
 
 /* Home eclipse icon — slightly larger */
@@ -143,6 +143,6 @@ const showNav = computed(() => isPro.value && route.path !== '/')
 }
 
 .bottom-nav-home.active .home-eclipse {
-  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.3));
+  filter: drop-shadow(0 0 6px rgb(var(--accent) / 0.35));
 }
 </style>

@@ -283,7 +283,7 @@ const nearbyPoi = computed<string[]>(() => {
         <div
           v-for="(warning, i) in warnings"
           :key="i"
-          class="px-3 py-2.5 rounded bg-amber-900/15 border border-amber-700/20 text-xs font-mono text-amber-400/80"
+          class="px-3 py-2.5 ec-banner-warn text-xs font-mono"
         >
           {{ warning }}
         </div>
@@ -344,7 +344,7 @@ const nearbyPoi = computed<string[]>(() => {
         </div>
 
         <!-- Timing warning -->
-        <div class="mt-4 px-3 py-2.5 rounded bg-amber-900/15 border border-amber-700/20 text-xs font-mono text-amber-400/80">
+        <div class="mt-4 px-3 py-2.5 ec-banner-warn text-xs font-mono">
           {{ t('spot.timing_warning') }}
         </div>
       </div>
@@ -364,7 +364,7 @@ const nearbyPoi = computed<string[]>(() => {
         <!-- Blocked warning banner -->
         <div
           v-if="horizonCheck!.verdict === 'blocked'"
-          class="mb-4 px-4 py-3 rounded bg-red-900/20 border border-red-700/30 text-sm text-red-400"
+          class="mb-4 px-4 py-3 ec-banner-error text-sm"
         >
           {{ t('horizon.blocked_warning', {
             height: horizonCheck!.blocking_elevation_m ?? '?',

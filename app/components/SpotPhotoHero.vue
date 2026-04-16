@@ -17,7 +17,7 @@ const thumbSrc = computed(() => {
 </script>
 
 <template>
-  <div class="relative overflow-hidden rounded-lg border border-void-border/40">
+  <div class="relative overflow-hidden rounded-lg border border-border-subtle/40">
     <img
       :src="fullSrc"
       :srcset="`${thumbSrc} 600w, ${fullSrc} 1200w`"

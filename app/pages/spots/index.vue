@@ -151,9 +151,9 @@ useHead({
       <!-- Pro upgrade prompt (shown when free user clicks a profile) -->
       <div
         v-if="showProPrompt"
-        class="mb-6 px-4 py-3 rounded bg-amber-900/15 border border-amber-700/20 flex items-center justify-between gap-4"
+        class="mb-6 px-4 py-3 ec-banner-warn flex items-center justify-between gap-4"
       >
-        <p class="text-xs font-mono text-amber-400/80">
+        <p class="text-xs font-mono">
           Profile-based scoring is a Pro feature.
           <NuxtLink to="/pro" class="text-accent hover:text-accent-strong transition-colors ml-1">
             Get Pro Access
@@ -170,7 +170,7 @@ useHead({
       <!-- Thin results warning -->
       <div
         v-if="selectedProfile && thinResults"
-        class="mb-6 px-3 py-2.5 rounded bg-amber-900/15 border border-amber-700/20 text-xs font-mono text-amber-400/80"
+        class="mb-6 px-3 py-2.5 ec-banner-warn text-xs font-mono"
       >
         Few spots match this profile. Consider trying a different one for more options.
       </div>

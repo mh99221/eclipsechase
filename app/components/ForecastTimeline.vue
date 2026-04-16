@@ -49,7 +49,7 @@ function cloudLabel(cover: number | null): string {
 
 <template>
   <div v-if="forecasts.length > 0" class="space-y-1">
-    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">
+    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-2">
       {{ t('forecast.timeline_title') }}
     </p>
 
@@ -74,11 +74,11 @@ function cloudLabel(cover: number | null): string {
     </div>
 
     <!-- Time labels (first, eclipse, last) -->
-    <div class="flex justify-between text-[9px] font-mono text-slate-600">
+    <div class="flex justify-between text-[9px] font-mono text-ink-3/70">
       <span>{{ formatHour(forecasts[0].valid_time) }}</span>
       <span
         v-if="forecasts.some(f => isEclipseWindow(f.valid_time))"
-        class="text-corona/70 flex items-center gap-0.5"
+        class="text-accent/70 flex items-center gap-0.5"
       >
         <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <circle cx="12" cy="12" r="5" />
@@ -90,7 +90,7 @@ function cloudLabel(cover: number | null): string {
     </div>
 
     <!-- Legend -->
-    <div class="flex gap-3 text-[9px] font-mono text-slate-600 mt-1">
+    <div class="flex gap-3 text-[9px] font-mono text-ink-3/70 mt-1">
       <span class="flex items-center gap-1">
         <span class="w-1.5 h-1.5 rounded-full bg-green-500" />Clear
       </span>
@@ -103,7 +103,7 @@ function cloudLabel(cover: number | null): string {
     </div>
   </div>
 
-  <div v-else class="text-xs font-mono text-slate-600">
+  <div v-else class="text-xs font-mono text-ink-3/70">
     {{ t('forecast.no_data') }}
   </div>
 </template>

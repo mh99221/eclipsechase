@@ -308,13 +308,13 @@ function createDirectionWedge(lat: number, lng: number, azimuth: number, radiusM
 
 <template>
   <ClientOnly>
-    <div v-if="mapError" class="w-full rounded border border-void-border bg-void-surface flex items-center justify-center text-slate-500 font-mono text-sm" style="height: 400px;">
+    <div v-if="mapError" class="w-full rounded border border-border-subtle bg-surface flex items-center justify-center text-ink-3 font-mono text-sm" style="height: 400px;">
       {{ mapError }}
     </div>
     <div v-else class="relative">
       <div
         ref="mapContainer"
-        class="w-full rounded border border-void-border"
+        class="w-full rounded border border-border-subtle"
         style="height: 400px;"
       />
       <!-- Map controls overlay -->
@@ -322,8 +322,8 @@ function createDirectionWedge(lat: number, lng: number, azimuth: number, radiusM
         <button
           class="px-2.5 py-1.5 rounded text-[10px] font-mono uppercase tracking-wider transition-all"
           :class="is3D
-            ? 'bg-corona/20 border border-corona/40 text-corona'
-            : 'bg-void-deep/80 border border-void-border/60 text-slate-400 hover:text-slate-200'"
+            ? 'bg-accent/20 border border-accent/40 text-accent'
+            : 'bg-surface-raised/80 border border-border-subtle/60 text-ink-3 hover:text-ink-1'"
           @click="toggle3D"
         >
           {{ is3D ? '3D' : '2D' }}
@@ -331,8 +331,8 @@ function createDirectionWedge(lat: number, lng: number, azimuth: number, radiusM
         <button
           class="px-2.5 py-1.5 rounded text-[10px] font-mono uppercase tracking-wider transition-all"
           :class="showPOIs
-            ? 'bg-corona/20 border border-corona/40 text-corona'
-            : 'bg-void-deep/80 border border-void-border/60 text-slate-400 hover:text-slate-200'"
+            ? 'bg-accent/20 border border-accent/40 text-accent'
+            : 'bg-surface-raised/80 border border-border-subtle/60 text-ink-3 hover:text-ink-1'"
           @click="togglePOIs"
         >
           POI
@@ -340,7 +340,7 @@ function createDirectionWedge(lat: number, lng: number, azimuth: number, radiusM
       </div>
     </div>
     <template #fallback>
-      <div class="w-full rounded border border-void-border bg-void-surface flex items-center justify-center text-slate-500 font-mono text-sm" style="height: 400px;">
+      <div class="w-full rounded border border-border-subtle bg-surface flex items-center justify-center text-ink-3 font-mono text-sm" style="height: 400px;">
         Loading map…
       </div>
     </template>

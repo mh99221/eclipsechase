@@ -46,11 +46,11 @@ onMounted(async () => {
       <div class="text-center px-6 max-w-md">
         <!-- Loading -->
         <div v-if="status === 'loading'" class="space-y-4">
-          <svg class="animate-spin h-8 w-8 text-corona mx-auto" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+          <svg class="animate-spin h-8 w-8 text-accent mx-auto" fill="none" viewBox="0 0 24 24" aria-hidden="true">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          <p class="font-mono text-sm text-slate-400 tracking-wider">
+          <p class="font-mono text-sm text-ink-3 tracking-wider">
             Activating your purchase...
           </p>
         </div>
@@ -63,10 +63,10 @@ onMounted(async () => {
             </svg>
           </div>
           <div>
-            <h1 class="font-display text-2xl sm:text-3xl font-bold text-white mb-2">
+            <h1 class="font-display text-2xl sm:text-3xl font-bold text-ink-1 mb-2">
               You're all set!
             </h1>
-            <p class="text-slate-400">
+            <p class="text-ink-3">
               Eclipse Pro is active. You're ready for August 12.
             </p>
           </div>
@@ -86,15 +86,15 @@ onMounted(async () => {
             </svg>
           </div>
           <div>
-            <h1 class="font-display text-xl font-bold text-white mb-2">
+            <h1 class="font-display text-xl font-bold text-ink-1 mb-2">
               Activation is taking longer than expected
             </h1>
-            <p class="text-sm text-slate-400 mb-2">
+            <p class="text-sm text-ink-3 mb-2">
               Your payment was successful. Pro features will activate shortly.
             </p>
-            <p class="text-xs text-slate-500">
+            <p class="text-xs text-ink-3">
               If features aren't active within 5 minutes, use Restore Purchase on the
-              <NuxtLink to="/pro" class="text-corona hover:text-corona-bright transition-colors">Pro page</NuxtLink>.
+              <NuxtLink to="/pro" class="text-accent hover:text-accent-strong transition-colors">Pro page</NuxtLink>.
             </p>
           </div>
         </div>

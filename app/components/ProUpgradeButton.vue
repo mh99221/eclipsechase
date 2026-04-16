@@ -49,7 +49,7 @@ const buttonLabel = computed(() => props.label || t('pro.get_access'))
   <button
     v-else
     :disabled="submitting"
-    class="text-sm text-corona hover:text-corona-bright transition-colors disabled:opacity-50"
+    class="text-sm text-accent hover:text-accent-strong transition-colors disabled:opacity-50"
     @click="handleCheckout"
   >
     <span v-if="submitting">{{ t('pro.processing') }}</span>

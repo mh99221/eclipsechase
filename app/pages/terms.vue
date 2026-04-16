@@ -54,7 +54,7 @@ useHead({
             <li>Road condition data is sourced from Vegagerðin (Iceland Road Administration) and may not reflect real-time conditions</li>
             <li>Icelandic roads and weather conditions can be hazardous, including single-lane roads, river crossings, sudden weather changes, and limited cell coverage</li>
           </ul>
-          <div class="my-4 px-3 py-2.5 rounded bg-amber-900/15 border border-amber-700/20 text-xs font-mono text-amber-400/80">
+          <div class="my-4 px-3 py-2.5 ec-banner-warn text-xs font-mono">
             <strong>Important:</strong> Users are solely responsible for their own safety, including but not limited to:
             <ul class="list-disc list-outside ml-5 mt-2 space-y-1">
               <li>Driving decisions and route planning on Icelandic roads</li>

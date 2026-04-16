@@ -67,7 +67,7 @@ const features = [
         <!-- Cancelled banner -->
         <div
           v-if="cancelled"
-          class="mb-8 px-4 py-3 rounded bg-amber-900/15 border border-amber-700/20 text-sm font-mono text-amber-400/80"
+          class="mb-8 px-4 py-3 ec-banner-warn text-sm font-mono"
         >
           {{ t('pro.cancelled') }}
         </div>
