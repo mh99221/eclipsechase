@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import mapboxgl from 'mapbox-gl'
-import { cloudColor, cloudLevel, formatDuration, weatherSvgHtml, HORIZON_VERDICT_COLORS } from '~/utils/eclipse'
+import { cloudColor, cloudLevel, formatDuration, weatherSvgHtml } from '~/utils/eclipse'
 import { addEclipsePathLayers } from '~/utils/mapLayers'
 
 const props = defineProps<{
@@ -121,9 +121,25 @@ function applyZoomVisibility() {
   setMarkerVisibility(spotMarkers, zoom)
 }
 
+/**
+ * Read a CSS variable from :root and format as an rgb() color so we can
+ * hand it to Mapbox (which doesn't understand CSS vars directly). Keeps
+ * the eclipse path tinted consistently with the legend in both themes.
+ */
+function readCssVar(name: string, fallback: string): string {
+  if (typeof window === 'undefined') return fallback
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+  return raw ? `rgb(${raw})` : fallback
+}
+
 function addEclipsePath() {
   if (!map) return
-  addEclipsePathLayers(map)
+  addEclipsePathLayers(map, {
+    colors: {
+      accent:       readCssVar('--accent', '#f59e0b'),
+      accentStrong: readCssVar('--accent-strong', '#fbbf24'),
+    },
+  })
 }
 
 function resetZoomBucket() { lastZoomBucket = -1 }
@@ -199,8 +215,17 @@ function updateSpotMarkers() {
     const isFiltered = hasRanking && rankInfo?.filtered
     const isTop3 = hasRanking && rankInfo && !rankInfo.filtered && rankInfo.rank <= 3
 
-    const verdict = spot.horizon_check?.verdict
-    const ringColor = verdict ? (HORIZON_VERDICT_COLORS[verdict] || '#f59e0b') : '#f59e0b'
+    // Resolve theme-aware colors from CSS variables so markers recolor
+    // cleanly when toggling dark ↔ light (matches the legend).
+    const rootStyle = getComputedStyle(document.documentElement)
+    const readVar = (name: string) => {
+      const raw = rootStyle.getPropertyValue(name).trim()
+      return raw ? `rgb(${raw})` : '#f59e0b'
+    }
+    const accent = readVar('--accent')
+    const accentStrong = readVar('--accent-strong')
+    const markerBg = readVar('--bg')
+    const mutedInk = readVar('--ink-3')
 
     const el = document.createElement('div')
     el.className = 'spot-marker'
@@ -212,37 +237,40 @@ function updateSpotMarkers() {
       // Dimmed marker for filtered spots
       el.style.cssText = `
         width: 22px; height: 22px; border-radius: 50%;
-        background: #050810; border: 2px solid #475569;
+        background: ${markerBg}; border: 2px solid ${mutedInk};
         opacity: 0.4; cursor: pointer; z-index: 10;
         display: flex; align-items: center; justify-content: center;
       `
       const inner = document.createElement('div')
-      inner.style.cssText = 'width: 6px; height: 6px; border-radius: 50%; background: #475569;'
+      inner.style.cssText = `width: 6px; height: 6px; border-radius: 50%; background: ${mutedInk};`
       el.appendChild(inner)
     } else if (hasRanking && rankInfo) {
-      // Ranked marker with number
+      // Ranked marker with number — Top 3 gets a stronger corona glow
       const size = isTop3 ? 30 : 26
-      const borderColor = verdict ? ringColor : (isTop3 ? '#f59e0b' : '#d97706')
-      const shadow = isTop3 ? '0 0 14px rgba(245, 158, 11, 0.4)' : '0 0 8px rgba(245, 158, 11, 0.2)'
+      const borderColor = isTop3 ? accent : accentStrong
+      const shadow = isTop3
+        ? `0 0 14px rgb(var(--accent) / 0.4)`
+        : `0 0 8px rgb(var(--accent) / 0.2)`
       el.style.cssText = `
         width: ${size}px; height: ${size}px; border-radius: 50%;
-        background: #050810; border: 2px solid ${borderColor};
+        background: ${markerBg}; border: 2px solid ${borderColor};
         box-shadow: ${shadow}; cursor: pointer; z-index: 10;
         display: flex; align-items: center; justify-content: center;
         font-family: 'IBM Plex Mono', monospace; font-size: ${isTop3 ? 13 : 11}px;
-        font-weight: 700; color: ${isTop3 ? '#fbbf24' : '#d97706'};
+        font-weight: 700; color: ${isTop3 ? accent : accentStrong};
       `
       el.textContent = String(rankInfo.rank)
     } else {
-      // Default dot (no ranking), color by horizon verdict
+      // Default viewing-spot dot — same as legend (corona ring + corona dot).
+      // Verdict info is shown in the popup / spot detail page instead.
       el.style.cssText = `
         width: 26px; height: 26px; border-radius: 50%;
-        background: #050810; border: 2px solid ${ringColor};
-        box-shadow: 0 0 12px ${ringColor}30; cursor: pointer; z-index: 10;
+        background: ${markerBg}; border: 2px solid ${accent};
+        box-shadow: 0 0 12px rgb(var(--accent) / 0.25); cursor: pointer; z-index: 10;
         display: flex; align-items: center; justify-content: center;
       `
       const inner = document.createElement('div')
-      inner.style.cssText = `width: 8px; height: 8px; border-radius: 50%; background: ${ringColor};`
+      inner.style.cssText = `width: 8px; height: 8px; border-radius: 50%; background: ${accent};`
       el.appendChild(inner)
     }
 
