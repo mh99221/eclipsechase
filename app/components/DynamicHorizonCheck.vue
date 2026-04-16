@@ -88,7 +88,7 @@ onMounted(async () => {
     </div>
 
     <!-- Error -->
-    <div v-else-if="error" class="text-sm text-red-400 py-4">
+    <div v-else-if="error" class="text-sm text-status-red py-4">
       {{ error }}
     </div>
 

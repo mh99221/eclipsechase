@@ -205,6 +205,89 @@
     color: rgba(147, 197, 253, 0.75);
   }
 
+  /* ───────────────────────────────────────────────────────────
+     Status chips (short walk, clear/marginal/risky/blocked, etc.)
+     Apply alongside existing structural classes. The chip itself
+     still needs the padding + font-mono tracking; these bundle
+     color + border + soft bg into one theme-aware class.
+     ─────────────────────────────────────────────────────────── */
+  .ec-chip-amber {
+    color: #92400e;
+    border-color: rgba(180, 83, 9, 0.5);
+    background: rgba(251, 191, 36, 0.18);
+  }
+  html.dark .ec-chip-amber {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.3);
+    background: rgba(251, 191, 36, 0.1);
+  }
+
+  .ec-chip-green {
+    color: #166534;
+    border-color: rgba(22, 101, 52, 0.45);
+    background: rgba(34, 197, 94, 0.15);
+  }
+  html.dark .ec-chip-green {
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.3);
+    background: rgba(74, 222, 128, 0.1);
+  }
+
+  .ec-chip-yellow {
+    color: #854d0e;
+    border-color: rgba(133, 77, 14, 0.5);
+    background: rgba(250, 204, 21, 0.22);
+  }
+  html.dark .ec-chip-yellow {
+    color: #facc15;
+    border-color: rgba(250, 204, 21, 0.3);
+    background: rgba(250, 204, 21, 0.1);
+  }
+
+  .ec-chip-orange {
+    color: #9a3412;
+    border-color: rgba(154, 52, 18, 0.5);
+    background: rgba(249, 115, 22, 0.18);
+  }
+  html.dark .ec-chip-orange {
+    color: #fb923c;
+    border-color: rgba(251, 146, 60, 0.3);
+    background: rgba(251, 146, 60, 0.1);
+  }
+
+  .ec-chip-red {
+    color: #991b1b;
+    border-color: rgba(153, 27, 27, 0.5);
+    background: rgba(239, 68, 68, 0.15);
+  }
+  html.dark .ec-chip-red {
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.3);
+    background: rgba(248, 113, 113, 0.1);
+  }
+
+  .ec-chip-blue {
+    color: #1e40af;
+    border-color: rgba(30, 64, 175, 0.45);
+    background: rgba(59, 130, 246, 0.15);
+  }
+  html.dark .ec-chip-blue {
+    color: #60a5fa;
+    border-color: rgba(96, 165, 250, 0.3);
+    background: rgba(96, 165, 250, 0.1);
+  }
+
+  /* Inline status text (no bg/border) — for labels like "Available",
+     "Limited signal" that live inside a stat card. */
+  .text-status-green  { color: #15803d; }
+  .text-status-amber  { color: #b45309; }
+  .text-status-red    { color: #b91c1c; }
+  .text-status-blue   { color: #1d4ed8; }
+  html.dark .text-status-green { color: #4ade80; }
+  html.dark .text-status-amber { color: #fbbf24; }
+  html.dark .text-status-red   { color: #f87171; }
+  html.dark .text-status-blue  { color: #60a5fa; }
+
   /* Noise texture overlay — darker noise on dark theme, slightly warmer /
      stronger on light theme so cream parchment feels tactile. */
   .noise::after {

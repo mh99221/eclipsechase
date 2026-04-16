@@ -142,7 +142,7 @@ const features = [
           </div>
 
           <!-- Error -->
-          <p v-if="checkoutError" class="text-sm font-mono text-red-400 mb-4">
+          <p v-if="checkoutError" class="text-sm font-mono text-status-red mb-4">
             {{ checkoutError }}
           </p>
 

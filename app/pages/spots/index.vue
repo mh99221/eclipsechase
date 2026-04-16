@@ -93,10 +93,10 @@ function getHorizonVerdict(spot: any): string | null {
 }
 
 const verdictColor: Record<string, string> = {
-  clear: 'text-green-400 border-green-400/30 bg-green-400/10',
-  marginal: 'text-yellow-400 border-yellow-400/30 bg-yellow-400/10',
-  risky: 'text-orange-400 border-orange-400/30 bg-orange-400/10',
-  blocked: 'text-red-400 border-red-400/30 bg-red-400/10',
+  clear: 'ec-chip-green',
+  marginal: 'ec-chip-yellow',
+  risky: 'ec-chip-orange',
+  blocked: 'ec-chip-red',
 }
 
 function scoreColor(score: number): string {
@@ -205,7 +205,7 @@ useHead({
               <span
                 v-if="item.spot.spot_type"
                 class="text-[9px] font-mono tracking-[0.15em] uppercase px-1.5 py-0.5 rounded border"
-                :class="item.spot.spot_type === 'drive-up' ? 'text-green-400 border-green-400/30' : 'text-amber-400 border-amber-400/30'"
+                :class="item.spot.spot_type === 'drive-up' ? 'ec-chip-green' : 'ec-chip-amber'"
               >{{ SPOT_TYPE_LABELS[item.spot.spot_type] || item.spot.spot_type }}</span>
               <span
                 v-if="getHorizonVerdict(item.spot)"

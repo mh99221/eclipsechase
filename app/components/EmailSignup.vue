@@ -32,11 +32,11 @@ async function handleSubmit() {
       class="text-center animate-fade-in"
     >
       <div class="inline-flex items-center justify-center w-16 h-16 rounded-full border border-green-500/20 mb-4">
-        <svg class="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <svg class="w-8 h-8 text-status-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7" />
         </svg>
       </div>
-      <p class="text-green-400 font-display font-medium text-lg">
+      <p class="text-status-green font-display font-medium text-lg">
         {{ t('signup.success') }}
       </p>
     </div>
@@ -97,7 +97,7 @@ async function handleSubmit() {
 
       <p
         v-if="status === 'error'"
-        class="mt-3 text-sm text-red-400 font-display"
+        class="mt-3 text-sm text-status-red font-display"
       >
         {{ errorMessage }}
       </p>

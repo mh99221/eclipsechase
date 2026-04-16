@@ -144,7 +144,7 @@ function retry() {
 
       <!-- Code sent message -->
       <div v-else-if="state === 'code_sent'">
-        <p class="text-sm text-green-400">
+        <p class="text-sm text-status-green">
           Code sent to {{ maskedEmail }}. Check your email.
         </p>
       </div>
@@ -181,7 +181,7 @@ function retry() {
 
       <!-- Success -->
       <div v-else-if="state === 'success'" class="text-center py-4">
-        <svg class="w-8 h-8 text-green-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <svg class="w-8 h-8 text-status-green mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
         </svg>
         <p class="font-display text-lg font-semibold text-ink-1">
@@ -192,7 +192,7 @@ function retry() {
 
       <!-- Error -->
       <div v-else-if="state === 'error'">
-        <p class="text-sm text-red-400 mb-3">{{ error }}</p>
+        <p class="text-sm text-status-red mb-3">{{ error }}</p>
         <button
           class="text-sm font-mono text-accent hover:text-accent-strong transition-colors"
           @click="retry"

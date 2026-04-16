@@ -876,7 +876,7 @@ const profileIcons: Record<ProfileId, string> = {
         :aria-label="showCameras ? t('map.cams_on') : t('map.cams_off')"
         class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
         :class="showCameras
-          ? 'text-blue-400 bg-surface-raised/90 border-blue-400/40'
+          ? 'ec-chip-blue bg-surface-raised/90'
           : 'text-ink-3 bg-surface-raised/90 border-border-subtle/50 hover:text-ink-1'"
         @click="showCameras = !showCameras"
       >
@@ -1198,7 +1198,7 @@ const profileIcons: Record<ProfileId, string> = {
       >
         <span>Could not load viewing spots.</span>
         <button
-          class="text-red-400 hover:text-red-200 transition-colors shrink-0"
+          class="text-status-red hover:opacity-75 transition-opacity shrink-0"
           aria-label="Dismiss error"
           @click="showSpotError = false"
         >

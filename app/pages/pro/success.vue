@@ -58,7 +58,7 @@ onMounted(async () => {
         <!-- Success -->
         <div v-else-if="status === 'success'" class="space-y-6">
           <div class="w-16 h-16 mx-auto rounded-full bg-green-900/20 border border-green-700/30 flex items-center justify-center">
-            <svg class="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <svg class="w-8 h-8 text-status-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
@@ -81,7 +81,7 @@ onMounted(async () => {
         <!-- Delayed -->
         <div v-else class="space-y-4">
           <div class="w-16 h-16 mx-auto rounded-full bg-amber-900/20 border border-amber-700/30 flex items-center justify-center">
-            <svg class="w-8 h-8 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <svg class="w-8 h-8 text-status-amber" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>

@@ -78,16 +78,16 @@ useHead({
 })
 
 const coverageBadge: Record<string, { label: string; color: string }> = {
-  good: { label: 'Good signal', color: 'text-green-400' },
-  limited: { label: 'Limited signal', color: 'text-amber-400' },
-  none: { label: 'No signal', color: 'text-red-400' },
+  good: { label: 'Good signal', color: 'text-status-green' },
+  limited: { label: 'Limited signal', color: 'text-status-amber' },
+  none: { label: 'No signal', color: 'text-status-red' },
 }
 
 const difficultyBadge: Record<string, { label: string; color: string }> = {
-  easy: { label: 'Easy', color: 'text-green-400 border-green-400/30' },
-  moderate: { label: 'Moderate', color: 'text-amber-400 border-amber-400/30' },
-  difficult: { label: 'Difficult', color: 'text-orange-400 border-orange-400/30' },
-  strenuous: { label: 'Strenuous', color: 'text-red-400 border-red-400/30' },
+  easy: { label: 'Easy', color: 'ec-chip-green' },
+  moderate: { label: 'Moderate', color: 'ec-chip-amber' },
+  difficult: { label: 'Difficult', color: 'ec-chip-orange' },
+  strenuous: { label: 'Strenuous', color: 'ec-chip-red' },
 }
 
 const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 'drive-up')
@@ -162,7 +162,7 @@ const nearbyPoi = computed<string[]>(() => {
         <span
           v-if="spot.spot_type"
           class="inline-block px-2 py-0.5 text-[10px] font-mono tracking-[0.15em] uppercase rounded border"
-          :class="spot.spot_type === 'drive-up' ? 'text-green-400 border-green-400/30 bg-green-400/10' : 'text-amber-400 border-amber-400/30 bg-amber-400/10'"
+          :class="spot.spot_type === 'drive-up' ? 'ec-chip-green' : 'ec-chip-amber'"
         >
           {{ SPOT_TYPE_LABELS[spot.spot_type] || spot.spot_type }}
         </span>
@@ -258,7 +258,7 @@ const nearbyPoi = computed<string[]>(() => {
         </div>
         <div class="bg-surface border border-border-subtle/40 px-4 py-4 rounded">
           <dt class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-1.5">{{ t('spot.services') }}</dt>
-          <dd class="font-display text-lg font-semibold ml-0" :class="spot.has_services ? 'text-green-400' : 'text-ink-3'">
+          <dd class="font-display text-lg font-semibold ml-0" :class="spot.has_services ? 'text-status-green' : 'text-ink-3'">
             {{ spot.has_services ? t('spot.available') : t('spot.none_nearby') }}
           </dd>
         </div>

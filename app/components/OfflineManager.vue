@@ -188,7 +188,7 @@ function cancel() {
         {{ t('offline.description') }}
       </p>
       <div class="flex flex-col gap-2">
-        <div v-if="hasCachedTiles" class="flex items-center gap-1.5 text-green-400 font-mono text-xs">
+        <div v-if="hasCachedTiles" class="flex items-center gap-1.5 text-status-green font-mono text-xs">
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
           </svg>
@@ -210,7 +210,7 @@ function cancel() {
           <span v-if="isCachingData">{{ t('offline.caching_data') }}</span>
           <span v-else>{{ t('offline.cache_weather') }}</span>
         </button>
-        <div v-if="dataCached" class="flex items-center gap-1.5 text-green-400 font-mono text-xs">
+        <div v-if="dataCached" class="flex items-center gap-1.5 text-status-green font-mono text-xs">
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
           </svg>
@@ -275,10 +275,10 @@ function cancel() {
     <!-- Done -->
     <div v-else-if="isDone">
       <div class="flex items-center gap-2">
-        <svg class="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <svg class="w-4 h-4 text-status-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
         </svg>
-        <p class="text-sm text-green-400 font-mono">
+        <p class="text-sm text-status-green font-mono">
           {{ t('offline.done') }}
         </p>
       </div>
@@ -294,7 +294,7 @@ function cancel() {
         <span v-if="isCachingData">{{ t('offline.caching_data') }}</span>
         <span v-else>{{ t('offline.cache_weather') }}</span>
       </button>
-      <div v-if="dataCached" class="mt-2 flex items-center gap-1.5 text-green-400 font-mono text-xs">
+      <div v-if="dataCached" class="mt-2 flex items-center gap-1.5 text-status-green font-mono text-xs">
         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
         </svg>
