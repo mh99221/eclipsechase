@@ -27,35 +27,16 @@ const mockSupabase = {
         }),
       }
     }
-    // weather_forecasts — used by both ensureFreshForecasts and the main query
+    // weather_forecasts — the main query returns an awaitable of { data, error }
     return {
       select: vi.fn().mockReturnThis(),
       gte: vi.fn().mockReturnThis(),
       lte: vi.fn().mockReturnThis(),
       order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockImplementation(() => {
-        // Return different things based on the context
-        // ensureFreshForecasts calls .limit(1).maybeSingle()
-        // main query calls .limit(3000) and resolves directly
-        const result = {
-          data: mockForecastRows,
-          error: null,
-          maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
-        }
-        return result
-      }),
-      maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+      limit: vi.fn().mockImplementation(() => ({ data: mockForecastRows, error: null })),
     }
   }),
 }
-
-vi.mock('../../../../server/utils/vedur', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../../../server/utils/vedur')>()
-  return {
-    ...actual,
-    ensureFreshForecasts: vi.fn().mockResolvedValue({ isStale: false, refreshFailed: false }),
-  }
-})
 
 const { default: handler } = await import('../../../../server/api/weather/forecast-timeline.get')
 

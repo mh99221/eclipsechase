@@ -25,13 +25,16 @@ useHead({
   ],
 })
 
-// Fetch all data in parallel (independent requests)
-const [{ data: stationsData }, { data: spotsData, error: spotsError }, { data: cloudData, refresh: refreshCloud }] = await Promise.all([
-  useFetch('/api/weather/stations'),
-  useFetch('/api/spots'),
-  useFetch('/api/weather/cloud-cover'),
-])
-const showSpotError = ref(!!spotsError.value)
+// Fetch data lazily + client-only so the map chrome renders instantly.
+// /map is Pro-gated (middleware redirects non-Pro users), so SSR would
+// just emit a redirect — no point pre-fetching on the server. Markers
+// and cloud-cover overlays populate reactively as each response lands.
+const { data: stationsData } = useFetch('/api/weather/stations', { lazy: true, server: false })
+const { data: spotsData, error: spotsError } = useFetch('/api/spots', { lazy: true, server: false })
+const { data: cloudData, refresh: refreshCloud } = useFetch('/api/weather/cloud-cover', { lazy: true, server: false })
+// Dismissable error banner — driven by spotsError ref but user can close it.
+const showSpotError = ref(false)
+watch(spotsError, (err) => { if (err) showSpotError.value = true })
 
 // Merge station metadata with cloud cover
 const stations = computed(() => {

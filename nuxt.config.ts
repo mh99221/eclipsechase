@@ -78,6 +78,7 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    // Pages
     '/guide': { prerender: true },
     '/pro': { ssr: true },
     '/privacy': { prerender: true },
@@ -91,6 +92,29 @@ export default defineNuxtConfig({
       },
     },
     '/spots/**': { isr: 3600 },
+
+    // API — cached at the Vercel edge so most map page loads don't hit
+    // our serverless functions or Supabase at all. stale-while-revalidate
+    // lets us serve instantly while a fresh copy is fetched in the
+    // background. Tune these if data freshness starts to matter.
+    '/api/weather/stations': {
+      // Essentially immutable — stations are seeded + rarely change.
+      headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+    },
+    '/api/weather/cloud-cover': {
+      // Upstream cron refreshes every 15 min. 2-min edge cache with SWR
+      // keeps the map feeling live without hammering the function.
+      headers: { 'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=300' },
+    },
+    '/api/weather/forecast-timeline': {
+      // Same cadence as cloud-cover — hourly timeline used by the map.
+      headers: { 'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=300' },
+    },
+    '/api/spots': {
+      // Data changes rarely (manual SQL edits). Long SWR so re-renders
+      // feel instant but a fresh version eventually propagates.
+      headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600' },
+    },
   },
 
   nitro: {

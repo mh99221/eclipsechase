@@ -1,13 +1,25 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
-import { ensureFreshForecasts, STATION_IDS } from '../../utils/vedur'
+import { STATION_IDS } from '../../utils/vedur'
+
+/**
+ * Return the latest cloud cover forecast per station.
+ *
+ * This is a pure read — we no longer run ensureFreshForecasts() here.
+ * The /api/tasks/ingest-weather cron is responsible for keeping the
+ * weather_forecasts table current (every 15 min). Doing the refresh
+ * synchronously from this GET made the map page block on an upstream
+ * XML fetch + upsert on every user load, which was the largest single
+ * contributor to slow map loads.
+ *
+ * The returned `stale` flag is computed from the newest row's forecast
+ * timestamp vs now, so the client can still surface a warning if the
+ * cron has fallen behind.
+ */
+const STALE_THRESHOLD_MS = 90 * 60 * 1000 // 90 min — cron runs every 15
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseServiceRole(event)
 
-  // 1. Ensure forecast data is fresh
-  const { isStale, refreshFailed } = await ensureFreshForecasts(supabase, 'cloud-cover')
-
-  // 2. Return latest cloud cover per station
   const now = new Date()
   const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString()
 
@@ -30,15 +42,18 @@ export default defineEventHandler(async (event) => {
         cloud_cover: row.cloud_cover,
       })
     }
-    // Track the most recent forecast_time we're returning
     if (!fetchedAt || row.forecast_time > fetchedAt) {
       fetchedAt = row.forecast_time
     }
   }
 
+  const isStale = fetchedAt
+    ? (Date.now() - new Date(fetchedAt).getTime()) >= STALE_THRESHOLD_MS
+    : true
+
   return {
     cloud_cover: Array.from(byStation.values()),
-    stale: isStale && refreshFailed,
+    stale: isStale,
     fetched_at: fetchedAt,
   }
 })

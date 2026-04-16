@@ -1,8 +1,11 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
-import { ensureFreshForecasts } from '../../utils/vedur'
 
 // Cache station metadata in memory (static data, never changes)
 let stationCache: Array<{ id: string; name: string; lat: number; lng: number; region: string | null }> | null = null
+
+// Matches the cloud-cover endpoint. The upstream refresh is the cron's
+// job (/api/tasks/ingest-weather); don't block user requests on it.
+const STALE_THRESHOLD_MS = 90 * 60 * 1000
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
@@ -10,10 +13,6 @@ export default defineEventHandler(async (event) => {
 
   const supabase = await serverSupabaseServiceRole(event)
 
-  // 1. Ensure forecast data is fresh
-  const { isStale, refreshFailed } = await ensureFreshForecasts(supabase, 'forecast-timeline')
-
-  // 2. Query forecasts and station metadata in parallel
   const now = new Date()
   const windowEnd = new Date(now.getTime() + hours * 60 * 60 * 1000).toISOString()
   const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString()
@@ -73,10 +72,20 @@ export default defineEventHandler(async (event) => {
     })
     .filter(s => s.forecasts.length > 0)
 
+  // Compute staleness from the newest forecast_time we returned
+  let latestForecastMs = 0
+  for (const row of forecastResult.data || []) {
+    const t = row.forecast_time ? new Date(row.forecast_time).getTime() : 0
+    if (t > latestForecastMs) latestForecastMs = t
+  }
+  const isStale = latestForecastMs
+    ? (Date.now() - latestForecastMs) >= STALE_THRESHOLD_MS
+    : true
+
   return {
     stations: result,
     hours,
-    stale: isStale && refreshFailed,
+    stale: isStale,
     fetched_at: now.toISOString(),
   }
 })
