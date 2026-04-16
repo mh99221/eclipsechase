@@ -4,6 +4,9 @@
 
 @layer base {
   :root {
+    /* Legacy named tokens — kept for anything still referencing them
+       directly. The canonical theme-aware values live in the theme blocks
+       below. */
     --void: #050810;
     --void-deep: #030508;
     --void-surface: #0a1020;
@@ -16,10 +19,75 @@
     --ice: #7dd3fc;
   }
 
+  /* ══════════════════════════════════════════════════════════
+     DARK theme — astronomy canonical (brand default)
+     ══════════════════════════════════════════════════════════ */
+  html.dark {
+    --bg:             5   8   16;   /* #050810  page background */
+    --surface:        10  16  32;   /* #0a1020  cards, chips     */
+    --surface-raised: 17  26  46;   /* #111a2e  hover / raised   */
+    --border-subtle:  26  37  64;   /* #1a2540  dividers         */
+
+    --ink-1:          255 255 255;  /* headlines                 */
+    --ink-2:          203 213 225;  /* body                      */
+    --ink-3:          148 163 184;  /* meta / labels             */
+
+    --accent:         245 158 11;   /* corona                    */
+    --accent-strong:  251 191 36;   /* corona-bright             */
+    --accent-soft:    245 158 11;   /* same hue, use with alpha  */
+
+    --selection-bg:   245 158 11;
+    --selection-ink:  254 243 199;
+    --body-gradient:  radial-gradient(ellipse at 50% 0%, #0a1628 0%, #050810 70%);
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     LIGHT theme — "Dawn Horizon"
+     warm parchment + deep indigo ink + deepened corona
+     ══════════════════════════════════════════════════════════ */
+  html.light {
+    --bg:             250 245 235;  /* #faf5eb  warm parchment   */
+    --surface:        255 251 240;  /* #fffbf0  card surface     */
+    --surface-raised: 247 239 220;  /* #f7efdc  hover / raised   */
+    --border-subtle:  231 222 200;  /* #e7dec8  dividers         */
+
+    --ink-1:          26  22  40;   /* #1a1628  deep indigo text */
+    --ink-2:          61  52  73;   /* #3d3449  body             */
+    --ink-3:          139 125 125;  /* #8b7d7d  meta / labels    */
+
+    --accent:         194 65  12;   /* #c2410c  deepened corona  */
+    --accent-strong:  154 52  18;   /* #9a3412  hover / active   */
+    --accent-soft:    251 146 60;   /* #fb923c  peach glow hints */
+
+    --selection-bg:   251 146 60;
+    --selection-ink:  26  22  40;
+    --body-gradient:
+      radial-gradient(ellipse at 80% 0%, rgba(251, 146, 60, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 0% 100%, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
+      #faf5eb;
+  }
+
+  /* Default (pre-hydration / SSR fallback) — mirrors DARK. @nuxtjs/color-mode
+     sets the html class on the client before paint; this stops us from
+     briefly flashing unstyled content on first load. */
   html {
+    --bg: 5 8 16;
+    --surface: 10 16 32;
+    --surface-raised: 17 26 46;
+    --border-subtle: 26 37 64;
+    --ink-1: 255 255 255;
+    --ink-2: 203 213 225;
+    --ink-3: 148 163 184;
+    --accent: 245 158 11;
+    --accent-strong: 251 191 36;
+    --accent-soft: 245 158 11;
+    --selection-bg: 245 158 11;
+    --selection-ink: 254 243 199;
+    --body-gradient: radial-gradient(ellipse at 50% 0%, #0a1628 0%, #050810 70%);
+
     font-family: 'Manrope', system-ui, sans-serif;
-    background-color: var(--void);
-    color: #c8d6e5;
+    background-color: rgb(var(--bg));
+    color: rgb(var(--ink-2));
     scroll-behavior: smooth;
     overflow-x: hidden;
   }
@@ -28,13 +96,13 @@
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: radial-gradient(ellipse at 50% 0%, #0a1628 0%, var(--void) 70%);
+    background: var(--body-gradient);
   }
 
   /* Custom selection color */
   ::selection {
-    background: rgba(245, 158, 11, 0.3);
-    color: #fef3c7;
+    background: rgb(var(--selection-bg) / 0.3);
+    color: rgb(var(--selection-ink));
   }
 }
 

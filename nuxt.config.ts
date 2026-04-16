@@ -9,7 +9,15 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase',
     '@nuxt/content',
     '@nuxtjs/sitemap',
+    '@nuxtjs/color-mode',
   ],
+
+  colorMode: {
+    preference: 'dark',      // fallback when user has no system / stored preference
+    fallback: 'dark',        // SSR fallback — keeps the brand canonical
+    classSuffix: '',         // so html gets `dark` or `light` (no `-mode` suffix)
+    storageKey: 'ec-color-mode',
+  },
 
   site: {
     url: 'https://eclipsechase.is',

@@ -21,6 +21,7 @@ async function handleLogout() {
     <span class="hidden sm:inline font-mono text-[10px] text-corona/60 tracking-wider uppercase">
       {{ t('pro.badge', 'Pro') }}
     </span>
+    <ThemeToggle />
     <button
       :disabled="isLoggingOut"
       class="font-mono text-[10px] text-slate-500 hover:text-slate-300 tracking-wider uppercase transition-colors disabled:opacity-50"
