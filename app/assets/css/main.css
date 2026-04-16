@@ -159,6 +159,12 @@
     @apply max-w-5xl mx-auto px-5 sm:px-8;
   }
 
+  /* Eclipse SVG logo — theme-aware fill/stroke for the three circles.
+     Use alongside the logo SVG markup so it adapts to dark + light themes. */
+  .ec-logo-bg   { fill: rgb(var(--bg)); }
+  .ec-logo-ring { stroke: rgb(var(--accent)); }
+  .ec-logo-dot  { fill: rgb(var(--accent)); }
+
   /* Noise texture overlay — darker noise on dark theme, slightly warmer /
      stronger on light theme so cream parchment feels tactile. */
   .noise::after {

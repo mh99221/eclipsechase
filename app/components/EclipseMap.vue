@@ -313,6 +313,10 @@ watch(() => props.stations, updateMarkers, { deep: true })
 watch(() => props.spots, updateSpotMarkers)
 watch(() => props.rankedSpots, updateSpotMarkers, { deep: true })
 
+const colorMode = useColorMode()
+const mapboxStyleFor = (mode: string) =>
+  mode === 'light' ? 'mapbox://styles/mapbox/light-v11' : 'mapbox://styles/mapbox/dark-v11'
+
 onMounted(() => {
   if (!mapContainer.value) return
 
@@ -320,7 +324,7 @@ onMounted(() => {
 
   map = new mapboxgl.Map({
     container: mapContainer.value,
-    style: 'mapbox://styles/mapbox/dark-v11',
+    style: mapboxStyleFor(colorMode.value),
     center: props.initialCenter || [-23.5, 65.0],
     zoom: props.initialZoom ?? 6,
     minZoom: 5,
@@ -359,6 +363,18 @@ onMounted(() => {
   mapExposed.value = map
 })
 
+// Swap Mapbox base style when the app theme toggles. Re-adds the eclipse
+// path + markers once the new style finishes loading (style.load fires).
+watch(() => colorMode.value, (mode) => {
+  if (!map) return
+  map.setStyle(mapboxStyleFor(mode))
+  map.once('style.load', () => {
+    addEclipsePath()
+    updateMarkers()
+    updateSpotMarkers()
+  })
+})
+
 defineExpose({ map: mapExposed })
 
 onUnmounted(() => {
@@ -375,21 +391,21 @@ onUnmounted(() => {
 </template>
 
 <style>
-/* Mapbox popup overrides for dark theme */
+/* Mapbox popup overrides — theme-aware */
 .eclipse-popup {
   z-index: 20 !important;
 }
 
 .eclipse-popup .mapboxgl-popup-content {
-  background: #0a1020;
-  border: 1px solid rgba(26, 37, 64, 0.6);
+  background: rgb(var(--surface));
+  border: 1px solid rgb(var(--border-subtle) / 0.7);
   border-radius: 4px;
   padding: 8px 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
 
 .eclipse-popup .mapboxgl-popup-tip {
-  border-top-color: #0a1020;
+  border-top-color: rgb(var(--surface));
 }
 
 @media (max-width: 639px) {

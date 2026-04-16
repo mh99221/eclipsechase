@@ -26,7 +26,7 @@ const units = computed(() => [
         </span>
         <span
           class="countdown-label"
-          :class="unit.primary ? 'text-slate-400' : 'text-slate-500'"
+          :class="unit.primary ? 'text-ink-3' : 'text-ink-3/70'"
         >
           {{ unit.label }}
         </span>

@@ -758,7 +758,7 @@ const profileIcons: Record<ProfileId, string> = {
 </script>
 
 <template>
-  <div class="relative w-full h-screen bg-void-deep">
+  <div class="relative w-full h-screen bg-surface-raised">
     <h1 class="sr-only">Weather Map — Eclipse Viewing Conditions in Iceland</h1>
 
     <!-- Map -->
@@ -776,7 +776,7 @@ const profileIcons: Record<ProfileId, string> = {
       />
       <template #fallback>
         <div class="absolute inset-0 flex items-center justify-center">
-          <p class="text-sm font-mono text-slate-500 animate-pulse">{{ t('map.loading') }}</p>
+          <p class="text-sm font-mono text-ink-3 animate-pulse">{{ t('map.loading') }}</p>
         </div>
       </template>
     </ClientOnly>
@@ -789,11 +789,11 @@ const profileIcons: Record<ProfileId, string> = {
       <div class="relative flex items-center justify-between gap-5 px-4 sm:px-6 py-4">
         <NuxtLink to="/" aria-label="EclipseChase — Home" class="pointer-events-auto flex items-center gap-2.5 group flex-shrink-0">
           <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
-            <circle cx="64" cy="64" r="36" fill="#050810" />
-            <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
-            <circle cx="96" cy="48" r="4" fill="#f59e0b" />
+            <circle cx="64" cy="64" r="36" class="ec-logo-bg" />
+            <circle cx="64" cy="64" r="36" class="ec-logo-ring" stroke-width="3" opacity="0.8" />
+            <circle cx="96" cy="48" r="4" class="ec-logo-dot" />
           </svg>
-          <span class="font-display font-semibold text-base tracking-wide text-slate-300 group-hover:text-white transition-colors">
+          <span class="font-display font-semibold text-base tracking-wide text-ink-2 group-hover:text-ink-1 transition-colors">
             ECLIPSECHASE
           </span>
         </NuxtLink>
@@ -822,8 +822,8 @@ const profileIcons: Record<ProfileId, string> = {
             <button
               class="text-xs font-mono tracking-wider px-2.5 py-1.5 rounded transition-all"
               :class="activeProfileName
-                ? 'text-corona bg-void-deep/80 border border-corona/40'
-                : 'text-slate-400 hover:text-slate-200'"
+                ? 'text-accent bg-surface-raised/80 border border-accent/40'
+                : 'text-ink-3 hover:text-ink-1'"
               :aria-expanded="profileMenuOpen"
               aria-haspopup="true"
               aria-controls="profile-menu"
@@ -836,14 +836,14 @@ const profileIcons: Record<ProfileId, string> = {
               v-if="profileMenuOpen"
               id="profile-menu"
               role="menu"
-              class="absolute right-0 top-full mt-1 bg-void-deep/95 backdrop-blur-sm border border-void-border/60 rounded py-1 min-w-[140px] z-20"
+              class="absolute right-0 top-full mt-1 bg-surface-raised/95 backdrop-blur-sm border border-border-subtle/60 rounded py-1 min-w-[140px] z-20"
             >
               <button
                 v-for="profile in PROFILES"
                 :key="profile.id"
                 role="menuitem"
                 class="w-full text-left px-3 py-1.5 text-xs font-mono transition-colors"
-                :class="selectedProfile === profile.id ? 'text-corona' : 'text-slate-400 hover:text-slate-200'"
+                :class="selectedProfile === profile.id ? 'text-accent' : 'text-ink-3 hover:text-ink-1'"
                 @click="selectedProfile = selectedProfile === profile.id ? null : profile.id as ProfileId; profileMenuOpen = false; if (selectedProfile) requestGps()"
               >
                 {{ profile.name }}
@@ -851,7 +851,7 @@ const profileIcons: Record<ProfileId, string> = {
               <button
                 v-if="selectedProfile"
                 role="menuitem"
-                class="w-full text-left px-3 py-1.5 text-xs font-mono text-slate-500 hover:text-slate-300 border-t border-void-border/40 mt-1 pt-1.5 transition-colors"
+                class="w-full text-left px-3 py-1.5 text-xs font-mono text-ink-3 hover:text-ink-2 border-t border-border-subtle/40 mt-1 pt-1.5 transition-colors"
                 @click="selectedProfile = null; profileMenuOpen = false"
               >
                 {{ t('map.clear_profile') }}
@@ -873,8 +873,8 @@ const profileIcons: Record<ProfileId, string> = {
         :aria-label="showCameras ? t('map.cams_on') : t('map.cams_off')"
         class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
         :class="showCameras
-          ? 'text-blue-400 bg-void-deep/90 border-blue-400/40'
-          : 'text-slate-400 bg-void-deep/90 border-void-border/50 hover:text-slate-200'"
+          ? 'text-blue-400 bg-surface-raised/90 border-blue-400/40'
+          : 'text-ink-3 bg-surface-raised/90 border-border-subtle/50 hover:text-ink-1'"
         @click="showCameras = !showCameras"
       >
         {{ showCameras ? t('map.cams_on') : t('map.cams_off') }}
@@ -884,75 +884,75 @@ const profileIcons: Record<ProfileId, string> = {
         :aria-label="showTraffic ? t('map.roads_on') : t('map.roads_off')"
         class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
         :class="showTraffic
-          ? 'text-corona bg-void-deep/90 border-corona/40'
-          : 'text-slate-400 bg-void-deep/90 border-void-border/50 hover:text-slate-200'"
+          ? 'text-accent bg-surface-raised/90 border-accent/40'
+          : 'text-ink-3 bg-surface-raised/90 border-border-subtle/50 hover:text-ink-1'"
         @click="showTraffic = !showTraffic"
       >
         {{ showTraffic ? t('map.roads_on') : t('map.roads_off') }}
       </button>
     </div>
 
-    <div class="hidden sm:block absolute bottom-[84px] left-6 z-10 bg-void-deep/90 backdrop-blur-sm border border-void-border/50 rounded px-4 py-3 max-h-[calc(100dvh-220px)] overflow-y-auto text-xs">
-      <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2.5">{{ t('map.cloud_cover') }}</p>
+    <div class="hidden sm:block absolute bottom-[84px] left-6 z-10 bg-surface-raised/90 backdrop-blur-sm border border-border-subtle/50 rounded px-4 py-3 max-h-[calc(100dvh-220px)] overflow-y-auto text-xs">
+      <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-2.5">{{ t('map.cloud_cover') }}</p>
       <div class="flex flex-col gap-1.5">
         <div v-for="item in legendItems" :key="item.label" class="flex items-center gap-2">
           <WeatherIcon :cloud-cover="item.cloudCover" :size="20" class="shrink-0" />
-          <span class="text-xs font-mono text-slate-300">{{ item.label }}</span>
+          <span class="text-xs font-mono text-ink-2">{{ item.label }}</span>
         </div>
       </div>
-      <div class="mt-3 pt-2.5 border-t border-void-border/40">
+      <div class="mt-3 pt-2.5 border-t border-border-subtle/40">
         <div class="flex items-center gap-2 mb-1">
-          <span class="w-3.5 h-3.5 rounded-full border-2 border-corona bg-void-deep flex items-center justify-center shrink-0">
-            <span class="w-1.5 h-1.5 rounded-full bg-corona" />
+          <span class="w-3.5 h-3.5 rounded-full border-2 border-accent bg-surface-raised flex items-center justify-center shrink-0">
+            <span class="w-1.5 h-1.5 rounded-full bg-accent" />
           </span>
-          <span class="text-xs font-mono text-slate-300">{{ t('map.viewing_spot') }}</span>
+          <span class="text-xs font-mono text-ink-2">{{ t('map.viewing_spot') }}</span>
         </div>
         <div class="flex items-center gap-2 mb-1">
-          <span class="w-4 h-0 border-t border-dashed border-corona/40" />
-          <span class="text-xs font-mono text-slate-300">{{ t('map.totality_path') }}</span>
+          <span class="w-4 h-0 border-t border-dashed border-accent/40" />
+          <span class="text-xs font-mono text-ink-2">{{ t('map.totality_path') }}</span>
         </div>
         <div class="flex items-center gap-2">
-          <span class="w-4 h-0 border-t-2 border-corona-bright/60" />
-          <span class="text-xs font-mono text-slate-300">{{ t('map.centerline') }}</span>
+          <span class="w-4 h-0 border-t-2 border-accent-strong/60" />
+          <span class="text-xs font-mono text-ink-2">{{ t('map.centerline') }}</span>
         </div>
       </div>
-      <div v-if="showTraffic" class="mt-3 pt-2.5 border-t border-void-border/40">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2">{{ t('map.road_conditions') }}</p>
+      <div v-if="showTraffic" class="mt-3 pt-2.5 border-t border-border-subtle/40">
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-2">{{ t('map.road_conditions') }}</p>
         <div class="flex items-center gap-2 mb-1">
           <span class="w-4 h-0 border-t-2 border-green-500" />
-          <span class="text-xs font-mono text-slate-300">{{ t('map.road_good') }}</span>
+          <span class="text-xs font-mono text-ink-2">{{ t('map.road_good') }}</span>
         </div>
         <div class="flex items-center gap-2 mb-1">
           <span class="w-4 h-0 border-t-2 border-orange-500" />
-          <span class="text-xs font-mono text-slate-300">{{ t('map.road_difficult') }}</span>
+          <span class="text-xs font-mono text-ink-2">{{ t('map.road_difficult') }}</span>
         </div>
         <div class="flex items-center gap-2 mb-1">
           <span class="w-4 h-0 border-t-2 border-red-500" />
-          <span class="text-xs font-mono text-slate-300">{{ t('map.road_closed') }}</span>
+          <span class="text-xs font-mono text-ink-2">{{ t('map.road_closed') }}</span>
         </div>
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mt-2 mb-2">{{ t('map.road_warnings') }}</p>
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mt-2 mb-2">{{ t('map.road_warnings') }}</p>
         <div class="flex items-center gap-2 mb-1">
-          <span class="w-3 h-3 rounded-full border-2 border-orange-500 bg-void-deep shrink-0" />
-          <span class="text-xs font-mono text-slate-300">{{ t('map.hazard') }}</span>
+          <span class="w-3 h-3 rounded-full border-2 border-orange-500 bg-surface-raised shrink-0" />
+          <span class="text-xs font-mono text-ink-2">{{ t('map.hazard') }}</span>
         </div>
         <div class="flex items-center gap-2 mb-1">
-          <span class="w-3 h-3 rounded-full border-2 border-red-500 bg-void-deep shrink-0" />
-          <span class="text-xs font-mono text-slate-300">{{ t('map.closed') }}</span>
+          <span class="w-3 h-3 rounded-full border-2 border-red-500 bg-surface-raised shrink-0" />
+          <span class="text-xs font-mono text-ink-2">{{ t('map.closed') }}</span>
         </div>
         <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full border-2 border-gray-500 bg-void-deep shrink-0" />
-          <span class="text-xs font-mono text-slate-300">{{ t('map.other') }}</span>
+          <span class="w-3 h-3 rounded-full border-2 border-gray-500 bg-surface-raised shrink-0" />
+          <span class="text-xs font-mono text-ink-2">{{ t('map.other') }}</span>
         </div>
       </div>
-      <div v-if="showCameras" class="mt-3 pt-2.5 border-t border-void-border/40">
+      <div v-if="showCameras" class="mt-3 pt-2.5 border-t border-border-subtle/40">
         <div class="flex items-center gap-2">
-          <span class="w-4 h-4 rounded-full border-2 border-ice bg-void-deep flex items-center justify-center shrink-0">
+          <span class="w-4 h-4 rounded-full border-2 border-ice bg-surface-raised flex items-center justify-center shrink-0">
             <svg width="8" height="8" viewBox="0 0 16 16" fill="none" class="shrink-0">
               <circle cx="8" cy="8" r="5" stroke="#7dd3fc" stroke-width="1.5" fill="none" />
               <circle cx="8" cy="8" r="2" fill="#7dd3fc" />
             </svg>
           </span>
-          <span class="text-xs font-mono text-slate-300">{{ t('map.road_camera') }}</span>
+          <span class="text-xs font-mono text-ink-2">{{ t('map.road_camera') }}</span>
         </div>
       </div>
     </div>
@@ -963,7 +963,7 @@ const profileIcons: Record<ProfileId, string> = {
       :style="{ height: sheetHeight + 'px' }"
       :class="sheetDragging ? '' : 'transition-[height] duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]'"
     >
-      <div class="h-full bg-void-deep/95 backdrop-blur-md border-t border-void-border/40 rounded-t-xl flex flex-col overflow-hidden">
+      <div class="h-full bg-surface-raised/95 backdrop-blur-md border-t border-border-subtle/40 rounded-t-xl flex flex-col overflow-hidden">
         <!-- Drag handle -->
         <div
           role="button"
@@ -987,8 +987,8 @@ const profileIcons: Record<ProfileId, string> = {
             :aria-label="activeProfileName ? `Profile: ${activeProfileName}` : t('map.profile')"
             class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded border font-mono text-[11px] tracking-wider transition-all active:scale-95"
             :class="selectedProfile
-              ? 'border-corona/30 bg-corona/8 text-corona'
-              : 'border-void-border/30 bg-void/40 text-slate-500'"
+              ? 'border-accent/30 bg-accent/8 text-accent'
+              : 'border-border-subtle/30 bg-bg/40 text-ink-3'"
             @click="cycleProfile"
           >
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
@@ -1003,7 +1003,7 @@ const profileIcons: Record<ProfileId, string> = {
             class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded border font-mono text-[11px] tracking-wider transition-all active:scale-95"
             :class="showCameras
               ? 'border-ice/30 bg-ice/8 text-ice'
-              : 'border-void-border/30 bg-void/40 text-slate-500'"
+              : 'border-border-subtle/30 bg-bg/40 text-ink-3'"
             @click="showCameras = !showCameras"
           >
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" :stroke="showCameras ? '#7dd3fc' : '#475569'" stroke-width="1.5" fill="none" /><circle cx="8" cy="8" r="2" :fill="showCameras ? '#7dd3fc' : '#475569'" /></svg>
@@ -1015,8 +1015,8 @@ const profileIcons: Record<ProfileId, string> = {
             :aria-label="showTraffic ? t('map.roads_on') : t('map.roads_off')"
             class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded border font-mono text-[11px] tracking-wider transition-all active:scale-95"
             :class="showTraffic
-              ? 'border-corona/30 bg-corona/8 text-corona'
-              : 'border-void-border/30 bg-void/40 text-slate-500'"
+              ? 'border-accent/30 bg-accent/8 text-accent'
+              : 'border-border-subtle/30 bg-bg/40 text-ink-3'"
             @click="showTraffic = !showTraffic"
           >
             <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 1L15 14H1L8 1Z" :stroke="showTraffic ? '#f59e0b' : '#475569'" stroke-width="1.5" fill="none" /></svg>
@@ -1025,18 +1025,18 @@ const profileIcons: Record<ProfileId, string> = {
         </div>
 
         <!-- Expanded content (visible when pulled up) -->
-        <div v-show="sheetHeight > sheetSnapPoints[0] + 20" class="flex-1 overflow-y-auto px-4 pb-4 border-t border-void-border/30 pt-3">
+        <div v-show="sheetHeight > sheetSnapPoints[0] + 20" class="flex-1 overflow-y-auto px-4 pb-4 border-t border-border-subtle/30 pt-3">
           <!-- Profile selector (full chip list) -->
-          <div class="mb-3 pb-3 border-b border-void-border/30">
-            <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2">{{ t('map.viewer_profile') }}</p>
+          <div class="mb-3 pb-3 border-b border-border-subtle/30">
+            <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-2">{{ t('map.viewer_profile') }}</p>
             <div class="flex flex-wrap gap-1.5">
               <button
                 v-for="profile in PROFILES"
                 :key="profile.id"
                 class="flex items-center gap-1.5 px-2.5 py-1.5 rounded border font-mono text-[11px] transition-all"
                 :class="selectedProfile === profile.id
-                  ? 'border-corona/40 bg-corona/10 text-corona'
-                  : 'border-void-border/30 bg-void/40 text-slate-500'"
+                  ? 'border-accent/40 bg-accent/10 text-accent'
+                  : 'border-border-subtle/30 bg-bg/40 text-ink-3'"
                 @click="selectedProfile = selectedProfile === profile.id ? null : profile.id as ProfileId; if (selectedProfile) requestGps()"
               >
                 <svg width="12" height="12" viewBox="0 0 16 16" class="shrink-0">
@@ -1051,76 +1051,76 @@ const profileIcons: Record<ProfileId, string> = {
           <div class="grid grid-cols-2 gap-4">
             <!-- Left column: Cloud cover -->
             <div>
-              <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2.5">{{ t('map.cloud_cover') }}</p>
+              <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-2.5">{{ t('map.cloud_cover') }}</p>
               <div class="flex flex-col gap-1.5">
                 <div v-for="item in legendItems" :key="item.label" class="flex items-center gap-2">
                   <WeatherIcon :cloud-cover="item.cloudCover" :size="18" class="shrink-0" />
-                  <span class="text-[11px] font-mono text-slate-400">{{ item.label }}</span>
+                  <span class="text-[11px] font-mono text-ink-3">{{ item.label }}</span>
                 </div>
               </div>
             </div>
             <!-- Right column: Map legend -->
             <div>
-              <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2.5">{{ t('map.map_legend') }}</p>
+              <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-2.5">{{ t('map.map_legend') }}</p>
               <div class="flex flex-col gap-2">
                 <div class="flex items-center gap-2">
-                  <span class="w-3 h-3 rounded-full border-2 border-corona bg-void-deep shrink-0" />
-                  <span class="text-[11px] font-mono text-slate-300">{{ t('map.viewing_spot') }}</span>
+                  <span class="w-3 h-3 rounded-full border-2 border-accent bg-surface-raised shrink-0" />
+                  <span class="text-[11px] font-mono text-ink-2">{{ t('map.viewing_spot') }}</span>
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="w-4 h-0 border-t border-dashed border-corona/40" />
-                  <span class="text-[11px] font-mono text-slate-300">{{ t('map.totality_path') }}</span>
+                  <span class="w-4 h-0 border-t border-dashed border-accent/40" />
+                  <span class="text-[11px] font-mono text-ink-2">{{ t('map.totality_path') }}</span>
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="w-4 h-0 border-t-2 border-corona-bright/60" />
-                  <span class="text-[11px] font-mono text-slate-300">{{ t('map.centerline') }}</span>
+                  <span class="w-4 h-0 border-t-2 border-accent-strong/60" />
+                  <span class="text-[11px] font-mono text-ink-2">{{ t('map.centerline') }}</span>
                 </div>
                 <!-- Conditional: road conditions + warnings -->
                 <template v-if="showTraffic">
-                  <div class="mt-1.5 pt-1.5 border-t border-void-border/30">
-                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('map.road_conditions') }}</p>
+                  <div class="mt-1.5 pt-1.5 border-t border-border-subtle/30">
+                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-1.5">{{ t('map.road_conditions') }}</p>
                   </div>
                   <div class="flex items-center gap-2">
                     <span class="w-4 h-0 border-t-2 border-green-500" />
-                    <span class="text-[11px] font-mono text-slate-300">{{ t('map.road_good') }}</span>
+                    <span class="text-[11px] font-mono text-ink-2">{{ t('map.road_good') }}</span>
                   </div>
                   <div class="flex items-center gap-2">
                     <span class="w-4 h-0 border-t-2 border-orange-500" />
-                    <span class="text-[11px] font-mono text-slate-300">{{ t('map.road_difficult') }}</span>
+                    <span class="text-[11px] font-mono text-ink-2">{{ t('map.road_difficult') }}</span>
                   </div>
                   <div class="flex items-center gap-2">
                     <span class="w-4 h-0 border-t-2 border-red-500" />
-                    <span class="text-[11px] font-mono text-slate-300">{{ t('map.road_closed') }}</span>
+                    <span class="text-[11px] font-mono text-ink-2">{{ t('map.road_closed') }}</span>
                   </div>
                   <div class="mt-1.5">
-                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('map.road_warnings') }}</p>
+                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-1.5">{{ t('map.road_warnings') }}</p>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full border-2 border-orange-500 bg-void-deep shrink-0" />
-                    <span class="text-[11px] font-mono text-slate-300">{{ t('map.hazard') }}</span>
+                    <span class="w-2.5 h-2.5 rounded-full border-2 border-orange-500 bg-surface-raised shrink-0" />
+                    <span class="text-[11px] font-mono text-ink-2">{{ t('map.hazard') }}</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full border-2 border-red-500 bg-void-deep shrink-0" />
-                    <span class="text-[11px] font-mono text-slate-300">{{ t('map.closed') }}</span>
+                    <span class="w-2.5 h-2.5 rounded-full border-2 border-red-500 bg-surface-raised shrink-0" />
+                    <span class="text-[11px] font-mono text-ink-2">{{ t('map.closed') }}</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full border-2 border-gray-500 bg-void-deep shrink-0" />
-                    <span class="text-[11px] font-mono text-slate-300">{{ t('map.other') }}</span>
+                    <span class="w-2.5 h-2.5 rounded-full border-2 border-gray-500 bg-surface-raised shrink-0" />
+                    <span class="text-[11px] font-mono text-ink-2">{{ t('map.other') }}</span>
                   </div>
                 </template>
                 <!-- Conditional: camera -->
-                <div v-if="showCameras" class="flex items-center gap-2" :class="{ 'mt-1.5 pt-1.5 border-t border-void-border/30': !showTraffic }">
-                  <span class="w-3.5 h-3.5 rounded-full border-2 border-ice bg-void-deep flex items-center justify-center shrink-0">
+                <div v-if="showCameras" class="flex items-center gap-2" :class="{ 'mt-1.5 pt-1.5 border-t border-border-subtle/30': !showTraffic }">
+                  <span class="w-3.5 h-3.5 rounded-full border-2 border-ice bg-surface-raised flex items-center justify-center shrink-0">
                     <svg width="7" height="7" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" stroke="#7dd3fc" stroke-width="1.5" fill="none" /><circle cx="8" cy="8" r="2" fill="#7dd3fc" /></svg>
                   </span>
-                  <span class="text-[11px] font-mono text-slate-300">{{ t('map.road_camera') }}</span>
+                  <span class="text-[11px] font-mono text-ink-2">{{ t('map.road_camera') }}</span>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Offline download (mobile) -->
-          <div class="mt-3 pt-3 border-t border-void-border/30">
+          <div class="mt-3 pt-3 border-t border-border-subtle/30">
             <OfflineManager :map="eclipseMapRef?.map" @downloading="tileDownloading = $event" ref="offlineManagerMobile" />
           </div>
         </div>
@@ -1135,23 +1135,23 @@ const profileIcons: Record<ProfileId, string> = {
     <!-- Full-screen download overlay -->
     <div
       v-if="tileDownloading"
-      class="absolute inset-0 z-50 bg-void-deep/95 flex flex-col items-center justify-center px-8"
+      class="absolute inset-0 z-50 bg-surface-raised/95 flex flex-col items-center justify-center px-8"
     >
-      <svg class="w-12 h-12 text-corona/40 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+      <svg class="w-12 h-12 text-accent/40 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
       </svg>
-      <p class="font-display text-xl font-semibold text-white mb-2">{{ t('offline.downloading') }}</p>
-      <p class="font-mono text-xs text-slate-400 mb-6">
+      <p class="font-display text-xl font-semibold text-ink-1 mb-2">{{ t('offline.downloading') }}</p>
+      <p class="font-mono text-xs text-ink-3 mb-6">
         {{ t('offline.tiles_progress', { loaded: offlineManagerRef?.loadedTiles ?? 0, total: offlineManagerRef?.totalTiles ?? 0, progress: offlineManagerRef?.progress ?? 0 }) }}
       </p>
-      <div class="w-full max-w-xs h-2 bg-void rounded-full overflow-hidden mb-6">
+      <div class="w-full max-w-xs h-2 bg-bg rounded-full overflow-hidden mb-6">
         <div
-          class="h-full bg-corona transition-all duration-200"
+          class="h-full bg-accent transition-all duration-200"
           :style="{ width: `${offlineManagerRef?.progress ?? 0}%` }"
         />
       </div>
       <button
-        class="font-mono text-xs text-slate-500 hover:text-slate-300 transition-colors"
+        class="font-mono text-xs text-ink-3 hover:text-ink-2 transition-colors"
         @click="offlineManagerRef?.cancel()"
       >
         {{ t('offline.cancel') }}
@@ -1165,7 +1165,7 @@ const profileIcons: Record<ProfileId, string> = {
         class="absolute z-10 left-1/2 -translate-x-1/2 sm:bottom-[120px] pointer-events-none"
         :style="horizonBottomStyle"
       >
-        <div class="px-3 py-1.5 rounded bg-void-deep/80 backdrop-blur-sm border border-corona/20 text-[11px] font-mono text-corona/70">
+        <div class="px-3 py-1.5 rounded bg-surface-raised/80 backdrop-blur-sm border border-accent/20 text-[11px] font-mono text-accent/70">
           {{ t('horizon.click_hint') }}
         </div>
       </div>

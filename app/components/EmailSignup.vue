@@ -56,9 +56,9 @@ async function handleSubmit() {
             aria-label="Email address"
             :placeholder="t('signup.placeholder')"
             :disabled="status === 'loading'"
-            class="w-full px-5 py-4 bg-void-surface border border-void-border
-                   text-slate-200 placeholder-slate-500 font-display text-base tracking-wide
-                   focus:outline-none focus:border-corona/40 focus:shadow-[0_0_20px_rgba(245,158,11,0.08)]
+            class="w-full px-5 py-4 bg-surface border border-border-subtle
+                   text-ink-1 placeholder:text-ink-3 font-display text-base tracking-wide
+                   focus:outline-none focus:border-accent/40 focus:shadow-[0_0_20px_rgb(var(--accent)/0.12)]
                    disabled:opacity-50 transition-all duration-300"
             style="border-radius: 2px;"
           >
@@ -102,9 +102,9 @@ async function handleSubmit() {
         {{ errorMessage }}
       </p>
 
-      <p class="mt-3 text-xs text-slate-500 text-center">
+      <p class="mt-3 text-xs text-ink-3 text-center">
         {{ t('signup.privacy_note_pre') }}
-        <NuxtLink to="/privacy" class="text-slate-400 hover:text-slate-300 underline underline-offset-2 transition-colors">
+        <NuxtLink to="/privacy" class="text-ink-2 hover:text-ink-1 underline underline-offset-2 transition-colors">
           {{ t('signup.privacy_note_link') }}
         </NuxtLink>
       </p>

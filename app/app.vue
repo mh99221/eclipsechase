@@ -25,9 +25,9 @@ const showMasthead = computed(() => isPro.value && !isLanding.value)
       <nav class="section-container max-w-3xl flex items-center justify-between gap-5 py-5">
         <NuxtLink to="/" aria-label="EclipseChase — Home" class="flex items-center gap-3 group">
           <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
-            <circle cx="64" cy="64" r="36" class="logo-bg" />
-            <circle cx="64" cy="64" r="36" class="logo-ring" stroke-width="3" opacity="0.8" />
-            <circle cx="96" cy="48" r="4" class="logo-dot" />
+            <circle cx="64" cy="64" r="36" class="ec-logo-bg" />
+            <circle cx="64" cy="64" r="36" class="ec-logo-ring" stroke-width="3" opacity="0.8" />
+            <circle cx="96" cy="48" r="4" class="ec-logo-dot" />
           </svg>
           <span class="font-display font-semibold text-base tracking-wide text-ink-2 group-hover:text-ink-1 transition-colors">
             ECLIPSECHASE
@@ -73,11 +73,6 @@ const showMasthead = computed(() => isPro.value && !isLanding.value)
 </template>
 
 <style scoped>
-/* Eclipse logo — theme-aware colors */
-.logo-bg   { fill: rgb(var(--bg)); }
-.logo-ring { stroke: rgb(var(--accent)); }
-.logo-dot  { fill: rgb(var(--accent)); }
-
 /* Masthead links — tracked mono caps, corona dot indicator when active */
 .masthead-link {
   position: relative;
