@@ -15,10 +15,10 @@ const isCredits = computed(() => route.path === '/credits')
 </script>
 
 <template>
-  <footer class="border-t border-void-border/30 py-8 mt-12">
+  <footer class="border-t border-border-subtle/50 py-8 mt-12">
     <div class="section-container max-w-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
       <button
-        class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors"
+        class="font-mono text-sm text-ink-3 hover:text-ink-2 transition-colors"
         @click="goBack"
       >
         &larr; {{ t('nav.back') }}
@@ -28,21 +28,21 @@ const isCredits = computed(() => route.path === '/credits')
         <NuxtLink
           v-if="!isPrivacy"
           to="/privacy"
-          class="font-mono text-xs text-slate-500 hover:text-slate-300 transition-colors"
+          class="font-mono text-xs text-ink-3 hover:text-ink-2 transition-colors"
         >
           {{ t('footer.privacy') }}
         </NuxtLink>
         <NuxtLink
           v-if="!isTerms"
           to="/terms"
-          class="font-mono text-xs text-slate-500 hover:text-slate-300 transition-colors"
+          class="font-mono text-xs text-ink-3 hover:text-ink-2 transition-colors"
         >
           {{ t('footer.terms') }}
         </NuxtLink>
         <NuxtLink
           v-if="!isCredits"
           to="/credits"
-          class="font-mono text-xs text-slate-500 hover:text-slate-300 transition-colors"
+          class="font-mono text-xs text-ink-3 hover:text-ink-2 transition-colors"
         >
           {{ t('footer.credits') }}
         </NuxtLink>

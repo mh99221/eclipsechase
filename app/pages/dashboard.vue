@@ -62,25 +62,25 @@ const checkedCount = computed(() =>
     <div class="section-container max-w-3xl py-8 sm:py-16">
       <!-- 1. Hero Countdown -->
       <section class="text-center mb-12 sm:mb-16">
-        <p class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase mb-4">Eclipse 2026</p>
+        <p class="font-mono text-xs tracking-[0.3em] text-accent/60 uppercase mb-4">Eclipse 2026</p>
         <CountdownBar />
       </section>
 
       <!-- 2. Weather Snapshot -->
       <section class="mb-8 sm:mb-12">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-3">Best conditions now</p>
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-3">Best conditions now</p>
 
         <!-- Loading skeleton -->
-        <div v-if="weatherLoading" class="bg-void-surface border border-void-border/40 rounded px-4 py-4 animate-pulse">
-          <div class="h-5 bg-void-border/30 rounded w-1/3 mb-2" />
-          <div class="h-4 bg-void-border/20 rounded w-1/4" />
+        <div v-if="weatherLoading" class="bg-surface border border-border-subtle/40 rounded px-4 py-4 animate-pulse">
+          <div class="h-5 bg-border-subtle/30 rounded w-1/3 mb-2" />
+          <div class="h-4 bg-border-subtle/20 rounded w-1/4" />
         </div>
 
         <!-- Weather card -->
-        <div v-else-if="weatherBest" class="bg-void-surface border border-void-border/40 rounded px-4 py-4">
+        <div v-else-if="weatherBest" class="bg-surface border border-border-subtle/40 rounded px-4 py-4">
           <div class="flex items-center justify-between">
             <div>
-              <p class="font-display text-lg font-semibold text-white">
+              <p class="font-display text-lg font-semibold text-ink-1">
                 {{ REGION_LABELS[weatherBest.region] || weatherBest.region }}
               </p>
               <p class="text-sm mt-0.5" :style="{ color: cloudColor(weatherBest.avgCloudCover) }">
@@ -89,7 +89,7 @@ const checkedCount = computed(() =>
             </div>
             <NuxtLink
               to="/map"
-              class="text-xs font-mono text-corona/70 hover:text-corona transition-colors tracking-wider"
+              class="text-xs font-mono text-accent/70 hover:text-accent transition-colors tracking-wider"
             >
               VIEW MAP &rarr;
             </NuxtLink>
@@ -97,35 +97,35 @@ const checkedCount = computed(() =>
         </div>
 
         <!-- Fallback -->
-        <div v-else class="bg-void-surface border border-void-border/40 rounded px-4 py-4">
-          <p class="text-sm text-slate-500">No weather data available</p>
+        <div v-else class="bg-surface border border-border-subtle/40 rounded px-4 py-4">
+          <p class="text-sm text-ink-3">No weather data available</p>
         </div>
       </section>
 
       <!-- 3. News / Updates -->
       <section v-if="updatesLoading" class="mb-8 sm:mb-12">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-3">Latest updates</p>
-        <div class="bg-void-surface border border-void-border/40 rounded px-4 py-3 animate-pulse">
-          <div class="h-3 bg-void-border/20 rounded w-1/5 mb-2" />
-          <div class="h-4 bg-void-border/30 rounded w-2/3 mb-2" />
-          <div class="h-3 bg-void-border/20 rounded w-1/2" />
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-3">Latest updates</p>
+        <div class="bg-surface border border-border-subtle/40 rounded px-4 py-3 animate-pulse">
+          <div class="h-3 bg-border-subtle/20 rounded w-1/5 mb-2" />
+          <div class="h-4 bg-border-subtle/30 rounded w-2/3 mb-2" />
+          <div class="h-3 bg-border-subtle/20 rounded w-1/2" />
         </div>
       </section>
       <section v-else-if="updates && updates.length" class="mb-8 sm:mb-12">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-3">Latest updates</p>
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-3">Latest updates</p>
         <div class="space-y-3">
           <div
             v-for="update in updates"
             :key="update._path"
-            class="bg-void-surface border border-void-border/40 rounded px-4 py-3"
+            class="bg-surface border border-border-subtle/40 rounded px-4 py-3"
           >
-            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-3 mb-1">
               {{ update.date }}
             </p>
-            <p class="font-display text-sm font-semibold text-white">
+            <p class="font-display text-sm font-semibold text-ink-1">
               {{ update.title }}
             </p>
-            <p v-if="update.summary" class="text-sm text-slate-400 mt-1 leading-relaxed">
+            <p v-if="update.summary" class="text-sm text-ink-3 mt-1 leading-relaxed">
               {{ update.summary }}
             </p>
           </div>
@@ -135,17 +135,17 @@ const checkedCount = computed(() =>
       <!-- 4. Eclipse Day Checklist -->
       <section class="mb-8 sm:mb-12">
         <div class="flex items-center justify-between mb-3">
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Eclipse day checklist</p>
-          <p class="font-mono text-[10px] text-slate-500">
+          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">Eclipse day checklist</p>
+          <p class="font-mono text-[10px] text-ink-3">
             {{ checkedCount }}/{{ CHECKLIST_ITEMS.length }}
           </p>
         </div>
-        <div class="bg-void-surface border border-void-border/40 rounded px-4 py-3">
+        <div class="bg-surface border border-border-subtle/40 rounded px-4 py-3">
           <label
             v-for="(item, idx) in CHECKLIST_ITEMS"
             :key="idx"
             class="flex items-start gap-3 py-2 cursor-pointer group"
-            :class="idx < CHECKLIST_ITEMS.length - 1 ? 'border-b border-void-border/20' : ''"
+            :class="idx < CHECKLIST_ITEMS.length - 1 ? 'border-b border-border-subtle/20' : ''"
           >
             <input
               type="checkbox"
@@ -155,7 +155,7 @@ const checkedCount = computed(() =>
             >
             <span
               class="text-sm leading-relaxed transition-colors"
-              :class="checkedItems[idx] ? 'text-slate-500 line-through' : 'text-slate-300'"
+              :class="checkedItems[idx] ? 'text-ink-3 line-through' : 'text-ink-2'"
             >
               {{ item }}
             </span>

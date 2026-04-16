@@ -116,12 +116,12 @@ useHead({
 <template>
   <div class="relative noise min-h-screen pt-[72px]">
     <div class="section-container max-w-3xl py-8 sm:py-12">
-      <p class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase mb-3">Eclipse 2026</p>
-      <h1 class="font-display text-3xl sm:text-4xl font-bold text-white mb-6">Viewing Spots</h1>
+      <p class="font-mono text-xs tracking-[0.3em] text-accent/60 uppercase mb-3">Eclipse 2026</p>
+      <h1 class="font-display text-3xl sm:text-4xl font-bold text-ink-1 mb-6">Viewing Spots</h1>
 
       <!-- Profile selector -->
       <div class="mb-6">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-3">Find your best spot</p>
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-3">Find your best spot</p>
         <div class="flex flex-wrap gap-2">
           <button
             v-for="profile in PROFILES"
@@ -130,9 +130,9 @@ useHead({
             :class="
               isPro
                 ? selectedProfile === profile.id
-                  ? 'border-corona bg-corona/10 text-corona'
-                  : 'border-void-border/40 text-slate-400 hover:border-slate-500 hover:text-slate-300'
-                : 'border-void-border/30 text-slate-500 opacity-50 cursor-not-allowed'
+                  ? 'border-accent bg-accent/10 text-accent'
+                  : 'border-border-subtle/40 text-ink-3 hover:border-slate-500 hover:text-ink-2'
+                : 'border-border-subtle/30 text-ink-3 opacity-50 cursor-not-allowed'
             "
             @click="selectProfile(profile.id)"
           >
@@ -140,7 +140,7 @@ useHead({
           </button>
           <button
             v-if="selectedProfile"
-            class="px-3 py-1.5 rounded border border-void-border/40 text-xs font-mono tracking-wider text-slate-500 hover:text-slate-300 hover:border-slate-500 transition-all"
+            class="px-3 py-1.5 rounded border border-border-subtle/40 text-xs font-mono tracking-wider text-ink-3 hover:text-ink-2 hover:border-slate-500 transition-all"
             @click="clearProfile"
           >
             Clear
@@ -155,12 +155,12 @@ useHead({
       >
         <p class="text-xs font-mono text-amber-400/80">
           Profile-based scoring is a Pro feature.
-          <NuxtLink to="/pro" class="text-corona hover:text-corona-bright transition-colors ml-1">
+          <NuxtLink to="/pro" class="text-accent hover:text-accent-strong transition-colors ml-1">
             Get Pro Access
           </NuxtLink>
         </p>
         <button
-          class="text-slate-500 hover:text-slate-300 transition-colors text-xs font-mono shrink-0"
+          class="text-ink-3 hover:text-ink-2 transition-colors text-xs font-mono shrink-0"
           @click="dismissProPrompt"
         >
           Dismiss
@@ -181,10 +181,10 @@ useHead({
           v-for="item in displayItems"
           :key="item.spot.id"
           :to="`/spots/${item.spot.slug}`"
-          class="group bg-void-surface border border-void-border/40 rounded overflow-hidden hover:border-corona/30 transition-all"
+          class="group bg-surface border border-border-subtle/40 rounded overflow-hidden hover:border-accent/30 transition-all"
           :class="{ 'opacity-50': item.filtered }"
         >
-          <div class="relative aspect-video bg-void-deep overflow-hidden">
+          <div class="relative aspect-video bg-surface-raised overflow-hidden">
             <img
               :src="getThumbUrl(item.spot)"
               :srcset="`${getThumbUrl(item.spot)} 600w, ${getHeroUrl(item.spot)} 1200w`"
@@ -196,7 +196,7 @@ useHead({
             <!-- Score badge (Pro + profile selected) -->
             <span
               v-if="selectedProfile && item.score >= 0"
-              class="absolute top-2 right-2 px-2 py-0.5 rounded text-xs font-mono font-bold text-white"
+              class="absolute top-2 right-2 px-2 py-0.5 rounded text-xs font-mono font-bold text-ink-1"
               :class="scoreColor(item.score)"
             >{{ item.score }}</span>
           </div>
@@ -220,10 +220,10 @@ useHead({
                 class="ml-auto"
               />
             </div>
-            <h3 class="font-display text-base font-semibold text-white mb-1 group-hover:text-corona-bright transition-colors">{{ item.spot.name }}</h3>
+            <h3 class="font-display text-base font-semibold text-ink-1 mb-1 group-hover:text-accent-strong transition-colors">{{ item.spot.name }}</h3>
             <div class="flex items-center justify-between">
-              <span class="font-mono text-[10px] text-slate-500 uppercase tracking-wider">{{ REGION_LABELS[item.spot.region] || item.spot.region }}</span>
-              <span class="font-display text-sm font-bold text-white">{{ formatDuration(item.spot.totality_duration_seconds) }}</span>
+              <span class="font-mono text-[10px] text-ink-3 uppercase tracking-wider">{{ REGION_LABELS[item.spot.region] || item.spot.region }}</span>
+              <span class="font-display text-sm font-bold text-ink-1">{{ formatDuration(item.spot.totality_duration_seconds) }}</span>
             </div>
           </div>
         </NuxtLink>

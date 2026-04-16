@@ -74,13 +74,13 @@ const features = [
 
         <!-- Header -->
         <div class="mb-12">
-          <span class="font-mono text-xs tracking-[0.3em] text-corona/60 uppercase">
+          <span class="font-mono text-xs tracking-[0.3em] text-accent/60 uppercase">
             {{ t('pro.unlock') }}
           </span>
-          <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-2 mb-4">
+          <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-ink-1 mt-2 mb-4">
             {{ t('pro.heading') }}
           </h1>
-          <p class="text-base sm:text-lg text-slate-400 max-w-xl">
+          <p class="text-base sm:text-lg text-ink-3 max-w-xl">
             {{ t('pro.subtitle') }}
           </p>
         </div>
@@ -90,10 +90,10 @@ const features = [
           <div
             v-for="feature in features"
             :key="feature.label"
-            class="flex items-start gap-3 bg-void-surface border border-void-border/40 rounded px-4 py-4"
+            class="flex items-start gap-3 bg-surface border border-border-subtle/40 rounded px-4 py-4"
           >
             <svg
-              class="w-5 h-5 text-corona shrink-0 mt-0.5"
+              class="w-5 h-5 text-accent shrink-0 mt-0.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -103,10 +103,10 @@ const features = [
               <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
             </svg>
             <div>
-              <p class="font-display font-semibold text-white text-sm sm:text-base">
+              <p class="font-display font-semibold text-ink-1 text-sm sm:text-base">
                 {{ feature.label }}
               </p>
-              <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+              <p class="text-xs sm:text-sm text-ink-3 mt-0.5">
                 {{ feature.description }}
               </p>
             </div>
@@ -114,12 +114,12 @@ const features = [
         </div>
 
         <!-- Price card + Checkout -->
-        <div class="bg-void-surface border border-corona/20 rounded-lg p-6 sm:p-8 text-center">
+        <div class="bg-surface border border-accent/20 rounded-lg p-6 sm:p-8 text-center">
           <div class="mb-6">
-            <div class="font-display text-5xl sm:text-6xl font-bold text-white">
+            <div class="font-display text-5xl sm:text-6xl font-bold text-ink-1">
               &euro;9.99
             </div>
-            <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mt-3">
+            <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mt-3">
               {{ t('pro.price') }}
             </p>
           </div>
@@ -132,11 +132,11 @@ const features = [
                 type="checkbox"
                 class="mt-1 shrink-0 accent-corona"
               >
-              <span class="text-xs text-slate-400 leading-relaxed">
+              <span class="text-xs text-ink-3 leading-relaxed">
                 {{ t('pro.withdrawal_waiver_pre') }}
-                <NuxtLink to="/terms" class="text-corona hover:text-corona-bright transition-colors">{{ t('pro.terms_link_text') }}</NuxtLink>
+                <NuxtLink to="/terms" class="text-accent hover:text-accent-strong transition-colors">{{ t('pro.terms_link_text') }}</NuxtLink>
                 {{ t('pro.withdrawal_waiver_and') }}
-                <NuxtLink to="/privacy" class="text-corona hover:text-corona-bright transition-colors">{{ t('pro.privacy_link_text') }}</NuxtLink>.
+                <NuxtLink to="/privacy" class="text-accent hover:text-accent-strong transition-colors">{{ t('pro.privacy_link_text') }}</NuxtLink>.
               </span>
             </label>
           </div>
@@ -162,7 +162,7 @@ const features = [
             <span v-else>{{ t('pro.get_access') }}</span>
           </button>
 
-          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-600 mt-4">
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-3 mt-4">
             {{ t('pro.stripe_note') }}
           </p>
         </div>

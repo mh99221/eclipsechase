@@ -142,18 +142,18 @@ const nearbyPoi = computed<string[]>(() => {
     <header class="section-container max-w-3xl pt-8 sm:pt-10">
       <!-- Breadcrumb / coord row -->
       <div class="flex items-center justify-between gap-4 mb-4">
-        <div class="flex items-center gap-2 font-mono text-[10px] tracking-[0.25em] text-slate-500 uppercase min-w-0">
+        <div class="flex items-center gap-2 font-mono text-[10px] tracking-[0.25em] text-ink-3 uppercase min-w-0">
           <span class="truncate">{{ REGION_LABELS[spot.region] || spot.region }}</span>
-          <span class="text-slate-700" aria-hidden="true">/</span>
-          <span class="text-corona/80 truncate">{{ t('spot.viewing_spot') }}</span>
+          <span class="text-ink-3/50" aria-hidden="true">/</span>
+          <span class="text-accent/80 truncate">{{ t('spot.viewing_spot') }}</span>
         </div>
-        <span class="font-mono text-[10px] tracking-[0.2em] text-slate-500 uppercase whitespace-nowrap">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-ink-3 uppercase whitespace-nowrap">
           {{ spot.lat.toFixed(4) }}°N · {{ Math.abs(spot.lng).toFixed(4) }}°W
         </span>
       </div>
 
       <!-- Title -->
-      <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight mb-3">
+      <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-ink-1 tracking-tight mb-3">
         {{ spot.name }}
       </h1>
 
@@ -168,7 +168,7 @@ const nearbyPoi = computed<string[]>(() => {
         </span>
         <span
           v-if="isTrail && (spot.trail_distance_km || spot.trail_time_minutes)"
-          class="font-mono text-xs tracking-wider text-slate-400"
+          class="font-mono text-xs tracking-wider text-ink-3"
         >
           <template v-if="spot.trail_distance_km">{{ spot.trail_distance_km }} km</template>
           <template v-if="spot.trail_distance_km && spot.trail_time_minutes"> · </template>
@@ -182,7 +182,7 @@ const nearbyPoi = computed<string[]>(() => {
       <!-- Hero image (contained, framed) -->
       <figure
         v-if="heroPhoto"
-        class="relative overflow-hidden rounded border border-void-border/60 spot-hero-frame mb-5"
+        class="relative overflow-hidden rounded border border-border-subtle/60 spot-hero-frame mb-5"
       >
         <img
           :src="`/images/spots/${heroPhoto.filename}`"
@@ -203,7 +203,7 @@ const nearbyPoi = computed<string[]>(() => {
       </figure>
 
       <!-- Description -->
-      <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+      <p class="text-base sm:text-lg text-ink-2 leading-relaxed">
         {{ spot.description }}
       </p>
     </header>
@@ -221,7 +221,7 @@ const nearbyPoi = computed<string[]>(() => {
         <div
           v-for="photo in otherPhotos.slice(0, 2)"
           :key="photo.filename"
-          class="relative overflow-hidden rounded border border-void-border/40"
+          class="relative overflow-hidden rounded border border-border-subtle/40"
         >
           <img
             :src="`/images/spots/${photo.filename}`"
@@ -244,27 +244,27 @@ const nearbyPoi = computed<string[]>(() => {
 
       <!-- Key stats -->
       <dl class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
-        <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <dt class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.totality') }}</dt>
-          <dd class="font-display text-2xl font-bold text-white ml-0">
+        <div class="bg-surface border border-border-subtle/40 px-4 py-4 rounded">
+          <dt class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-1.5">{{ t('spot.totality') }}</dt>
+          <dd class="font-display text-2xl font-bold text-ink-1 ml-0">
             {{ formatDuration(spot.totality_duration_seconds) }}
           </dd>
         </div>
-        <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <dt class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.sun_altitude') }}</dt>
-          <dd class="font-display text-2xl font-bold text-white ml-0">
+        <div class="bg-surface border border-border-subtle/40 px-4 py-4 rounded">
+          <dt class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-1.5">{{ t('spot.sun_altitude') }}</dt>
+          <dd class="font-display text-2xl font-bold text-ink-1 ml-0">
             {{ spot.sun_altitude }}°
           </dd>
         </div>
-        <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <dt class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.services') }}</dt>
-          <dd class="font-display text-lg font-semibold ml-0" :class="spot.has_services ? 'text-green-400' : 'text-slate-500'">
+        <div class="bg-surface border border-border-subtle/40 px-4 py-4 rounded">
+          <dt class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-1.5">{{ t('spot.services') }}</dt>
+          <dd class="font-display text-lg font-semibold ml-0" :class="spot.has_services ? 'text-green-400' : 'text-ink-3'">
             {{ spot.has_services ? t('spot.available') : t('spot.none_nearby') }}
           </dd>
         </div>
-        <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-          <dt class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5">{{ t('spot.cell_coverage') }}</dt>
-          <dd class="font-display text-lg font-semibold ml-0" :class="coverageBadge[spot.cell_coverage]?.color || 'text-slate-400'">
+        <div class="bg-surface border border-border-subtle/40 px-4 py-4 rounded">
+          <dt class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-1.5">{{ t('spot.cell_coverage') }}</dt>
+          <dd class="font-display text-lg font-semibold ml-0" :class="coverageBadge[spot.cell_coverage]?.color || 'text-ink-3'">
             {{ coverageBadge[spot.cell_coverage]?.label || spot.cell_coverage }}
           </dd>
         </div>
@@ -290,9 +290,9 @@ const nearbyPoi = computed<string[]>(() => {
       </div>
 
       <!-- Trail info (hiking spots only) -->
-      <div v-if="isTrail" class="mb-12 bg-void-surface border border-void-border/40 rounded-lg p-5 sm:p-6">
-        <h2 class="font-display text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <svg class="w-5 h-5 text-corona/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <div v-if="isTrail" class="mb-12 bg-surface border border-border-subtle/40 rounded-lg p-5 sm:p-6">
+        <h2 class="font-display text-lg font-semibold text-ink-1 mb-4 flex items-center gap-2">
+          <svg class="w-5 h-5 text-accent/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
           </svg>
           {{ t('spot.trail_info') }}
@@ -307,34 +307,34 @@ const nearbyPoi = computed<string[]>(() => {
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
           <div v-if="spot.spot_type">
-            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">{{ t('spot.type') }}</p>
-            <p class="text-sm font-mono text-slate-300">{{ SPOT_TYPE_LABELS[spot.spot_type] || spot.spot_type }}</p>
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-3 mb-1">{{ t('spot.type') }}</p>
+            <p class="text-sm font-mono text-ink-2">{{ SPOT_TYPE_LABELS[spot.spot_type] || spot.spot_type }}</p>
           </div>
           <div v-if="spot.trail_distance_km">
-            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">{{ t('spot.distance') }}</p>
-            <p class="text-sm font-mono text-slate-300">{{ spot.trail_distance_km }} km</p>
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-3 mb-1">{{ t('spot.distance') }}</p>
+            <p class="text-sm font-mono text-ink-2">{{ spot.trail_distance_km }} km</p>
           </div>
           <div v-if="spot.trail_time_minutes">
-            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">{{ t('spot.est_time') }}</p>
-            <p class="text-sm font-mono text-slate-300">{{ spot.trail_time_minutes < 60 ? `${spot.trail_time_minutes} min` : `${Math.floor(spot.trail_time_minutes / 60)}h ${spot.trail_time_minutes % 60}min` }}</p>
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-3 mb-1">{{ t('spot.est_time') }}</p>
+            <p class="text-sm font-mono text-ink-2">{{ spot.trail_time_minutes < 60 ? `${spot.trail_time_minutes} min` : `${Math.floor(spot.trail_time_minutes / 60)}h ${spot.trail_time_minutes % 60}min` }}</p>
           </div>
           <div v-if="spot.elevation_gain_m">
-            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-1">{{ t('spot.elevation_gain') }}</p>
-            <p class="text-sm font-mono text-slate-300">{{ spot.elevation_gain_m }} m</p>
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-3 mb-1">{{ t('spot.elevation_gain') }}</p>
+            <p class="text-sm font-mono text-ink-2">{{ spot.elevation_gain_m }} m</p>
           </div>
         </div>
 
         <!-- Trailhead coordinates -->
-        <div v-if="spot.trailhead_lat && spot.trailhead_lng" class="pt-3 border-t border-void-border/30">
-          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-400 mb-1.5">{{ t('spot.trailhead') }}</p>
-          <p class="font-mono text-sm text-slate-400">
+        <div v-if="spot.trailhead_lat && spot.trailhead_lng" class="pt-3 border-t border-border-subtle/30">
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-3 mb-1.5">{{ t('spot.trailhead') }}</p>
+          <p class="font-mono text-sm text-ink-3">
             {{ spot.trailhead_lat.toFixed(4) }}°N, {{ Math.abs(spot.trailhead_lng).toFixed(4) }}°W
           </p>
           <a
             :href="`https://www.google.com/maps?q=${spot.trailhead_lat},${spot.trailhead_lng}`"
             target="_blank"
             rel="noopener"
-            class="inline-flex items-center gap-1.5 mt-1.5 text-sm text-corona hover:text-corona-bright transition-colors"
+            class="inline-flex items-center gap-1.5 mt-1.5 text-sm text-accent hover:text-accent-strong transition-colors"
           >
             {{ t('spot.navigate_trailhead') }}
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -351,13 +351,13 @@ const nearbyPoi = computed<string[]>(() => {
 
       <!-- Horizon View -->
       <section v-if="horizonProfileData" class="mb-12">
-        <h2 class="font-display text-xl font-semibold text-white mb-3 flex items-center gap-2">
-          <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <h2 class="font-display text-xl font-semibold text-ink-1 mb-3 flex items-center gap-2">
+          <svg class="w-5 h-5 text-ink-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15l5.12-5.12A3 3 0 0110.24 9H13a2 2 0 012 2v.76a3 3 0 01-.88 2.12L9 19" />
           </svg>
           {{ t('horizon.section_title') }}
         </h2>
-        <p class="text-sm text-slate-400 mb-4">
+        <p class="text-sm text-ink-3 mb-4">
           {{ t('horizon.sun_position', { altitude: horizonCheck!.sun_altitude.toFixed(0), direction: compassDirection(horizonCheck!.sun_azimuth) }) }}
         </p>
 
@@ -388,29 +388,29 @@ const nearbyPoi = computed<string[]>(() => {
       <!-- Details -->
       <div class="space-y-8">
         <section v-if="spot.parking_info">
-          <h2 class="font-display text-xl font-semibold text-white mb-3 flex items-center gap-2">
-            <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <h2 class="font-display text-xl font-semibold text-ink-1 mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-ink-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h.01M12 7h.01M16 7h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             {{ t('spot.parking') }}
           </h2>
-          <p class="text-slate-300 text-base leading-relaxed">{{ spot.parking_info }}</p>
+          <p class="text-ink-2 text-base leading-relaxed">{{ spot.parking_info }}</p>
         </section>
 
         <section v-if="spot.terrain_notes">
-          <h2 class="font-display text-xl font-semibold text-white mb-3 flex items-center gap-2">
-            <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <h2 class="font-display text-xl font-semibold text-ink-1 mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-ink-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
             </svg>
             {{ t('spot.terrain') }}
           </h2>
-          <p class="text-slate-300 text-base leading-relaxed">{{ spot.terrain_notes }}</p>
+          <p class="text-ink-2 text-base leading-relaxed">{{ spot.terrain_notes }}</p>
         </section>
 
         <!-- Nearby points of interest -->
         <section v-if="nearbyPoi.length > 0">
-          <h2 class="font-display text-xl font-semibold text-white mb-3 flex items-center gap-2">
-            <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <h2 class="font-display text-xl font-semibold text-ink-1 mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-ink-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
             Nearby
@@ -419,9 +419,9 @@ const nearbyPoi = computed<string[]>(() => {
             <li
               v-for="(poi, i) in nearbyPoi"
               :key="i"
-              class="text-slate-300 text-sm flex items-start gap-2"
+              class="text-ink-2 text-sm flex items-start gap-2"
             >
-              <span class="text-corona/50 mt-1">&#x2022;</span>
+              <span class="text-accent/50 mt-1">&#x2022;</span>
               {{ poi }}
             </li>
           </ul>
@@ -429,8 +429,8 @@ const nearbyPoi = computed<string[]>(() => {
 
         <!-- Location + Map -->
         <section>
-          <h2 class="font-display text-xl font-semibold text-white mb-3 flex items-center gap-2">
-            <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <h2 class="font-display text-xl font-semibold text-ink-1 mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-ink-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -445,14 +445,14 @@ const nearbyPoi = computed<string[]>(() => {
             class="mb-4"
           />
 
-          <p class="font-mono text-sm text-slate-400">
+          <p class="font-mono text-sm text-ink-3">
             {{ spot.lat.toFixed(4) }}°N, {{ Math.abs(spot.lng).toFixed(4) }}°W
           </p>
           <a
             :href="`https://www.google.com/maps?q=${spot.lat},${spot.lng}`"
             target="_blank"
             rel="noopener"
-            class="inline-flex items-center gap-1.5 mt-2 text-sm text-corona hover:text-corona-bright transition-colors"
+            class="inline-flex items-center gap-1.5 mt-2 text-sm text-accent hover:text-accent-strong transition-colors"
           >
             {{ t('spot.open_gmaps') }}
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

@@ -33,9 +33,9 @@ const licenseLabels: Record<PhotoLicense, string> = {
     class="flex items-center gap-1.5 text-xs font-mono"
     :class="[
       variant === 'overlay'
-        ? 'absolute bottom-2 right-2 bg-void-deep/80 backdrop-blur-sm px-2.5 py-1.5 rounded'
+        ? 'absolute bottom-2 right-2 bg-surface-raised/80 backdrop-blur-sm px-2.5 py-1.5 rounded'
         : '',
-      'text-slate-500',
+      'text-ink-3',
     ]"
     :title="licenseLabels[license]"
   >
@@ -47,7 +47,7 @@ const licenseLabels: Record<PhotoLicense, string> = {
     <component
       :is="resolvedUrl ? 'a' : 'span'"
       v-bind="resolvedUrl ? { href: resolvedUrl, target: '_blank', rel: 'noopener noreferrer' } : {}"
-      class="hover:text-slate-300 transition-colors truncate"
+      class="hover:text-ink-2 transition-colors truncate"
     >
       {{ credit }}
     </component>

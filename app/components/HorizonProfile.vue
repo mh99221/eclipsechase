@@ -340,14 +340,14 @@ const ariaLabel = computed(() => {
     <!-- Tooltip -->
     <div
       v-if="tooltip && interactive"
-      class="absolute pointer-events-none bg-void-surface border border-void-border/60 rounded px-2 py-1 text-xs font-mono text-slate-300 whitespace-nowrap z-10"
+      class="absolute pointer-events-none bg-surface border border-border-subtle/60 rounded px-2 py-1 text-xs font-mono text-ink-2 whitespace-nowrap z-10"
       :style="{ left: `${tooltip.x}px`, top: `${tooltip.y}px`, transform: 'translate(-50%, -100%)' }"
     >
       {{ tooltip.text }}
     </div>
 
     <!-- Attribution -->
-    <p class="mt-2 text-[10px] font-mono text-slate-600 text-right">
+    <p class="mt-2 text-[10px] font-mono text-ink-3/70 text-right">
       {{ t('horizon.attribution') }}
     </p>
   </div>
