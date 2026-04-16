@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const { goBack } = useGoBack()
 useHead({
   title: 'Privacy Policy',
   meta: [
@@ -264,16 +263,6 @@ useHead({
       </div>
     </article>
 
-    <!-- Footer -->
-    <footer class="border-t border-void-border/30 py-8">
-      <div class="section-container flex items-center justify-between">
-        <button class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors" @click="goBack">
-          &larr; Back
-        </button>
-        <NuxtLink to="/terms" class="font-mono text-xs text-slate-500 hover:text-slate-300 transition-colors">
-          Terms
-        </NuxtLink>
-      </div>
-    </footer>
+    <AppFooter />
   </div>
 </template>

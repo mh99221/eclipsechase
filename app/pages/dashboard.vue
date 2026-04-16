@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { bestRegion } from '~/utils/weather'
 import { REGION_LABELS, cloudColor, cloudLevel } from '~/utils/eclipse'
-const { goBack } = useGoBack()
 
 definePageMeta({ middleware: ['pro-gate'] })
 
@@ -165,14 +164,7 @@ const checkedCount = computed(() =>
       </section>
     </div>
 
-    <!-- Footer -->
-    <footer class="border-t border-void-border/30 py-8">
-      <div class="section-container text-center">
-        <button class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors" @click="goBack">
-          &larr; Back
-        </button>
-      </div>
-    </footer>
+    <AppFooter />
   </div>
 </template>
 
