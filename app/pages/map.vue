@@ -795,7 +795,31 @@ const profileIcons: Record<ProfileId, string> = {
     <div class="absolute top-[72px] left-0 right-0 z-10 pointer-events-none">
       <!-- Profile selector dropdown — Pro + score-based marker ranking.
            Hidden on mobile (the bottom sheet provides the same control). -->
-      <div class="relative flex items-center justify-end px-4 sm:px-6 py-3">
+      <div class="relative flex items-center justify-end gap-2 px-4 sm:px-6 py-3">
+        <div class="pointer-events-auto hidden sm:flex items-center gap-2">
+          <button
+            :aria-pressed="showCameras"
+            :aria-label="showCameras ? t('map.cams_on') : t('map.cams_off')"
+            class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
+            :class="showCameras
+              ? 'ec-chip-blue bg-surface-raised/90'
+              : 'text-ink-3 bg-surface-raised/90 border-border-subtle/50 hover:text-ink-1'"
+            @click="showCameras = !showCameras"
+          >
+            {{ showCameras ? t('map.cams_on') : t('map.cams_off') }}
+          </button>
+          <button
+            :aria-pressed="showTraffic"
+            :aria-label="showTraffic ? t('map.roads_on') : t('map.roads_off')"
+            class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
+            :class="showTraffic
+              ? 'text-accent bg-surface-raised/90 border-accent/40'
+              : 'text-ink-3 bg-surface-raised/90 border-border-subtle/50 hover:text-ink-1'"
+            @click="showTraffic = !showTraffic"
+          >
+            {{ showTraffic ? t('map.roads_on') : t('map.roads_off') }}
+          </button>
+        </div>
         <div class="pointer-events-auto hidden sm:block" @click.stop>
           <button
             class="text-xs font-mono tracking-wider px-2.5 py-1.5 rounded transition-all border"
@@ -843,32 +867,7 @@ const profileIcons: Record<ProfileId, string> = {
       </div>
     </div>
 
-    <!-- ═══ Desktop: layer toggles + legend (hidden on mobile) ═══ -->
-    <div class="hidden sm:flex absolute bottom-[80px] right-20 z-10 gap-2">
-      <button
-        :aria-pressed="showCameras"
-        :aria-label="showCameras ? t('map.cams_on') : t('map.cams_off')"
-        class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
-        :class="showCameras
-          ? 'ec-chip-blue bg-surface-raised/90'
-          : 'text-ink-3 bg-surface-raised/90 border-border-subtle/50 hover:text-ink-1'"
-        @click="showCameras = !showCameras"
-      >
-        {{ showCameras ? t('map.cams_on') : t('map.cams_off') }}
-      </button>
-      <button
-        :aria-pressed="showTraffic"
-        :aria-label="showTraffic ? t('map.roads_on') : t('map.roads_off')"
-        class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
-        :class="showTraffic
-          ? 'text-accent bg-surface-raised/90 border-accent/40'
-          : 'text-ink-3 bg-surface-raised/90 border-border-subtle/50 hover:text-ink-1'"
-        @click="showTraffic = !showTraffic"
-      >
-        {{ showTraffic ? t('map.roads_on') : t('map.roads_off') }}
-      </button>
-    </div>
-
+    <!-- ═══ Desktop: legend (hidden on mobile) ═══ -->
     <div class="hidden sm:block absolute bottom-[84px] left-6 z-10 bg-surface-raised/90 backdrop-blur-sm border border-border-subtle/50 rounded px-4 py-3 max-h-[calc(100dvh-220px)] overflow-y-auto text-xs">
       <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-2.5">{{ t('map.cloud_cover') }}</p>
       <div class="flex flex-col gap-1.5">
