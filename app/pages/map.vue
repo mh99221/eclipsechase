@@ -793,8 +793,8 @@ const profileIcons: Record<ProfileId, string> = {
          UserMenu now live in the global nav and are no longer duplicated
          here. -->
     <div class="absolute top-[72px] left-0 right-0 z-10 pointer-events-none">
-      <!-- Profile selector dropdown — Pro + score-based marker ranking.
-           Hidden on mobile (the bottom sheet provides the same control). -->
+      <!-- Desktop top-right controls: layer toggles + Profile selector.
+           Hidden on mobile (the bottom sheet provides the same controls). -->
       <div class="relative flex items-center justify-end gap-2 px-4 sm:px-6 py-3">
         <div class="pointer-events-auto hidden sm:flex items-center gap-2">
           <button
