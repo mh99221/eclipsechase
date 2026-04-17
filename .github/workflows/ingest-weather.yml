@@ -1,0 +1,54 @@
+name: Ingest weather (15-min)
+
+# Vercel Hobby plan caps scheduled functions at daily, so we drive the
+# 15-minute weather-ingestion cadence from GitHub Actions instead.
+# The Vercel cron in vercel.json still runs once a day as a fallback.
+#
+# Required repo secrets:
+#   CRON_SECRET   — bearer token accepted by /api/tasks/ingest-weather
+#                    (set the same value in Vercel env vars)
+#   SITE_URL      — optional; defaults to https://eclipsechase.is
+
+on:
+  schedule:
+    # Every 15 minutes. GitHub Actions scheduling can drift by several
+    # minutes under load; that's fine — the 90-min staleness threshold in
+    # the weather endpoints absorbs it.
+    - cron: '*/15 * * * *'
+  workflow_dispatch: {}
+
+concurrency:
+  group: ingest-weather
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Hit ingest-weather endpoint
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://eclipsechase.is' }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::error::CRON_SECRET repo secret is not set"
+            exit 1
+          fi
+
+          response=$(curl -sS -L \
+            -w "\n%{http_code}" \
+            -X POST \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "$SITE_URL/api/tasks/ingest-weather")
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "HTTP $http_code"
+          echo "$body"
+
+          if [ "$http_code" -ge 400 ]; then
+            echo "::error::Ingest endpoint returned $http_code"
+            exit 1
+          fi

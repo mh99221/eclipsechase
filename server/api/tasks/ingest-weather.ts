@@ -2,6 +2,18 @@ import { serverSupabaseServiceRole } from '#supabase/server'
 import { fetchObservations, fetchForecasts, forecastsToRows, STATION_IDS } from '../../utils/vedur'
 
 export default defineEventHandler(async (event) => {
+  // Auth: require Bearer $CRON_SECRET if the env var is set.
+  // Vercel's scheduled cron and our GitHub Actions workflow both send this
+  // header. If CRON_SECRET is unset (dev/local), the endpoint is open —
+  // that's intentional so you can hit it manually during development.
+  const cronSecret = process.env.CRON_SECRET
+  if (cronSecret) {
+    const header = getHeader(event, 'authorization') || ''
+    if (header !== `Bearer ${cronSecret}`) {
+      throw createError({ statusCode: 401, message: 'Unauthorized' })
+    }
+  }
+
   const supabase = await serverSupabaseServiceRole(event)
 
   // Fetch observations and forecasts in parallel

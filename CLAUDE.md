@@ -143,7 +143,7 @@ eclipse-chaser/
 │   │   ├── cameras.get.ts           # Road camera feeds (Vegagerðin)
 │   │   ├── signup.post.ts           # Email signup handler
 │   │   ├── tasks/
-│   │   │   └── ingest-weather.ts    # Cron: 15-min weather data pull from vedur.is
+│   │   │   └── ingest-weather.ts    # Bearer-auth ingest (CRON_SECRET); GH Actions hits every 15 min, Vercel daily fallback
 │   │   └── __sitemap__/urls.ts      # Dynamic sitemap generation
 │   ├── utils/
 │   │   ├── vedur.ts                 # vedur.is XML API (55 stations, observations, forecasts)
