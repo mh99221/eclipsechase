@@ -35,7 +35,7 @@ describe('PhotoCredit', () => {
     })
     // cc0 has no fallback URL
     const link = wrapper.find('a')
-    const span = wrapper.find('span.hover\\:text-slate-300')
+    const span = wrapper.find('span.hover\\:text-ink-2')
     // Either link or span should be present depending on fallback
     expect(link.exists() || span.exists()).toBe(true)
   })

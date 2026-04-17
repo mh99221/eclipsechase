@@ -24,20 +24,20 @@ describe('OfflineBanner', () => {
   it('does not render when online and data is fresh', async () => {
     const wrapper = await mountSuspended(OfflineBanner)
     // No banner should show
-    expect(wrapper.find('.bg-amber-900\\/15').exists()).toBe(false)
-    expect(wrapper.find('.bg-blue-900\\/10').exists()).toBe(false)
+    expect(wrapper.find('.ec-banner-warn').exists()).toBe(false)
+    expect(wrapper.find('.ec-banner-info').exists()).toBe(false)
   })
 
   it('shows offline banner when offline', async () => {
     mockIsOffline.value = true
     const wrapper = await mountSuspended(OfflineBanner)
-    expect(wrapper.find('.bg-amber-900\\/15').exists()).toBe(true)
+    expect(wrapper.find('.ec-banner-warn').exists()).toBe(true)
   })
 
   it('shows stale data banner when weather is stale', async () => {
     mockIsWeatherStale.value = true
     const wrapper = await mountSuspended(OfflineBanner)
-    expect(wrapper.find('.bg-blue-900\\/10').exists()).toBe(true)
+    expect(wrapper.find('.ec-banner-info').exists()).toBe(true)
   })
 
   it('shows last weather update time when available', async () => {
@@ -60,6 +60,6 @@ describe('OfflineBanner', () => {
     const dismissBtn = wrapper.find('button[aria-label="Dismiss"]')
     await dismissBtn.trigger('click')
     // After dismissing, should be hidden
-    expect(wrapper.find('.bg-amber-900\\/15').exists()).toBe(false)
+    expect(wrapper.find('.ec-banner-warn').exists()).toBe(false)
   })
 })

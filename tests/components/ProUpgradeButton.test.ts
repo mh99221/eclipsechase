@@ -17,7 +17,7 @@ describe('ProUpgradeButton', () => {
     const button = wrapper.find('button')
     expect(button.exists()).toBe(true)
     expect(button.classes()).not.toContain('btn-corona')
-    expect(button.classes()).toContain('text-corona')
+    expect(button.classes()).toContain('text-accent')
   })
 
   it('uses custom label when provided', async () => {
