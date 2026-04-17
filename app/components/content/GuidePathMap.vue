@@ -1,8 +1,38 @@
 <script setup lang="ts">
 const config = useRuntimeConfig()
+const colorMode = useColorMode()
 const mapContainer = ref<HTMLElement | null>(null)
 const mapError = ref('')
 let map: any = null
+
+const mapboxStyleFor = (mode: string) =>
+  mode === 'light' ? 'mapbox://styles/mapbox/light-v11' : 'mapbox://styles/mapbox/dark-v11'
+
+/** Read a CSS var and emit a Mapbox-compatible rgb() color. */
+function readCssVar(name: string, fallback: string): string {
+  if (typeof window === 'undefined') return fallback
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+  if (!raw) return fallback
+  const parts = raw.split(/[\s,]+/).filter(Boolean)
+  if (parts.length < 3) return fallback
+  return `rgb(${parts.slice(0, 3).join(', ')})`
+}
+
+/** Re-add eclipse path with current theme colors. */
+function applyEclipsePath() {
+  if (!map) return
+  // Dynamically import to keep the initial bundle small
+  import('~/utils/mapLayers').then(({ addEclipsePathLayers }) => {
+    addEclipsePathLayers(map, {
+      borderWidth: 1,
+      centerlineOpacity: 0.8,
+      colors: {
+        accent:       readCssVar('--accent',        '#f59e0b'),
+        accentStrong: readCssVar('--accent-strong', '#fbbf24'),
+      },
+    })
+  })
+}
 
 watch(mapContainer, async (el) => {
   if (!el || map) return
@@ -15,14 +45,13 @@ watch(mapContainer, async (el) => {
 
   try {
     const mapboxgl = (await import('mapbox-gl')).default
-    const { addEclipsePathLayers } = await import('~/utils/mapLayers')
     const { REGION_LABELS } = await import('~/utils/eclipse')
 
     mapboxgl.accessToken = token
 
     map = new mapboxgl.Map({
       container: el,
-      style: 'mapbox://styles/mapbox/dark-v11',
+      style: mapboxStyleFor(colorMode.value),
       center: [-22.5, 65.0],
       zoom: 5.5,
       interactive: false,
@@ -32,7 +61,7 @@ watch(mapContainer, async (el) => {
     map.on('load', () => {
       if (!map) return
 
-      addEclipsePathLayers(map, { borderWidth: 1, centerlineOpacity: 0.8 })
+      applyEclipsePath()
 
       const REGION_MARKERS = [
         { key: 'westfjords', lng: -22.8, lat: 65.8 },
@@ -62,6 +91,16 @@ watch(mapContainer, async (el) => {
   }
 })
 
+// Swap Mapbox base style when the app theme toggles. The style reset
+// wipes sources/layers, so we re-add the eclipse path once the new
+// style finishes loading. Region-label markers are DOM elements, so
+// they survive style changes automatically.
+watch(() => colorMode.value, (mode) => {
+  if (!map) return
+  map.setStyle(mapboxStyleFor(mode))
+  map.once('style.load', () => applyEclipsePath())
+})
+
 onUnmounted(() => {
   map?.remove()
   map = null
@@ -88,13 +127,23 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+/* Region labels — halo via text-shadow in the opposite tone so the text
+   stays readable whether placed on a dark sea or a pale land tile. */
 :deep(.guide-map-label) {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
-  color: #94a3b8;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 2px rgba(0, 0, 0, 0.6);
+  color: #e2e8f0;
+  text-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.8),
+    0 0 2px rgba(0, 0, 0, 0.6);
   pointer-events: none;
   white-space: nowrap;
   letter-spacing: 0.04em;
+}
+html.light :deep(.guide-map-label) {
+  color: #1a1628;
+  text-shadow:
+    0 1px 4px rgba(250, 245, 235, 0.95),
+    0 0 2px rgba(250, 245, 235, 0.8);
 }
 </style>
