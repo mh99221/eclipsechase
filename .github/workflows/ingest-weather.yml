@@ -1,4 +1,4 @@
-name: Ingest weather (15-min)
+name: Ingest weather
 
 # Vercel Hobby plan caps scheduled functions at daily, so we drive the
 # 15-minute weather-ingestion cadence from GitHub Actions instead.
