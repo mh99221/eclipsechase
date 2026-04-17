@@ -6,6 +6,9 @@
 .cache
 dist
 
+# Script caches (raw API dumps, regenerable)
+scripts/output/discovery-cache.json
+
 # Node dependencies
 node_modules
 

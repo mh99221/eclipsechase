@@ -1,0 +1,124 @@
+{
+  "generated_at": "2026-04-17T08:04:27.417Z",
+  "source": "open-meteo-era5",
+  "eclipse_time_utc": "17:45",
+  "years_covered": [
+    2016,
+    2025
+  ],
+  "min_clear_threshold": 4,
+  "min_elevation_m": 10,
+  "grid_step_deg": {
+    "lat": 0.045,
+    "lng": 0.1
+  },
+  "candidate_count": 414,
+  "results": [
+    {
+      "lat": 63.99,
+      "lng": -22.6,
+      "elev": 50,
+      "region": "reykjanes",
+      "years": [
+        {
+          "year": 2016,
+          "cloud_cover": 94
+        },
+        {
+          "year": 2017,
+          "cloud_cover": 12
+        },
+        {
+          "year": 2018,
+          "cloud_cover": 86
+        },
+        {
+          "year": 2019,
+          "cloud_cover": 69
+        },
+        {
+          "year": 2020,
+          "cloud_cover": 100
+        },
+        {
+          "year": 2021,
+          "cloud_cover": 29
+        },
+        {
+          "year": 2022,
+          "cloud_cover": 93
+        },
+        {
+          "year": 2023,
+          "cloud_cover": 27
+        },
+        {
+          "year": 2024,
+          "cloud_cover": 100
+        },
+        {
+          "year": 2025,
+          "cloud_cover": 21
+        }
+      ],
+      "clear_years": 4,
+      "partly_years": 1,
+      "overcast_years": 5,
+      "total_years": 10,
+      "avg_cloud_cover": 63
+    },
+    {
+      "lat": 64.035,
+      "lng": -22.6,
+      "elev": 19,
+      "region": "reykjanes",
+      "years": [
+        {
+          "year": 2016,
+          "cloud_cover": 94
+        },
+        {
+          "year": 2017,
+          "cloud_cover": 12
+        },
+        {
+          "year": 2018,
+          "cloud_cover": 86
+        },
+        {
+          "year": 2019,
+          "cloud_cover": 69
+        },
+        {
+          "year": 2020,
+          "cloud_cover": 100
+        },
+        {
+          "year": 2021,
+          "cloud_cover": 29
+        },
+        {
+          "year": 2022,
+          "cloud_cover": 93
+        },
+        {
+          "year": 2023,
+          "cloud_cover": 27
+        },
+        {
+          "year": 2024,
+          "cloud_cover": 100
+        },
+        {
+          "year": 2025,
+          "cloud_cover": 21
+        }
+      ],
+      "clear_years": 4,
+      "partly_years": 1,
+      "overcast_years": 5,
+      "total_years": 10,
+      "avg_cloud_cover": 63
+    }
+  ]
+}
