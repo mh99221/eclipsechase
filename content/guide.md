@@ -36,43 +36,47 @@ The further northwest you go, the longer totality lasts — but the harder it is
 
 | Region | Totality Duration | Totality Starts (UTC) |
 |--------|------------------|-----------------------|
-| Westfjords | ~2m 10–18s | ~17:43 |
-| Snæfellsnes | ~1m 50–2m 10s | ~17:44 |
-| Borgarfjörður | ~1m 30–50s | ~17:45 |
-| Reykjanes | ~1m 10–40s | ~17:46 |
-| Reykjavík | ~0–30s (edge) | ~17:46 |
+| Westfjords | ~1m 30s – 2m 13s | ~17:43 |
+| Snæfellsnes | ~1m 25s – 2m 10s | ~17:44 |
+| Borgarfjörður (Akranes only) | ~1m 02s | ~17:45 |
+| Reykjanes | ~1m 35s – 1m 47s | ~17:46 |
+| Reykjavík | ~0–1m 06s (edge) | ~17:46 |
 
 ## Best Viewing Spots
 
 ### Westfjords
 
-The longest totality in Iceland — over 2 minutes. Remote, dramatic fjord landscapes, but requires a 4–5 hour drive from Reykjavík. Weather can be variable. Best for dedicated eclipse chasers willing to commit to the journey.
+The longest totality in Iceland — over 2 minutes at the outer cape. Remote, dramatic fjord landscapes, but requires a 4–5 hour drive from Reykjavík. Weather can be variable. Best for dedicated eclipse chasers willing to commit to the journey.
 
-Top spots: [Látrabjarg Cliffs](/spots/latrabjarg-cliffs) · [Patreksfjörður](/spots/patreksfjordur-beach) · [Bíldudalur](/spots/bildudalur-harbour) · [Breiðavík Beach](/spots/breidavik-beach) · [Dynjandi](/spots/dynjandi-arnarfjordur)
+Top spots: [Látrabjarg Cliffs](/spots/latrabjarg-cliffs) · [Breiðavík Beach](/spots/breidavik-beach) · [Patreksfjörður Beach](/spots/patreksfjordur-beach) · [Ísafjörður Harbour](/spots/isafjordur-harbour)
 
 ### Snæfellsnes
 
-Excellent balance of duration (~2 minutes), scenery, and accessibility. About 2 hours from Reykjavík. The iconic Snæfellsjökull glacier provides a stunning backdrop. Moderate road access.
+Excellent balance of duration (up to 2m 10s), scenery, and accessibility — about 2 hours from Reykjavík, and the densest cluster of viable spots in Iceland (15 curated locations). The iconic Snæfellsjökull glacier provides a stunning backdrop, and the western cape (Öndverðarnes, Djúpalónssandur, Saxhóll) sits directly on the centerline.
 
-Top spots: [Kirkjufell](/spots/kirkjufell-viewpoint) · [Arnarstapi](/spots/arnarstapi-coastal-platform) · [Djúpalónssandur](/spots/djupalonssandur-beach) · [Búðir Black Church](/spots/budir-black-church) · [Saxhóll Crater](/spots/saxholl-crater)
+Top spots: [Djúpalónssandur](/spots/djupalonssandur-beach) · [Öndverðarnes/Svörtuloft](/spots/ondverdarnes-svortuloft) · [Saxhóll Crater](/spots/saxholl-crater) · [Kirkjufell](/spots/kirkjufell-viewpoint) · [Arnarstapi](/spots/arnarstapi-coastal-platform) · [Búðir Black Church](/spots/budir-black-church) · [Lóndrangar/Malarrif](/spots/londrangar-malarrif) · [Hellnar](/spots/hellnar-viewpoint)
 
 ### Borgarfjörður
 
-Easy drive from Reykjavík (under 1.5 hours), but shorter totality around 1.5 minutes. Good services and infrastructure. A solid choice if you want convenience without giving up too much eclipse time.
-
-Top spots: [Reykholt](/spots/reykholt-snorrastofa) · [Borgarnes](/spots/borgarnes-foreshore) · [Glymur Waterfall](/spots/glymur-waterfall)
+The inland Borgarfjörður valley (Reykholt, Borgarnes, Glymur) sits **just outside** the path of totality. The only spot in this region that does fall inside the path is [Akranes Lighthouse](/spots/akranes-lighthouse) — a 45-minute coastal drive north of Reykjavík, with about a minute of totality.
 
 ### Reykjanes
 
-Closest to Keflavík Airport — only 45 minutes from Reykjavík. Shortest totality in the path (~1 minute), but the most accessible for last-minute decisions. Volcanic landscape adds character.
+Closest to Keflavík Airport — only 45 minutes from Reykjavík. Totality runs about **1m 35s to 1m 45s** across the peninsula, which is the sweet spot of "short drive + meaningful totality." Volcanic landscape adds character.
 
-Top spots: [Reykjanestá Lighthouse](/spots/reykjanesta-lighthouse) · [Garður Lighthouse](/spots/gardur-lighthouse) · [Sandgerði](/spots/sandgerdi-shore)
+Top spots: [Reykjanestá Lighthouse](/spots/reykjanesta-lighthouse) · [Garður Lighthouse](/spots/gardur-lighthouse) · [Sandgerði Shore](/spots/sandgerdi-shore) · [Keflavík (Ásbrú)](/spots/keflavik-asbru-viewpoint) · [Blue Lagoon](/spots/blue-lagoon)
 
 ### Reykjavík
 
-The capital only catches the **very edge** of the path. You'll see a deep partial eclipse, but totality will last seconds at best — or not at all depending on your exact position. Don't rely on seeing totality from Reykjavík.
+The capital only catches the **very edge** of the path. Totality lasts about a minute at the best-positioned points and drops to seconds — or zero — elsewhere in the city. Don't rely on Reykjavík if you can drive.
 
-[Grotta Lighthouse](/spots/grotta-lighthouse-reykjavik) is the best option if you're staying in the city.
+If you can't: [Grótta Lighthouse](/spots/grotta-lighthouse-reykjavik) on the west tip gives the longest totality in the city (~1m 06s). [Perlan Observation Deck](/spots/perlan-reykjavik) and [Sky Lagoon](/spots/sky-lagoon) offer shorter totality with the benefit of established infrastructure.
+
+### Sun geometry & horizon
+
+At totality the sun sits about **24° above the horizon** in the **west-southwest** (azimuth ~250°). That's low enough that mountains, cliffs, or buildings in that direction can block your view even from an otherwise well-positioned spot — so a flat or water-facing horizon to the west matters.
+
+Every spot page on this site carries a **horizon verdict** (*clear*, *marginal*, *risky*, or *blocked*) computed from a 91-point azimuth sweep of the ÍslandsDEM terrain model. Prefer **clear** verdicts, and use the live map to spot-check any alternative location you're considering.
 
 [Find your perfect spot →](/recommend)
 
