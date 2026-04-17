@@ -159,11 +159,13 @@
     @apply max-w-5xl mx-auto px-5 sm:px-8;
   }
 
-  /* Eclipse SVG logo — theme-aware fill/stroke for the three circles.
-     Use alongside the logo SVG markup so it adapts to dark + light themes. */
-  .ec-logo-bg   { fill: rgb(var(--bg)); }
-  .ec-logo-ring { stroke: rgb(var(--accent)); }
-  .ec-logo-dot  { fill: rgb(var(--accent)); }
+  /* Eclipse SVG logo — always keeps its "dark moon + bright corona"
+     look, even on the cream theme. Recolouring the moon to parchment
+     loses the eclipse motif (it reads as a cheese wheel), so the logo
+     stays on its original palette in both themes. */
+  .ec-logo-bg   { fill: #050810; }
+  .ec-logo-ring { stroke: #f59e0b; }
+  .ec-logo-dot  { fill: #f59e0b; }
 
   /* Status banners — theme-aware amber / red / blue surfaces used for
      warnings, errors, and info. Use one of these classes in place of the
