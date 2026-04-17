@@ -274,8 +274,12 @@ useHead({
                 class="text-[9px] font-mono tracking-[0.15em] uppercase px-1.5 py-0.5 rounded border"
                 :class="item.spot.spot_type === 'drive-up' ? 'ec-chip-green' : 'ec-chip-amber'"
               >{{ SPOT_TYPE_LABELS[item.spot.spot_type] || item.spot.spot_type }}</span>
+              <!-- Horizon verdict chip is only shown when it warrants attention
+                   (marginal / risky / blocked). Every curated spot is currently
+                   'clear', so the chip never appears on today's dataset — kept
+                   to auto-surface future edge-case curations without dead noise. -->
               <span
-                v-if="getHorizonVerdict(item.spot)"
+                v-if="getHorizonVerdict(item.spot) && getHorizonVerdict(item.spot) !== 'clear'"
                 class="text-[9px] font-mono tracking-[0.15em] uppercase px-1.5 py-0.5 rounded border"
                 :class="verdictColor[getHorizonVerdict(item.spot)!]"
               >{{ getHorizonVerdict(item.spot) }}</span>

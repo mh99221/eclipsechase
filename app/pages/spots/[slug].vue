@@ -278,8 +278,11 @@ const spotHistory = computed(() => historicalData.value?.spots?.[slug] ?? null)
         </div>
       </dl>
 
-      <!-- Horizon Check Badge -->
-      <div v-if="horizonCheck" class="mb-12">
+      <!-- Horizon verdict is surfaced inside the HorizonProfile chart below,
+           so we only show a standalone banner when the verdict is not 'clear'
+           — catches any future curation of edge-case spots that need a prominent
+           warning. All current spots are 'clear', so this renders nothing. -->
+      <div v-if="horizonCheck && horizonCheck.verdict !== 'clear'" class="mb-12">
         <HorizonBadge
           :verdict="horizonCheck.verdict"
           :clearance="horizonCheck.clearance_degrees"
