@@ -15,7 +15,7 @@ on:
     # minutes under load; that's fine — the 90-min staleness threshold in
     # the weather endpoints absorbs it.
     - cron: '*/15 * * * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
 
 concurrency:
   group: ingest-weather
