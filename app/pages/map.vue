@@ -8,7 +8,6 @@ import type { ProfileId } from '~/composables/useRecommendation'
 
 const { t } = useI18n()
 const route = useRoute()
-const { items: mapNavItems, isActive: isMapNavActive } = useNavItems()
 const focusSpot = (route.query.spot as string) || null
 const profileParam = (route.query.profile as string) || null
 
@@ -789,82 +788,52 @@ const profileIcons: Record<ProfileId, string> = {
       </template>
     </ClientOnly>
 
-    <!-- Top bar -->
-    <div class="absolute top-0 left-0 right-0 z-10 pointer-events-none">
-      <!-- Top fade for legibility — keeps the overlay text readable without a hard chrome bar -->
-      <div class="map-top-fade pointer-events-none" aria-hidden="true" />
-
-      <div class="relative flex items-center justify-between gap-5 px-4 sm:px-6 py-4">
-        <NuxtLink to="/" aria-label="EclipseChase — Home" class="pointer-events-auto flex items-center gap-2.5 group flex-shrink-0">
-          <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
-            <circle cx="64" cy="64" r="36" class="ec-logo-bg" />
-            <circle cx="64" cy="64" r="36" class="ec-logo-ring" stroke-width="3" opacity="0.8" />
-            <circle cx="96" cy="48" r="4" class="ec-logo-dot" />
-          </svg>
-          <span class="font-display font-semibold text-base tracking-wide text-ink-2 group-hover:text-ink-1 transition-colors">
-            ECLIPSECHASE
-          </span>
-        </NuxtLink>
-
-        <!-- Desktop masthead nav (md+) — same pattern as global app.vue masthead -->
-        <nav
-          class="pointer-events-auto hidden md:flex items-center gap-8"
-          aria-label="Primary"
-        >
-          <NuxtLink
-            v-for="item in mapNavItems"
-            :key="item.to"
-            :to="item.to"
-            class="map-masthead-link"
-            :class="{ active: isMapNavActive(item.to) }"
-            :aria-current="isMapNavActive(item.to) ? 'page' : undefined"
+    <!-- Map-specific page controls — floats below the global top nav
+         (nav is 72px tall, fixed at top=0 on z-50). Logo, masthead, and
+         UserMenu now live in the global nav and are no longer duplicated
+         here. -->
+    <div class="absolute top-[72px] left-0 right-0 z-10 pointer-events-none">
+      <!-- Profile selector dropdown — Pro + score-based marker ranking.
+           Hidden on mobile (the bottom sheet provides the same control). -->
+      <div class="relative flex items-center justify-end px-4 sm:px-6 py-3">
+        <div class="pointer-events-auto hidden sm:block" @click.stop>
+          <button
+            class="text-xs font-mono tracking-wider px-2.5 py-1.5 rounded transition-all border"
+            :class="activeProfileName
+              ? 'text-accent bg-surface-raised/90 border-accent/40'
+              : 'text-ink-3 bg-surface-raised/90 border-border-subtle/50 hover:text-ink-1'"
+            :aria-expanded="profileMenuOpen"
+            aria-haspopup="true"
+            aria-controls="profile-menu"
+            @click="profileMenuOpen = !profileMenuOpen"
           >
-            {{ item.label }}
-          </NuxtLink>
-        </nav>
-
-        <!-- User menu + Desktop profile selector (hidden on mobile — moved to bottom sheet) -->
-        <div class="pointer-events-auto hidden sm:flex items-center gap-3 flex-shrink-0">
-          <ClientOnly><UserMenu /></ClientOnly>
-          <div class="relative" @click.stop>
+            {{ activeProfileName || t('map.profile') }}
+            <span class="ml-1 text-[10px]" aria-hidden="true">{{ profileMenuOpen ? '▲' : '▼' }}</span>
+          </button>
+          <div
+            v-if="profileMenuOpen"
+            id="profile-menu"
+            role="menu"
+            class="absolute right-4 sm:right-6 top-full mt-1 bg-surface-raised/95 backdrop-blur-sm border border-border-subtle/60 rounded py-1 min-w-[140px] z-20"
+          >
             <button
-              class="text-xs font-mono tracking-wider px-2.5 py-1.5 rounded transition-all"
-              :class="activeProfileName
-                ? 'text-accent bg-surface-raised/80 border border-accent/40'
-                : 'text-ink-3 hover:text-ink-1'"
-              :aria-expanded="profileMenuOpen"
-              aria-haspopup="true"
-              aria-controls="profile-menu"
-              @click="profileMenuOpen = !profileMenuOpen"
+              v-for="profile in PROFILES"
+              :key="profile.id"
+              role="menuitem"
+              class="w-full text-left px-3 py-1.5 text-xs font-mono transition-colors"
+              :class="selectedProfile === profile.id ? 'text-accent' : 'text-ink-3 hover:text-ink-1'"
+              @click="selectedProfile = selectedProfile === profile.id ? null : profile.id as ProfileId; profileMenuOpen = false; if (selectedProfile) requestGps()"
             >
-              {{ activeProfileName || t('map.profile') }}
-              <span class="ml-1 text-[10px]" aria-hidden="true">{{ profileMenuOpen ? '▲' : '▼' }}</span>
+              {{ profile.name }}
             </button>
-            <div
-              v-if="profileMenuOpen"
-              id="profile-menu"
-              role="menu"
-              class="absolute right-0 top-full mt-1 bg-surface-raised/95 backdrop-blur-sm border border-border-subtle/60 rounded py-1 min-w-[140px] z-20"
+            <button
+              v-if="selectedProfile"
+              role="menuitem"
+              class="w-full text-left px-3 py-1.5 text-xs font-mono text-ink-3 hover:text-ink-2 border-t border-border-subtle/40 mt-1 pt-1.5 transition-colors"
+              @click="selectedProfile = null; profileMenuOpen = false"
             >
-              <button
-                v-for="profile in PROFILES"
-                :key="profile.id"
-                role="menuitem"
-                class="w-full text-left px-3 py-1.5 text-xs font-mono transition-colors"
-                :class="selectedProfile === profile.id ? 'text-accent' : 'text-ink-3 hover:text-ink-1'"
-                @click="selectedProfile = selectedProfile === profile.id ? null : profile.id as ProfileId; profileMenuOpen = false; if (selectedProfile) requestGps()"
-              >
-                {{ profile.name }}
-              </button>
-              <button
-                v-if="selectedProfile"
-                role="menuitem"
-                class="w-full text-left px-3 py-1.5 text-xs font-mono text-ink-3 hover:text-ink-2 border-t border-border-subtle/40 mt-1 pt-1.5 transition-colors"
-                @click="selectedProfile = null; profileMenuOpen = false"
-              >
-                {{ t('map.clear_profile') }}
-              </button>
-            </div>
+              {{ t('map.clear_profile') }}
+            </button>
           </div>
         </div>
       </div>
@@ -1214,43 +1183,4 @@ const profileIcons: Record<ProfileId, string> = {
   </div>
 </template>
 
-<style scoped>
-/* Soft top-fade above the overlay so logo + nav stay legible against bright map content */
-.map-top-fade {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 120px;
-  background: linear-gradient(to bottom, rgba(3, 5, 8, 0.7) 0%, rgba(3, 5, 8, 0.35) 50%, rgba(3, 5, 8, 0) 100%);
-}
-
-/* Masthead links (desktop overlay) — same look as the global app.vue masthead */
-.map-masthead-link {
-  position: relative;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 13px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #94a3b8;
-  padding: 4px 0;
-  transition: color 0.2s ease;
-}
-.map-masthead-link:hover {
-  color: #fbbf24;
-}
-.map-masthead-link.active {
-  color: #f59e0b;
-}
-.map-masthead-link.active::after {
-  content: "";
-  position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
-  background: #f59e0b;
-  border-radius: 50%;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.7);
-}
-</style>
 

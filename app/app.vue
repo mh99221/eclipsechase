@@ -5,14 +5,28 @@ useAnalyticsConsent()
 const route = useRoute()
 const { isPro } = useProStatus()
 const { items: navItems, isActive: isNavActive } = useNavItems()
-// Bottom padding only on mobile — desktop swaps bottom nav for a top-bar masthead
-const mobileNavPadding = computed(() => isPro.value && !['/', '/map'].includes(route.path))
 
-// Fixed top nav: hide on map (full-screen), show everywhere else
-const showTopNav = computed(() => route.path !== '/map')
-const isLanding = computed(() => route.path === '/')
+// normalise trailing-slash paths once so every check below is robust
+const normalizedPath = computed(() => {
+  const p = route.path
+  return p.length > 1 && p.endsWith('/') ? p.slice(0, -1) : p
+})
+const isLanding = computed(() => normalizedPath.value === '/')
+const isMap = computed(() => normalizedPath.value === '/map')
+
+// Bottom padding only on mobile — desktop swaps bottom nav for a top-bar masthead
+const mobileNavPadding = computed(() => isPro.value && !isLanding.value && !isMap.value)
+
 // Show the desktop masthead links for Pro users on non-landing pages
 const showMasthead = computed(() => isPro.value && !isLanding.value)
+
+// On /map the nav stretches edge-to-edge so logo and masthead line up with
+// the full-width map chrome instead of the narrow reading column.
+const navInnerClass = computed(() =>
+  isMap.value
+    ? 'w-full px-4 sm:px-6 flex items-center justify-between gap-5 py-5'
+    : 'section-container max-w-3xl flex items-center justify-between gap-5 py-5',
+)
 </script>
 
 <template>
@@ -20,9 +34,12 @@ const showMasthead = computed(() => isPro.value && !isLanding.value)
     <NuxtLoadingIndicator color="#f59e0b" :height="2" :throttle="200" />
     <NuxtRouteAnnouncer />
 
-    <!-- Fixed top nav — outer bar stretches edge-to-edge, inner content aligns to reading column -->
-    <div v-if="showTopNav" class="fixed top-0 left-0 right-0 z-50 bg-bg/[0.97] backdrop-blur-md">
-      <nav class="section-container max-w-3xl flex items-center justify-between gap-5 py-5">
+    <!-- Fixed top nav — outer bar stretches edge-to-edge. Inner container
+         aligns to the 768px reading column on content pages, and to the
+         full viewport width on /map so it spans the whole chrome above
+         the map viewport. -->
+    <div class="fixed top-0 left-0 right-0 z-50 bg-bg/[0.97] backdrop-blur-md">
+      <nav :class="navInnerClass">
         <NuxtLink to="/" aria-label="EclipseChase — Home" class="flex items-center gap-3 group">
           <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none" aria-hidden="true">
             <circle cx="64" cy="64" r="36" class="ec-logo-bg" />
