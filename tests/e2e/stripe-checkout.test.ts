@@ -12,8 +12,8 @@ test.describe('Stripe checkout / Pro page', () => {
   test('/pro page lists feature benefits', async ({ page, goto }) => {
     await goto('/pro', { waitUntil: 'hydration' })
 
-    // Feature cards (check for checkmark SVG icons)
-    const featureCards = page.locator('.bg-void-surface')
+    // Feature cards — pull off the semantic bg-surface utility
+    const featureCards = page.locator('.bg-surface')
     const count = await featureCards.count()
     expect(count).toBeGreaterThanOrEqual(4)
   })
