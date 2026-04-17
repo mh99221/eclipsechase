@@ -143,11 +143,15 @@ export function useRecommendation(
 
     const profile = PROFILES.find(p => p.id === profileId.value)
 
-    // No profile: return all spots sorted by duration
+    // No profile: preserve the caller's existing order (caller picks the
+    // sort — totality duration, historical clearness, etc.). With a
+    // profile, the score-based sort further down takes over.
     if (!profile) {
-      return [...spots.value]
-        .sort((a, b) => (b.totality_duration_seconds || 0) - (a.totality_duration_seconds || 0))
-        .map(spot => ({ spot, score: -1, filtered: false, factors: { ...emptyFactors }, distanceKm: 0, weatherStatus: null, cloudCover: null }))
+      return spots.value.map(spot => ({
+        spot, score: -1, filtered: false,
+        factors: { ...emptyFactors }, distanceKm: 0,
+        weatherStatus: null, cloudCover: null,
+      }))
     }
 
     const allSpots = spots.value

@@ -156,13 +156,21 @@ useHead({
       <p class="font-mono text-xs tracking-[0.3em] text-accent/60 uppercase mb-3">Eclipse 2026</p>
       <h1 class="font-display text-3xl sm:text-4xl font-bold text-ink-1 mb-6">Viewing Spots</h1>
 
-      <!-- Sort toggle -->
+      <!-- Sort toggle — disabled when a profile is active (profile score takes over) -->
       <div class="mb-6">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-3">Sort by</p>
-        <div class="inline-flex gap-0 rounded border border-border-subtle/50 overflow-hidden">
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-3">
+          {{ selectedProfile ? 'Sort: by profile score' : 'Sort by' }}
+        </p>
+        <div
+          class="inline-flex gap-0 rounded border border-border-subtle/50 overflow-hidden transition-opacity"
+          :class="{ 'opacity-40 pointer-events-none': selectedProfile }"
+          :aria-disabled="selectedProfile ? 'true' : undefined"
+          :title="selectedProfile ? 'Clear the profile to change sort' : undefined"
+        >
           <button
             class="px-3 py-1.5 text-xs font-mono tracking-wider transition-all"
             :class="sortKey === 'duration' ? 'bg-accent/10 text-accent' : 'text-ink-3 hover:text-ink-2'"
+            :disabled="!!selectedProfile"
             @click="sortKey = 'duration'"
           >
             Totality duration
@@ -170,6 +178,7 @@ useHead({
           <button
             class="px-3 py-1.5 text-xs font-mono tracking-wider transition-all border-l border-border-subtle/50"
             :class="sortKey === 'historical' ? 'bg-accent/10 text-accent' : 'text-ink-3 hover:text-ink-2'"
+            :disabled="!!selectedProfile"
             @click="sortKey = 'historical'"
           >
             Historical clearness
