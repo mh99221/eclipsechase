@@ -637,7 +637,7 @@ onUnmounted(() => {
 })
 
 // ─── Mobile Peek Sheet ───
-const sheetSnapPoints = [130, 400] // peek (controls visible above gesture bar), full (legend visible)
+const sheetSnapPoints = [110, 400] // peek (just fits the 3 control buttons), full (legend visible)
 const sheetHeight = ref(sheetSnapPoints[0])
 const sheetDragging = ref(false)
 const sheetStartY = ref(0)
@@ -946,7 +946,7 @@ const profileIcons: Record<ProfileId, string> = {
           tabindex="0"
           :aria-label="sheetHeight > sheetSnapPoints[0] + 20 ? 'Collapse map legend' : 'Expand map legend'"
           :aria-expanded="sheetHeight > sheetSnapPoints[0] + 20"
-          class="flex flex-col items-center pt-2 pb-1 cursor-grab active:cursor-grabbing shrink-0"
+          class="flex flex-col items-center pt-2.5 pb-2 cursor-grab active:cursor-grabbing shrink-0"
           @touchstart="sheetTouchStart"
           @touchmove.prevent="sheetTouchMove"
           @click="sheetToggle"
@@ -956,8 +956,10 @@ const profileIcons: Record<ProfileId, string> = {
           <div class="w-10 h-1 rounded-full bg-slate-600/60" />
         </div>
 
-        <!-- Always-visible controls row: Profile (left) + Cams/Roads (right) -->
-        <div class="flex items-center gap-2 px-4 pb-6 shrink-0">
+        <!-- Always-visible controls row: Profile (left) + Cams/Roads (right).
+             pt-4 gives visual separation from the drag handle; the peek snap
+             (110 px) is sized to just fit this row + the handle. -->
+        <div class="flex items-center gap-2 px-4 pt-4 pb-3 shrink-0">
           <!-- Profile cycle button -->
           <button
             :aria-label="activeProfileName ? `Profile: ${activeProfileName}` : t('map.profile')"

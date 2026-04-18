@@ -13,7 +13,7 @@ const props = withDefaults(defineProps<{
   lng?: number
 }>(), {
   width: 700,
-  height: 280,
+  height: 360,
   interactive: true,
 })
 
@@ -23,8 +23,11 @@ const { t } = useI18n()
 const uid = useId()
 const gradientId = `horizon-sky-${uid}`
 
-// Layout constants
-const PADDING = { top: 20, bottom: 30, left: 45, right: 20 }
+// Layout constants — paddings sized for the 14-16px in-SVG text below.
+// Left padding fits "30°" altitude labels; bottom fits a two-line azimuth
+// label (degrees on top, "Sun" accent below). Top padding leaves room
+// above the verdict pill + sun label so nothing collides at mobile sizes.
+const PADDING = { top: 28, bottom: 48, left: 58, right: 24 }
 const MAX_ALT = 35 // degrees shown on chart
 
 const plotWidth = computed(() => props.width - PADDING.left - PADDING.right)
@@ -239,10 +242,11 @@ const ariaLabel = computed(() => {
       <text
         v-for="g in gridLines"
         :key="`label-${g.label}`"
-        :x="PADDING.left - 5"
-        :y="g.y + 4"
+        :x="PADDING.left - 8"
+        :y="g.y + 5"
         class="altitude-label"
-        font-size="10"
+        font-size="14"
+        font-weight="500"
         text-anchor="end"
         font-family="'IBM Plex Mono', monospace"
       >{{ g.label }}</text>
@@ -259,15 +263,16 @@ const ariaLabel = computed(() => {
       />
       <!-- Time labels along trajectory -->
       <template v-for="tl in trajectoryTimeLabels" :key="tl.label">
-        <circle :cx="tl.x" :cy="tl.y" r="2" fill="#fbbf24" opacity="0.4" />
+        <circle :cx="tl.x" :cy="tl.y" r="3" fill="#fbbf24" opacity="0.45" />
         <text
           :x="tl.x"
-          :y="tl.y - 8"
+          :y="tl.y - 11"
           fill="#fbbf24"
-          font-size="8"
+          font-size="12"
+          font-weight="500"
           text-anchor="middle"
           font-family="'IBM Plex Mono', monospace"
-          opacity="0.5"
+          opacity="0.7"
         >{{ tl.label }}</text>
       </template>
 
@@ -289,51 +294,66 @@ const ariaLabel = computed(() => {
       <!-- Blocked zone overlay -->
       <path :d="blockedPath" fill="#ef444430" />
 
-      <!-- Sun marker -->
-      <circle :cx="sunX" :cy="sunY" r="12" fill="#f59e0b" opacity="0.15" />
-      <circle :cx="sunX" :cy="sunY" r="6" fill="#f59e0b" opacity="0.9" />
+      <!-- Sun marker — halo, core, and a corona-pulse ring for emphasis -->
+      <circle :cx="sunX" :cy="sunY" r="18" fill="#f59e0b" opacity="0.12" />
+      <circle :cx="sunX" :cy="sunY" r="11" fill="#f59e0b" opacity="0.25" />
+      <circle :cx="sunX" :cy="sunY" r="7" fill="#f59e0b" opacity="0.95" />
 
       <!-- Sun label -->
       <text
         :x="sunX"
-        :y="sunY - 18"
-        fill="#f59e0b"
-        font-size="10"
+        :y="sunY - 26"
+        fill="#fbbf24"
+        font-size="14"
+        font-weight="600"
         text-anchor="middle"
         font-family="'IBM Plex Mono', monospace"
       >{{ data.sun_altitude.toFixed(0) }}° Sun</text>
 
-      <!-- Compass labels -->
-      <text
-        v-for="c in compassLabels"
-        :key="c.azimuth"
-        :x="azimuthToX(c.azimuth)"
-        :y="height - 8"
-        :class="c.highlight ? 'compass-label-active' : 'compass-label'"
-        font-size="10"
-        text-anchor="middle"
-        font-family="'IBM Plex Mono', monospace"
-      >{{ c.label }}</text>
+      <!-- Compass labels — degree on top line, optional "Sun" accent below -->
+      <g v-for="c in compassLabels" :key="c.azimuth">
+        <text
+          :x="azimuthToX(c.azimuth)"
+          :y="height - 24"
+          :class="c.highlight ? 'compass-label-active' : 'compass-label'"
+          font-size="14"
+          :font-weight="c.highlight ? '700' : '500'"
+          text-anchor="middle"
+          font-family="'IBM Plex Mono', monospace"
+        >{{ c.label.replace(' Sun', '') }}</text>
+        <text
+          v-if="c.highlight"
+          :x="azimuthToX(c.azimuth)"
+          :y="height - 8"
+          class="compass-label-active"
+          font-size="11"
+          font-weight="600"
+          letter-spacing="2"
+          text-anchor="middle"
+          font-family="'IBM Plex Mono', monospace"
+        >SUN</text>
+      </g>
 
       <!-- Verdict badge -->
       <rect
-        :x="width - 110"
-        y="8"
-        width="100"
-        height="22"
-        rx="11"
-        :fill="`${verdictColors[data.verdict]}20`"
+        :x="width - 150"
+        y="10"
+        width="136"
+        height="32"
+        rx="16"
+        :fill="`${verdictColors[data.verdict]}22`"
         :stroke="verdictColors[data.verdict]"
-        stroke-width="1"
+        stroke-width="1.25"
       />
       <text
-        :x="width - 60"
-        y="23"
+        :x="width - 82"
+        y="31"
         :fill="verdictColors[data.verdict]"
-        font-size="11"
+        font-size="15"
+        font-weight="700"
+        letter-spacing="1.5"
         text-anchor="middle"
         font-family="'IBM Plex Mono', monospace"
-        font-weight="bold"
       >{{ data.verdict.toUpperCase() }}</text>
     </svg>
 

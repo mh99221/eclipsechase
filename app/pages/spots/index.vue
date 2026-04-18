@@ -260,6 +260,16 @@ useHead({
               loading="lazy"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
+            <!-- Weather overlay badge (top-left): prominent icon + cloud %
+                 when a profile is selected and data is available. Paired
+                 visually with the score badge in the opposite corner. -->
+            <div
+              v-if="selectedProfile && item.cloudCover != null"
+              class="absolute top-2 left-2 flex items-center gap-1.5 pl-1.5 pr-2 py-1 rounded bg-void/70 backdrop-blur-sm border border-border-subtle/50"
+            >
+              <WeatherIcon :cloud-cover="item.cloudCover" :size="28" class="shrink-0" />
+              <span class="font-mono text-xs font-bold text-ink-1 tabular-nums">{{ item.cloudCover }}%</span>
+            </div>
             <!-- Score badge (Pro + profile selected) -->
             <span
               v-if="selectedProfile && item.score >= 0"
@@ -283,13 +293,6 @@ useHead({
                 class="text-[9px] font-mono tracking-[0.15em] uppercase px-1.5 py-0.5 rounded border"
                 :class="verdictColor[getHorizonVerdict(item.spot)!]"
               >{{ getHorizonVerdict(item.spot) }}</span>
-              <!-- Weather icon when profile selected and data available -->
-              <WeatherIcon
-                v-if="selectedProfile && item.cloudCover != null"
-                :cloud-cover="item.cloudCover"
-                :size="16"
-                class="ml-auto"
-              />
             </div>
             <h3 class="font-display text-base font-semibold text-ink-1 mb-1 group-hover:text-accent-strong transition-colors">{{ item.spot.name }}</h3>
             <div class="flex items-center justify-between">
