@@ -1,7 +1,9 @@
 # Sun-Arc Map Overlay — Design Spec
 
 **Date:** 2026-04-19
-**Status:** Design — awaiting approval to move to implementation plan
+**Status:** Approved — plan in progress
+
+**2026-04-19 revision:** Scope narrowed from three call sites to two. `SpotLocationMap.vue` already renders a sun-direction wedge + symbol label (lines 192–242); adding the arc there would duplicate. The spot detail page keeps its existing wedge; the new `SunArc` is only used on `/map` (focused spot popup + horizon-check point). See "Scope (revised)" section below.
 
 ## Problem
 
