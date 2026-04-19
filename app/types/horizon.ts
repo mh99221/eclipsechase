@@ -37,4 +37,5 @@ export interface HorizonCheckResponse extends HorizonCheck {
   peakfinder_url: string
   totality_duration_seconds: number | null
   in_totality_path: boolean
+  totality_start?: string  // ISO 8601. Absent when in_totality_path === false or grid miss.
 }
