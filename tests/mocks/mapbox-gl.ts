@@ -26,6 +26,20 @@ export class Map {
   resize() {}
   loaded() { return true }
   fire(event: string) { this._listeners[event]?.forEach(fn => fn()); return this }
+  // Simple deterministic projection for tests: 1° = 100 pixels around
+  // the current center. Good enough to verify arc geometry.
+  project(lnglat: [number, number] | { lng: number; lat: number }) {
+    const c = this.getCenter()
+    const lng = Array.isArray(lnglat) ? lnglat[0] : lnglat.lng
+    const lat = Array.isArray(lnglat) ? lnglat[1] : lnglat.lat
+    return { x: (lng - c.lng) * 100, y: -(lat - c.lat) * 100 }
+  }
+  unproject(point: [number, number] | { x: number; y: number }) {
+    const c = this.getCenter()
+    const x = Array.isArray(point) ? point[0] : point.x
+    const y = Array.isArray(point) ? point[1] : point.y
+    return { lng: c.lng + x / 100, lat: c.lat - y / 100 }
+  }
 }
 
 export class NavigationControl { constructor(_options?: any) {} }
