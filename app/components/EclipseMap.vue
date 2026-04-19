@@ -409,7 +409,9 @@ onMounted(() => {
     attributionControl: false,
   })
 
-  map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right')
+  // Attribution is required by Mapbox's TOS; the compact "i" button
+  // is the least-obtrusive compliant form. Pinch / scroll-wheel zoom
+  // covers the standalone +/- buttons, so no NavigationControl here.
   map.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right')
 
   map.on('load', () => {
