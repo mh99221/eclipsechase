@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
 
   const { data, error } = await supabase
     .from('viewing_spots')
-    .select('id, name, slug, lat, lng, region, has_services, cell_coverage, totality_duration_seconds, spot_type, trail_distance_km, trail_time_minutes, difficulty, elevation_gain_m, trailhead_lat, trailhead_lng, horizon_check, warnings')
+    .select('id, name, slug, lat, lng, region, has_services, cell_coverage, totality_duration_seconds, spot_type, trail_distance_km, trail_time_minutes, difficulty, elevation_gain_m, trailhead_lat, trailhead_lng, horizon_check, warnings, sun_azimuth, sun_altitude, totality_start')
     .order('totality_duration_seconds', { ascending: false })
 
   if (error) {
