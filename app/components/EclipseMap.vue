@@ -135,6 +135,7 @@ function updateMarkers() {
   const minZooms = computeMinZooms(props.stations.map(s => ({ lat: s.lat, lng: s.lng })))
   const seen = new Set<string>()
 
+  const currentZoom = map.getZoom()
   for (let i = 0; i < props.stations.length; i++) {
     const station = props.stations[i]!
     seen.add(station.station_id)
@@ -145,24 +146,31 @@ function updateMarkers() {
       el.className = 'station-marker'
       el.setAttribute('role', 'button')
       el.setAttribute('tabindex', '0')
+      // Render + popup html BEFORE addTo(map) so the element has
+      // proper size when Mapbox computes its initial wrapper
+      // transform — otherwise new markers can sit invisibly until
+      // the next map move/zoom event fires.
+      renderStationInto(el, station)
       const popup = new mapboxgl.Popup({
         offset: 12,
         closeButton: false,
         maxWidth: 'min(220px, 85vw)',
         className: 'eclipse-popup',
-      })
+      }).setHTML(stationPopupHtml(station))
       const marker = new mapboxgl.Marker({ element: el })
         .setLngLat([station.lng, station.lat])
         .setPopup(popup)
         .addTo(map)
       cached = { marker, el, popup, minZoom: minZooms[i]! }
       stationMarkers.set(station.station_id, cached)
+      // Inline visibility so the new marker obeys its bucket
+      // immediately — no reliance on the trailing batch pass.
+      setMarkerVisibility([cached], currentZoom)
     } else {
       cached.minZoom = minZooms[i]!
+      renderStationInto(cached.el, station)
+      cached.popup.setHTML(stationPopupHtml(station))
     }
-
-    renderStationInto(cached.el, station)
-    cached.popup.setHTML(stationPopupHtml(station))
   }
 
   for (const [id, cached] of stationMarkers) {
@@ -315,6 +323,7 @@ function updateSpotMarkers() {
     for (const r of props.rankedSpots) rankMap.set(r.slug, r)
   }
   const seen = new Set<string>()
+  const currentZoom = map.getZoom()
 
   for (let i = 0; i < props.spots.length; i++) {
     const spot = props.spots[i]!
@@ -322,30 +331,39 @@ function updateSpotMarkers() {
     const isTop3 = rankInfo && !rankInfo.filtered && rankInfo.rank <= 3
     seen.add(spot.slug)
 
+    const minZoom = isTop3 ? 5 : minZooms[i]!
     let cached = spotMarkers.get(spot.slug)
     if (!cached) {
       const el = document.createElement('div')
       el.className = 'spot-marker'
       el.setAttribute('role', 'button')
       el.setAttribute('tabindex', '0')
+      // Render + popup html BEFORE addTo(map) so Mapbox sees a
+      // properly-sized marker when computing its initial wrapper
+      // transform — otherwise new markers can sit invisibly until
+      // the next map move/zoom event fires.
+      renderSpotInto(el, spot, rankInfo, colors)
       const popup = new mapboxgl.Popup({
         offset: 14,
         closeButton: false,
         maxWidth: 'min(260px, 85vw)',
         className: 'eclipse-popup',
-      })
+      }).setHTML(spotPopupHtml(spot, rankInfo, colors))
       wireSpotPopupNavigation(popup)
       const marker = new mapboxgl.Marker({ element: el })
         .setLngLat([spot.lng, spot.lat])
         .setPopup(popup)
         .addTo(map)
-      cached = { marker, el, popup, minZoom: minZooms[i]! }
+      cached = { marker, el, popup, minZoom }
       spotMarkers.set(spot.slug, cached)
+      // Inline visibility so the new marker obeys its bucket
+      // immediately — no reliance on the trailing batch pass.
+      setMarkerVisibility([cached], currentZoom)
+    } else {
+      cached.minZoom = minZoom
+      renderSpotInto(cached.el, spot, rankInfo, colors)
+      cached.popup.setHTML(spotPopupHtml(spot, rankInfo, colors))
     }
-    cached.minZoom = isTop3 ? 5 : minZooms[i]!
-
-    renderSpotInto(cached.el, spot, rankInfo, colors)
-    cached.popup.setHTML(spotPopupHtml(spot, rankInfo, colors))
   }
 
   for (const [slug, cached] of spotMarkers) {
