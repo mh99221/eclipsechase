@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
 
   if (!slug) {
-    throw createError({ statusCode: 400, message: 'Slug is required' })
+    throw createError({ statusCode: 400, statusMessage: 'Slug is required' })
   }
 
   const supabase = await serverSupabaseServiceRole(event)
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     .single()
 
   if (error || !data) {
-    throw createError({ statusCode: 404, message: 'Spot not found' })
+    throw createError({ statusCode: 404, statusMessage: 'Spot not found' })
   }
 
   return { spot: data }

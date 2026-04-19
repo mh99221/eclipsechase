@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   const observations = await fetchObservations(STATION_IDS)
 
   if (observations.length === 0) {
-    throw createError({ statusCode: 502, message: 'No data from vedur.is' })
+    throw createError({ statusCode: 502, statusMessage: 'No data from vedur.is' })
   }
 
   // Upsert into Supabase

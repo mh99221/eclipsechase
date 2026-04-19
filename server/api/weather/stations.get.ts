@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     .order('region')
 
   if (error) {
-    throw createError({ statusCode: 500, message: 'Failed to fetch stations' })
+    throw createError({ statusCode: 500, statusMessage: 'Failed to fetch stations' })
   }
 
   return { stations: data }

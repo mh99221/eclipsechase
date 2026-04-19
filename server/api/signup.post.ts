@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   if (!body?.email || typeof body.email !== 'string') {
     throw createError({
       statusCode: 400,
-      message: 'Email is required',
+      statusMessage: 'Email is required',
     })
   }
 
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw createError({
       statusCode: 400,
-      message: 'Invalid email address',
+      statusMessage: 'Invalid email address',
     })
   }
 
@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
     console.error('[signup] Supabase error:', JSON.stringify(error, null, 2))
     throw createError({
       statusCode: 500,
-      message: 'Failed to save signup. Please try again.',
+      statusMessage: 'Failed to save signup. Please try again.',
     })
   }
 

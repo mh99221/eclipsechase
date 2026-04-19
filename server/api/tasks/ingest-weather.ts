@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   if (cronSecret) {
     const header = getHeader(event, 'authorization') || ''
     if (header !== `Bearer ${cronSecret}`) {
-      throw createError({ statusCode: 401, message: 'Unauthorized' })
+      throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     }
   }
 

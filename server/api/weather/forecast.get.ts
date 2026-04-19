@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   const forecasts = await fetchForecasts(STATION_IDS)
 
   if (forecasts.length === 0) {
-    throw createError({ statusCode: 502, message: 'No forecast data from vedur.is' })
+    throw createError({ statusCode: 502, statusMessage: 'No forecast data from vedur.is' })
   }
 
   // Upsert into Supabase (batch)

@@ -19,7 +19,7 @@ async function handleSubmit() {
     email.value = ''
   } catch (err: any) {
     status.value = 'error'
-    errorMessage.value = err?.data?.message || t('signup.error')
+    errorMessage.value = err?.data?.statusMessage || t('signup.error')
   }
 }
 </script>

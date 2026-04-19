@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     .order('totality_duration_seconds', { ascending: false })
 
   if (error) {
-    throw createError({ statusCode: 500, message: 'Failed to fetch spots' })
+    throw createError({ statusCode: 500, statusMessage: 'Failed to fetch spots' })
   }
 
   return { spots: data }

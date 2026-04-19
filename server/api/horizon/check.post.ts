@@ -109,13 +109,13 @@ export default defineEventHandler(async (event) => {
   const rawIp = getHeader(event, 'x-forwarded-for') || getHeader(event, 'x-real-ip') || 'unknown'
   const ip = rawIp.split(',')[0]!.trim()
   if (!checkRateLimit(`horizon:${ip}`, 10, 60_000)) {
-    throw createError({ statusCode: 429, message: 'Too many requests, try again in a minute' })
+    throw createError({ statusCode: 429, statusMessage: 'Too many requests, try again in a minute' })
   }
 
   // Parse body
   const body = await readBody<{ lat: number; lng: number }>(event)
   if (body?.lat == null || body?.lng == null || typeof body.lat !== 'number' || typeof body.lng !== 'number') {
-    throw createError({ statusCode: 400, message: 'lat and lng are required numbers' })
+    throw createError({ statusCode: 400, statusMessage: 'lat and lng are required numbers' })
   }
 
   // Load pre-computed grid
@@ -124,7 +124,7 @@ export default defineEventHandler(async (event) => {
     grid = await loadGrid()
   } catch (e) {
     console.error('[Horizon] Failed to load grid:', e)
-    throw createError({ statusCode: 503, message: 'Horizon data not available' })
+    throw createError({ statusCode: 503, statusMessage: 'Horizon data not available' })
   }
 
   // Find nearest grid point
@@ -136,7 +136,7 @@ export default defineEventHandler(async (event) => {
   }
 
   if (!nearest || Math.sqrt(minDist) > MAX_SNAP_DIST_DEG) {
-    throw createError({ statusCode: 422, message: 'Location outside coverage area' })
+    throw createError({ statusCode: 422, statusMessage: 'Location outside coverage area' })
   }
 
   // Expand compact format to full HorizonCheckResponse
