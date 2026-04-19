@@ -208,18 +208,21 @@ function renderSpotInto(el: HTMLElement, spot: Spot, rankInfo: RankInfo | undefi
   el.setAttribute('aria-label', `${spot.name} viewing spot, ${formatDuration(spot.totality_duration_seconds)} totality${hasRanking && !isFiltered ? `, rank ${rankInfo!.rank}` : ''}`)
   el.textContent = '' // clear any prior inner content
 
+  // Sizes: 20% smaller than prior revision, inner dot sized at the
+  // legend's 6/14 ratio (~43%) so map markers match the legend visual.
+  // Border stays at 2px (legend border width).
   if (isFiltered) {
     el.style.cssText = `
-      width: 22px; height: 22px; border-radius: 50%;
+      width: 18px; height: 18px; border-radius: 50%;
       background: ${colors.markerBg}; border: 2px solid ${colors.mutedInk};
       opacity: 0.4; cursor: pointer; z-index: 10;
       display: flex; align-items: center; justify-content: center;
     `
     const inner = document.createElement('div')
-    inner.style.cssText = `width: 6px; height: 6px; border-radius: 50%; background: ${colors.mutedInk};`
+    inner.style.cssText = `width: 8px; height: 8px; border-radius: 50%; background: ${colors.mutedInk};`
     el.appendChild(inner)
   } else if (hasRanking) {
-    const size = isTop3 ? 30 : 26
+    const size = isTop3 ? 24 : 21
     const borderColor = isTop3 ? colors.accent : colors.accentStrong
     const shadow = isTop3
       ? `0 0 14px rgb(var(--accent) / 0.4)`
@@ -229,19 +232,19 @@ function renderSpotInto(el: HTMLElement, spot: Spot, rankInfo: RankInfo | undefi
       background: ${colors.markerBg}; border: 2px solid ${borderColor};
       box-shadow: ${shadow}; cursor: pointer; z-index: 10;
       display: flex; align-items: center; justify-content: center;
-      font-family: 'IBM Plex Mono', monospace; font-size: ${isTop3 ? 13 : 11}px;
+      font-family: 'IBM Plex Mono', monospace; font-size: ${isTop3 ? 11 : 9}px;
       font-weight: 700; color: ${isTop3 ? colors.accent : colors.accentStrong};
     `
     el.textContent = String(rankInfo!.rank)
   } else {
     el.style.cssText = `
-      width: 26px; height: 26px; border-radius: 50%;
+      width: 21px; height: 21px; border-radius: 50%;
       background: ${colors.markerBg}; border: 2px solid ${colors.accent};
       box-shadow: 0 0 12px rgb(var(--accent) / 0.25); cursor: pointer; z-index: 10;
       display: flex; align-items: center; justify-content: center;
     `
     const inner = document.createElement('div')
-    inner.style.cssText = `width: 8px; height: 8px; border-radius: 50%; background: ${colors.accent};`
+    inner.style.cssText = `width: 9px; height: 9px; border-radius: 50%; background: ${colors.accent};`
     el.appendChild(inner)
   }
 }
