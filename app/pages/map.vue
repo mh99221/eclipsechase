@@ -6,6 +6,7 @@ import { CLOUD_COVER_LEVELS, CLOUD_COVER_NO_DATA } from '~/utils/eclipse'
 import { conditionPriority, getTrafficColor, getTrafficLabel } from '~/utils/traffic'
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId } from '~/composables/useRecommendation'
+import type { HorizonCheckResponse } from '~/types/horizon'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -566,7 +567,23 @@ function handleMapClick(coords: { lat: number; lng: number }) {
   })
 }
 
+function onHorizonResult(data: HorizonCheckResponse) {
+  if (!data.in_totality_path || data.sun_altitude == null || data.sun_azimuth == null || !data.totality_start) return
+  if (!horizonCheckCoords.value) return
+  const mapComponent = eclipseMapRef.value
+  if (!mapComponent?.attachArc) return
+  mapComponent.attachArc('external:horizon-check', {
+    lat: horizonCheckCoords.value.lat,
+    lng: horizonCheckCoords.value.lng,
+    sunAzimuth: data.sun_azimuth,
+    sunAltitude: data.sun_altitude,
+    totalityStartIso: data.totality_start,
+    id: 'horizon-check',
+  })
+}
+
 function closeHorizonCheck() {
+  eclipseMapRef.value?.detachArc?.('external:horizon-check')
   horizonCheckCoords.value = null
   if (horizonMarker) {
     horizonMarker.remove()
@@ -992,6 +1009,7 @@ const profileIcons: Record<ProfileId, string> = {
           :lat="horizonCheckCoords.lat"
           :lng="horizonCheckCoords.lng"
           @close="closeHorizonCheck"
+          @result="onHorizonResult"
         />
       </div>
     </Transition>
