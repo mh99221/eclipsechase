@@ -57,3 +57,18 @@ UPDATE viewing_spots SET photos = '[{"filename":"patreksfjordur-beach-hero.webp"
 UPDATE viewing_spots SET photos = '[{"filename":"breidavik-beach-hero.webp","alt":"Dramatic mountains and coastal sand dunes at Breidavik beach","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":true}]' WHERE slug = 'breidavik-beach';
 
 UPDATE viewing_spots SET photos = '[{"filename":"reykholt-snorrastofa-hero.webp","alt":"Mountains and river valley near Reykholt in Borgarfjordur","credit":"Unsplash / Alin Rusu","license":"unsplash","is_hero":true,"horizon_view":false}]' WHERE slug = 'reykholt-snorrastofa';
+
+-- Spots added in the 2026-04-19 photo regeneration pass.
+UPDATE viewing_spots SET photos = '[{"filename":"blue-lagoon-hero.webp","alt":"Milky-blue geothermal waters at Blue Lagoon, Reykjanes peninsula","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":false}]' WHERE slug = 'blue-lagoon';
+
+UPDATE viewing_spots SET photos = '[{"filename":"hellnar-viewpoint-hero.webp","alt":"Coastal basalt cliffs at Hellnar on Snaefellsnes peninsula","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":true}]' WHERE slug = 'hellnar-viewpoint';
+
+UPDATE viewing_spots SET photos = '[{"filename":"londrangar-malarrif-hero.webp","alt":"Londrangar basalt sea stacks on the southern Snaefellsnes coast","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":true},{"filename":"londrangar-malarrif-hero2.webp","alt":"Malarrif coastline near Londrangar, Snaefellsnes peninsula","credit":"Unsplash","license":"unsplash","is_hero":false,"horizon_view":true}]' WHERE slug = 'londrangar-malarrif';
+
+UPDATE viewing_spots SET photos = '[{"filename":"ondverdarnes-svortuloft-hero.webp","alt":"Svortuloft lighthouse and cliffs at Ondverdarnes, Snaefellsnes","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":true}]' WHERE slug = 'ondverdarnes-svortuloft';
+
+UPDATE viewing_spots SET photos = '[{"filename":"perlan-reykjavik-hero.webp","alt":"Perlan observation deck and dome above Reykjavik skyline","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":true}]' WHERE slug = 'perlan-reykjavik';
+
+UPDATE viewing_spots SET photos = '[{"filename":"svodufoss-waterfall-hero.webp","alt":"Svodufoss waterfall with Snaefellsjokull glacier in the distance","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":true}]' WHERE slug = 'svodufoss-waterfall';
+
+UPDATE viewing_spots SET photos = '[{"filename":"ytri-tunga-beach-hero.webp","alt":"Seal colony beach at Ytri Tunga on Snaefellsnes peninsula","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":true}]' WHERE slug = 'ytri-tunga-beach';
