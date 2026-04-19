@@ -114,6 +114,7 @@ eclipse-chaser/
 │   │   ├── mapMarkers.ts            # Zoom-visibility buckets + min-zoom helpers for HTML markers
 │   │   ├── proStorage.ts            # IndexedDB token storage (save/get/remove)
 │   │   ├── solar.ts                 # Solar calculations
+│   │   ├── sunArc.ts                # Attach sun-direction trajectory arc to a Mapbox map
 │   │   └── traffic.ts               # Road-condition colours, labels, priority
 │   ├── middleware/
 │   │   └── pro-gate.ts              # Route guard: redirect non-Pro to /pro
@@ -150,6 +151,7 @@ eclipse-chaser/
 │   │   │   └── ingest-weather.ts    # Bearer-auth ingest (CRON_SECRET); GH Actions hits every 15 min, Vercel daily fallback
 │   │   └── __sitemap__/urls.ts      # Dynamic sitemap generation
 │   ├── utils/
+│   │   ├── eclipseGrid.ts           # Load + nearest-point lookup for eclipse-data/grid.json (totality_start)
 │   │   ├── vedur.ts                 # vedur.is XML API (55 stations, observations, forecasts)
 │   │   ├── vegagerdin.ts            # Road conditions API (DATEX II)
 │   │   ├── horizon.ts              # Horizon computation (pre-computed grid lookup)
