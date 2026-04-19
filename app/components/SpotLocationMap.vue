@@ -9,7 +9,7 @@ const props = defineProps<{
 const config = useRuntimeConfig()
 const mapContainer = ref<HTMLElement | null>(null)
 const mapError = ref('')
-const is3D = ref(true)
+const is3D = ref(false)
 const showPOIs = ref(true)
 let map: any = null
 let mapboxgl: any = null
@@ -156,6 +156,10 @@ watch(mapContainer, async (el) => {
       bearing: is3D.value ? props.sunAzimuth - 180 : 0,
       attributionControl: false,
       antialias: true,
+      // Prevent the map from capturing page scroll/touch:
+      //   desktop → requires Ctrl/Cmd + wheel to zoom (shows a hint)
+      //   mobile  → requires two-finger pan (one-finger scrolls the page)
+      cooperativeGestures: true,
     })
 
     map.addControl(new mapboxgl.NavigationControl({ showCompass: true, visualizePitch: true }), 'top-right')
