@@ -37,5 +37,9 @@ de421.bsp
 # DEM binary (856MB, too large for git)
 server/data/dem/*.bin
 
+# Raw photos — sources for scripts/process-spot-photos.mjs.
+# Only the processed webps in public/images/spots/ are needed at runtime.
+raw-photos/
+
 .vercel
 .env*.local
