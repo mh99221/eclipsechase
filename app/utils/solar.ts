@@ -98,6 +98,36 @@ export function computeSunTrajectory(
 }
 
 /**
+ * Compute sun trajectory at a location across a time window, at a given
+ * per-minute step. Used by the map sun-arc overlay (±15 min around
+ * totality). Unlike computeSunTrajectory, the output is not filtered
+ * by azimuth — callers that want a narrow window get every point.
+ *
+ * @param lat Latitude in degrees
+ * @param lng Longitude in degrees
+ * @param minUtcHours Start of window in UTC hours (e.g. 17.5 = 17:30)
+ * @param maxUtcHours End of window, inclusive
+ * @param stepMinutes Sampling step in minutes (must divide the window evenly)
+ */
+export function computeSunTrajectoryByTime(
+  lat: number,
+  lng: number,
+  minUtcHours: number,
+  maxUtcHours: number,
+  stepMinutes: number,
+): SunTrajectoryPoint[] {
+  const points: SunTrajectoryPoint[] = []
+  const stepHours = stepMinutes / 60
+  // Add a tiny epsilon so floating-point rounding doesn't drop the endpoint.
+  const end = maxUtcHours + stepHours / 2
+  for (let h = minUtcHours; h <= end; h += stepHours) {
+    const pos = solarPosition(lat, lng, h)
+    points.push({ utcHours: h, altitude: pos.altitude, azimuth: pos.azimuth })
+  }
+  return points
+}
+
+/**
  * Format UTC hours as HH:MM string.
  */
 export function formatUtcTime(utcHours: number): string {
