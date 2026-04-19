@@ -496,6 +496,12 @@ watch(() => colorMode.value, (mode) => {
   for (const { marker } of spotMarkers.values()) marker.remove()
   stationMarkers.clear()
   spotMarkers.clear()
+  // Explicit detach is load-bearing for the external-owner case (the
+  // horizon-check flow drives an arc that isn't attached to any spot
+  // popup, so the marker.remove() sweep above wouldn't have fired its
+  // close handler). Don't remove this as "redundant" — popup-owned
+  // arcs would self-detach via that sweep, but external-owner arcs
+  // would leak their layer + markers into the torn-down style.
   detachCurrentArc?.()
   detachCurrentArc = null
   currentArcOwner = null
