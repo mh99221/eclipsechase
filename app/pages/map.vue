@@ -572,6 +572,11 @@ function onHorizonResult(data: HorizonCheckResponse) {
   if (!horizonCheckCoords.value) return
   const mapComponent = eclipseMapRef.value
   if (!mapComponent?.attachArc) return
+  // Don't clobber a spot-popup arc: if a spot arc is already attached
+  // (user clicked a marker while our horizon fetch was in flight), let
+  // it keep the slot. The horizon panel still renders its own profile.
+  const owner = mapComponent.getArcOwner?.()
+  if (owner && owner.startsWith('spot:')) return
   mapComponent.attachArc('external:horizon-check', {
     lat: horizonCheckCoords.value.lat,
     lng: horizonCheckCoords.value.lng,

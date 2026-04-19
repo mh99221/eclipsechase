@@ -513,7 +513,11 @@ watch(() => colorMode.value, (mode) => {
   })
 })
 
-defineExpose({ map: mapExposed, attachArc, detachArc })
+function getArcOwner(): string | null {
+  return currentArcOwner
+}
+
+defineExpose({ map: mapExposed, attachArc, detachArc, getArcOwner })
 
 onUnmounted(() => {
   for (const { marker } of stationMarkers.values()) marker.remove()
