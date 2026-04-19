@@ -261,18 +261,20 @@ const ariaLabel = computed(() => {
         stroke-dasharray="4 3"
         opacity="0.35"
       />
-      <!-- Time labels along trajectory -->
+      <!-- Time labels along trajectory. Text uses --accent-strong so it
+           stays legible on both the dark navy and light cream themes
+           (amber-on-navy vs deep-orange-on-cream). Dot keeps amber. -->
       <template v-for="tl in trajectoryTimeLabels" :key="tl.label">
         <circle :cx="tl.x" :cy="tl.y" r="3" fill="#fbbf24" opacity="0.45" />
         <text
           :x="tl.x"
           :y="tl.y - 11"
-          fill="#fbbf24"
+          fill="rgb(var(--accent-strong))"
           font-size="12"
           font-weight="500"
           text-anchor="middle"
           font-family="'IBM Plex Mono', monospace"
-          opacity="0.7"
+          opacity="0.85"
         >{{ tl.label }}</text>
       </template>
 
@@ -303,7 +305,7 @@ const ariaLabel = computed(() => {
       <text
         :x="sunX"
         :y="sunY - 26"
-        fill="#fbbf24"
+        fill="rgb(var(--accent-strong))"
         font-size="14"
         font-weight="600"
         text-anchor="middle"
