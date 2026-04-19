@@ -3,6 +3,7 @@ definePageMeta({ middleware: ['pro-gate'] })
 
 import mapboxgl from 'mapbox-gl'
 import { CLOUD_COVER_LEVELS, CLOUD_COVER_NO_DATA } from '~/utils/eclipse'
+import { computeMinZooms, OVERLAY_BUCKETS, setMarkerVisibility } from '~/utils/mapMarkers'
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId } from '~/composables/useRecommendation'
 
@@ -144,37 +145,15 @@ function getTrafficColor(condition: string): string {
   }
 }
 
-// Zoom-based visibility for overlay markers (traffic, cameras)
+// Overlay (traffic / cameras) marker type — shared shape, uses
+// OVERLAY_BUCKETS and the generic setMarkerVisibility helper below.
 interface OverlayMarker { marker: any; minZoom: number }
 
-function computeOverlayMinZooms(points: Array<{ lat: number; lng: number }>): number[] {
-  if (!points.length) return []
-  const dists = points.map((p, i) => {
-    let min = Infinity
-    for (let j = 0; j < points.length; j++) {
-      if (i === j) continue
-      const d = Math.sqrt((p.lat - points[j].lat) ** 2 + (p.lng - points[j].lng) ** 2)
-      if (d < min) min = d
-    }
-    return { idx: i, dist: min }
-  })
-  const sorted = [...dists].sort((a, b) => b.dist - a.dist)
-  const zooms = new Array<number>(points.length)
-  for (let i = 0; i < sorted.length; i++) {
-    const pct = i / sorted.length
-    zooms[sorted[i].idx] = pct < 0.25 ? 6 : pct < 0.50 ? 7 : pct < 0.75 ? 8 : 9
-  }
-  return zooms
-}
+const overlayMinZooms = (pts: Array<{ lat: number; lng: number }>) =>
+  computeMinZooms(pts, OVERLAY_BUCKETS)
 
-function applyOverlayVisibility(items: OverlayMarker[], zoom: number) {
-  for (const { marker, minZoom } of items) {
-    const el = marker.getElement()
-    const visible = zoom >= minZoom
-    el.style.visibility = visible ? '' : 'hidden'
-    el.style.pointerEvents = visible ? '' : 'none'
-  }
-}
+const applyOverlayVisibility = (items: OverlayMarker[], zoom: number) =>
+  setMarkerVisibility(items, zoom)
 
 const TRAFFIC_LABELS: Record<string, string> = {
   good: 'Passable',
@@ -186,7 +165,7 @@ const TRAFFIC_LABELS: Record<string, string> = {
 function addTrafficMarkers(map: any) {
   removeTrafficMarkers()
   const conditions = trafficData.value?.conditions || []
-  const minZooms = computeOverlayMinZooms(conditions.map((c: any) => ({ lat: c.lat, lng: c.lng })))
+  const minZooms = overlayMinZooms(conditions.map((c: any) => ({ lat: c.lat, lng: c.lng })))
   for (let ci = 0; ci < conditions.length; ci++) {
     const c = conditions[ci]
     const color = getTrafficColor(c.condition)
@@ -516,7 +495,7 @@ let cameraZoomHandler: (() => void) | null = null
 function addCameraMarkers(map: any) {
   removeCameraMarkers()
   const cameras = cameraData.value?.cameras || []
-  const camMinZooms = computeOverlayMinZooms(cameras.map((c: any) => ({ lat: c.lat, lng: c.lng })))
+  const camMinZooms = overlayMinZooms(cameras.map((c: any) => ({ lat: c.lat, lng: c.lng })))
   for (let ci = 0; ci < cameras.length; ci++) {
     const cam = cameras[ci]
     // Camera pin: circle matching spot marker style, with camera lens icon

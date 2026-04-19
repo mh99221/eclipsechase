@@ -2,6 +2,7 @@
 import mapboxgl from 'mapbox-gl'
 import { cloudColor, cloudLevel, formatDuration, weatherSvgHtml } from '~/utils/eclipse'
 import { addEclipsePathLayers } from '~/utils/mapLayers'
+import { computeMinZooms, setMarkerVisibility } from '~/utils/mapMarkers'
 import { readCssVar } from '~/utils/theme'
 
 const props = defineProps<{
@@ -65,34 +66,6 @@ interface CachedMarker {
 const stationMarkers = new Map<string, CachedMarker>()
 const spotMarkers = new Map<string, CachedMarker>()
 
-// Assign a minZoom to each point based on nearest-neighbor distance.
-// Isolated points appear at low zoom; clustered ones only when zoomed in.
-function computeMinZooms(points: Array<{ lat: number; lng: number }>): number[] {
-  if (!points.length) return []
-  const dists = points.map((p, i) => {
-    let min = Infinity
-    for (let j = 0; j < points.length; j++) {
-      if (i === j) continue
-      const d = Math.sqrt((p.lat - points[j]!.lat) ** 2 + (p.lng - points[j]!.lng) ** 2)
-      if (d < min) min = d
-    }
-    return { idx: i, dist: min }
-  })
-  const sorted = [...dists].sort((a, b) => b.dist - a.dist)
-  const zooms = new Array<number>(points.length)
-  const total = sorted.length
-  for (let i = 0; i < total; i++) {
-    const pct = i / total
-    let z: number
-    if (pct < 0.30) z = 5        // top 30% visible from zoom 5
-    else if (pct < 0.55) z = 6   // next 25% from zoom 6
-    else if (pct < 0.80) z = 7   // next 25% from zoom 7
-    else z = 8                    // last 20% from zoom 8
-    zooms[sorted[i]!.idx] = z
-  }
-  return zooms
-}
-
 /** Find nearest station's cloud cover for a given lat/lng */
 function nearestCloudCover(lat: number, lng: number): number | null {
   if (!props.stations?.length) return null
@@ -107,14 +80,6 @@ function nearestCloudCover(lat: number, lng: number): number | null {
     }
   }
   return best
-}
-
-function setMarkerVisibility(items: Iterable<CachedMarker>, zoom: number) {
-  for (const { el, minZoom } of items) {
-    const visible = zoom >= minZoom
-    el.style.visibility = visible ? '' : 'hidden'
-    el.style.pointerEvents = visible ? '' : 'none'
-  }
 }
 
 let lastZoomBucket = -1
