@@ -4,8 +4,6 @@ import { cloudColor, cloudLevel, formatDuration, weatherSvgHtml } from '~/utils/
 import { addEclipsePathLayers } from '~/utils/mapLayers'
 import { computeMinZooms, setMarkerVisibility } from '~/utils/mapMarkers'
 import { readCssVar } from '~/utils/theme'
-import { attachSunArc } from '~/utils/sunArc'
-import type { SunArcProps } from '~/utils/sunArc'
 
 const props = defineProps<{
   stations?: Array<{
@@ -30,9 +28,6 @@ const props = defineProps<{
     has_services: boolean
     cell_coverage: string
     horizon_check?: { verdict: string; clearance_degrees?: number } | null
-    sun_azimuth?: number | null
-    sun_altitude?: number | null
-    totality_start?: string | null
   }>
   rankedSpots?: Array<{
     slug: string
@@ -70,28 +65,6 @@ interface CachedMarker {
 
 const stationMarkers = new Map<string, CachedMarker>()
 const spotMarkers = new Map<string, CachedMarker>()
-
-// The arc is a single-slot resource: only one visible at a time, owned
-// either by the focused spot popup or by an external caller (the
-// horizon-check flow in map.vue). attachArc() detaches any prior arc
-// before attaching the new one.
-let detachCurrentArc: (() => void) | null = null
-let currentArcOwner: string | null = null  // 'spot:<slug>' or 'external:<id>'
-
-function attachArc(owner: string, props: SunArcProps) {
-  if (!map) return
-  if (currentArcOwner === owner) return  // no-op if same owner
-  detachCurrentArc?.()
-  detachCurrentArc = attachSunArc(map, props)
-  currentArcOwner = owner
-}
-
-function detachArc(owner: string) {
-  if (currentArcOwner !== owner) return  // only the current owner can detach
-  detachCurrentArc?.()
-  detachCurrentArc = null
-  currentArcOwner = null
-}
 
 /** Find nearest station's cloud cover for a given lat/lng */
 function nearestCloudCover(lat: number, lng: number): number | null {
@@ -369,19 +342,6 @@ function updateSpotMarkers() {
         className: 'eclipse-popup',
       }).setHTML(spotPopupHtml(spot, rankInfo, colors))
       wireSpotPopupNavigation(popup)
-      popup.on('open', () => {
-        if (spot.sun_azimuth == null || spot.sun_altitude == null || !spot.totality_start) return
-        attachArc(`spot:${spot.slug}`, {
-          lat: spot.lat, lng: spot.lng,
-          sunAzimuth: spot.sun_azimuth,
-          sunAltitude: spot.sun_altitude,
-          totalityStartIso: spot.totality_start,
-          id: `spot-${spot.slug}`,
-        })
-      })
-      popup.on('close', () => {
-        detachArc(`spot:${spot.slug}`)
-      })
       const marker = new mapboxgl.Marker({ element: el })
         .setLngLat([spot.lng, spot.lat])
         .setPopup(popup)
@@ -496,15 +456,6 @@ watch(() => colorMode.value, (mode) => {
   for (const { marker } of spotMarkers.values()) marker.remove()
   stationMarkers.clear()
   spotMarkers.clear()
-  // Explicit detach is load-bearing for the external-owner case (the
-  // horizon-check flow drives an arc that isn't attached to any spot
-  // popup, so the marker.remove() sweep above wouldn't have fired its
-  // close handler). Don't remove this as "redundant" — popup-owned
-  // arcs would self-detach via that sweep, but external-owner arcs
-  // would leak their layer + markers into the torn-down style.
-  detachCurrentArc?.()
-  detachCurrentArc = null
-  currentArcOwner = null
   map.setStyle(mapboxStyleFor(mode))
   map.once('style.load', () => {
     addEclipsePath()
@@ -513,18 +464,13 @@ watch(() => colorMode.value, (mode) => {
   })
 })
 
-function getArcOwner(): string | null {
-  return currentArcOwner
-}
-
-defineExpose({ map: mapExposed, attachArc, detachArc, getArcOwner })
+defineExpose({ map: mapExposed })
 
 onUnmounted(() => {
   for (const { marker } of stationMarkers.values()) marker.remove()
   for (const { marker } of spotMarkers.values()) marker.remove()
   stationMarkers.clear()
   spotMarkers.clear()
-  detachCurrentArc?.()
   map?.remove()
   map = null
   mapExposed.value = null

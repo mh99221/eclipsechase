@@ -2,7 +2,6 @@
 // Grid loading + nearest-point lookup live in server/utils/horizonGrid.ts.
 import type { HorizonCheckResponse, HorizonSweepPoint } from '~/types/horizon'
 import { findNearestGridPoint, loadHorizonGrid } from '../../utils/horizonGrid'
-import { findNearestEclipsePoint, loadEclipseGrid } from '../../utils/eclipseGrid'
 
 export default defineEventHandler(async (event) => {
   // Rate limit: 10 req/min per IP
@@ -32,17 +31,6 @@ export default defineEventHandler(async (event) => {
 
   const { point } = match
 
-  // Look up totality_start from the eclipse grid (separate asset from the
-  // horizon grid, which doesn't carry ISO timestamps).
-  let totalityStart: string | undefined
-  try {
-    const eclipseGrid = await loadEclipseGrid()
-    const eMatch = findNearestEclipsePoint(eclipseGrid, body.lat, body.lng)
-    totalityStart = eMatch?.point.totality_start
-  } catch (e) {
-    console.warn('[Horizon] Eclipse grid unavailable, skipping totality_start:', e)
-  }
-
   const sweep: HorizonSweepPoint[] = point.s.map(([azimuth, horizon_angle, distance_m]) => ({
     azimuth, horizon_angle, distance_m,
   }))
@@ -63,7 +51,6 @@ export default defineEventHandler(async (event) => {
     peakfinder_url: peakfinderUrl,
     totality_duration_seconds: point.td,
     in_totality_path: point.td != null && point.td > 0,
-    totality_start: totalityStart,
   }
 
   return response

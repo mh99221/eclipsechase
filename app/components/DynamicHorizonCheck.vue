@@ -7,8 +7,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'close'): void
-  (e: 'result', data: HorizonCheckResponse): void
+  close: []
 }>()
 
 const { t } = useI18n()
@@ -40,7 +39,6 @@ onMounted(async () => {
       body: { lat: props.lat, lng: props.lng },
     })
     result.value = data
-    emit('result', data)
   } catch (e: any) {
     if (e?.statusCode === 401 || e?.statusCode === 403) {
       error.value = 'pro_required'

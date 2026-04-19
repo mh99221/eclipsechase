@@ -31,10 +31,6 @@ describe('POST /api/horizon/check', () => {
     expect(result.peakfinder_url).toContain('peakfinder.com')
     expect(typeof result.checked_at).toBe('string')
     expect(result).toHaveProperty('in_totality_path')
-    // totality_start is present for locations inside the totality path
-    expect(result.in_totality_path).toBe(true)
-    expect(result.totality_start).toBeTruthy()
-    expect(Number.isNaN(new Date(result.totality_start!).getTime())).toBe(false)
   })
 
   it('throws 400 for missing lat/lng', async () => {
