@@ -357,6 +357,11 @@ function updateSpotMarkers() {
       // state between this call and the trailing batch pass.
       renderSpotInto(cached.el, spot, rankInfo, colors)
       cached.popup.setHTML(spotPopupHtml(spot, rankInfo, colors))
+      // Force Mapbox to re-project and reapply the wrapper transform.
+      // Without this the marker can sit at a stale screen position
+      // until the next map move/zoom event fires (observed after
+      // profile change).
+      cached.marker.setLngLat(cached.marker.getLngLat())
     }
     setMarkerVisibility([cached], currentZoom)
   }
@@ -418,6 +423,11 @@ onMounted(() => {
   })
 
   map.on('zoom', applyZoomVisibility)
+  // Also re-apply on pan. Mapbox's own marker `_update()` runs on
+  // every map move to reposition the wrapper, but we want our CSS
+  // visibility pass to stay in sync too so a pan surfaces any
+  // markers that ended up in a stale hidden state.
+  map.on('move', applyZoomVisibility)
 
   // Emit click on empty map space (not on markers/popups)
   map.on('click', (e) => {
