@@ -309,24 +309,58 @@ CREATE TABLE restore_codes (
 );
 ```
 
-## Design Tokens (Dark Astronomy Theme)
+## Design Tokens
 
-Defined in `tailwind.config.ts`:
+Two layers coexist in `tailwind.config.ts`, both pointing at CSS
+variables defined in `app/assets/css/main.css` (dark is default; light
+is activated via `html.light` from `@nuxtjs/color-mode`).
+
+### Semantic tokens (preferred — theme-aware)
+
+Use these for any new code so styling follows light/dark mode
+automatically. Dark → parchment/cream swap is real.
 
 ```
-Colors:
-  void:        #050810 (near-black)       void-deep:    #030508
-  void-surface: #0a1020 (cards)           void-border:  #1a2540
-  corona:      #f59e0b (amber accent)     corona-bright: #fbbf24
-  corona-pale: #fef3c7                    corona-dim:   #b45309
-  ice:         #7dd3fc (sky blue)         ice-dim:      #38bdf8
+Surfaces:  bg / surface / surface-raised / border-subtle
+Text:      ink-1 (headlines) / ink-2 (body) / ink-3 (meta)
+Accent:    accent / accent-strong / accent-soft
+Status:    text-status-green / text-status-amber / text-status-red
+```
 
-Fonts:
-  Display: Manrope (400-800)
-  Mono: IBM Plex Mono (400-600)
+### Utility classes (defined in main.css)
 
-Animations:
-  corona-pulse (4s), drift-slow (60s), fade-in-up (0.8s), fade-in (0.6s)
+```
+Banners:  .ec-banner-warn / .ec-banner-error / .ec-banner-info
+Chips:    .ec-chip-green / .ec-chip-yellow / .ec-chip-orange /
+          .ec-chip-red  / .ec-chip-amber  / .ec-chip-blue
+```
+
+Each chip bundles colour + border + soft background; add the
+structural classes yourself (`font-mono text-xs tracking-wider px-2.5
+py-1.5 rounded border`).
+
+### Legacy palette (dark-only, being phased out)
+
+Still valid where we've hardcoded dark styling. Prefer the semantic
+token for new work.
+
+```
+void-*:    #050810 / deep / surface / elevated / border
+corona-*:  #f59e0b / bright / pale / dim / glow      (amber accent)
+ice-*:     #7dd3fc / dim / faint                     (sky blue)
+```
+
+### Typography
+
+```
+Display: Manrope (400-800)
+Mono:    IBM Plex Mono (400-600)
+```
+
+### Animations
+
+```
+corona-pulse (4s), drift-slow (60s), fade-in-up (0.8s), fade-in (1s)
 ```
 
 ## Page Design Patterns (MUST FOLLOW)
@@ -371,43 +405,45 @@ Every page uses the `noise` class for the grain texture overlay and `relative` p
 - Vertical padding with responsive breakpoints
 
 ### Typography roles
-- **Page label** (above h1): `font-mono text-xs tracking-[0.3em] text-corona/60 uppercase`
-- **Page title** (h1): `font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white`
-- **Section heading** (h2): `font-display text-xl font-semibold text-white`
-- **Body text**: default Manrope font, `text-base text-slate-300 leading-relaxed` — never use monospace for body prose
-- **Metadata/labels**: `font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500`
-- **Data values**: `font-display text-2xl font-bold text-white`
+- **Page label** (above h1): `font-mono text-xs tracking-[0.3em] text-accent/60 uppercase`
+- **Page title** (h1): `font-display text-3xl sm:text-4xl md:text-5xl font-bold text-ink-1`
+- **Section heading** (h2): `font-display text-xl font-semibold text-ink-1`
+- **Body text**: default Manrope font, `text-base text-ink-2 leading-relaxed` — never use monospace for body prose
+- **Metadata/labels**: `font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3`
+- **Data values**: `font-display text-2xl font-bold text-ink-1`
 
 ### Cards
 ```html
-<div class="bg-void-surface border border-void-border/40 rounded px-4 py-4">
+<div class="bg-surface border border-border-subtle/40 rounded px-4 py-4">
 ```
-Use `bg-void-surface` and semi-transparent borders. Use `rounded` (4px), not `rounded-lg` or `rounded-xl`.
+Use `bg-surface` and semi-transparent borders. Use `rounded` (4px), not `rounded-lg` or `rounded-xl`.
 
 ### Stat cards (grid pattern from /spots)
 ```html
 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-  <div class="bg-void-surface border border-void-border/40 px-4 py-4 rounded">
-    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-1.5">Label</p>
-    <p class="font-display text-2xl font-bold text-white">Value</p>
+  <div class="bg-surface border border-border-subtle/40 px-4 py-4 rounded">
+    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-1.5">Label</p>
+    <p class="font-display text-2xl font-bold text-ink-1">Value</p>
   </div>
 </div>
 ```
 
 ### Warning/info banners
+Use the utility classes in `main.css`:
 ```html
-<div class="px-3 py-2.5 rounded bg-amber-900/15 border border-amber-700/20 text-xs font-mono text-amber-400/80">
+<div class="px-3 py-2.5 ec-banner-warn text-xs font-mono">...</div>
 ```
+Variants: `ec-banner-warn`, `ec-banner-error`, `ec-banner-info`.
 
 ### Links
-- Internal navigation: `text-corona hover:text-corona-bright transition-colors`
-- Styled with subtle bottom border, not underline: `border-bottom: 1px solid rgba(245, 158, 11, 0.3)`
+- Internal navigation: `text-accent hover:text-accent-strong transition-colors`
+- Styled with subtle bottom border, not underline
 
 ### Footer
 ```html
-<footer class="border-t border-void-border/30 py-8">
+<footer class="border-t border-border-subtle/30 py-8">
   <div class="section-container text-center">
-    <NuxtLink to="/" class="font-mono text-sm text-slate-500 hover:text-slate-300 transition-colors">
+    <NuxtLink to="/" class="font-mono text-sm text-ink-3 hover:text-ink-2 transition-colors">
       &larr; Back to home
     </NuxtLink>
   </div>
@@ -415,7 +451,8 @@ Use `bg-void-surface` and semi-transparent borders. Use `rounded` (4px), not `ro
 ```
 
 ### What NOT to do
-- Never use a fixed/sticky nav with `bg-void/80 backdrop-blur-md border-b` — that's an old pattern
+- Never hardcode `text-white` / `text-slate-*` / `bg-void` — use `text-ink-1/2/3`, `bg-surface`, etc. so light mode works
+- Never use the legacy `corona` / `void-*` tokens for *new* code — prefer `accent` / `bg` / `surface`
 - Never use `bg-void` as the page wrapper — always use `noise`
 - Never use monospace (IBM Plex Mono) for body text/paragraphs — only for labels, metadata, code, and data
 - Never use text-based logo ("EclipseChase.is") — always use the SVG eclipse icon + wordmark

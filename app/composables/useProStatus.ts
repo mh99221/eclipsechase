@@ -30,8 +30,10 @@ export function useProStatus() {
       return
     }
 
-    // Dev bypass: treat as Pro on localhost
-    if (import.meta.dev) {
+    // Dev bypass: treat as Pro on localhost by default. Set
+    // NUXT_PUBLIC_BYPASS_PRO_GATE=0 in .env to test the real gate.
+    const bypass = useRuntimeConfig().public.bypassProGate
+    if (import.meta.dev && bypass !== '0') {
       isPro.value = true
       loading.value = false
       return

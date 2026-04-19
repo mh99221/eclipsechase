@@ -145,6 +145,10 @@ export default defineNuxtConfig({
       supabaseKey: '',
       umamiHost: '',
       umamiWebsiteId: '',
+      // Pro gate dev bypass. Dev always bypasses by default; set
+      // NUXT_PUBLIC_BYPASS_PRO_GATE=0 locally to test the real gate.
+      // Prod never bypasses regardless.
+      bypassProGate: '',
     },
   },
 })
