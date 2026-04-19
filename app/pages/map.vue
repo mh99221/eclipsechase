@@ -3,7 +3,7 @@ definePageMeta({ middleware: ['pro-gate'] })
 
 import mapboxgl from 'mapbox-gl'
 import { CLOUD_COVER_LEVELS, CLOUD_COVER_NO_DATA } from '~/utils/eclipse'
-import { computeMinZooms, OVERLAY_BUCKETS, setMarkerVisibility } from '~/utils/mapMarkers'
+import { conditionPriority, getTrafficColor, getTrafficLabel } from '~/utils/traffic'
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId } from '~/composables/useRecommendation'
 
@@ -128,87 +128,53 @@ const legendItems = [
 ]
 
 // Traffic / road conditions layer
+interface TrafficCondition { lat: number; lng: number; condition: string; roadName?: string; description: string }
+
 const showTraffic = ref(false)
-const trafficData = ref<{ conditions: any[] } | null>(null)
-const segmentsData = ref<{ segments: any[] } | null>(null)
-const roadsGeojson = ref<any>(null)
 
-const trafficMarkers = ref<OverlayMarker[]>([])
-let trafficZoomHandler: (() => void) | null = null
+// Module-scoped caches for the traffic overlay's companion data
+// (segments + full road geometry). `useMapOverlay` owns the primary
+// `conditions` array; these two are consumed by `addRoadPolylines` /
+// `buildEnrichedRoads` and survive re-toggles alongside it.
+let trafficSegmentsCache: { segments: any[] } | null = null
+let trafficRoadsCache: any = null
 
-function getTrafficColor(condition: string): string {
-  switch (condition) {
-    case 'good': return '#22c55e'
-    case 'difficult': return '#f97316'
-    case 'closed': return '#ef4444'
-    default: return '#6b7280'
-  }
-}
+function buildTrafficMarker(c: TrafficCondition, map: mapboxgl.Map): mapboxgl.Marker {
+  const color = getTrafficColor(c.condition)
+  const el = document.createElement('div')
+  el.className = 'traffic-marker'
+  el.setAttribute('role', 'button')
+  el.setAttribute('tabindex', '0')
+  el.setAttribute('aria-label', `${c.roadName || 'Road'}: ${c.description}`)
+  el.style.cssText = `
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #050810; border: 2px solid ${color};
+    box-shadow: 0 0 8px ${color}40;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  `
+  el.innerHTML = `<svg width="9" height="9" viewBox="0 0 16 16" fill="${color}">
+    <path d="M8 1L15 14H1L8 1Z" fill="none" stroke="${color}" stroke-width="1.5"/>
+    <circle cx="8" cy="11" r="1" fill="${color}"/>
+    <rect x="7.25" y="5.5" width="1.5" height="3.5" rx="0.75" fill="${color}"/>
+  </svg>`
 
-// Overlay (traffic / cameras) marker type — shared shape, uses
-// OVERLAY_BUCKETS and the generic setMarkerVisibility helper below.
-interface OverlayMarker { marker: any; minZoom: number }
+  const popup = new mapboxgl.Popup({
+    offset: 14,
+    closeButton: false,
+    maxWidth: 'min(220px, 85vw)',
+    className: 'eclipse-popup',
+  }).setHTML(`
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
+      <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${getTrafficLabel(c.condition)}</h3>
+      ${c.roadName ? `<p style="color: #94a3b8; margin: 0 0 4px;">${c.roadName}</p>` : ''}
+      <p style="color: #cbd5e1; margin: 0;">${c.description}</p>
+    </div>
+  `)
 
-const overlayMinZooms = (pts: Array<{ lat: number; lng: number }>) =>
-  computeMinZooms(pts, OVERLAY_BUCKETS)
-
-const applyOverlayVisibility = (items: OverlayMarker[], zoom: number) =>
-  setMarkerVisibility(items, zoom)
-
-const TRAFFIC_LABELS: Record<string, string> = {
-  good: 'Passable',
-  difficult: 'Difficult',
-  closed: 'Closed',
-  unknown: 'Unknown',
-}
-
-function addTrafficMarkers(map: any) {
-  removeTrafficMarkers()
-  const conditions = trafficData.value?.conditions || []
-  const minZooms = overlayMinZooms(conditions.map((c: any) => ({ lat: c.lat, lng: c.lng })))
-  for (let ci = 0; ci < conditions.length; ci++) {
-    const c = conditions[ci]
-    const color = getTrafficColor(c.condition)
-    const el = document.createElement('div')
-    el.className = 'traffic-marker'
-    el.setAttribute('role', 'button')
-    el.setAttribute('tabindex', '0')
-    el.setAttribute('aria-label', `${c.roadName}: ${c.description}`)
-    el.style.cssText = `
-      width: 18px; height: 18px; border-radius: 50%;
-      background: #050810; border: 2px solid ${color};
-      box-shadow: 0 0 8px ${color}40;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-    `
-    // Warning triangle icon
-    el.innerHTML = `<svg width="9" height="9" viewBox="0 0 16 16" fill="${color}">
-      <path d="M8 1L15 14H1L8 1Z" fill="none" stroke="${color}" stroke-width="1.5"/>
-      <circle cx="8" cy="11" r="1" fill="${color}"/>
-      <rect x="7.25" y="5.5" width="1.5" height="3.5" rx="0.75" fill="${color}"/>
-    </svg>`
-
-    const popup = new mapboxgl.Popup({
-      offset: 14,
-      closeButton: false,
-      maxWidth: 'min(220px, 85vw)',
-      className: 'eclipse-popup',
-    }).setHTML(`
-      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
-        <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${TRAFFIC_LABELS[c.condition] || 'Road condition'}</h3>
-        ${c.roadName ? `<p style="color: #94a3b8; margin: 0 0 4px;">${c.roadName}</p>` : ''}
-        <p style="color: #cbd5e1; margin: 0;">${c.description}</p>
-      </div>
-    `)
-
-    const marker = new mapboxgl.Marker({ element: el })
-      .setLngLat([c.lng, c.lat])
-      .setPopup(popup)
-      .addTo(map)
-    trafficMarkers.value.push({ marker, minZoom: minZooms[ci] })
-  }
-  applyOverlayVisibility(trafficMarkers.value, map.getZoom())
-  trafficZoomHandler = () => applyOverlayVisibility(trafficMarkers.value, map.getZoom())
-  map.on('zoom', trafficZoomHandler)
+  return new mapboxgl.Marker({ element: el })
+    .setLngLat([c.lng, c.lat])
+    .setPopup(popup)
+    .addTo(map)
 }
 
 /** Normalize a road name for fuzzy matching: lowercase, strip diacritics, trim */
@@ -221,11 +187,11 @@ let enrichedRoadsCache: any = null
 
 /** Build enriched GeoJSON by joining road geometry with segment condition data */
 function buildEnrichedRoads(): any {
-  if (!roadsGeojson.value || !segmentsData.value?.segments?.length) return null
+  if (!trafficRoadsCache || !trafficSegmentsCache?.segments?.length) return null
 
   // Build a lookup: normalized road name → worst condition
   const conditionLookup = new Map<string, string>()
-  for (const seg of segmentsData.value.segments) {
+  for (const seg of trafficSegmentsCache.segments) {
     const key = normalizeRoadName(seg.sectionName || seg.roadName)
     const existing = conditionLookup.get(key)
     if (!existing || conditionPriority(seg.condition) > conditionPriority(existing)) {
@@ -234,7 +200,7 @@ function buildEnrichedRoads(): any {
   }
 
   // Shallow-clone features array, only copying properties we mutate
-  const features = roadsGeojson.value.features.map((f: any) => {
+  const features = trafficRoadsCache.features.map((f: any) => {
     const normName = normalizeRoadName(f.properties.roadName || '')
     const normRef = f.properties.roadRef ? normalizeRoadName(f.properties.roadRef) : ''
 
@@ -317,7 +283,7 @@ function addRoadPolylines(map: any) {
       .setLngLat(e.lngLat)
       .setHTML(`
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
-          <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${TRAFFIC_LABELS[condition] || 'Unknown'}</h3>
+          <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${getTrafficLabel(condition)}</h3>
           <p style="color: #94a3b8; margin: 0;">${name}${f.properties.roadRef ? ` (${f.properties.roadRef})` : ''}</p>
         </div>
       `)
@@ -345,274 +311,155 @@ function removeRoadPolylines(map: any) {
   enrichedRoadsCache = null
 }
 
-function conditionPriority(c: string): number {
-  switch (c) {
-    case 'closed': return 3
-    case 'difficult': return 2
-    case 'good': return 1
-    default: return 0
-  }
-}
-
-function removeTrafficMarkers() {
-  if (trafficZoomHandler && eclipseMapRef.value?.map) {
-    eclipseMapRef.value.map.off('zoom', trafficZoomHandler)
-    trafficZoomHandler = null
-  }
-  for (const { marker } of trafficMarkers.value) {
-    marker.remove()
-  }
-  trafficMarkers.value = []
-}
-
 // We need access to the map instance — watch for it via the EclipseMap component ref
 const eclipseMapRef = ref<any>(null)
 
-watch(showTraffic, async (val) => {
-  const mapInstance = eclipseMapRef.value?.map
-  if (!mapInstance) return
-  if (val) {
-    // Fetch point conditions + segments + road geometry in parallel
-    const [conditionsRes, segmentsRes, geojsonRes] = await Promise.all([
-      trafficData.value ? Promise.resolve(trafficData.value) : $fetch<{ conditions: any[] }>('/api/traffic/conditions'),
-      segmentsData.value ? Promise.resolve(segmentsData.value) : $fetch<{ segments: any[] }>('/api/traffic/segments'),
-      roadsGeojson.value ? Promise.resolve(roadsGeojson.value) : $fetch('/eclipse-data/roads.geojson'),
-    ])
-    trafficData.value = conditionsRes
-    segmentsData.value = segmentsRes
-    roadsGeojson.value = geojsonRes
-    addRoadPolylines(mapInstance)
-    addTrafficMarkers(mapInstance)
-  } else {
-    removeTrafficMarkers()
-    removeRoadPolylines(mapInstance)
-  }
-})
+// Road cameras — carousel state + full-screen lightbox
+interface CameraImage { url: string; description: string }
+interface CameraData { id: string; name: string; lat: number; lng: number; images: CameraImage[] }
 
-// Road cameras — global carousel nav + lightbox
-const camCurrentIndex: Record<string, number> = {}
-const camImageRegistry: Record<string, { name: string; images: Array<{ url: string; description: string }> }> = {}
-if (import.meta.client) {
-  // Carousel navigation
-  ;(window as any).__camNav = (uid: string, total: number, dir: number) => {
-    const prev = camCurrentIndex[uid] || 0
-    const next = ((prev + dir) % total + total) % total
-    camCurrentIndex[uid] = next
+const activeLightboxCamera = ref<CameraData | null>(null)
+const lightboxStartIndex = ref(0)
 
-    for (let i = 0; i < total; i++) {
-      const img = document.getElementById(`${uid}-img-${i}`)
-      const desc = document.getElementById(`${uid}-desc-${i}`)
-      const dot = document.getElementById(`${uid}-dot-${i}`)
-      if (img) img.style.display = i === next ? 'block' : 'none'
-      if (desc) desc.style.display = i === next ? 'inline' : 'none'
-      if (dot) dot.style.background = i === next ? '#7dd3fc' : '#1a2540'
+// Per-camera carousel index, keyed by camera id. Lives at module scope
+// so it survives popup close/reopen (Mapbox reuses the popup DOM on reopen).
+const camIndexById = new Map<string, number>()
+
+function buildCameraPopupHTML(cam: CameraData, currentIndex: number): string {
+  const imgs = cam.images
+  const hasMultiple = imgs.length > 1
+  const cur = imgs[currentIndex] ?? imgs[0]!
+
+  const dotsHtml = imgs.map((_, i) => `
+    <span style="width:7px;height:7px;border-radius:50%;background:${i === currentIndex ? '#7dd3fc' : '#1a2540'};transition:background 0.2s;"></span>
+  `).join('')
+
+  const navHtml = !hasMultiple ? '' : `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+      <button data-cam-action="prev" style="background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;font-size:16px;padding:4px 12px;font-family:'IBM Plex Mono',monospace;line-height:1.2;" aria-label="Previous image">&#8249;</button>
+      <div style="display:flex;align-items:center;gap:5px;">${dotsHtml}</div>
+      <button data-cam-action="next" style="background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;font-size:16px;padding:4px 12px;font-family:'IBM Plex Mono',monospace;line-height:1.2;" aria-label="Next image">&#8250;</button>
+    </div>
+  `
+
+  return `
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#e2e8f0;padding:4px;">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:6px;margin-bottom:2px;">
+        <h3 style="font-family:'Manrope',sans-serif;font-weight:600;font-size:14px;color:#7dd3fc;margin:0;">${cam.name}</h3>
+        ${hasMultiple ? `<span style="font-size:11px;color:#475569;white-space:nowrap;" aria-live="polite">${currentIndex + 1}/${imgs.length}</span>` : ''}
+      </div>
+      <p style="color:#475569;font-size:11px;margin:0 0 6px;">${cur?.description ?? ''}</p>
+      <div style="position:relative;overflow:hidden;border-radius:3px;">
+        <img
+          data-cam-action="open"
+          src="${cur?.url ?? ''}"
+          alt="${cur?.description || cam.name}"
+          style="width:100%;border-radius:3px;border:1px solid #1a2540;aspect-ratio:4/3;object-fit:cover;cursor:zoom-in;"
+          loading="lazy"
+          onerror="this.style.display='none'"
+        />
+      </div>
+      ${navHtml}
+      <div style="text-align:center;margin-top:4px;">
+        <span data-cam-action="open" style="color:#475569;font-size:10px;cursor:pointer;border-bottom:1px solid #1a2540;">Click image to enlarge</span>
+      </div>
+    </div>
+  `
+}
+
+/** Attach a single delegated click handler to a camera popup that
+ *  dispatches the three actions (prev / next / open-lightbox) by
+ *  reading a `data-cam-action` attribute. Handler is idempotent so it
+ *  can be called from `popup.on('open', …)` without leaking. */
+function wireCameraPopup(popup: mapboxgl.Popup, cam: CameraData) {
+  const el = popup.getElement() as HTMLElement & { __camWired?: boolean } | null
+  if (!el || el.__camWired) return
+  el.__camWired = true
+  el.addEventListener('click', (e) => {
+    const target = (e.target as HTMLElement | null)?.closest('[data-cam-action]') as HTMLElement | null
+    if (!target) return
+    e.stopPropagation()
+    const action = target.dataset.camAction
+    const cur = camIndexById.get(cam.id) ?? 0
+    const total = cam.images.length
+    if (action === 'prev') {
+      const next = (cur - 1 + total) % total
+      camIndexById.set(cam.id, next)
+      popup.setHTML(buildCameraPopupHTML(cam, next))
+    } else if (action === 'next') {
+      const next = (cur + 1) % total
+      camIndexById.set(cam.id, next)
+      popup.setHTML(buildCameraPopupHTML(cam, next))
+    } else if (action === 'open') {
+      lightboxStartIndex.value = cur
+      activeLightboxCamera.value = cam
     }
-    const counter = document.getElementById(`${uid}-counter`)
-    if (counter) counter.textContent = `${next + 1}/${total}`
-  }
-
-  // Fullscreen lightbox
-  ;(window as any).__camOpen = (uid: string) => {
-    const reg = camImageRegistry[uid]
-    if (!reg?.images?.length) return
-    const imgs = reg.images
-    const idx = camCurrentIndex[uid] || 0
-
-    // Create overlay
-    const overlay = document.createElement('div')
-    overlay.id = 'cam-lightbox'
-    overlay.style.cssText = `
-      position:fixed;inset:0;z-index:99999;
-      background:radial-gradient(ellipse at 50% 0%, #0a1628 0%, #050810 70%);
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      cursor:default;padding:20px;
-    `
-
-    let currentLb = idx
-    function renderLightbox() {
-      const cur = imgs[currentLb]
-      overlay.innerHTML = `
-        <!-- Top bar -->
-        <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
-              <circle cx="8" cy="8" r="5" stroke="#7dd3fc" stroke-width="1.5" fill="none"/>
-              <circle cx="8" cy="8" r="2" fill="#7dd3fc"/>
-            </svg>
-            <span style="font-family:'Manrope',sans-serif;font-weight:600;font-size:16px;color:#f1f5f9;">${reg.name}</span>
-            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#475569;">Road camera</span>
-          </div>
-          <button id="lb-close" style="background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#94a3b8;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:6px 14px;transition:color 0.2s;">
-            Close
-          </button>
-        </div>
-
-        <!-- Image -->
-        <div style="position:relative;max-width:90vw;max-height:70vh;">
-          <img src="${cur.url}" alt="${cur.description}" style="max-width:90vw;max-height:70vh;border-radius:4px;border:1px solid #1a2540;object-fit:contain;display:block;" />
-          ${imgs.length > 1 ? `
-            <button id="lb-prev" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(5,8,16,0.8);backdrop-filter:blur(4px);border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;width:40px;height:40px;font-size:20px;display:flex;align-items:center;justify-content:center;">&#8249;</button>
-            <button id="lb-next" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(5,8,16,0.8);backdrop-filter:blur(4px);border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;width:40px;height:40px;font-size:20px;display:flex;align-items:center;justify-content:center;">&#8250;</button>
-          ` : ''}
-        </div>
-
-        <!-- Bottom info -->
-        <div style="margin-top:16px;text-align:center;">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#94a3b8;">${cur.description || ''}</div>
-          ${imgs.length > 1 ? `
-            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;">
-              ${imgs.map((_: any, i: number) => `
-                <span style="width:8px;height:8px;border-radius:50%;background:${i === currentLb ? '#7dd3fc' : '#1a2540'};transition:background 0.2s;"></span>
-              `).join('')}
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;margin-left:6px;">${currentLb + 1}/${imgs.length}</span>
-            </div>
-          ` : ''}
-        </div>
-      `
-      overlay.querySelector('#lb-close')?.addEventListener('click', (e) => { e.stopPropagation(); closeLightbox() })
-      overlay.querySelector('#lb-prev')?.addEventListener('click', (e) => { e.stopPropagation(); currentLb = (currentLb - 1 + imgs.length) % imgs.length; renderLightbox() })
-      overlay.querySelector('#lb-next')?.addEventListener('click', (e) => { e.stopPropagation(); currentLb = (currentLb + 1) % imgs.length; renderLightbox() })
-    }
-
-    renderLightbox()
-    function closeLightbox() { overlay.remove(); document.removeEventListener('keydown', keyHandler) }
-    function keyHandler(e: KeyboardEvent) {
-      if (e.key === 'Escape') closeLightbox()
-      if (e.key === 'ArrowLeft') { currentLb = (currentLb - 1 + imgs.length) % imgs.length; renderLightbox() }
-      if (e.key === 'ArrowRight') { currentLb = (currentLb + 1) % imgs.length; renderLightbox() }
-    }
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeLightbox() })
-    document.addEventListener('keydown', keyHandler)
-    document.body.appendChild(overlay)
-  }
+  })
 }
 
 const showCameras = ref(false)
-const cameraData = ref<{ cameras: any[] } | null>(null)
-const cameraMarkers = ref<OverlayMarker[]>([])
-let cameraZoomHandler: (() => void) | null = null
 
-function addCameraMarkers(map: any) {
-  removeCameraMarkers()
-  const cameras = cameraData.value?.cameras || []
-  const camMinZooms = overlayMinZooms(cameras.map((c: any) => ({ lat: c.lat, lng: c.lng })))
-  for (let ci = 0; ci < cameras.length; ci++) {
-    const cam = cameras[ci]
-    // Camera pin: circle matching spot marker style, with camera lens icon
-    const el = document.createElement('div')
-    el.className = 'camera-marker'
-    el.setAttribute('role', 'button')
-    el.setAttribute('tabindex', '0')
-    el.setAttribute('aria-label', `${cam.name} road camera`)
-    el.style.cssText = `
-      width: 20px; height: 20px; border-radius: 50%;
-      background: #050810; border: 2px solid #7dd3fc;
-      box-shadow: 0 0 8px rgba(125, 211, 252, 0.25);
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-    `
-    // Camera lens SVG — simple aperture icon
-    el.innerHTML = `<svg width="10" height="10" viewBox="0 0 16 16" fill="none">
-      <circle cx="8" cy="8" r="5" stroke="#7dd3fc" stroke-width="1.5" fill="none"/>
-      <circle cx="8" cy="8" r="2" fill="#7dd3fc"/>
-    </svg>`
+function buildCameraMarker(cam: CameraData, map: mapboxgl.Map): mapboxgl.Marker {
+  // Camera pin: circle matching spot marker style, with camera lens icon
+  const el = document.createElement('div')
+  el.className = 'camera-marker'
+  el.setAttribute('role', 'button')
+  el.setAttribute('tabindex', '0')
+  el.setAttribute('aria-label', `${cam.name} road camera`)
+  el.style.cssText = `
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #050810; border: 2px solid #7dd3fc;
+    box-shadow: 0 0 8px rgba(125, 211, 252, 0.25);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  `
+  el.innerHTML = `<svg width="10" height="10" viewBox="0 0 16 16" fill="none">
+    <circle cx="8" cy="8" r="5" stroke="#7dd3fc" stroke-width="1.5" fill="none"/>
+    <circle cx="8" cy="8" r="2" fill="#7dd3fc"/>
+  </svg>`
 
-    // Popup with carousel + lightbox
-    const uid = `cam-${cam.id}`
-    const imgs = cam.images as Array<{ url: string; description: string }>
-    const hasMultiple = imgs.length > 1
-    camImageRegistry[uid] = { name: cam.name, images: imgs }
+  const startIndex = camIndexById.get(cam.id) ?? 0
 
-    const imagesHtml = imgs.map((img: { url: string; description: string }, i: number) => `
-      <img
-        id="${uid}-img-${i}"
-        src="${img.url}"
-        alt="${img.description || cam.name}"
-        style="width:100%;border-radius:3px;border:1px solid #1a2540;display:${i === 0 ? 'block' : 'none'};aspect-ratio:4/3;object-fit:cover;cursor:zoom-in;"
-        loading="lazy"
-        onclick="window.__camOpen('${uid}')"
-        onerror="this.style.display='none'"
-      />
-    `).join('')
+  const popup = new mapboxgl.Popup({
+    offset: 14,
+    closeButton: false,
+    maxWidth: 'min(300px, 85vw)',
+    className: 'eclipse-popup',
+  }).setHTML(buildCameraPopupHTML(cam, startIndex))
 
-    const descHtml = imgs.map((img: { url: string; description: string }, i: number) => `
-      <span id="${uid}-desc-${i}" style="display:${i === 0 ? 'inline' : 'none'};">${img.description || ''}</span>
-    `).join('')
+  popup.on('open', () => wireCameraPopup(popup, cam))
 
-    // Navigation: prev/next buttons flanking the image, sized for touch
-    const navHtml = !hasMultiple ? '' : `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
-        <button onclick="window.__camNav('${uid}',${imgs.length},-1)" style="background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;font-size:16px;padding:4px 12px;font-family:'IBM Plex Mono',monospace;line-height:1.2;">&#8249;</button>
-        <div style="display:flex;align-items:center;gap:5px;">
-          ${imgs.map((_: any, i: number) => `
-            <span id="${uid}-dot-${i}" style="width:7px;height:7px;border-radius:50%;background:${i === 0 ? '#7dd3fc' : '#1a2540'};transition:background 0.2s;"></span>
-          `).join('')}
-        </div>
-        <button onclick="window.__camNav('${uid}',${imgs.length},1)" style="background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;font-size:16px;padding:4px 12px;font-family:'IBM Plex Mono',monospace;line-height:1.2;">&#8250;</button>
-      </div>
-    `
-
-    const popup = new mapboxgl.Popup({
-      offset: 14,
-      closeButton: false,
-      maxWidth: 'min(300px, 85vw)',
-      className: 'eclipse-popup',
-    }).setHTML(`
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#e2e8f0;padding:4px;">
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:6px;margin-bottom:2px;">
-          <h3 style="font-family:'Manrope',sans-serif;font-weight:600;font-size:14px;color:#7dd3fc;margin:0;">${cam.name}</h3>
-          ${hasMultiple ? `<span id="${uid}-counter" style="font-size:11px;color:#475569;white-space:nowrap;" aria-live="polite">1/${imgs.length}</span>` : ''}
-        </div>
-        <p style="color:#475569;font-size:11px;margin:0 0 6px;">${descHtml}</p>
-        <div style="position:relative;overflow:hidden;border-radius:3px;">
-          ${imagesHtml}
-        </div>
-        ${navHtml}
-        <div style="text-align:center;margin-top:4px;">
-          <span onclick="window.__camOpen('${uid}')" style="color:#475569;font-size:10px;cursor:pointer;border-bottom:1px solid #1a2540;">Click image to enlarge</span>
-        </div>
-      </div>
-    `)
-
-    const marker = new mapboxgl.Marker({ element: el })
-      .setLngLat([cam.lng, cam.lat])
-      .setPopup(popup)
-      .addTo(map)
-    cameraMarkers.value.push({ marker, minZoom: camMinZooms[ci] })
-  }
-  applyOverlayVisibility(cameraMarkers.value, map.getZoom())
-  cameraZoomHandler = () => applyOverlayVisibility(cameraMarkers.value, map.getZoom())
-  map.on('zoom', cameraZoomHandler)
+  return new mapboxgl.Marker({ element: el })
+    .setLngLat([cam.lng, cam.lat])
+    .setPopup(popup)
+    .addTo(map)
 }
 
-function removeCameraMarkers() {
-  if (cameraZoomHandler && eclipseMapRef.value?.map) {
-    eclipseMapRef.value.map.off('zoom', cameraZoomHandler)
-    cameraZoomHandler = null
-  }
-  for (const { marker } of cameraMarkers.value) {
-    marker.remove()
-  }
-  cameraMarkers.value = []
-}
-
-watch(showCameras, async (val) => {
-  const mapInstance = eclipseMapRef.value?.map
-  if (!mapInstance) return
-  if (val) {
-    if (!cameraData.value) {
-      const data = await $fetch<{ cameras: any[] }>('/api/cameras')
-      cameraData.value = data
-    }
-    addCameraMarkers(mapInstance)
-  } else {
-    removeCameraMarkers()
-  }
+useMapOverlay<CameraData>({
+  active: showCameras,
+  mapRef: eclipseMapRef,
+  fetchData: async () => {
+    const { cameras } = await $fetch<{ cameras: CameraData[] }>('/api/cameras')
+    return cameras
+  },
+  buildMarker: (cam, { map }) => buildCameraMarker(cam, map),
 })
 
-onUnmounted(() => {
-  removeTrafficMarkers()
-  removeCameraMarkers()
-  if (horizonMarker) { horizonMarker.remove(); horizonMarker = null }
+useMapOverlay<TrafficCondition>({
+  active: showTraffic,
+  mapRef: eclipseMapRef,
+  fetchData: async () => {
+    const [conditionsRes, segmentsRes, roadsRes] = await Promise.all([
+      $fetch<{ conditions: TrafficCondition[] }>('/api/traffic/conditions'),
+      trafficSegmentsCache ? Promise.resolve(trafficSegmentsCache) : $fetch<{ segments: any[] }>('/api/traffic/segments'),
+      trafficRoadsCache ? Promise.resolve(trafficRoadsCache) : $fetch('/eclipse-data/roads.geojson'),
+    ])
+    trafficSegmentsCache = segmentsRes
+    trafficRoadsCache = roadsRes
+    return conditionsRes.conditions
+  },
+  buildMarker: (c, { map }) => buildTrafficMarker(c, map),
+  onActivate: (map) => addRoadPolylines(map),
+  onDeactivate: (map) => removeRoadPolylines(map),
 })
 
 // ─── Mobile Peek Sheet ───
@@ -671,6 +518,7 @@ const { isPro } = useProStatus()
 const horizonCheckCoords = ref<{ lat: number; lng: number } | null>(null)
 
 let horizonMarker: any = null
+onScopeDispose(() => { horizonMarker?.remove(); horizonMarker = null })
 
 // ─── Offline tile download overlay ───
 const tileDownloading = ref(false)
@@ -1140,6 +988,15 @@ const profileIcons: Record<ProfileId, string> = {
         />
       </div>
     </Transition>
+
+    <!-- Camera lightbox (full-screen overlay, z-99999) -->
+    <ClientOnly>
+      <CameraLightbox
+        :camera="activeLightboxCamera"
+        :start-index="lightboxStartIndex"
+        @close="activeLightboxCamera = null"
+      />
+    </ClientOnly>
 
     <!-- Spot data error banner -->
     <Transition name="fade">

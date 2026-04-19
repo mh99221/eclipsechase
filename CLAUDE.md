@@ -97,9 +97,11 @@ eclipse-chaser/
 │   │   ├── OfflineManager.vue       # Precache API endpoints + offline tile downloads
 │   │   ├── CookieConsent.vue        # GDPR cookie consent banner (Umami analytics)
 │   │   ├── UserMenu.vue             # User dropdown menu
+│   │   ├── CameraLightbox.vue       # Full-screen road camera viewer (keyboard nav + carousel)
 │   │   ├── content/GuidePathMap.vue # Eclipse path map embedded in guide.md
 │   │   └── OgImage/OgImageDefault.satori.vue  # Satori-based OG image generation
 │   ├── composables/
+│   │   ├── useMapOverlay.ts         # Fetch + marker + zoom lifecycle for /map traffic + camera overlays
 │   │   ├── useProStatus.ts          # JWT-based Pro status (IndexedDB + RS256 verify)
 │   │   ├── useRecommendation.ts     # Spot scoring engine (5 profiles, weighted factors)
 │   │   ├── useLocation.ts           # GPS geolocation (defaults to Reykjavik)
@@ -109,8 +111,10 @@ eclipse-chaser/
 │   ├── utils/
 │   │   ├── eclipse.ts               # Shared helpers (formatDuration, cloudColor, compassDirection, etc.)
 │   │   ├── mapLayers.ts             # Mapbox GL layer definitions
+│   │   ├── mapMarkers.ts            # Zoom-visibility buckets + min-zoom helpers for HTML markers
 │   │   ├── proStorage.ts            # IndexedDB token storage (save/get/remove)
-│   │   └── solar.ts                 # Solar calculations
+│   │   ├── solar.ts                 # Solar calculations
+│   │   └── traffic.ts               # Road-condition colours, labels, priority
 │   ├── middleware/
 │   │   └── pro-gate.ts              # Route guard: redirect non-Pro to /pro
 │   └── types/
