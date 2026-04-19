@@ -321,8 +321,9 @@ function createDirectionWedge(lat: number, lng: number, azimuth: number, radiusM
         class="w-full rounded border border-border-subtle"
         style="height: 400px;"
       />
-      <!-- Map controls overlay -->
-      <div class="absolute bottom-3 left-3 flex gap-1.5 z-10">
+      <!-- Map controls overlay (top-left: bottom rows are reserved for the
+           Mapbox logo + attribution; top-right has the NavigationControl). -->
+      <div class="absolute top-3 left-3 flex gap-1.5 z-10">
         <button
           class="px-2.5 py-1.5 rounded text-[10px] font-mono uppercase tracking-wider transition-all"
           :class="is3D
