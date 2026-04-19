@@ -54,10 +54,13 @@ export class Popup {
   on() { return this }
 }
 export class Marker {
-  _element: HTMLElement = document.createElement('div')
+  _element: HTMLElement
+  constructor(options?: { element?: HTMLElement; anchor?: string } | null) {
+    this._element = options?.element ?? document.createElement('div')
+  }
   setLngLat() { return this }
-  addTo() { return this }
-  remove() { return this }
+  addTo(_map: any) { document.body.appendChild(this._element); return this }
+  remove() { this._element.remove(); return this }
   getElement() { return this._element }
   setPopup() { return this }
 }
@@ -65,3 +68,17 @@ export class LngLatBounds {
   extend() { return this }
   isEmpty() { return false }
 }
+
+// Default export mirrors the real mapbox-gl module so `import mapboxgl from 'mapbox-gl'`
+// and `mapboxgl.Marker` / `mapboxgl.accessToken` work in tests.
+const mapboxgl = {
+  Map,
+  Marker,
+  Popup,
+  NavigationControl,
+  GeolocateControl,
+  ScaleControl,
+  LngLatBounds,
+  accessToken: '',
+}
+export default mapboxgl
