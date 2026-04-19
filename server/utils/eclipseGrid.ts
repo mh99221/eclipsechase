@@ -24,8 +24,11 @@ export interface EclipseGrid {
   points: EclipsePoint[]
 }
 
-/** Max snap distance in degrees (~5 km at 65°N, wider than horizon grid's
- *  3 km because eclipse grid is coarser at 0.15° spacing). */
+/** Max snap distance in degrees. 0.12° ≈ 13 km latitude, ~5.6 km longitude
+ *  at 65°N — sized at ~14% beyond a half-cell (grid spacing is 0.15°)
+ *  so coordinates just inside the totality path still snap but clearly-
+ *  outside clicks don't. Wider than horizon grid's 3 km because the
+ *  eclipse grid is coarser. */
 const MAX_SNAP_DIST_DEG = 0.12
 
 let cached: EclipseGrid | null = null
