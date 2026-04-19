@@ -984,7 +984,7 @@ const profileIcons: Record<ProfileId, string> = {
     <Transition name="fade">
       <div
         v-if="horizonCheckCoords"
-        class="absolute z-20 sm:bottom-[80px] left-2 right-2 sm:left-auto sm:right-6 sm:w-96"
+        class="absolute z-20 sm:bottom-[80px] left-2 right-2 sm:left-auto sm:right-6 sm:w-[640px] sm:max-w-[calc(100vw-3rem)]"
         :style="horizonBottomStyle"
       >
         <DynamicHorizonCheck

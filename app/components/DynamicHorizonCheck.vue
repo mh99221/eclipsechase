@@ -54,7 +54,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="bg-surface border border-border-subtle/40 rounded p-4 max-w-lg w-full">
+  <div class="bg-surface border border-border-subtle/40 rounded p-4 max-w-2xl w-full">
     <!-- Close button -->
     <div class="flex justify-between items-center mb-3">
       <h3 class="font-display text-sm font-semibold text-ink-1">{{ t('horizon.section_title') }}</h3>
@@ -100,7 +100,7 @@ onMounted(async () => {
       <template v-else>
         <HorizonBadge :verdict="result.verdict" :clearance="result.clearance_degrees" class="mb-3" />
 
-        <HorizonProfile v-if="profileData" :data="profileData" :lat="lat" :lng="lng" :height="200" class="mb-3" />
+        <HorizonProfile v-if="profileData" :data="profileData" :lat="lat" :lng="lng" class="mb-3" />
 
         <div class="flex items-center gap-2 mt-3">
           <a
