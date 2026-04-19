@@ -330,38 +330,45 @@ function buildCameraPopupHTML(cam: CameraData, currentIndex: number): string {
   const hasMultiple = imgs.length > 1
   const cur = imgs[currentIndex] ?? imgs[0]!
 
+  // Theme-aware colours (dark → cream auto-swap via CSS custom props).
+  // Button/dot accent stays ice #7dd3fc — constant across themes.
+  const btnBg = 'rgb(var(--surface-raised))'
+  const border = 'rgb(var(--border-subtle))'
+  const meta = 'rgb(var(--ink-3))'
+  const body = 'rgb(var(--ink-2))'
+
   const dotsHtml = imgs.map((_, i) => `
-    <span style="width:7px;height:7px;border-radius:50%;background:${i === currentIndex ? '#7dd3fc' : '#1a2540'};transition:background 0.2s;"></span>
+    <span style="width:7px;height:7px;border-radius:50%;background:${i === currentIndex ? '#7dd3fc' : border};transition:background 0.2s;"></span>
   `).join('')
 
   const navHtml = !hasMultiple ? '' : `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
-      <button data-cam-action="prev" style="background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;font-size:16px;padding:4px 12px;font-family:'IBM Plex Mono',monospace;line-height:1.2;" aria-label="Previous image">&#8249;</button>
+      <button data-cam-action="prev" style="background:${btnBg};border:1px solid ${border};border-radius:4px;color:#7dd3fc;cursor:pointer;font-size:16px;padding:4px 12px;font-family:'IBM Plex Mono',monospace;line-height:1.2;" aria-label="Previous image">&#8249;</button>
       <div style="display:flex;align-items:center;gap:5px;">${dotsHtml}</div>
-      <button data-cam-action="next" style="background:#0a1020;border:1px solid #1a2540;border-radius:4px;color:#7dd3fc;cursor:pointer;font-size:16px;padding:4px 12px;font-family:'IBM Plex Mono',monospace;line-height:1.2;" aria-label="Next image">&#8250;</button>
+      <button data-cam-action="next" style="background:${btnBg};border:1px solid ${border};border-radius:4px;color:#7dd3fc;cursor:pointer;font-size:16px;padding:4px 12px;font-family:'IBM Plex Mono',monospace;line-height:1.2;" aria-label="Next image">&#8250;</button>
     </div>
   `
 
   return `
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#e2e8f0;padding:4px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:${body};padding:4px;">
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:6px;margin-bottom:2px;">
         <h3 style="font-family:'Manrope',sans-serif;font-weight:600;font-size:14px;color:#7dd3fc;margin:0;">${cam.name}</h3>
-        ${hasMultiple ? `<span style="font-size:11px;color:#475569;white-space:nowrap;" aria-live="polite">${currentIndex + 1}/${imgs.length}</span>` : ''}
+        ${hasMultiple ? `<span style="font-size:11px;color:${meta};white-space:nowrap;" aria-live="polite">${currentIndex + 1}/${imgs.length}</span>` : ''}
       </div>
-      <p style="color:#475569;font-size:11px;margin:0 0 6px;">${cur?.description ?? ''}</p>
+      <p style="color:${meta};font-size:11px;margin:0 0 6px;">${cur?.description ?? ''}</p>
       <div style="position:relative;overflow:hidden;border-radius:3px;">
         <img
           data-cam-action="open"
           src="${cur?.url ?? ''}"
           alt="${cur?.description || cam.name}"
-          style="width:100%;border-radius:3px;border:1px solid #1a2540;aspect-ratio:4/3;object-fit:cover;cursor:zoom-in;"
+          style="width:100%;border-radius:3px;border:1px solid ${border};aspect-ratio:4/3;object-fit:cover;cursor:zoom-in;"
           loading="lazy"
           onerror="this.style.display='none'"
         />
       </div>
       ${navHtml}
       <div style="text-align:center;margin-top:4px;">
-        <span data-cam-action="open" style="color:#475569;font-size:10px;cursor:pointer;border-bottom:1px solid #1a2540;">Click image to enlarge</span>
+        <span data-cam-action="open" style="color:${meta};font-size:10px;cursor:pointer;border-bottom:1px solid ${border};">Click image to enlarge</span>
       </div>
     </div>
   `
