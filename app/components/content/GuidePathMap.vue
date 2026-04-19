@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Region } from '~/types/spots'
 import { readCssVar } from '~/utils/theme'
 
 const config = useRuntimeConfig()
@@ -37,7 +38,7 @@ watch(mapContainer, async (el) => {
 
   try {
     const mapboxgl = (await import('mapbox-gl')).default
-    const { REGION_LABELS } = await import('~/utils/eclipse')
+    const { regionLabel } = await import('~/utils/eclipse')
 
     mapboxgl.accessToken = token
 
@@ -55,17 +56,17 @@ watch(mapContainer, async (el) => {
 
       applyEclipsePath()
 
-      const REGION_MARKERS = [
-        { key: 'westfjords', lng: -22.8, lat: 65.8 },
-        { key: 'snaefellsnes', lng: -23.5, lat: 64.85 },
-        { key: 'borgarfjordur', lng: -21.5, lat: 64.7 },
-        { key: 'reykjanes', lng: -22.2, lat: 63.95 },
+      const REGION_MARKERS: Array<{ key: Region; lng: number; lat: number }> = [
+        { key: 'westfjords',    lng: -22.8, lat: 65.8  },
+        { key: 'snaefellsnes',  lng: -23.5, lat: 64.85 },
+        { key: 'borgarfjordur', lng: -21.5, lat: 64.7  },
+        { key: 'reykjanes',     lng: -22.2, lat: 63.95 },
       ]
 
       for (const region of REGION_MARKERS) {
         const el = document.createElement('div')
         el.className = 'guide-map-label'
-        el.textContent = REGION_LABELS[region.key] || region.key
+        el.textContent = regionLabel(region.key)
 
         new mapboxgl.Marker({ element: el, anchor: 'center' })
           .setLngLat([region.lng, region.lat])

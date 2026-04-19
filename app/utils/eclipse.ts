@@ -114,12 +114,20 @@ export function weatherSvgHtml(cloudCover: number | null | undefined, size: numb
   </svg>`
 }
 
-export const REGION_LABELS: Record<string, string> = {
+import type { Region } from '~/types/spots'
+
+export const REGION_LABELS: Record<Region, string> = {
   westfjords: 'Westfjords',
   snaefellsnes: 'Snæfellsnes',
   reykjanes: 'Reykjanes',
   reykjavik: 'Reykjavík',
   borgarfjordur: 'Borgarfjörður',
+}
+
+/** Display label for a region slug; falls back to the raw value. */
+export function regionLabel(region: string | null | undefined): string {
+  if (!region) return ''
+  return REGION_LABELS[region as Region] ?? region
 }
 
 export const SPOT_TYPE_LABELS: Record<string, string> = {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { compassDirection, formatDuration, formatTrailTime, parseJsonb, REGION_LABELS, SPOT_TYPE_LABELS } from '~/utils/eclipse'
+import { compassDirection, formatDuration, formatTrailTime, parseJsonb, regionLabel, SPOT_TYPE_LABELS } from '~/utils/eclipse'
 import type { SpotPhoto } from '~/types/spots'
 import type { HorizonCheck, HorizonProfileData } from '~/types/horizon'
 
@@ -31,7 +31,7 @@ const siteUrl = useRuntimeConfig().public.siteUrl as string
 useHead({
   title: () => spot.value.name,
   meta: [
-    { name: 'description', content: () => `${spot.value.name} — eclipse viewing spot in ${REGION_LABELS[spot.value.region] || spot.value.region}. ${formatDuration(spot.value.totality_duration_seconds)} of totality.` },
+    { name: 'description', content: () => `${spot.value.name} — eclipse viewing spot in ${regionLabel(spot.value.region)}. ${formatDuration(spot.value.totality_duration_seconds)} of totality.` },
     { property: 'og:title', content: () => `${spot.value.name} — Eclipse Viewing Spot` },
     { property: 'og:description', content: () => spot.value.description },
     { property: 'og:url', content: () => `${siteUrl}/spots/${slug}` },
@@ -120,7 +120,7 @@ const spotHistory = computed(() => historicalData.value?.spots?.[slug] ?? null)
       <!-- Breadcrumb / coord row -->
       <div class="flex items-center justify-between gap-4 mb-4">
         <div class="flex items-center gap-2 font-mono text-[10px] tracking-[0.25em] text-ink-3 uppercase min-w-0">
-          <span class="truncate">{{ REGION_LABELS[spot.region] || spot.region }}</span>
+          <span class="truncate">{{ regionLabel(spot.region) }}</span>
           <span class="text-ink-3/50" aria-hidden="true">/</span>
           <span class="text-accent/80 truncate">{{ t('spot.viewing_spot') }}</span>
         </div>

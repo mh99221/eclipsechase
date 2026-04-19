@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { bestRegion } from '~/utils/weather'
-import { REGION_LABELS, cloudColor, cloudLevel } from '~/utils/eclipse'
+import { cloudColor, cloudLevel, regionLabel } from '~/utils/eclipse'
 
 definePageMeta({ middleware: ['pro-gate'] })
 
@@ -81,7 +81,7 @@ const checkedCount = computed(() =>
           <div class="flex items-center justify-between">
             <div>
               <p class="font-display text-lg font-semibold text-ink-1">
-                {{ REGION_LABELS[weatherBest.region] || weatherBest.region }}
+                {{ regionLabel(weatherBest.region) }}
               </p>
               <p class="text-sm mt-0.5" :style="{ color: cloudColor(weatherBest.avgCloudCover) }">
                 {{ weatherBest.avgCloudCover }}% cloud cover &middot; {{ cloudLevel(weatherBest.avgCloudCover).label }}

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatDuration, HORIZON_VERDICT_STYLES, parseJsonb, REGION_LABELS, SPOT_TYPE_LABELS } from '~/utils/eclipse'
+import { formatDuration, HORIZON_VERDICT_STYLES, parseJsonb, regionLabel, SPOT_TYPE_LABELS } from '~/utils/eclipse'
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId, RankedSpot } from '~/composables/useRecommendation'
 import type { SpotPhoto } from '~/types/spots'
@@ -288,7 +288,7 @@ useHead({
             </div>
             <h3 class="font-display text-base font-semibold text-ink-1 mb-1 group-hover:text-accent-strong transition-colors">{{ item.spot.name }}</h3>
             <div class="flex items-center justify-between">
-              <span class="font-mono text-[10px] text-ink-3 uppercase tracking-wider">{{ REGION_LABELS[item.spot.region] || item.spot.region }}</span>
+              <span class="font-mono text-[10px] text-ink-3 uppercase tracking-wider">{{ regionLabel(item.spot.region) }}</span>
               <span class="font-display text-sm font-bold text-ink-1">{{ formatDuration(item.spot.totality_duration_seconds) }}</span>
             </div>
             <!-- Historical clearness strip: 10 tiny squares for the last 10 years -->
