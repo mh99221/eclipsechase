@@ -38,12 +38,12 @@ function projectOffset(
   lng: number,
   azimuth: number,
 ): { lng: number; lat: number } {
-  const origin = map.project([lng, lat] as any)
+  const origin = map.project([lng, lat])
   const azRad = azimuth * Math.PI / 180
   const dx = Math.sin(azRad) * ARC_RADIUS_PX
   const dy = -Math.cos(azRad) * ARC_RADIUS_PX
-  const ll = map.unproject([origin.x + dx, origin.y + dy] as any)
-  return { lng: (ll as any).lng, lat: (ll as any).lat }
+  const ll = map.unproject([origin.x + dx, origin.y + dy])
+  return { lng: ll.lng, lat: ll.lat }
 }
 
 function trajectoryToLineFeature(
@@ -175,6 +175,7 @@ export function attachSunArc(map: MapboxMap, props: SunArcProps): () => void {
 
   // --- Tick markers at 5-min intervals, skipping the totality tick ---
   const tickMarkers: MapboxMarker[] = []
+  const tickSrcIndices: number[] = []
   for (let i = 0; i < trajectory.length; i++) {
     const pt = trajectory[i]!
     const minute = Math.round(pt.utcHours * 60)
@@ -188,6 +189,7 @@ export function attachSunArc(map: MapboxMap, props: SunArcProps): () => void {
       .setLngLat([tickLngLat.lng, tickLngLat.lat])
       .addTo(map)
     tickMarkers.push(marker)
+    tickSrcIndices.push(i)
   }
 
   // --- Zoom handler: recompute everything at the new zoom ---
@@ -199,15 +201,10 @@ export function attachSunArc(map: MapboxMap, props: SunArcProps): () => void {
     const sun = projectOffset(map, props.lat, props.lng, sunPt.azimuth)
     sunMarker.setLngLat([sun.lng, sun.lat])
     calloutMarker.setLngLat([sun.lng, sun.lat])
-    let tickIdx = 0
-    for (let i = 0; i < trajectory.length; i++) {
-      const pt = trajectory[i]!
-      const minute = Math.round(pt.utcHours * 60)
-      if (minute % TICK_STEP_MINUTES !== 0) continue
-      if (i === sunIdx) continue
+    for (let k = 0; k < tickSrcIndices.length; k++) {
+      const pt = trajectory[tickSrcIndices[k]!]!
       const ll = projectOffset(map, props.lat, props.lng, pt.azimuth)
-      tickMarkers[tickIdx]!.setLngLat([ll.lng, ll.lat])
-      tickIdx++
+      tickMarkers[k]!.setLngLat([ll.lng, ll.lat])
     }
   }
   map.on('zoom', zoomHandler)
