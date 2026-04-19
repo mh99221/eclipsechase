@@ -82,14 +82,9 @@ function nearestCloudCover(lat: number, lng: number): number | null {
   return best
 }
 
-let lastZoomBucket = -1
-
 function applyZoomVisibility() {
   if (!map) return
   const zoom = map.getZoom()
-  const bucket = Math.floor(zoom)
-  if (bucket === lastZoomBucket) return
-  lastZoomBucket = bucket
   setMarkerVisibility(stationMarkers.values(), zoom)
   setMarkerVisibility(spotMarkers.values(), zoom)
 }
@@ -103,8 +98,6 @@ function addEclipsePath() {
     },
   })
 }
-
-function resetZoomBucket() { lastZoomBucket = -1 }
 
 type Station = NonNullable<typeof props.stations>[number]
 
@@ -163,14 +156,14 @@ function updateMarkers() {
         .addTo(map)
       cached = { marker, el, popup, minZoom: minZooms[i]! }
       stationMarkers.set(station.station_id, cached)
-      // Inline visibility so the new marker obeys its bucket
-      // immediately — no reliance on the trailing batch pass.
-      setMarkerVisibility([cached], currentZoom)
     } else {
       cached.minZoom = minZooms[i]!
       renderStationInto(cached.el, station)
       cached.popup.setHTML(stationPopupHtml(station))
     }
+    // Re-apply visibility inline after every render — renderInto
+    // wipes cssText which could clobber prior visibility state.
+    setMarkerVisibility([cached], currentZoom)
   }
 
   for (const [id, cached] of stationMarkers) {
@@ -179,7 +172,6 @@ function updateMarkers() {
       stationMarkers.delete(id)
     }
   }
-  resetZoomBucket()
   applyZoomVisibility()
 }
 
@@ -356,14 +348,17 @@ function updateSpotMarkers() {
         .addTo(map)
       cached = { marker, el, popup, minZoom }
       spotMarkers.set(spot.slug, cached)
-      // Inline visibility so the new marker obeys its bucket
-      // immediately — no reliance on the trailing batch pass.
-      setMarkerVisibility([cached], currentZoom)
     } else {
       cached.minZoom = minZoom
+      // renderSpotInto wipes el.style.cssText, which clobbers any
+      // visibility/pointer-events set by a previous zoom-visibility
+      // pass. Re-render then re-apply visibility inline so the
+      // marker never sits in a "rendered but stale visibility"
+      // state between this call and the trailing batch pass.
       renderSpotInto(cached.el, spot, rankInfo, colors)
       cached.popup.setHTML(spotPopupHtml(spot, rankInfo, colors))
     }
+    setMarkerVisibility([cached], currentZoom)
   }
 
   for (const [slug, cached] of spotMarkers) {
@@ -372,7 +367,6 @@ function updateSpotMarkers() {
       spotMarkers.delete(slug)
     }
   }
-  resetZoomBucket()
   applyZoomVisibility()
 }
 
