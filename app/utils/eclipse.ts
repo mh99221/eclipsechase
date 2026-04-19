@@ -129,12 +129,40 @@ export const SPOT_TYPE_LABELS: Record<string, string> = {
   'serious-hike': 'Serious hike',
 }
 
-// Horizon verdict colors — shared across HorizonBadge, HorizonProfile, EclipseMap
-export const HORIZON_VERDICT_COLORS: Record<string, string> = {
-  clear: '#22c55e',
-  marginal: '#eab308',
-  risky: '#f97316',
-  blocked: '#ef4444',
+// Horizon verdict styling — single source of truth shared across
+// HorizonBadge (full chip), HorizonProfile/EclipseMap (raw colour),
+// and spots/index.vue (ec-chip-* class).
+export const HORIZON_VERDICT_STYLES: Record<string, {
+  color: string
+  bg: string
+  border: string
+  chip: string
+}> = {
+  clear:    { color: '#22c55e', bg: 'bg-green-500/10',  border: 'border-green-500/30',  chip: 'ec-chip-green'  },
+  marginal: { color: '#eab308', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', chip: 'ec-chip-yellow' },
+  risky:    { color: '#f97316', bg: 'bg-orange-500/10', border: 'border-orange-500/30', chip: 'ec-chip-orange' },
+  blocked:  { color: '#ef4444', bg: 'bg-red-500/10',    border: 'border-red-500/30',    chip: 'ec-chip-red'    },
+}
+
+export const HORIZON_VERDICT_COLORS: Record<string, string> = Object.fromEntries(
+  Object.entries(HORIZON_VERDICT_STYLES).map(([k, v]) => [k, v.color]),
+)
+
+// Parse a JSONB column that may arrive as string (PostgREST) or native
+// (client-decoded). Returns the fallback on any shape mismatch.
+export function parseJsonb<T>(raw: unknown, fallback: T): T {
+  if (raw == null) return fallback
+  if (typeof raw === 'string') {
+    try { return JSON.parse(raw) as T } catch { return fallback }
+  }
+  return raw as T
+}
+
+export function formatTrailTime(minutes: number): string {
+  if (minutes < 60) return `${minutes} min`
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return `${h}h ${m}min`
 }
 
 // 16-point compass direction from azimuth degrees

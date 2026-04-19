@@ -2,6 +2,7 @@
 import mapboxgl from 'mapbox-gl'
 import { cloudColor, cloudLevel, formatDuration, weatherSvgHtml } from '~/utils/eclipse'
 import { addEclipsePathLayers } from '~/utils/mapLayers'
+import { readCssVar } from '~/utils/theme'
 
 const props = defineProps<{
   stations?: Array<{
@@ -121,21 +122,6 @@ function applyZoomVisibility() {
   lastZoomBucket = bucket
   setMarkerVisibility(markers, zoom)
   setMarkerVisibility(spotMarkers, zoom)
-}
-
-/**
- * Read a CSS variable from :root and return a Mapbox-compatible color.
- * Our tokens are stored as space-separated rgb triples ("245 158 11")
- * for use with `rgb(var(--accent) / <alpha>)`. Mapbox GL's style-spec
- * color parser only accepts the comma-separated form, so we convert it.
- */
-function readCssVar(name: string, fallback: string): string {
-  if (typeof window === 'undefined') return fallback
-  const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
-  if (!raw) return fallback
-  const parts = raw.split(/[\s,]+/).filter(Boolean)
-  if (parts.length < 3) return fallback
-  return `rgb(${parts.slice(0, 3).join(', ')})`
 }
 
 function addEclipsePath() {

@@ -788,10 +788,7 @@ const profileIcons: Record<ProfileId, string> = {
       </template>
     </ClientOnly>
 
-    <!-- Map-specific page controls — floats below the global top nav
-         (nav is 72px tall, fixed at top=0 on z-50). Logo, masthead, and
-         UserMenu now live in the global nav and are no longer duplicated
-         here. -->
+    <!-- Floats below the global top nav (72px, fixed, z-50). -->
     <div class="absolute top-[72px] left-0 right-0 z-10 pointer-events-none">
       <!-- Desktop top-right controls: layer toggles + Profile selector.
            Hidden on mobile (the bottom sheet provides the same controls). -->

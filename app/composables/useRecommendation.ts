@@ -76,14 +76,21 @@ function nearestStationWeather(
   weatherByStation: Map<string, number | null>,
   stations: Array<{ id: string; lat: number; lng: number }>,
 ): number | null {
-  let minDist = Infinity
+  // We only need the *ordering* (nearest station), not absolute distance,
+  // so we skip haversine's trig and use cos-scaled squared-Euclidean.
+  // At Iceland's ~64°N latitude the scale factor is constant across our
+  // station set, so ordering is identical to great-circle distance.
+  const cosLat = Math.cos((spotLat * Math.PI) / 180)
+  let minD = Infinity
   let nearest: number | null = null
   for (const s of stations) {
     const cc = weatherByStation.get(s.id)
     if (cc == null) continue
-    const d = haversineKm(spotLat, spotLng, s.lat, s.lng)
-    if (d < minDist) {
-      minDist = d
+    const dLat = spotLat - s.lat
+    const dLng = (spotLng - s.lng) * cosLat
+    const d = dLat * dLat + dLng * dLng
+    if (d < minD) {
+      minD = d
       nearest = cc
     }
   }

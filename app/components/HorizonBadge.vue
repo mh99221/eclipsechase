@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HorizonVerdict } from '~/types/horizon'
+import { HORIZON_VERDICT_STYLES } from '~/utils/eclipse'
 
 const props = defineProps<{
   verdict: HorizonVerdict
@@ -9,14 +10,7 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const config: Record<HorizonVerdict, { color: string; bg: string; border: string }> = {
-  clear: { color: '#22c55e', bg: 'bg-green-500/10', border: 'border-green-500/30' },
-  marginal: { color: '#eab308', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30' },
-  risky: { color: '#f97316', bg: 'bg-orange-500/10', border: 'border-orange-500/30' },
-  blocked: { color: '#ef4444', bg: 'bg-red-500/10', border: 'border-red-500/30' },
-}
-
-const style = computed(() => config[props.verdict])
+const style = computed(() => HORIZON_VERDICT_STYLES[props.verdict]!)
 
 const label = computed(() => t(`horizon.label_${props.verdict}`))
 

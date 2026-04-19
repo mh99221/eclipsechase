@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatDuration, REGION_LABELS, SPOT_TYPE_LABELS } from '~/utils/eclipse'
+import { formatDuration, HORIZON_VERDICT_STYLES, parseJsonb, REGION_LABELS, SPOT_TYPE_LABELS } from '~/utils/eclipse'
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId, RankedSpot } from '~/composables/useRecommendation'
 import type { SpotPhoto } from '~/types/spots'
@@ -109,12 +109,9 @@ const displayItems = computed<RankedSpot[]>(() => {
 
 // Helpers
 function getHeroUrl(spot: any): string {
-  const raw = spot.photos
-  if (raw) {
-    const photos = typeof raw === 'string' ? JSON.parse(raw) : Array.isArray(raw) ? raw : []
-    const hero = photos.find((p: SpotPhoto) => p.is_hero) || photos[0]
-    if (hero) return `/images/spots/${hero.filename}`
-  }
+  const photos = parseJsonb<SpotPhoto[]>(spot.photos, [])
+  const hero = photos.find(p => p.is_hero) || photos[0]
+  if (hero) return `/images/spots/${hero.filename}`
   return `/images/spots/${spot.slug}-hero.webp`
 }
 
@@ -123,17 +120,12 @@ function getThumbUrl(spot: any): string {
 }
 
 function getHorizonVerdict(spot: any): string | null {
-  const raw = spot.horizon_check
-  if (!raw) return null
-  const hc = typeof raw === 'string' ? JSON.parse(raw) : raw
+  const hc = parseJsonb<{ verdict?: string } | null>(spot.horizon_check, null)
   return hc?.verdict || null
 }
 
-const verdictColor: Record<string, string> = {
-  clear: 'ec-chip-green',
-  marginal: 'ec-chip-yellow',
-  risky: 'ec-chip-orange',
-  blocked: 'ec-chip-red',
+function verdictChip(verdict: string): string {
+  return HORIZON_VERDICT_STYLES[verdict]?.chip || ''
 }
 
 function scoreColor(score: number): string {
@@ -291,7 +283,7 @@ useHead({
               <span
                 v-if="getHorizonVerdict(item.spot) && getHorizonVerdict(item.spot) !== 'clear'"
                 class="text-[9px] font-mono tracking-[0.15em] uppercase px-1.5 py-0.5 rounded border"
-                :class="verdictColor[getHorizonVerdict(item.spot)!]"
+                :class="verdictChip(getHorizonVerdict(item.spot)!)"
               >{{ getHorizonVerdict(item.spot) }}</span>
             </div>
             <h3 class="font-display text-base font-semibold text-ink-1 mb-1 group-hover:text-accent-strong transition-colors">{{ item.spot.name }}</h3>

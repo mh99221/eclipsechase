@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatDuration, REGION_LABELS, SPOT_TYPE_LABELS, compassDirection } from '~/utils/eclipse'
+import { compassDirection, formatDuration, formatTrailTime, parseJsonb, REGION_LABELS, SPOT_TYPE_LABELS } from '~/utils/eclipse'
 import type { SpotPhoto } from '~/types/spots'
 import type { HorizonCheck, HorizonProfileData } from '~/types/horizon'
 
@@ -16,15 +16,7 @@ if (error.value || !data.value?.spot) {
 
 const spot = computed(() => data.value!.spot)
 
-// Parse photos JSONB — may come as string from API or already parsed
-const spotPhotos = computed<SpotPhoto[]>(() => {
-  const raw = spot.value.photos
-  if (!raw) return []
-  if (typeof raw === 'string') {
-    try { return JSON.parse(raw) } catch { return [] }
-  }
-  return Array.isArray(raw) ? raw : []
-})
+const spotPhotos = computed<SpotPhoto[]>(() => parseJsonb<SpotPhoto[]>(spot.value.photos, []))
 
 const heroPhoto = computed<SpotPhoto | null>(() =>
   spotPhotos.value.find(p => p.is_hero) || spotPhotos.value[0] || null,
@@ -92,15 +84,9 @@ const difficultyBadge: Record<string, { label: string; color: string }> = {
 
 const isTrail = computed(() => spot.value.spot_type && spot.value.spot_type !== 'drive-up')
 
-// Parse horizon_check JSONB
-const horizonCheck = computed<HorizonCheck | null>(() => {
-  const raw = spot.value.horizon_check
-  if (!raw) return null
-  if (typeof raw === 'string') {
-    try { return JSON.parse(raw) } catch { return null }
-  }
-  return raw as HorizonCheck
-})
+const horizonCheck = computed<HorizonCheck | null>(
+  () => parseJsonb<HorizonCheck | null>(spot.value.horizon_check, null),
+)
 
 const horizonProfileData = computed<HorizonProfileData | null>(() => {
   const hc = horizonCheck.value
@@ -114,25 +100,8 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
   }
 })
 
-// Parse warnings JSONB
-const warnings = computed<string[]>(() => {
-  const raw = spot.value.warnings
-  if (!raw) return []
-  if (typeof raw === 'string') {
-    try { return JSON.parse(raw) } catch { return [] }
-  }
-  return Array.isArray(raw) ? raw : []
-})
-
-// Parse nearby_poi JSONB
-const nearbyPoi = computed<string[]>(() => {
-  const raw = spot.value.nearby_poi
-  if (!raw) return []
-  if (typeof raw === 'string') {
-    try { return JSON.parse(raw) } catch { return [] }
-  }
-  return Array.isArray(raw) ? raw : []
-})
+const warnings = computed<string[]>(() => parseJsonb<string[]>(spot.value.warnings, []))
+const nearbyPoi = computed<string[]>(() => parseJsonb<string[]>(spot.value.nearby_poi, []))
 
 // Historical weather — pre-computed by scripts/fetch-historical-weather.mjs
 // and served as a static JSON. Lazy + client-only so it doesn't block SSR.
@@ -181,7 +150,7 @@ const spotHistory = computed(() => historicalData.value?.spots?.[slug] ?? null)
           <template v-if="spot.trail_distance_km">{{ spot.trail_distance_km }} km</template>
           <template v-if="spot.trail_distance_km && spot.trail_time_minutes"> · </template>
           <template v-if="spot.trail_time_minutes">
-            {{ spot.trail_time_minutes < 60 ? `${spot.trail_time_minutes} min` : `${Math.floor(spot.trail_time_minutes / 60)}h ${spot.trail_time_minutes % 60}min` }}
+            {{ formatTrailTime(spot.trail_time_minutes) }}
           </template>
           <template v-if="spot.difficulty"> · {{ difficultyBadge[spot.difficulty]?.label || spot.difficulty }}</template>
         </span>
@@ -278,10 +247,8 @@ const spotHistory = computed(() => historicalData.value?.spots?.[slug] ?? null)
         </div>
       </dl>
 
-      <!-- Horizon verdict is surfaced inside the HorizonProfile chart below,
-           so we only show a standalone banner when the verdict is not 'clear'
-           — catches any future curation of edge-case spots that need a prominent
-           warning. All current spots are 'clear', so this renders nothing. -->
+      <!-- Only show a standalone horizon banner for non-'clear' verdicts;
+           otherwise the verdict is already surfaced inside HorizonProfile. -->
       <div v-if="horizonCheck && horizonCheck.verdict !== 'clear'" class="mb-12">
         <HorizonBadge
           :verdict="horizonCheck.verdict"
@@ -327,7 +294,7 @@ const spotHistory = computed(() => historicalData.value?.spots?.[slug] ?? null)
           </div>
           <div v-if="spot.trail_time_minutes">
             <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-3 mb-1">{{ t('spot.est_time') }}</p>
-            <p class="text-sm font-mono text-ink-2">{{ spot.trail_time_minutes < 60 ? `${spot.trail_time_minutes} min` : `${Math.floor(spot.trail_time_minutes / 60)}h ${spot.trail_time_minutes % 60}min` }}</p>
+            <p class="text-sm font-mono text-ink-2">{{ formatTrailTime(spot.trail_time_minutes) }}</p>
           </div>
           <div v-if="spot.elevation_gain_m">
             <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-3 mb-1">{{ t('spot.elevation_gain') }}</p>

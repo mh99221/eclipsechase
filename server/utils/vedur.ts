@@ -37,6 +37,30 @@ export interface VedurForecast {
   precipitation: number | null
 }
 
+// 90 min — cron runs every 15, plus a safety margin.
+export const FORECAST_STALE_THRESHOLD_MS = 90 * 60 * 1000
+
+/**
+ * Given a set of forecast rows, return the newest `forecast_time` and
+ * whether that makes the set stale. Shared by the cloud-cover and
+ * forecast-timeline endpoints.
+ */
+export function computeForecastStaleness(
+  rows: Array<{ forecast_time?: string | null }> | null | undefined,
+  thresholdMs: number = FORECAST_STALE_THRESHOLD_MS,
+): { fetchedAt: string | null; stale: boolean } {
+  let fetchedAt: string | null = null
+  for (const row of rows || []) {
+    if (row.forecast_time && (!fetchedAt || row.forecast_time > fetchedAt)) {
+      fetchedAt = row.forecast_time
+    }
+  }
+  const stale = fetchedAt
+    ? (Date.now() - new Date(fetchedAt).getTime()) >= thresholdMs
+    : true
+  return { fetchedAt, stale }
+}
+
 function parseNum(val: string | undefined): number | null {
   if (val === undefined || val === '') return null
   const n = Number(val)

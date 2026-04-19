@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { readCssVar } from '~/utils/theme'
+
 const config = useRuntimeConfig()
 const colorMode = useColorMode()
 const mapContainer = ref<HTMLElement | null>(null)
@@ -7,16 +9,6 @@ let map: any = null
 
 const mapboxStyleFor = (mode: string) =>
   mode === 'light' ? 'mapbox://styles/mapbox/light-v11' : 'mapbox://styles/mapbox/dark-v11'
-
-/** Read a CSS var and emit a Mapbox-compatible rgb() color. */
-function readCssVar(name: string, fallback: string): string {
-  if (typeof window === 'undefined') return fallback
-  const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
-  if (!raw) return fallback
-  const parts = raw.split(/[\s,]+/).filter(Boolean)
-  if (parts.length < 3) return fallback
-  return `rgb(${parts.slice(0, 3).join(', ')})`
-}
 
 /** Re-add eclipse path with current theme colors. */
 function applyEclipsePath() {
