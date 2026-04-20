@@ -460,14 +460,16 @@ const spotHistory = computed(() => historicalData.value?.spots?.[slug] ?? null)
     inset 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
-/* Aspect ratio: cinematic 16:10 on desktop, 4:5 portrait on mobile */
+/* Aspect ratio: cinematic 16:10 on desktop; on mobile let the photo's
+   intrinsic ratio show so portraits aren't letterboxed + landscapes
+   aren't cropped into a forced portrait. */
 .spot-hero-img {
   aspect-ratio: 16 / 10;
 }
 
 @media (max-width: 639px) {
   .spot-hero-img {
-    aspect-ratio: 4 / 5;
+    aspect-ratio: auto;
   }
 }
 </style>
