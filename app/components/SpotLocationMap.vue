@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { addEclipsePathLayers } from '~/utils/mapLayers'
+import { readCssVar } from '~/utils/theme'
+
 const props = defineProps<{
   lat: number
   lng: number
@@ -186,6 +189,14 @@ watch(mapContainer, async (el) => {
           'sky-type': 'atmosphere',
           'sky-atmosphere-sun': [0.0, 24.0],
           'sky-atmosphere-sun-intensity': 5,
+        },
+      })
+
+      // Eclipse totality path + centerline (matches the legend on /map).
+      addEclipsePathLayers(map, {
+        colors: {
+          accent:       readCssVar('--accent', '#f59e0b'),
+          accentStrong: readCssVar('--accent-strong', '#fbbf24'),
         },
       })
 
