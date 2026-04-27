@@ -36,8 +36,14 @@ const tabs = computed<Array<{ k: TabKey; l: string }>>(() => ([
   overflow-x: auto;
   scrollbar-width: none;
 }
-@media (min-width: 768px) {
-  .detail-tabs { padding: 8px 24px 18px; gap: 8px; }
+@media (min-width: 640px) {
+  /* Inset the row + its bottom border by 24px so the rule lines up with
+     the card grid below instead of spanning the full column. */
+  .detail-tabs {
+    margin: 0 24px;
+    padding: 8px 0 18px;
+    gap: 8px;
+  }
 }
 .detail-tabs::-webkit-scrollbar { display: none; }
 </style>

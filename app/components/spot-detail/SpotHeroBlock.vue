@@ -37,8 +37,14 @@ defineProps<{
   overflow: hidden;
   background: linear-gradient(180deg, #2a1f15 0%, #0f1018 100%);
 }
-@media (min-width: 768px) {
-  .spot-hero-photo { height: 320px; }
+@media (min-width: 640px) {
+  /* Match the page content gutter on desktop and round to the same
+     12px radius as the Cards below. Mobile stays full-bleed per v0. */
+  .spot-hero-photo {
+    height: 320px;
+    margin: 0 24px;
+    border-radius: 12px;
+  }
 }
 @media (min-width: 1024px) {
   .spot-hero-photo { height: 400px; }
