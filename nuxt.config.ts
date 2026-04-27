@@ -50,7 +50,7 @@ export default defineNuxtConfig({
         { rel: 'manifest', href: '/manifest.json' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'preload', as: 'style', href: 'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap', onload: "this.onload=null;this.rel='stylesheet'" },
+        { rel: 'preload', as: 'style', href: 'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap', onload: "this.onload=null;this.rel='stylesheet'" },
         { rel: 'preload', as: 'style', href: 'https://api.mapbox.com/mapbox-gl-js/v3.20.0/mapbox-gl.css', onload: "this.onload=null;this.rel='stylesheet'" },
       ],
     },

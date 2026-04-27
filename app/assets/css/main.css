@@ -20,74 +20,105 @@
   }
 
   /* ══════════════════════════════════════════════════════════
-     DARK theme — astronomy canonical (brand default)
+     DARK theme — v0 (astronomy canonical, brand default)
+     Values from eclipsechase-v0-prototype/tokens.jsx THEMES.dark
      ══════════════════════════════════════════════════════════ */
   html.dark {
-    --bg:             5   8   16;   /* #050810  page background */
-    --surface:        10  16  32;   /* #0a1020  cards, chips     */
-    --surface-raised: 17  26  46;   /* #111a2e  hover / raised   */
-    --border-subtle:  26  37  64;   /* #1a2540  dividers         */
+    --bg:             7   10  18;   /* #070A12  page background  */
+    --bg-elevated:    13  19  32;   /* #0D1320  top nav strip    */
+    --surface:        255 255 255;  /* used with /0.04 alpha     */
+    --surface-solid:  16  23  42;   /* #10172A  solid alt        */
+    --surface-raised: 17  26  46;   /* legacy compat             */
+    --border-subtle:  255 255 255;  /* used with /0.08 alpha     */
+    --border-strong:  255 255 255;  /* used with /0.16 alpha     */
 
-    --ink-1:          255 255 255;  /* headlines                 */
-    --ink-2:          203 213 225;  /* body                      */
-    --ink-3:          148 163 184;  /* meta / labels             */
+    --ink-1:          232 229 220;  /* #E8E5DC primary cream     */
+    --ink-2:          232 229 220;  /* used with /0.62 alpha     */
+    --ink-3:          232 229 220;  /* used with /0.42 alpha     */
 
-    --accent:         245 158 11;   /* corona                    */
-    --accent-strong:  251 191 36;   /* corona-bright             */
-    --accent-soft:    245 158 11;   /* same hue, use with alpha  */
+    --accent:         232 154 60;   /* #E89A3C amber             */
+    --accent-strong:  232 154 60;
+    --accent-soft:    232 154 60;   /* used with /0.16 alpha     */
 
-    --selection-bg:   245 158 11;
-    --selection-ink:  254 243 199;
-    --body-gradient:  radial-gradient(ellipse at 50% 0%, #0a1628 0%, #050810 70%);
+    --totality:       143 140 97;   /* #8F8C61 olive             */
+    --cream:          229 214 181;  /* #E5D6B5                   */
+
+    --good:           120 216 136;  /* #78D888 ≤40% cloud        */
+    --warn:           229 192 74;   /* #E5C04A 40-70% cloud      */
+    --bad:            216 88  72;   /* #D85848 >70% cloud        */
+
+    --chart-track:    255 255 255;  /* used with /0.06 alpha     */
+
+    --selection-bg:   232 154 60;
+    --selection-ink:  232 229 220;
+    --body-gradient:  radial-gradient(ellipse at 50% 0%, #0a1320 0%, #070A12 70%);
   }
 
   /* ══════════════════════════════════════════════════════════
-     LIGHT theme — "Dawn Horizon"
-     warm parchment + deep indigo ink + deepened corona
+     LIGHT theme — v0 "Dawn Horizon" (UNVERIFIED, no toggle in UI)
+     Values from eclipsechase-v0-prototype/tokens.jsx THEMES.light
      ══════════════════════════════════════════════════════════ */
   html.light {
-    --bg:             250 245 235;  /* #faf5eb  warm parchment   */
-    --surface:        255 251 240;  /* #fffbf0  card surface     */
-    --surface-raised: 247 239 220;  /* #f7efdc  hover / raised   */
-    --border-subtle:  231 222 200;  /* #e7dec8  dividers         */
+    --bg:             240 235 220;  /* #F0EBDC parchment         */
+    --bg-elevated:    255 255 255;
+    --surface:        7   10  18;   /* used with /0.04 alpha     */
+    --surface-solid:  255 255 255;
+    --surface-raised: 247 239 220;  /* legacy compat             */
+    --border-subtle:  7   10  18;   /* used with /0.10 alpha     */
+    --border-strong:  7   10  18;   /* used with /0.20 alpha     */
 
-    --ink-1:          26  22  40;   /* #1a1628  deep indigo text */
-    --ink-2:          61  52  73;   /* #3d3449  body             */
-    --ink-3:          139 125 125;  /* #8b7d7d  meta / labels    */
+    --ink-1:          13  16  24;   /* #0D1018                   */
+    --ink-2:          13  16  24;   /* used with /0.62 alpha     */
+    --ink-3:          13  16  24;   /* used with /0.42 alpha     */
 
-    --accent:         194 65  12;   /* #c2410c  deepened corona  */
-    --accent-strong:  154 52  18;   /* #9a3412  hover / active   */
-    --accent-soft:    251 146 60;   /* #fb923c  peach glow hints */
+    --accent:         184 106 28;   /* #B86A1C deeper amber      */
+    --accent-strong:  184 106 28;
+    --accent-soft:    184 106 28;   /* /0.14 alpha               */
 
-    --selection-bg:   251 146 60;
-    --selection-ink:  26  22  40;
-    --body-gradient:
-      radial-gradient(ellipse at 80% 0%, rgba(251, 146, 60, 0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 0% 100%, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
-      #faf5eb;
+    --totality:       90  90  56;   /* #5A5A38 deeper olive      */
+    --cream:          138 122 69;   /* #8A7A45                   */
+
+    --good:           79  138 90;   /* #4F8A5A                   */
+    --warn:           184 154 46;   /* #B89A2E                   */
+    --bad:            163 58  42;   /* #A33A2A                   */
+
+    --chart-track:    13  16  24;   /* /0.06 alpha               */
+
+    --selection-bg:   184 106 28;
+    --selection-ink:  13  16  24;
+    --body-gradient:  #F0EBDC;
   }
 
-  /* Default (pre-hydration / SSR fallback) — mirrors DARK. @nuxtjs/color-mode
+  /* Default (pre-hydration / SSR fallback) — mirrors DARK v0. @nuxtjs/color-mode
      sets the html class on the client before paint; this stops us from
      briefly flashing unstyled content on first load. */
   html {
-    --bg: 5 8 16;
-    --surface: 10 16 32;
+    --bg: 7 10 18;
+    --bg-elevated: 13 19 32;
+    --surface: 255 255 255;
+    --surface-solid: 16 23 42;
     --surface-raised: 17 26 46;
-    --border-subtle: 26 37 64;
-    --ink-1: 255 255 255;
-    --ink-2: 203 213 225;
-    --ink-3: 148 163 184;
-    --accent: 245 158 11;
-    --accent-strong: 251 191 36;
-    --accent-soft: 245 158 11;
-    --selection-bg: 245 158 11;
-    --selection-ink: 254 243 199;
-    --body-gradient: radial-gradient(ellipse at 50% 0%, #0a1628 0%, #050810 70%);
+    --border-subtle: 255 255 255;
+    --border-strong: 255 255 255;
+    --ink-1: 232 229 220;
+    --ink-2: 232 229 220;
+    --ink-3: 232 229 220;
+    --accent: 232 154 60;
+    --accent-strong: 232 154 60;
+    --accent-soft: 232 154 60;
+    --totality: 143 140 97;
+    --cream: 229 214 181;
+    --good: 120 216 136;
+    --warn: 229 192 74;
+    --bad: 216 88 72;
+    --chart-track: 255 255 255;
+    --selection-bg: 232 154 60;
+    --selection-ink: 232 229 220;
+    --body-gradient: radial-gradient(ellipse at 50% 0%, #0a1320 0%, #070A12 70%);
 
-    font-family: 'Manrope', system-ui, sans-serif;
+    font-family: 'Inter Tight', system-ui, sans-serif;
     background-color: rgb(var(--bg));
-    color: rgb(var(--ink-2));
+    color: rgb(var(--ink-1) / 0.62);
     scroll-behavior: smooth;
     overflow-x: hidden;
   }
@@ -122,7 +153,7 @@
            font-semibold text-sm tracking-wide uppercase
            text-gray-900 overflow-hidden
            transition-all duration-300 focus:outline-none;
-    font-family: 'Manrope', system-ui, sans-serif;
+    font-family: 'Inter Tight', system-ui, sans-serif;
     background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%);
     border-radius: 2px;
   }
@@ -151,7 +182,7 @@
            font-medium text-sm tracking-wide uppercase
            text-slate-300 border border-slate-700/50
            transition-all duration-300 focus:outline-none;
-    font-family: 'Manrope', system-ui, sans-serif;
+    font-family: 'Inter Tight', system-ui, sans-serif;
     border-radius: 2px;
   }
 

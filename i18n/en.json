@@ -3,6 +3,52 @@
     "title": "EclipseChase.is — Find Clear Skies on Eclipse Day",
     "description": "Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland."
   },
+  "v0": {
+    "home": {
+      "eyebrow": "ECLIPSE 2026",
+      "best_conditions_now": "BEST CONDITIONS NOW",
+      "view_map_cta": "VIEW MAP →",
+      "checklist_eyebrow": "ECLIPSE DAY CHECKLIST",
+      "checklist": [
+        "Eclipse glasses (ISO 12312-2 certified)",
+        "Check weather forecast morning of eclipse day",
+        "Arrive at viewing spot 2 hours before totality",
+        "Fully charged phone & camera",
+        "Warm layers (Iceland weather is unpredictable)",
+        "Snacks & water"
+      ]
+    },
+    "spots": {
+      "viewer_profile_eyebrow": "— VIEWER PROFILE",
+      "sort_duration": "TOTALITY DURATION",
+      "sort_clearness": "HISTORICAL CLEARNESS"
+    },
+    "spot_detail": {
+      "kicker": "● SPOT DOSSIER",
+      "advisories_eyebrow": "ADVISORIES",
+      "tab_overview": "Overview",
+      "tab_sky": "Sky",
+      "tab_weather": "Weather",
+      "tab_plan": "Plan",
+      "stat_totality": "TOTALITY",
+      "stat_sun_alt": "SUN ALT",
+      "stat_horizon": "HORIZON",
+      "card_contact": "Contact times · UTC",
+      "card_logistics": "Logistics",
+      "card_sun_position": "Sun position at totality",
+      "card_cloud_cover": "Cloud cover · 16-yr Aug 12",
+      "card_plan_b": "Plan B · within 30 min",
+      "card_map": "Map",
+      "plan_placeholder": "Alternates data coming soon — see the Map tab for nearby spots."
+    },
+    "map": {
+      "open_field_card": "OPEN FIELD CARD →",
+      "selected": "SELECTED",
+      "stat_totality": "TOTALITY",
+      "stat_cloud": "CLOUD",
+      "stat_score": "SCORE"
+    }
+  },
   "historical": {
     "title": "Historical weather (last 10 years)",
     "summary_suffix": "years clear at totality",
