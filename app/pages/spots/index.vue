@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { formatDuration, HORIZON_VERDICT_STYLES, parseJsonb, regionLabel, SPOT_TYPE_LABELS } from '~/utils/eclipse'
+import { parseJsonb } from '~/utils/eclipse'
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId, RankedSpot } from '~/composables/useRecommendation'
-import type { SpotPhoto } from '~/types/spots'
+import type { Region, SpotPhoto } from '~/types/spots'
 
 const { isPro } = useProStatus()
 const { coords } = useLocation()
@@ -11,7 +11,7 @@ const router = useRouter()
 
 const { data } = await useFetch('/api/spots')
 
-// Historical cloud cover — pre-computed, lazy so it never blocks render
+// Historical cloud cover — pre-computed
 const { data: historicalData } = useFetch<{ spots: Record<string, { clear_years: number; total_years: number; avg_cloud_cover: number | null }> }>(
   '/eclipse-data/historical-weather.json',
   { lazy: true, server: false, key: 'historical-weather' },
@@ -33,6 +33,20 @@ watch(sortKey, (val) => {
   router.replace({ path: route.path, query })
 })
 
+// Region filter — URL-persisted
+const initialRegion = typeof route.query.region === 'string' ? route.query.region : null
+const VALID_REGIONS: ReadonlyArray<Region> = ['westfjords', 'snaefellsnes', 'borgarfjordur', 'reykjavik', 'reykjanes']
+const selectedRegion = ref<Region | null>(
+  VALID_REGIONS.includes(initialRegion as Region) ? (initialRegion as Region) : null,
+)
+watch(selectedRegion, (val) => {
+  if (!import.meta.client) return
+  const query = { ...route.query }
+  if (val) query.region = val
+  else delete query.region
+  router.replace({ path: route.path, query })
+})
+
 const rawSpots = computed(() => {
   const list = data.value?.spots || []
   const copy = [...list]
@@ -40,7 +54,6 @@ const rawSpots = computed(() => {
     return copy.sort((a: any, b: any) => {
       const ha = historyFor(a.slug)
       const hb = historyFor(b.slug)
-      // Primary: more clear years better; tie: fewer overcast; tie: longer totality
       const clearA = ha?.clear_years ?? -1
       const clearB = hb?.clear_years ?? -1
       if (clearA !== clearB) return clearB - clearA
@@ -53,22 +66,20 @@ const rawSpots = computed(() => {
   return copy.sort((a: any, b: any) => (b.totality_duration_seconds || 0) - (a.totality_duration_seconds || 0))
 })
 
-// Weather + stations — lazy, client-only (avoid server fetch / free-user overhead)
+// Weather + stations — lazy, client-only
 const { data: rawWeatherData } = useFetch<{ cloud_cover: Array<{ station_id: string; cloud_cover: number | null }> }>('/api/weather/cloud-cover', { lazy: true, server: false })
 const { data: rawStationsData } = useFetch<{ stations: Array<{ id: string; lat: number; lng: number }> }>('/api/weather/stations', { lazy: true, server: false })
 
 const weatherData = computed(() => rawWeatherData.value?.cloud_cover || null)
 const stationsData = computed(() => rawStationsData.value?.stations || null)
 
-// Profile selection — persisted in URL so it survives navigation
-// (e.g. click a spot detail, press back → the profile is still selected)
+// Profile selection — URL-persisted
 const initialProfile = typeof route.query.profile === 'string' ? route.query.profile : null
 const selectedProfile = ref<ProfileId | null>(
   PROFILES.some(p => p.id === initialProfile) ? (initialProfile as ProfileId) : null,
 )
 const showProPrompt = ref(false)
 
-// State → URL: keep the query param in sync without polluting history (replace, not push)
 watch(selectedProfile, (val) => {
   if (!import.meta.client) return
   const query = { ...route.query }
@@ -77,17 +88,18 @@ watch(selectedProfile, (val) => {
   router.replace({ path: route.path, query })
 })
 
-function selectProfile(id: ProfileId) {
-  if (!isPro.value) {
+// Pro-gate the profile picker — free users see the pills but get prompted to upgrade.
+function setProfile(id: ProfileId | null) {
+  if (id != null && !isPro.value) {
     showProPrompt.value = true
     return
   }
-  selectedProfile.value = selectedProfile.value === id ? null : id
+  selectedProfile.value = id
 }
-
-function clearProfile() {
-  selectedProfile.value = null
-}
+const profileModel = computed<ProfileId | null>({
+  get: () => selectedProfile.value,
+  set: (v) => setProfile(v),
+})
 
 function dismissProPrompt() {
   showProPrompt.value = false
@@ -102,219 +114,146 @@ const { ranked, thinResults } = useRecommendation(
   selectedProfile,
 )
 
-// Final display list — always RankedSpot[]
+// Region filter applied AFTER ranking so profile sort is preserved
 const displayItems = computed<RankedSpot[]>(() => {
-  return ranked.value
+  if (!selectedRegion.value) return ranked.value
+  return ranked.value.filter(item => item.spot.region === selectedRegion.value)
 })
 
 // Helpers
-function getHeroUrl(spot: any): string {
+function heroFilenameFor(spot: any): string | null {
   const photos = parseJsonb<SpotPhoto[]>(spot.photos, [])
   const hero = photos.find(p => p.is_hero) || photos[0]
-  if (hero) return `/images/spots/${hero.filename}`
-  return `/images/spots/${spot.slug}-hero.webp`
+  return hero?.filename ?? null
 }
-
-function getThumbUrl(spot: any): string {
-  return getHeroUrl(spot).replace(/\.webp$/, '-thumb.webp')
+function heroAltFor(spot: any): string {
+  const photos = parseJsonb<SpotPhoto[]>(spot.photos, [])
+  const hero = photos.find(p => p.is_hero) || photos[0]
+  return hero?.alt ?? spot.name
 }
-
-function getHorizonVerdict(spot: any): string | null {
-  const hc = parseJsonb<{ verdict?: string } | null>(spot.horizon_check, null)
-  return hc?.verdict || null
-}
-
-function verdictChip(verdict: string): string {
-  return HORIZON_VERDICT_STYLES[verdict]?.chip || ''
-}
-
-function scoreColor(score: number): string {
-  if (score >= 80) return 'bg-green-500'
-  if (score >= 50) return 'bg-amber-500'
-  return 'bg-red-500'
+function cloudFor(spot: any): number | null {
+  const h = historyFor(spot.slug)
+  return h?.avg_cloud_cover ?? null
 }
 
 useHead({
   title: 'Viewing Spots — EclipseChase',
   meta: [
-    { name: 'description', content: 'Browse 28 curated eclipse viewing spots across western Iceland for the August 12, 2026 total solar eclipse.' },
+    { name: 'description', content: 'Browse curated eclipse viewing spots across western Iceland for the August 12, 2026 total solar eclipse.' },
   ],
+})
+
+const headerSub = computed(() => {
+  const profileName = selectedProfile.value
+    ? PROFILES.find(p => p.id === selectedProfile.value)?.name
+    : 'All'
+  const sortLabel = sortKey.value === 'duration' ? 'totality duration' : 'historical clearness'
+  return `${profileName} · sorted by ${sortLabel}`
 })
 </script>
 
 <template>
-  <div class="relative noise min-h-screen pt-[72px]">
-    <div class="section-container max-w-3xl py-8 sm:py-12">
-      <p class="font-mono text-xs tracking-[0.3em] text-accent/60 uppercase mb-3">Eclipse 2026</p>
-      <h1 class="font-display text-3xl sm:text-4xl font-bold text-ink-1 mb-6">Viewing Spots</h1>
+  <PageShell screen="spots">
+    <header class="spots-header">
+      <Eyebrow variant="dot" tone="accent">SPOTS · {{ displayItems.length }}</Eyebrow>
+      <p class="spots-sub">{{ headerSub }}</p>
+    </header>
 
-      <!-- Sort toggle — disabled when a profile is active (profile score takes over) -->
-      <div class="mb-6">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-3">
-          {{ selectedProfile ? 'Sort: by profile score' : 'Sort by' }}
-        </p>
-        <div
-          class="inline-flex gap-0 rounded border border-border-subtle/50 overflow-hidden transition-opacity"
-          :class="{ 'opacity-40 pointer-events-none': selectedProfile }"
-          :aria-disabled="selectedProfile ? 'true' : undefined"
-          :title="selectedProfile ? 'Clear the profile to change sort' : undefined"
-        >
-          <button
-            class="px-3 py-1.5 text-xs font-mono tracking-wider transition-all"
-            :class="sortKey === 'duration' ? 'bg-accent/10 text-accent' : 'text-ink-3 hover:text-ink-2'"
-            :disabled="!!selectedProfile"
-            @click="sortKey = 'duration'"
-          >
-            Totality duration
-          </button>
-          <button
-            class="px-3 py-1.5 text-xs font-mono tracking-wider transition-all border-l border-border-subtle/50"
-            :class="sortKey === 'historical' ? 'bg-accent/10 text-accent' : 'text-ink-3 hover:text-ink-2'"
-            :disabled="!!selectedProfile"
-            @click="sortKey = 'historical'"
-          >
-            Historical clearness
-          </button>
-        </div>
-      </div>
+    <ProfileSelector v-model="profileModel" />
+    <SortTabs v-model="sortKey" :disabled="!!selectedProfile" />
+    <RegionChips v-model="selectedRegion" />
 
-      <!-- Profile selector -->
-      <div class="mb-6">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-3">Find your best spot</p>
-        <div class="flex flex-wrap gap-2">
-          <button
-            v-for="profile in PROFILES"
-            :key="profile.id"
-            class="px-3 py-1.5 rounded border text-xs font-mono tracking-wider transition-all"
-            :class="
-              isPro
-                ? selectedProfile === profile.id
-                  ? 'border-accent bg-accent/10 text-accent'
-                  : 'border-border-subtle/40 text-ink-3 hover:border-slate-500 hover:text-ink-2'
-                : 'border-border-subtle/30 text-ink-3 opacity-50 cursor-not-allowed'
-            "
-            @click="selectProfile(profile.id)"
-          >
-            <template v-if="!isPro">&#x1F512; </template>{{ profile.name }}
-          </button>
-          <button
-            v-if="selectedProfile"
-            class="px-3 py-1.5 rounded border border-border-subtle/40 text-xs font-mono tracking-wider text-ink-3 hover:text-ink-2 hover:border-slate-500 transition-all"
-            @click="clearProfile"
-          >
-            Clear
-          </button>
-        </div>
-      </div>
-
-      <!-- Pro upgrade prompt (shown when free user clicks a profile) -->
-      <div
-        v-if="showProPrompt"
-        class="mb-6 px-4 py-3 ec-banner-warn flex items-center justify-between gap-4"
-      >
-        <p class="text-xs font-mono">
-          Profile-based scoring is a Pro feature.
-          <NuxtLink to="/pro" class="text-accent hover:text-accent-strong transition-colors ml-1">
-            Get Pro Access
-          </NuxtLink>
-        </p>
-        <button
-          class="text-ink-3 hover:text-ink-2 transition-colors text-xs font-mono shrink-0"
-          @click="dismissProPrompt"
-        >
-          Dismiss
-        </button>
-      </div>
-
-      <!-- Thin results warning -->
-      <div
-        v-if="selectedProfile && thinResults"
-        class="mb-6 px-3 py-2.5 ec-banner-warn text-xs font-mono"
-      >
-        Few spots match this profile. Consider trying a different one for more options.
-      </div>
-
-      <!-- Spot grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <NuxtLink
-          v-for="item in displayItems"
-          :key="item.spot.id"
-          :to="`/spots/${item.spot.slug}`"
-          class="group bg-surface border border-border-subtle/40 rounded overflow-hidden hover:border-accent/30 transition-all"
-          :class="{ 'opacity-50': item.filtered }"
-        >
-          <div class="relative aspect-video bg-surface-raised overflow-hidden">
-            <img
-              :src="getThumbUrl(item.spot)"
-              :srcset="`${getThumbUrl(item.spot)} 600w, ${getHeroUrl(item.spot)} 1200w`"
-              sizes="(max-width: 639px) 100vw, 384px"
-              :alt="item.spot.name"
-              loading="lazy"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-            <!-- Weather overlay badge (top-left): prominent icon + cloud %
-                 when a profile is selected and data is available. Paired
-                 visually with the score badge in the opposite corner. -->
-            <div
-              v-if="selectedProfile && item.cloudCover != null"
-              class="absolute top-2 left-2 flex items-center gap-1.5 pl-1.5 pr-2 py-1 rounded bg-void/70 backdrop-blur-sm border border-border-subtle/50"
-            >
-              <WeatherIcon :cloud-cover="item.cloudCover" :size="28" class="shrink-0" />
-              <span class="font-mono text-xs font-bold text-ink-1 tabular-nums">{{ item.cloudCover }}%</span>
-            </div>
-            <!-- Score badge (Pro + profile selected) -->
-            <span
-              v-if="selectedProfile && item.score >= 0"
-              class="absolute top-2 right-2 px-2 py-0.5 rounded text-xs font-mono font-bold text-ink-1"
-              :class="scoreColor(item.score)"
-            >{{ item.score }}</span>
-          </div>
-          <div class="px-4 py-3">
-            <div class="flex items-center gap-2 mb-1.5">
-              <span
-                v-if="item.spot.spot_type"
-                class="text-[9px] font-mono tracking-[0.15em] uppercase px-1.5 py-0.5 rounded border"
-                :class="item.spot.spot_type === 'drive-up' ? 'ec-chip-green' : 'ec-chip-amber'"
-              >{{ SPOT_TYPE_LABELS[item.spot.spot_type] || item.spot.spot_type }}</span>
-              <!-- Horizon verdict chip is only shown when it warrants attention
-                   (marginal / risky / blocked). Every curated spot is currently
-                   'clear', so the chip never appears on today's dataset — kept
-                   to auto-surface future edge-case curations without dead noise. -->
-              <span
-                v-if="getHorizonVerdict(item.spot) && getHorizonVerdict(item.spot) !== 'clear'"
-                class="text-[9px] font-mono tracking-[0.15em] uppercase px-1.5 py-0.5 rounded border"
-                :class="verdictChip(getHorizonVerdict(item.spot)!)"
-              >{{ getHorizonVerdict(item.spot) }}</span>
-            </div>
-            <h3 class="font-display text-base font-semibold text-ink-1 mb-1 group-hover:text-accent-strong transition-colors">{{ item.spot.name }}</h3>
-            <div class="flex items-center justify-between">
-              <span class="font-mono text-[10px] text-ink-3 uppercase tracking-wider">{{ regionLabel(item.spot.region) }}</span>
-              <span class="font-display text-sm font-bold text-ink-1">{{ formatDuration(item.spot.totality_duration_seconds) }}</span>
-            </div>
-            <!-- Historical clearness strip: 10 tiny squares for the last 10 years -->
-            <div v-if="historyFor(item.spot.slug)" class="mt-2 flex items-center gap-1.5">
-              <span class="font-mono text-[9px] uppercase tracking-[0.15em] text-ink-3 shrink-0">10y</span>
-              <div class="flex gap-[2px] flex-1">
-                <span
-                  v-for="yr in historyFor(item.spot.slug)!.years"
-                  :key="yr.year"
-                  class="h-2 flex-1 rounded-[1px]"
-                  :class="yr.cloud_cover == null ? 'bg-ink-3/30'
-                    : yr.cloud_cover < 40 ? 'bg-green-500'
-                    : yr.cloud_cover <= 70 ? 'bg-amber-500'
-                    : 'bg-red-500'"
-                  :title="yr.cloud_cover != null ? `${yr.year}: ${yr.cloud_cover}% cloud` : `${yr.year}: no data`"
-                />
-              </div>
-              <span class="font-mono text-[10px] text-ink-2 shrink-0">
-                {{ historyFor(item.spot.slug)!.clear_years }}/{{ historyFor(item.spot.slug)!.total_years }}
-              </span>
-            </div>
-          </div>
-        </NuxtLink>
-      </div>
+    <div v-if="showProPrompt" class="pro-prompt">
+      <p class="pro-prompt-text">
+        Profile-based scoring is a Pro feature.
+        <NuxtLink to="/pro" class="pro-prompt-link">Get Pro Access</NuxtLink>
+      </p>
+      <button type="button" class="pro-prompt-dismiss" @click="dismissProPrompt">Dismiss</button>
     </div>
 
-    <AppFooter />
-  </div>
+    <div v-if="selectedProfile && thinResults" class="thin-results">
+      Few spots match this profile. Try a different one for more options.
+    </div>
+
+    <div class="spots-list">
+      <SpotCard
+        v-for="item in displayItems"
+        :key="item.spot.id"
+        :slug="item.spot.slug"
+        :name="item.spot.name"
+        :region="item.spot.region"
+        :duration-seconds="item.spot.totality_duration_seconds || 0"
+        :cloud="cloudFor(item.spot)"
+        :hero-filename="heroFilenameFor(item.spot)"
+        :hero-alt="heroAltFor(item.spot)"
+        :class="{ 'is-filtered': item.filtered }"
+      />
+    </div>
+  </PageShell>
 </template>
+
+<style scoped>
+.spots-header {
+  padding: 24px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.spots-sub {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 14px;
+  color: rgb(var(--ink-1) / 0.62);
+  margin: 0;
+}
+
+.pro-prompt {
+  margin: 12px 16px;
+  padding: 12px 14px;
+  background: rgb(var(--accent) / 0.1);
+  border: 1px solid rgb(var(--accent) / 0.4);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+}
+.pro-prompt-text { margin: 0; color: rgb(var(--ink-1)); }
+.pro-prompt-link {
+  color: rgb(var(--accent));
+  text-decoration: none;
+  margin-left: 6px;
+  font-weight: 600;
+}
+.pro-prompt-dismiss {
+  background: transparent;
+  border: 0;
+  color: rgb(var(--ink-1) / 0.62);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  min-height: 32px;
+}
+
+.thin-results {
+  margin: 12px 16px;
+  padding: 10px 12px;
+  background: rgb(var(--warn) / 0.1);
+  border: 1px solid rgb(var(--warn) / 0.4);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  color: rgb(var(--ink-1));
+}
+
+.spots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+.is-filtered {
+  opacity: 0.5;
+}
+</style>
