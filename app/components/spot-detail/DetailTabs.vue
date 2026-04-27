@@ -36,5 +36,8 @@ const tabs = computed<Array<{ k: TabKey; l: string }>>(() => ([
   overflow-x: auto;
   scrollbar-width: none;
 }
+@media (min-width: 768px) {
+  .detail-tabs { padding: 8px 24px 18px; gap: 8px; }
+}
 .detail-tabs::-webkit-scrollbar { display: none; }
 </style>

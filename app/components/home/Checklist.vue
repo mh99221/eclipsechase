@@ -111,4 +111,11 @@ const checkedCount = computed(() => Object.values(checked.value).filter(Boolean)
   color: rgb(var(--ink-1) / 0.62);
   text-decoration: line-through;
 }
+
+/* Desktop overrides — placed after base rules so cascade wins. */
+@media (min-width: 768px) {
+  .checklist { padding: 8px 24px 40px; }
+  .row { padding: 16px 24px; }
+  .text { font-size: 15px; }
+}
 </style>

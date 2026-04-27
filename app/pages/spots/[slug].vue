@@ -178,6 +178,9 @@ const horizonScanCount = computed(() => horizonCheck.value?.sweep?.length ?? 0)
 .spot-body {
   padding: 16px;
 }
+@media (min-width: 768px) {
+  .spot-body { padding: 24px; }
+}
 .spacer-8 { height: 8px; }
 
 .description-block {

@@ -153,7 +153,7 @@ const headerSub = computed(() => {
 </script>
 
 <template>
-  <PageShell screen="spots">
+  <PageShell screen="spots" width="wide">
     <header class="spots-header">
       <Eyebrow variant="dot" tone="accent">SPOTS · {{ displayItems.length }}</Eyebrow>
       <p class="spots-sub">{{ headerSub }}</p>
@@ -248,11 +248,23 @@ const headerSub = computed(() => {
 }
 
 .spots-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 12px;
   padding: 16px;
 }
+@media (min-width: 640px) {
+  .spots-list { grid-template-columns: repeat(2, 1fr); gap: 16px; padding: 16px 24px; }
+}
+@media (min-width: 1024px) {
+  .spots-list { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 768px) {
+  .spots-header { padding: 32px 24px 18px; }
+  .spots-sub { font-size: 16px; }
+}
+
 .is-filtered {
   opacity: 0.5;
 }

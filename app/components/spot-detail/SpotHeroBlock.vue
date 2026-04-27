@@ -37,6 +37,12 @@ defineProps<{
   overflow: hidden;
   background: linear-gradient(180deg, #2a1f15 0%, #0f1018 100%);
 }
+@media (min-width: 768px) {
+  .spot-hero-photo { height: 320px; }
+}
+@media (min-width: 1024px) {
+  .spot-hero-photo { height: 400px; }
+}
 .spot-hero-photo img {
   width: 100%;
   height: 100%;
@@ -76,5 +82,15 @@ defineProps<{
   font-size: 13px;
   color: rgb(var(--ink-1) / 0.62);
   margin-top: 6px;
+}
+
+/* Desktop scale-up — placed after the base rules so cascade wins. */
+@media (min-width: 768px) {
+  .spot-hero-meta { padding: 28px 24px 12px; }
+  .spot-hero-name { font-size: 36px; }
+  .spot-hero-region { font-size: 14px; margin-top: 8px; }
+}
+@media (min-width: 1024px) {
+  .spot-hero-name { font-size: 44px; letter-spacing: -0.02em; }
 }
 </style>

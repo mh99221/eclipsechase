@@ -34,4 +34,10 @@ const count = computed(() => props.warnings.length)
   flex-direction: column;
   gap: 6px;
 }
+
+/* Desktop overrides — after base rules. */
+@media (min-width: 768px) {
+  .advisories-block { padding: 0 24px 18px; }
+  .advisories-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+}
 </style>

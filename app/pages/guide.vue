@@ -86,6 +86,9 @@ function scrollTo(id: string) {
   flex-direction: column;
   gap: 10px;
 }
+@media (min-width: 768px) {
+  .guide-header { padding: 48px 24px 24px; gap: 14px; }
+}
 .guide-title {
   font-family: 'Inter Tight', system-ui, sans-serif;
   font-size: 28px;
@@ -112,12 +115,18 @@ function scrollTo(id: string) {
   border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
   scrollbar-width: none;
 }
+@media (min-width: 768px) {
+  .guide-toc {
+    padding: 0 24px 18px;
+    gap: 8px;
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
 .guide-toc::-webkit-scrollbar { display: none; }
 
 .guide-content {
   padding: 16px 16px 32px;
-  max-width: 720px;
-  margin: 0 auto;
 }
 
 /* ═══════════════════════════════════════════════════
@@ -329,4 +338,14 @@ function scrollTo(id: string) {
   font-size: 14px;
 }
 .guide-content :deep(> ul:first-of-type a:hover) { color: rgb(var(--accent)); }
+
+/* Desktop overrides for the markdown content — placed after the base
+   :deep rules so cascade favors them at viewports ≥ 768px. */
+@media (min-width: 768px) {
+  .guide-content { padding: 24px 24px 48px; }
+  .guide-content :deep(h2) { font-size: 22px; margin-top: 48px; }
+  .guide-content :deep(p),
+  .guide-content :deep(ul),
+  .guide-content :deep(ol) { font-size: 15px; line-height: 1.7; }
+}
 </style>

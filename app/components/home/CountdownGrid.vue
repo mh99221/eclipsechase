@@ -52,4 +52,11 @@ const cells = computed(() => [
   background: rgb(var(--border-subtle) / 0.08);
   margin: 8px 0;
 }
+
+/* Desktop overrides — after base rules. */
+@media (min-width: 768px) {
+  .countdown-grid { padding: 0 24px 40px; }
+  .cell-v { font-size: 64px; }
+  .cell-u { font-size: 11px; margin-top: 10px; letter-spacing: 0.2em; }
+}
 </style>

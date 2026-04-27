@@ -201,4 +201,22 @@ const { t } = useI18n()
   font-size: 14px;
   color: rgb(var(--ink-1));
 }
+
+/* ═══════════════════════════════════════════════════
+   Desktop overrides — kept at the end of the style
+   block so cascade beats the base rules above.
+   ═══════════════════════════════════════════════════ */
+@media (min-width: 768px) {
+  .home-eyebrow {
+    padding: 48px 24px 24px;
+    font-size: 12px;
+    letter-spacing: 0.48em;
+  }
+  .conditions { padding: 0 24px 32px; }
+  .conditions-card { padding: 20px 24px; min-height: 80px; }
+  .conditions-name { font-size: 26px; }
+  .conditions-cta { font-size: 13px; }
+  .legacy-updates { padding: 8px 24px 40px; padding-top: 32px; }
+  .update-link { padding: 14px 24px; }
+}
 </style>
