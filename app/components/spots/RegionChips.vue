@@ -33,5 +33,8 @@ const chips = computed<Array<{ id: Region | null; label: string }>>(() => ([
   border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
   scrollbar-width: none;
 }
+@media (min-width: 640px) {
+  .region-chips { padding: 14px 24px; }
+}
 .region-chips::-webkit-scrollbar { display: none; }
 </style>

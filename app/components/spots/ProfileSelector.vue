@@ -53,6 +53,9 @@ function pick(id: ProfileId | null) {
   padding: 14px 16px 10px;
   border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
 }
+@media (min-width: 640px) {
+  .profile-selector { padding: 14px 24px 10px; }
+}
 .profile-selector :deep(.eyebrow) {
   margin-bottom: 8px;
 }

@@ -33,6 +33,11 @@ const tabs = computed<Array<{ k: SortKey; l: string }>>(() => ([
   display: flex;
   border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
 }
+@media (min-width: 640px) {
+  /* Inset the tab row to align with the page's 24px content gutter, so
+     the bottom border lines up with the card grid below. */
+  .sort-tabs { margin: 0 24px; }
+}
 .sort-tabs[data-disabled='true'] {
   opacity: 0.5;
   pointer-events: none;
