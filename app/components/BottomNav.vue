@@ -13,33 +13,29 @@ const showNav = computed(() => isPro.value && route.path !== '/')
       :key="item.to"
       :to="item.to"
       class="bottom-nav-item"
-      :class="[
-        { active: isActive(item.to) },
-        item.icon === 'home' ? 'bottom-nav-home' : ''
-      ]"
+      :class="{ active: isActive(item.to) }"
       :aria-current="isActive(item.to) ? 'page' : undefined"
     >
-      <!-- Map icon -->
-      <svg v-if="item.icon === 'map'" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
-        <line x1="8" y1="2" x2="8" y2="18" />
-        <line x1="16" y1="6" x2="16" y2="22" />
+      <!-- Home — eclipse motif (circle outline + dot) -->
+      <svg v-if="item.icon === 'home'" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="10" cy="10" r="6" />
+        <circle cx="14.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
       </svg>
-      <!-- Home icon — eclipse motif -->
-      <svg v-else-if="item.icon === 'home'" class="home-eclipse" width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <circle cx="12" cy="12" r="9" />
-        <circle cx="12" cy="12" r="4" fill="currentColor" opacity="0.15" />
-        <circle cx="18" cy="8" r="1.5" fill="currentColor" />
+      <!-- Spots — pin -->
+      <svg v-else-if="item.icon === 'spots'" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 1c-3 0-5 2-5 5 0 4 5 9 5 9s5-5 5-9c0-3-2-5-5-5z" />
+        <circle cx="10" cy="6.5" r="1.6" />
       </svg>
-      <!-- Spots icon -->
-      <svg v-else-if="item.icon === 'spots'" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-        <circle cx="12" cy="10" r="3" />
+      <!-- Map — globe / world -->
+      <svg v-else-if="item.icon === 'map'" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="2 5 2 18 7 15 13 18 18 15 18 2 13 5 7 2 2 5" />
+        <line x1="7" y1="2" x2="7" y2="15" />
+        <line x1="13" y1="5" x2="13" y2="18" />
       </svg>
-      <!-- Guide icon -->
-      <svg v-else-if="item.icon === 'guide'" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+      <!-- Guide — open book -->
+      <svg v-else-if="item.icon === 'guide'" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 3h5a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H2z" />
+        <path d="M18 3h-5a3 3 0 0 0-3 3v11a2 2 0 0 1 2-2h6z" />
       </svg>
       <span class="bottom-nav-label">{{ item.label }}</span>
     </NuxtLink>
@@ -52,97 +48,51 @@ const showNav = computed(() => isPro.value && route.path !== '/')
   bottom: 0;
   left: 0;
   right: 0;
-  height: 76px;
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  background: rgb(var(--bg) / 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid rgb(var(--border-subtle) / 0.5);
-  z-index: 50;
+  background: rgb(var(--bg-elevated) / 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgb(var(--border-subtle) / 0.08);
+  z-index: 30;
 }
-
-/* Desktop (md+): hide bottom nav — top masthead takes over */
 @media (min-width: 768px) {
-  .bottom-nav {
-    display: none;
-  }
+  .bottom-nav { display: none; }
 }
-
-/* Safe area for notched phones */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .bottom-nav {
-    height: calc(76px + env(safe-area-inset-bottom));
+    height: calc(72px + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
 .bottom-nav-item {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
-  cursor: pointer;
-  text-decoration: none;
+  gap: 4px;
   padding: 8px 0;
-  flex: 1;
-  transition: transform 0.2s ease;
-  position: relative;
+  min-height: 44px;
+  text-decoration: none;
+  color: rgb(var(--ink-1) / 0.62);
+  transition: color 0.2s ease;
 }
-
-.bottom-nav-item svg {
-  color: rgb(var(--ink-3));
-  transition: all 0.25s ease;
+.bottom-nav-item svg { color: inherit; }
+.bottom-nav-item:hover {
+  color: rgb(var(--ink-1));
 }
-
-.bottom-nav-item.active svg {
+.bottom-nav-item.active {
   color: rgb(var(--accent));
 }
-
-.bottom-nav-item:hover svg {
-  color: rgb(var(--ink-2));
-}
-
-.bottom-nav-item.active:hover svg {
-  color: rgb(var(--accent-strong));
-}
-
 .bottom-nav-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
-  color: rgb(var(--ink-3));
-  transition: color 0.25s;
-}
-
-.bottom-nav-item:hover .bottom-nav-label {
-  color: rgb(var(--ink-2));
-}
-
-.bottom-nav-item.active .bottom-nav-label {
-  color: rgb(var(--accent));
-}
-
-/* Active indicator dot */
-.bottom-nav-item.active::after {
-  content: '';
-  position: absolute;
-  bottom: 2px;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: rgb(var(--accent));
-}
-
-/* Home eclipse icon — slightly larger */
-.bottom-nav-home .home-eclipse {
-  transition: all 0.3s ease;
-}
-
-.bottom-nav-home.active .home-eclipse {
-  filter: drop-shadow(0 0 6px rgb(var(--accent) / 0.35));
+  color: inherit;
 }
 </style>
