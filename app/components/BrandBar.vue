@@ -18,20 +18,7 @@ const showMasthead = computed(() => isPro.value && !isLanding.value)
          Other pages use the standard reading column. -->
     <div :class="['brand-bar-inner', isMap ? 'is-map' : 'is-content']">
       <NuxtLink to="/" aria-label="EclipseChase — Home" class="brand-mark">
-        <!-- v0 logo: amber outline ring + inner amber disc clipped to its
-             left 70%, evoking a partial eclipse. Faithful port of the
-             prototype's BrandBar div+border+inset+clipPath construction.
-             Source: eclipsechase-v0-prototype/home.jsx:26-34 -->
-        <svg class="brand-mark-logo" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-          <defs>
-            <clipPath id="ec-logo-bite">
-              <rect x="0" y="0" width="15.4" height="22" />
-            </clipPath>
-          </defs>
-          <circle cx="11" cy="11" r="10" stroke="rgb(var(--accent))" stroke-width="1.5" fill="none" />
-          <circle cx="11" cy="11" r="8" fill="rgb(var(--accent))" clip-path="url(#ec-logo-bite)" />
-        </svg>
-        <span class="brand-mark-wordmark">ECLIPSECHASE</span>
+        <BrandLogo />
       </NuxtLink>
 
       <!-- Desktop masthead — only on Pro non-landing pages -->
@@ -101,25 +88,8 @@ const showMasthead = computed(() => isPro.value && !isLanding.value)
 .brand-mark {
   display: flex;
   align-items: center;
-  gap: 10px;
   text-decoration: none;
   min-height: 44px;
-}
-.brand-mark-logo {
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-}
-.brand-mark-wordmark {
-  /* v0 prototype uses body (Inter Tight), not mono. The SPEC.md hint
-     of "mono 12/500/2.5" is overridden by the v0.jsx implementation
-     (PRODUCTION_SPEC §0: "When this spec and the prototype disagree,
-     the prototype wins"). Source: home.jsx:35-38 */
-  font-family: 'Inter Tight', -apple-system, system-ui, sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  color: rgb(var(--ink-1));
 }
 .brand-bar-coords {
   font-family: 'JetBrains Mono', ui-monospace, monospace;

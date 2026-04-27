@@ -58,10 +58,15 @@ export default {
         warn:             'rgb(var(--warn) / <alpha-value>)',
         bad:              'rgb(var(--bad) / <alpha-value>)',
         'chart-track':    'rgb(var(--chart-track) / <alpha-value>)',
+
+        // BrandLogo + v0 prototype literal aliases — `text-text` resolves
+        // to the cream ink-1 token so the v0-spec snippets work as-is.
+        text: 'rgb(var(--ink-1) / <alpha-value>)',
       },
       fontFamily: {
         display: ['"Inter Tight"', '-apple-system', 'system-ui', 'sans-serif'],
         body:    ['"Inter Tight"', '-apple-system', 'system-ui', 'sans-serif'],
+        sans:    ['"Inter Tight"', '-apple-system', 'system-ui', 'sans-serif'],
         mono:    ['"JetBrains Mono"', '"SF Mono"', 'ui-monospace', 'Menlo', 'monospace'],
       },
       animation: {
