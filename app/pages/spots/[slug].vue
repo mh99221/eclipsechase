@@ -126,6 +126,8 @@ const activeTab = ref<TabKey>('overview')
           <ContactList
             :totality-start="spot.totality_start"
             :totality-seconds="spot.totality_duration_seconds"
+            :c1="spot.c1"
+            :c4="spot.c4"
           />
         </Card>
         <div class="spacer-8" />

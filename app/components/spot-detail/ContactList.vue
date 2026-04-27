@@ -1,43 +1,65 @@
 <script setup lang="ts">
 const props = defineProps<{
-  /** ISO timestamp (UTC) when totality starts at the spot. */
+  /** ISO timestamp (UTC) when totality starts at the spot — i.e. C2. */
   totalityStart: string | null
   /** Duration of totality in seconds. */
   totalitySeconds: number
+  /** Pre-computed partial begins (C1) from the eclipse grid. Optional —
+   *  when missing we fall back to the calibrated approximation. */
+  c1?: string | null
+  /** Pre-computed partial ends (C4) from the eclipse grid. */
+  c4?: string | null
 }>()
 
 /**
- * The eclipse grid stores only C2 (totality_start) and totality_end (≈ C3).
- * C1 (partial begins) and C4 (partial ends) are approximated using fixed
- * offsets calibrated against the verified HELLNAR fixture for the
- * 2026-08-12 Iceland eclipse:
- *   C1 → C2 = 59m 39s
- *   C3 → C4 = 56m 53s
- * Across the full Iceland path the partial-phase duration varies < 3 min
- * — fine for UI planning. For higher accuracy, re-run the Skyfield grid
- * computation with C1/C4 outputs and pull from the row directly.
+ * C1 / C4 sourcing:
+ *
+ *   1. Server enriches each spot row with `c1`/`c4` looked up from the
+ *      pre-computed eclipse grid (server/utils/eclipseGrid.ts), which
+ *      contains Skyfield-bisected contact times to ~1 s precision per
+ *      grid point. This is the accurate path.
+ *   2. If the grid hasn't been regenerated yet (or the lookup failed),
+ *      we approximate using fixed offsets calibrated against the
+ *      verified HELLNAR fixture for the 2026-08-12 Iceland eclipse:
+ *        C1 → C2 = 59m 39s, C3 → C4 = 56m 53s.
+ *      Across the full Iceland path the partial-phase duration varies
+ *      < 3 min, so the approximation is within UI tolerance.
+ *
+ * To regenerate the grid with C1/C4:
+ *   python scripts/compute-eclipse-grid.py
+ *   # writes public/eclipse-data/grid.json
  */
 const C1_OFFSET_SECONDS = -(59 * 60 + 39)  // -3579
 const C4_OFFSET_SECONDS = (56 * 60 + 53)   // +3413
 
-function fmtUTC(iso: string | null, offsetSec: number = 0): string {
+function fmtUTC(iso: string | null | undefined, offsetSec: number = 0): string {
   if (!iso) return '—'
   try {
     const d = new Date(iso)
     if (isNaN(d.getTime())) return '—'
-    d.setUTCSeconds(d.getUTCSeconds() + offsetSec)
+    if (offsetSec) d.setUTCSeconds(d.getUTCSeconds() + offsetSec)
     return d.toISOString().slice(11, 19)
   } catch {
     return '—'
   }
 }
 
+const c1Display = computed(() => {
+  if (props.c1) return fmtUTC(props.c1)
+  return fmtUTC(props.totalityStart, C1_OFFSET_SECONDS)
+})
+
+const c4Display = computed(() => {
+  if (props.c4) return fmtUTC(props.c4)
+  return fmtUTC(props.totalityStart, props.totalitySeconds + C4_OFFSET_SECONDS)
+})
+
 const rows = computed(() => [
-  { k: 'C1',  l: 'Partial begins',  t: fmtUTC(props.totalityStart, C1_OFFSET_SECONDS),                                    big: false, faint: true },
+  { k: 'C1',  l: 'Partial begins',  t: c1Display.value,                                                                   big: false, faint: true },
   { k: 'C2',  l: 'Totality begins', t: fmtUTC(props.totalityStart),                                                       big: true,  faint: false },
   { k: 'MAX', l: 'Maximum',         t: fmtUTC(props.totalityStart, Math.floor(props.totalitySeconds / 2)),                big: false, faint: false },
   { k: 'C3',  l: 'Totality ends',   t: fmtUTC(props.totalityStart, props.totalitySeconds),                                big: true,  faint: false },
-  { k: 'C4',  l: 'Partial ends',    t: fmtUTC(props.totalityStart, props.totalitySeconds + C4_OFFSET_SECONDS),            big: false, faint: true },
+  { k: 'C4',  l: 'Partial ends',    t: c4Display.value,                                                                   big: false, faint: true },
 ])
 </script>
 
