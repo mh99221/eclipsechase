@@ -72,7 +72,10 @@ const showMasthead = computed(() => isPro.value && !isLanding.value)
   gap: 14px;
 }
 .brand-bar-inner.is-content {
-  max-width: 1120px;       /* roomier on desktop, max-w-3xl was too tight for the masthead */
+  /* Match the page content column on desktop (768px reading width).
+     Outer .brand-bar still spans full viewport so the blur backdrop +
+     bottom border read across the whole top of the page. */
+  max-width: 768px;
   margin: 0 auto;
 }
 .brand-bar-inner.is-map {
@@ -109,7 +112,7 @@ const showMasthead = computed(() => isPro.value && !isLanding.value)
 .masthead {
   display: none;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
 }
 @media (min-width: 768px) {
   .masthead { display: flex; }
