@@ -22,12 +22,6 @@ const weatherBest = computed(() => {
 
 const weatherLoading = computed(() => cloudStatus.value === 'pending')
 
-// News updates from Nuxt Content (lazy: don't block navigation)
-const { data: updates, status: updatesStatus } = useLazyAsyncData('dashboard-updates', () =>
-  queryContent('updates').sort({ date: -1 }).limit(5).find(),
-)
-const updatesLoading = computed(() => updatesStatus.value === 'pending')
-
 const { t } = useI18n()
 </script>
 
@@ -65,21 +59,6 @@ const { t } = useI18n()
     </section>
 
     <Checklist />
-
-    <!-- Legacy updates feed — preserved below the v0-spec'd content per
-         the no-feature-removal constraint. TODO(v0-spec): relocate or fold
-         into a dedicated /updates route. -->
-    <section v-if="!updatesLoading && updates?.length" class="legacy-updates">
-      <Eyebrow>LATEST UPDATES</Eyebrow>
-      <ul class="updates-list">
-        <li v-for="post in updates" :key="post._path" class="update-row">
-          <NuxtLink :to="post._path" class="update-link">
-            <span class="update-date">{{ post.date }}</span>
-            <span class="update-title">{{ post.title }}</span>
-          </NuxtLink>
-        </li>
-      </ul>
-    </section>
 
     <ClientOnly><OfflineBanner /></ClientOnly>
   </PageShell>
@@ -156,55 +135,6 @@ const { t } = useI18n()
 }
 @media (prefers-reduced-motion: reduce) {
   .skeleton-line { animation: none; }
-}
-
-.legacy-updates {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 8px 16px 0;
-  padding: 24px 0;
-  border-top: 1px solid rgb(var(--border-subtle) / 0.08);
-}
-@media (min-width: 640px) {
-  .legacy-updates {
-    margin: 8px 24px 0;
-    padding: 32px 0 40px;
-  }
-}
-.updates-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  background: rgb(var(--surface) / 0.04);
-  border: 1px solid rgb(var(--border-subtle) / 0.08);
-  border-radius: 10px;
-  overflow: hidden;
-}
-.update-row + .update-row {
-  border-top: 1px solid rgb(var(--border-subtle) / 0.08);
-}
-.update-link {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  padding: 12px 18px;
-  text-decoration: none;
-  color: inherit;
-  min-height: 44px;
-}
-.update-date {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: rgb(var(--ink-1) / 0.42);
-  flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-}
-.update-title {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 14px;
-  color: rgb(var(--ink-1));
 }
 
 /* ═══════════════════════════════════════════════════

@@ -104,15 +104,16 @@ const rankedForMap = computed(() => {
 const activeProfileName = computed(() => PROFILES.find(p => p.id === selectedProfile.value)?.name || null)
 
 // v0 mobile chrome — chip stack + bottom selected lightbox.
-// Lightbox is driven by ?spot= URL param (existing focusSpot mechanism).
-// Pin clicks still trigger the existing Mapbox popup behavior; promoting
-// pin clicks into a reactive selection would require an emit from EclipseMap.
-// TODO(v0-spec): wire spot:select emit from EclipseMap so lightbox tracks
-// pin taps directly without a URL roundtrip.
+// Seeded from ?spot= URL param so deep links open with a selection;
+// pin clicks update it reactively via the EclipseMap spotSelect emit.
 const showWeatherV0 = ref(true) // visual-only toggle; cloud-cover overlay is always-on today
+const selectedSlug = ref<string | null>(focusSpot)
+function onSpotSelect(slug: string) {
+  selectedSlug.value = slug
+}
 const lightboxSpot = computed(() => {
-  if (!focusSpot) return null
-  return spotsData.value?.spots?.find((s: any) => s.slug === focusSpot) ?? null
+  if (!selectedSlug.value) return null
+  return spotsData.value?.spots?.find((s: any) => s.slug === selectedSlug.value) ?? null
 })
 function lightboxCloud(spot: any): number | null {
   return historicalWeatherData.value?.spots?.[spot.slug]?.avg_cloud_cover ?? null
@@ -629,6 +630,7 @@ const profileIcons: Record<ProfileId, string> = {
         :initial-zoom="restoreZoom"
         class="absolute inset-0"
         @map-click="handleMapClick"
+        @spot-select="onSpotSelect"
       />
       <template #fallback>
         <div class="absolute inset-0 flex items-center justify-center">

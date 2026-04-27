@@ -15,12 +15,22 @@ if (error.value || !data.value?.spot) {
 
 const spot = computed(() => data.value!.spot)
 
+// Full spots list — used by the Plan tab's AlternatesList. Lazy + client-only
+// so it never blocks the detail-page critical path. The endpoint is cached
+// at the edge (s-maxage=300, SWR=3600 per nuxt.config), so this is cheap.
+const { data: allSpotsData } = useFetch('/api/spots', { lazy: true, server: false, key: 'all-spots' })
+const allSpots = computed(() => allSpotsData.value?.spots ?? null)
+
 const spotPhotos = computed<SpotPhoto[]>(() => parseJsonb<SpotPhoto[]>(spot.value.photos, []))
 const heroPhoto = computed<SpotPhoto | null>(
   () => spotPhotos.value.find(p => p.is_hero) || spotPhotos.value[0] || null,
 )
 
-const warnings = computed<string[]>(() => parseJsonb<string[]>(spot.value.warnings, []))
+// Tolerates both legacy string[] and migrated {level,title,body}[] shapes.
+// AdvisoriesBlock normalises whichever it gets.
+const warnings = computed<Array<string | { level?: string; title?: string; body?: string }>>(() =>
+  parseJsonb<Array<string | { level?: string; title?: string; body?: string }>>(spot.value.warnings, []),
+)
 
 const horizonCheck = computed<HorizonCheck | null>(
   () => parseJsonb<HorizonCheck | null>(spot.value.horizon_check, null),
@@ -152,14 +162,14 @@ const activeTab = ref<TabKey>('overview')
       </Card>
 
       <template v-else-if="activeTab === 'plan'">
-        <AlternatesPlaceholder />
+        <AlternatesList :current="spot" :spots="allSpots" />
         <div class="spacer-8" />
         <Card>
           <CardTitle>{{ t('v0.spot_detail.card_map') }}</CardTitle>
           <SpotLocationMap
             :lat="spot.lat"
             :lng="spot.lng"
-            :sun-azimuth="spot.sun_azimuth ?? 249"
+            :sun-azimuth="spot.sun_azimuth ?? null"
             :spot-name="spot.name"
             class="plan-map"
           />

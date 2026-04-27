@@ -43,7 +43,9 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  mapClick: [coords: { lat: number; lng: number }]
+  mapClick:   [coords: { lat: number; lng: number }]
+  /** Fired when a spot marker is clicked. Drives the v0 selected-lightbox. */
+  spotSelect: [slug: string]
 }>()
 
 const router = useRouter()
@@ -346,6 +348,10 @@ function updateSpotMarkers() {
         .setLngLat([spot.lng, spot.lat])
         .setPopup(popup)
         .addTo(map)
+      // Drive the v0 selected-lightbox on parent pages — emits before the
+      // popup opens. Listener bound once at marker creation; the slug is
+      // stable since it keys the marker cache.
+      el.addEventListener('click', () => emit('spotSelect', spot.slug))
       cached = { marker, el, popup, minZoom }
       spotMarkers.set(spot.slug, cached)
     } else {
