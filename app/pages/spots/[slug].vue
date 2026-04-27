@@ -88,8 +88,6 @@ useHead({
 
 type TabKey = 'overview' | 'sky' | 'weather' | 'plan'
 const activeTab = ref<TabKey>('overview')
-
-const horizonScanCount = computed(() => horizonCheck.value?.sweep?.length ?? 0)
 </script>
 
 <template>
@@ -108,11 +106,8 @@ const horizonScanCount = computed(() => horizonCheck.value?.sweep?.length ?? 0)
     <div class="spot-body">
       <StatStrip
         :totality-seconds="spot.totality_duration_seconds"
-        :totality-start="spot.totality_start"
         :sun-altitude="spot.sun_altitude"
-        :sun-azimuth="spot.sun_azimuth"
         :horizon-verdict="horizonCheck?.verdict ?? null"
-        :horizon-scan-count="horizonScanCount"
       />
 
       <template v-if="activeTab === 'overview'">
