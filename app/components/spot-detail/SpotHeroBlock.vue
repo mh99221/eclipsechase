@@ -22,7 +22,7 @@ defineProps<{
       <div class="spot-hero-veil" aria-hidden="true" />
     </div>
     <div class="spot-hero-meta">
-      <div class="spot-hero-kicker">{{ kicker ?? '● SPOT DOSSIER' }}</div>
+      <div class="spot-hero-kicker">{{ kicker ?? '● SPOT' }}</div>
       <h1 class="spot-hero-name">{{ name }}</h1>
       <div class="spot-hero-region">{{ region }}</div>
     </div>

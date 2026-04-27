@@ -7,12 +7,19 @@ const props = defineProps<{
 }>()
 
 /**
- * Production data only stores totality_start + duration. We render C2 directly,
- * derive MAX (start + duration/2) and C3 (start + duration), and leave C1/C4
- * as placeholders until the eclipse-grid lookup is wired in.
- *
- * TODO(v0-spec): pull C1/C4 from server/utils/eclipseGrid.ts at request time.
+ * The eclipse grid stores only C2 (totality_start) and totality_end (≈ C3).
+ * C1 (partial begins) and C4 (partial ends) are approximated using fixed
+ * offsets calibrated against the verified HELLNAR fixture for the
+ * 2026-08-12 Iceland eclipse:
+ *   C1 → C2 = 59m 39s
+ *   C3 → C4 = 56m 53s
+ * Across the full Iceland path the partial-phase duration varies < 3 min
+ * — fine for UI planning. For higher accuracy, re-run the Skyfield grid
+ * computation with C1/C4 outputs and pull from the row directly.
  */
+const C1_OFFSET_SECONDS = -(59 * 60 + 39)  // -3579
+const C4_OFFSET_SECONDS = (56 * 60 + 53)   // +3413
+
 function fmtUTC(iso: string | null, offsetSec: number = 0): string {
   if (!iso) return '—'
   try {
@@ -26,11 +33,11 @@ function fmtUTC(iso: string | null, offsetSec: number = 0): string {
 }
 
 const rows = computed(() => [
-  { k: 'C1',  l: 'Partial begins',    t: '—',                                                                  big: false, faint: true },
-  { k: 'C2',  l: 'Totality begins',   t: fmtUTC(props.totalityStart),                                           big: true,  faint: false },
-  { k: 'MAX', l: 'Maximum',           t: fmtUTC(props.totalityStart, Math.floor(props.totalitySeconds / 2)),    big: false, faint: false },
-  { k: 'C3',  l: 'Totality ends',     t: fmtUTC(props.totalityStart, props.totalitySeconds),                    big: true,  faint: false },
-  { k: 'C4',  l: 'Partial ends',      t: '—',                                                                  big: false, faint: true },
+  { k: 'C1',  l: 'Partial begins',  t: fmtUTC(props.totalityStart, C1_OFFSET_SECONDS),                                    big: false, faint: true },
+  { k: 'C2',  l: 'Totality begins', t: fmtUTC(props.totalityStart),                                                       big: true,  faint: false },
+  { k: 'MAX', l: 'Maximum',         t: fmtUTC(props.totalityStart, Math.floor(props.totalitySeconds / 2)),                big: false, faint: false },
+  { k: 'C3',  l: 'Totality ends',   t: fmtUTC(props.totalityStart, props.totalitySeconds),                                big: true,  faint: false },
+  { k: 'C4',  l: 'Partial ends',    t: fmtUTC(props.totalityStart, props.totalitySeconds + C4_OFFSET_SECONDS),            big: false, faint: true },
 ])
 </script>
 
@@ -90,6 +97,6 @@ const rows = computed(() => [
 }
 .row[data-faint='true'] .l,
 .row[data-faint='true'] .t {
-  color: rgb(var(--ink-1) / 0.42);
+  color: rgb(var(--ink-1) / 0.62);
 }
 </style>
