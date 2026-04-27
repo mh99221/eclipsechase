@@ -116,8 +116,10 @@ function scrollTo(id: string) {
   scrollbar-width: none;
 }
 @media (min-width: 768px) {
+  /* Inset the row + its bottom rule by 24px to match the page gutter. */
   .guide-toc {
-    padding: 0 24px 18px;
+    margin: 0 24px;
+    padding: 0 0 18px;
     gap: 8px;
     flex-wrap: wrap;
     overflow-x: visible;

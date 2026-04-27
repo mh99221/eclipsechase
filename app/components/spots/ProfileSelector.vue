@@ -54,7 +54,12 @@ function pick(id: ProfileId | null) {
   border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
 }
 @media (min-width: 640px) {
-  .profile-selector { padding: 14px 24px 10px; }
+  /* Inset the row + its border-bottom so the rule aligns with the
+     card grid (page gutter is 24px on desktop). */
+  .profile-selector {
+    margin: 0 24px;
+    padding: 14px 0 10px;
+  }
 }
 .profile-selector :deep(.eyebrow) {
   margin-bottom: 8px;

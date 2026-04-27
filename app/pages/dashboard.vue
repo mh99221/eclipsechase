@@ -159,13 +159,18 @@ const { t } = useI18n()
 }
 
 .legacy-updates {
-  padding: 8px 16px 24px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin: 8px 16px 0;
+  padding: 24px 0;
   border-top: 1px solid rgb(var(--border-subtle) / 0.08);
-  margin-top: 8px;
-  padding-top: 24px;
+}
+@media (min-width: 640px) {
+  .legacy-updates {
+    margin: 8px 24px 0;
+    padding: 32px 0 40px;
+  }
 }
 .updates-list {
   list-style: none;
@@ -216,7 +221,6 @@ const { t } = useI18n()
   .conditions-card { padding: 20px 24px; min-height: 80px; }
   .conditions-name { font-size: 26px; }
   .conditions-cta { font-size: 13px; }
-  .legacy-updates { padding: 8px 24px 40px; padding-top: 32px; }
-  .update-link { padding: 14px 24px; }
+  /* legacy-updates desktop overrides handled at the rule itself, above */
 }
 </style>
