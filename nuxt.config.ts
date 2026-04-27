@@ -58,6 +58,15 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // Flatten auto-import names so nested folders (ui/, spot-detail/, home/, etc.)
+  // can be referenced as <Pill>, <SpotHeroBlock> rather than <UiPill>, <SpotDetailSpotHeroBlock>.
+  // The `content/` subfolder is excluded — Nuxt Content registers those via its own rules.
+  components: [
+    { path: '~/components/content', prefix: '' },
+    { path: '~/components', pathPrefix: false },
+  ],
+
+
   tailwindcss: {
     cssPath: '~/assets/css/main.css',
   },
