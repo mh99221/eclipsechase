@@ -47,10 +47,27 @@ export default {
           strong: 'rgb(var(--accent-strong) / <alpha-value>)',
           soft:   'rgb(var(--accent-soft) / <alpha-value>)',
         },
+
+        // v0 tokens (added 2026-04-27)
+        'bg-elevated':    'rgb(var(--bg-elevated) / <alpha-value>)',
+        'surface-solid':  'rgb(var(--surface-solid) / <alpha-value>)',
+        'border-strong':  'rgb(var(--border-strong) / <alpha-value>)',
+        totality:         'rgb(var(--totality) / <alpha-value>)',
+        cream:            'rgb(var(--cream) / <alpha-value>)',
+        good:             'rgb(var(--good) / <alpha-value>)',
+        warn:             'rgb(var(--warn) / <alpha-value>)',
+        bad:              'rgb(var(--bad) / <alpha-value>)',
+        'chart-track':    'rgb(var(--chart-track) / <alpha-value>)',
+
+        // BrandLogo + v0 prototype literal aliases — `text-text` resolves
+        // to the cream ink-1 token so the v0-spec snippets work as-is.
+        text: 'rgb(var(--ink-1) / <alpha-value>)',
       },
       fontFamily: {
-        display: ['Manrope', 'system-ui', 'sans-serif'],
-        mono: ['IBM Plex Mono', 'monospace'],
+        display: ['"Inter Tight"', '-apple-system', 'system-ui', 'sans-serif'],
+        body:    ['"Inter Tight"', '-apple-system', 'system-ui', 'sans-serif'],
+        sans:    ['"Inter Tight"', '-apple-system', 'system-ui', 'sans-serif'],
+        mono:    ['"JetBrains Mono"', '"SF Mono"', 'ui-monospace', 'Menlo', 'monospace'],
       },
       animation: {
         'corona-pulse': 'corona-pulse 4s ease-in-out infinite',

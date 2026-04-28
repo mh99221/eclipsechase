@@ -103,6 +103,22 @@ const rankedForMap = computed(() => {
 
 const activeProfileName = computed(() => PROFILES.find(p => p.id === selectedProfile.value)?.name || null)
 
+// v0 mobile chrome — chip stack + bottom selected lightbox.
+// Seeded from ?spot= URL param so deep links open with a selection;
+// pin clicks update it reactively via the EclipseMap spotSelect emit.
+const showWeatherV0 = ref(true) // visual-only toggle; cloud-cover overlay is always-on today
+const selectedSlug = ref<string | null>(focusSpot)
+function onSpotSelect(slug: string) {
+  selectedSlug.value = slug
+}
+const lightboxSpot = computed(() => {
+  if (!selectedSlug.value) return null
+  return spotsData.value?.spots?.find((s: any) => s.slug === selectedSlug.value) ?? null
+})
+function lightboxCloud(spot: any): number | null {
+  return historicalWeatherData.value?.spots?.[spot.slug]?.avg_cloud_cover ?? null
+}
+
 // Close profile menu on Escape or click outside
 function handleKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape' && profileMenuOpen.value) {
@@ -614,6 +630,7 @@ const profileIcons: Record<ProfileId, string> = {
         :initial-zoom="restoreZoom"
         class="absolute inset-0"
         @map-click="handleMapClick"
+        @spot-select="onSpotSelect"
       />
       <template #fallback>
         <div class="absolute inset-0 flex items-center justify-center">
@@ -621,6 +638,30 @@ const profileIcons: Record<ProfileId, string> = {
         </div>
       </template>
     </ClientOnly>
+
+    <!-- v0 mobile chrome — chip stack at top, lightbox at bottom.
+         Hidden on desktop; existing desktop floating controls remain in place. -->
+    <div class="md:hidden absolute top-[72px] left-0 right-0 z-10 pointer-events-none">
+      <MapChipStack
+        :selected-profile="selectedProfile"
+        :show-weather="showWeatherV0"
+        :show-traffic="showTraffic"
+        :show-cameras="showCameras"
+        @update:selected-profile="selectedProfile = $event"
+        @update:show-weather="showWeatherV0 = $event"
+        @update:show-traffic="showTraffic = $event"
+        @update:show-cameras="showCameras = $event"
+      />
+    </div>
+
+    <div v-if="lightboxSpot" class="md:hidden absolute left-0 right-0 bottom-0 z-10 pointer-events-none">
+      <SelectedLightbox
+        :name="lightboxSpot.name"
+        :slug="lightboxSpot.slug"
+        :totality-seconds="lightboxSpot.totality_duration_seconds || 0"
+        :cloud="lightboxCloud(lightboxSpot)"
+      />
+    </div>
 
     <!-- Floats below the global top nav (72px, fixed, z-50). -->
     <div class="absolute top-[72px] left-0 right-0 z-10 pointer-events-none">

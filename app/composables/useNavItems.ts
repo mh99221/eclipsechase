@@ -11,11 +11,13 @@ export interface NavItem {
   icon: NavIcon
 }
 
+// v0 nav order — HOME · SPOTS · MAP · GUIDE (no ME tab in this pass).
+// PRODUCTION_SPEC.md §3.2
 export const NAV_ITEMS: readonly NavItem[] = [
   { to: '/dashboard', label: 'Home',  icon: 'home' },
-  { to: '/guide',     label: 'Guide', icon: 'guide' },
   { to: '/spots',     label: 'Spots', icon: 'spots' },
   { to: '/map',       label: 'Map',   icon: 'map' },
+  { to: '/guide',     label: 'Guide', icon: 'guide' },
 ] as const
 
 export function useNavItems() {

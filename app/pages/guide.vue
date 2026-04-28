@@ -35,74 +35,155 @@ useHead(() => ({
     },
   ],
 }))
+
+// TOC chip strip — labels match the H2s in content/guide.md.
+const toc = [
+  { id: 'whats-happening',     label: "What's happening" },
+  { id: 'the-path-of-totality', label: 'Path of totality' },
+  { id: 'best-viewing-spots',  label: 'Best spots' },
+  { id: 'weather--cloud-cover', label: 'Weather' },
+  { id: 'getting-there',       label: 'Getting there' },
+  { id: 'what-to-bring',       label: 'What to bring' },
+  { id: 'eclipse-day-timeline', label: 'Day timeline' },
+  { id: 'faq',                 label: 'FAQ' },
+] as const
+
+function scrollTo(id: string) {
+  if (!import.meta.client) return
+  const el = document.getElementById(id)
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
 </script>
 
 <template>
-  <div class="relative noise min-h-screen pt-[72px]">
-    <!-- Article -->
-    <main class="pb-20">
-      <article class="section-container max-w-3xl py-8 sm:py-16 guide-content">
-        <ContentRenderer v-if="page" :value="page" />
-      </article>
-    </main>
+  <PageShell screen="guide">
+    <header class="guide-header">
+      <Eyebrow tone="accent">GUIDE · 2026.08.12</Eyebrow>
+      <h1 class="guide-title">Complete Guide to the 2026 Total Solar Eclipse in Iceland</h1>
+      <p class="guide-sub">Your practical planning reference — the only total solar eclipse to cross Iceland for the next 170 years.</p>
+    </header>
 
-    <AppFooter />
-  </div>
+    <nav class="guide-toc" aria-label="Sections">
+      <Pill
+        v-for="entry in toc"
+        :key="entry.id"
+        size="sm"
+        :active="false"
+        @click="scrollTo(entry.id)"
+      >{{ entry.label }}</Pill>
+    </nav>
+
+    <article class="guide-content">
+      <ContentRenderer v-if="page" :value="page" />
+    </article>
+  </PageShell>
 </template>
 
 <style scoped>
+.guide-header {
+  padding: 24px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+@media (min-width: 768px) {
+  .guide-header { padding: 48px 24px 24px; gap: 14px; }
+}
+.guide-title {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: rgb(var(--ink-1));
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0;
+}
+@media (min-width: 640px) { .guide-title { font-size: 36px; } }
+.guide-sub {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 14px;
+  color: rgb(var(--ink-1) / 0.62);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.guide-toc {
+  display: flex;
+  gap: 6px;
+  padding: 0 16px 14px;
+  overflow-x: auto;
+  border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
+  scrollbar-width: none;
+}
+@media (min-width: 768px) {
+  /* Inset the row + its bottom rule by 24px to match the page gutter. */
+  .guide-toc {
+    margin: 0 24px;
+    padding: 0 0 18px;
+    gap: 8px;
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+.guide-toc::-webkit-scrollbar { display: none; }
+
+.guide-content {
+  padding: 16px 16px 32px;
+}
+
 /* ═══════════════════════════════════════════════════
-   Guide content — theme-aware (dark + Dawn Horizon light).
-   All color values use semantic tokens from assets/css/main.css.
+   Markdown content — v0 typography pass.
+   Inter Tight body, JetBrains Mono labels/code/eyebrows.
+   All colors via semantic tokens for theme-awareness.
    ═══════════════════════════════════════════════════ */
 
 .guide-content :deep(h1) {
-  font-family: 'Manrope', system-ui, sans-serif;
-  font-size: 2rem;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 28px;
   font-weight: 700;
   color: rgb(var(--ink-1));
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+  /* The article H1 duplicates the page header above; hide it. */
+  display: none;
 }
-@media (min-width: 640px) { .guide-content :deep(h1) { font-size: 2.5rem; } }
-@media (min-width: 768px) { .guide-content :deep(h1) { font-size: 3rem; } }
 
 .guide-content :deep(h1 + p) {
-  color: rgb(var(--ink-3));
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
+  color: rgb(var(--ink-1) / 0.62);
+  font-size: 15px;
+  margin-bottom: 18px;
+  display: none;
 }
-@media (min-width: 640px) { .guide-content :deep(h1 + p) { font-size: 1.125rem; } }
 
 .guide-content :deep(h2) {
-  font-family: 'Manrope', system-ui, sans-serif;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 19px;
+  font-weight: 700;
   color: rgb(var(--ink-1));
-  margin-top: 3rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.625rem;
-  border-bottom: 1px solid rgb(var(--border-subtle) / 0.5);
+  margin-top: 36px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
+  letter-spacing: -0.005em;
 }
-@media (min-width: 640px) { .guide-content :deep(h2) { font-size: 1.5rem; } }
 .guide-content :deep(h2:first-of-type) { margin-top: 0; }
 
 .guide-content :deep(h3) {
-  font-family: 'Manrope', system-ui, sans-serif;
-  font-size: 1.125rem;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 16px;
   font-weight: 600;
   color: rgb(var(--ink-1));
-  margin-top: 2rem;
-  margin-bottom: 0.75rem;
+  margin-top: 24px;
+  margin-bottom: 10px;
 }
 
 .guide-content :deep(p) {
-  font-size: 0.9375rem;
-  line-height: 1.8;
-  color: rgb(var(--ink-2));
-  margin-bottom: 1rem;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgb(var(--ink-1) / 0.85);
+  margin-bottom: 14px;
 }
-@media (min-width: 640px) { .guide-content :deep(p) { font-size: 1rem; } }
 
 .guide-content :deep(a) {
   color: rgb(var(--accent));
@@ -117,78 +198,75 @@ useHead(() => ({
 
 .guide-content :deep(strong) {
   color: rgb(var(--ink-1));
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .guide-content :deep(ul),
 .guide-content :deep(ol) {
-  font-size: 0.9375rem;
-  line-height: 1.8;
-  color: rgb(var(--ink-2));
-  margin-bottom: 1rem;
-  padding-left: 1.5rem;
-}
-@media (min-width: 640px) {
-  .guide-content :deep(ul),
-  .guide-content :deep(ol) { font-size: 1rem; }
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgb(var(--ink-1) / 0.85);
+  margin-bottom: 14px;
+  padding-left: 22px;
 }
 .guide-content :deep(ul) { list-style-type: disc; }
 .guide-content :deep(ol) { list-style-type: decimal; }
-.guide-content :deep(li) { margin-bottom: 0.375rem; }
+.guide-content :deep(li) { margin-bottom: 5px; }
 .guide-content :deep(li::marker) { color: rgb(var(--accent) / 0.5); }
 
-/* --- Tables --- */
+/* Tables — v0 mono-caps headers + olive accent on key columns */
 .guide-content :deep(table) {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  margin-bottom: 1.5rem;
-  font-size: 0.875rem;
-  background: rgb(var(--surface) / 0.6);
-  border: 1px solid rgb(var(--border-subtle) / 0.6);
-  border-radius: 6px;
+  margin: 14px 0 18px;
+  font-size: 13px;
+  background: rgb(var(--surface) / 0.04);
+  border: 1px solid rgb(var(--border-subtle) / 0.08);
+  border-radius: 8px;
   overflow: hidden;
 }
 .guide-content :deep(thead th) {
   text-align: left;
-  padding: 0.75rem 1rem;
-  font-family: 'IBM Plex Mono', monospace;
+  padding: 10px 14px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-weight: 500;
-  color: rgb(var(--accent));
-  font-size: 0.6875rem;
+  color: rgb(var(--ink-1) / 0.62);
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  background: rgb(var(--surface-raised) / 0.9);
-  border-bottom: 1px solid rgb(var(--border-subtle) / 0.6);
+  letter-spacing: 0.14em;
+  border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
 }
 .guide-content :deep(tbody td) {
-  padding: 0.625rem 1rem;
-  color: rgb(var(--ink-2));
-  border-bottom: 1px solid rgb(var(--border-subtle) / 0.35);
+  padding: 9px 14px;
+  color: rgb(var(--ink-1));
+  border-bottom: 1px solid rgb(var(--border-subtle) / 0.06);
+  font-variant-numeric: tabular-nums;
 }
 .guide-content :deep(tbody tr:last-child td) { border-bottom: none; }
-.guide-content :deep(tbody tr:hover) { background: rgb(var(--accent) / 0.04); }
 
-/* --- FAQ details/summary --- */
+/* FAQ details/summary */
 .guide-content :deep(details) {
-  background: rgb(var(--surface) / 0.6);
-  border: 1px solid rgb(var(--border-subtle) / 0.6);
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
+  background: rgb(var(--surface) / 0.04);
+  border: 1px solid rgb(var(--border-subtle) / 0.08);
+  border-radius: 8px;
+  margin-bottom: 6px;
   overflow: hidden;
   transition: border-color 0.2s;
 }
-.guide-content :deep(details:hover) { border-color: rgb(var(--border-subtle)); }
-
 .guide-content :deep(summary) {
-  padding: 0.875rem 1.25rem;
+  padding: 13px 16px;
   cursor: pointer;
-  font-family: 'Manrope', system-ui, sans-serif;
-  font-size: 0.9375rem;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 14px;
   font-weight: 600;
   color: rgb(var(--ink-1));
-  transition: background 0.2s;
   list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
 }
 .guide-content :deep(summary::-webkit-details-marker) { display: none; }
 .guide-content :deep(summary::before) {
@@ -196,69 +274,80 @@ useHead(() => ({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  margin-right: 0.75rem;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.875rem;
+  width: 20px;
+  height: 20px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 14px;
   color: rgb(var(--accent));
   opacity: 0.7;
   border: 1px solid rgb(var(--accent) / 0.3);
   border-radius: 3px;
-  transition: opacity 0.2s, transform 0.2s;
   flex-shrink: 0;
+  transition: opacity 0.2s;
 }
 .guide-content :deep(details[open] summary::before) { content: '−'; opacity: 1; }
 .guide-content :deep(summary:hover) { background: rgb(var(--accent) / 0.04); }
 .guide-content :deep(details[open] summary) {
-  border-bottom: 1px solid rgb(var(--border-subtle) / 0.5);
+  border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
 }
 .guide-content :deep(details > p),
-.guide-content :deep(details > :not(summary)) { padding: 1rem 1.25rem; }
+.guide-content :deep(details > :not(summary)) { padding: 14px 16px; }
 
-/* --- Inline code --- */
+/* Inline code */
 .guide-content :deep(code) {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.8125rem;
-  background: rgb(var(--surface-raised) / 0.8);
-  padding: 0.125rem 0.5rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12.5px;
+  background: rgb(var(--surface-solid));
+  padding: 2px 6px;
   border-radius: 3px;
-  color: rgb(var(--ink-2));
-  border: 1px solid rgb(var(--border-subtle) / 0.5);
+  color: rgb(var(--ink-1));
+  border: 1px solid rgb(var(--border-subtle) / 0.08);
 }
 
-/* --- Horizontal rule --- */
+/* Horizontal rule */
 .guide-content :deep(hr) {
   border: none;
   height: 1px;
-  background: linear-gradient(to right, transparent, rgb(var(--border-subtle) / 0.7), transparent);
-  margin: 3rem 0;
+  background: linear-gradient(to right, transparent, rgb(var(--border-subtle) / 0.16), transparent);
+  margin: 36px 0;
 }
 
-/* --- TOC (first ul) --- */
+/* In-content TOC (first ul, from the markdown) — keep it but restyle. */
 .guide-content :deep(> ul:first-of-type) {
   list-style: none;
-  padding: 1.25rem 1.5rem;
-  margin-bottom: 2rem;
-  background: rgb(var(--surface) / 0.6);
-  border: 1px solid rgb(var(--border-subtle) / 0.6);
-  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 0 0 24px;
+  background: rgb(var(--surface) / 0.04);
+  border: 1px solid rgb(var(--border-subtle) / 0.08);
+  border-radius: 8px;
 }
-.guide-content :deep(> ul:first-of-type li) { margin-bottom: 0.5rem; padding-left: 0; }
+.guide-content :deep(> ul:first-of-type li) {
+  margin-bottom: 6px;
+  padding-left: 0;
+}
 .guide-content :deep(> ul:first-of-type li::before) {
   content: '→';
   color: rgb(var(--accent) / 0.5);
-  margin-right: 0.75rem;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.75rem;
+  margin-right: 10px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
 }
 .guide-content :deep(> ul:first-of-type li::marker) { content: ''; }
 .guide-content :deep(> ul:first-of-type a) {
   text-decoration: none;
   border-bottom: none;
-  color: rgb(var(--ink-2));
-  font-size: 0.9375rem;
-  transition: color 0.2s;
+  color: rgb(var(--ink-1) / 0.85);
+  font-size: 14px;
 }
 .guide-content :deep(> ul:first-of-type a:hover) { color: rgb(var(--accent)); }
+
+/* Desktop overrides for the markdown content — placed after the base
+   :deep rules so cascade favors them at viewports ≥ 768px. */
+@media (min-width: 768px) {
+  .guide-content { padding: 24px 24px 48px; }
+  .guide-content :deep(h2) { font-size: 22px; margin-top: 48px; }
+  .guide-content :deep(p),
+  .guide-content :deep(ul),
+  .guide-content :deep(ol) { font-size: 15px; line-height: 1.7; }
+}
 </style>

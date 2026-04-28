@@ -5,7 +5,7 @@ import { readCssVar } from '~/utils/theme'
 const props = defineProps<{
   lat: number
   lng: number
-  sunAzimuth: number
+  sunAzimuth: number | null
   spotName: string
 }>()
 
@@ -47,7 +47,10 @@ function toggle3D() {
   is3D.value = !is3D.value
   if (is3D.value) {
     map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 })
-    map.easeTo({ pitch: 60, bearing: props.sunAzimuth - 180, duration: 1000 })
+    // Bearing the sun direction only makes sense when we have a real
+    // sun_azimuth on the spot row; otherwise just tilt without rotating.
+    const bearing = props.sunAzimuth != null ? props.sunAzimuth - 180 : 0
+    map.easeTo({ pitch: 60, bearing, duration: 1000 })
   } else {
     map.setTerrain(null)
     map.easeTo({ pitch: 0, bearing: 0, duration: 1000 })
@@ -156,7 +159,7 @@ watch(mapContainer, async (el) => {
       center: [props.lng, props.lat],
       zoom: 14,
       pitch: is3D.value ? 60 : 0,
-      bearing: is3D.value ? props.sunAzimuth - 180 : 0,
+      bearing: is3D.value && props.sunAzimuth != null ? props.sunAzimuth - 180 : 0,
       attributionControl: false,
       antialias: true,
       // Prevent the map from capturing page scroll/touch:
@@ -200,57 +203,61 @@ watch(mapContainer, async (el) => {
         },
       })
 
-      // Sun direction wedge (±20° from sun azimuth, extending ~2km)
-      const wedgeGeoJSON = createDirectionWedge(props.lat, props.lng, props.sunAzimuth, 2000, 20)
-      map.addSource('sun-direction', { type: 'geojson', data: wedgeGeoJSON })
-      map.addLayer({
-        id: 'sun-direction-fill',
-        type: 'fill',
-        source: 'sun-direction',
-        paint: {
-          'fill-color': '#f59e0b',
-          'fill-opacity': 0.08,
-        },
-      })
-      map.addLayer({
-        id: 'sun-direction-line',
-        type: 'line',
-        source: 'sun-direction',
-        paint: {
-          'line-color': '#f59e0b',
-          'line-width': 1.5,
-          'line-opacity': 0.4,
-          'line-dasharray': [4, 3],
-        },
-      })
+      // Sun direction wedge — only render when we actually have a real
+      // sun_azimuth on the spot row. Without it we'd be silently drawing
+      // a default trajectory, which would mislead users planning a shot.
+      if (props.sunAzimuth != null) {
+        const wedgeGeoJSON = createDirectionWedge(props.lat, props.lng, props.sunAzimuth, 2000, 20)
+        map.addSource('sun-direction', { type: 'geojson', data: wedgeGeoJSON })
+        map.addLayer({
+          id: 'sun-direction-fill',
+          type: 'fill',
+          source: 'sun-direction',
+          paint: {
+            'fill-color': '#f59e0b',
+            'fill-opacity': 0.08,
+          },
+        })
+        map.addLayer({
+          id: 'sun-direction-line',
+          type: 'line',
+          source: 'sun-direction',
+          paint: {
+            'line-color': '#f59e0b',
+            'line-width': 1.5,
+            'line-opacity': 0.4,
+            'line-dasharray': [4, 3],
+          },
+        })
 
-      // Sun direction label at the tip of the wedge
-      const tipPoint = movePoint(props.lat, props.lng, props.sunAzimuth, 2000)
-      map.addSource('sun-label', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          geometry: { type: 'Point', coordinates: [tipPoint[1], tipPoint[0]] },
-          properties: { label: `Sun ☀ ${Math.round(props.sunAzimuth)}°` },
-        },
-      })
-      map.addLayer({
-        id: 'sun-label-text',
-        type: 'symbol',
-        source: 'sun-label',
-        layout: {
-          'text-field': ['get', 'label'],
-          'text-size': 11,
-          'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
-          'text-offset': [0, -0.8],
-          'text-anchor': 'bottom',
-        },
-        paint: {
-          'text-color': '#f59e0b',
-          'text-halo-color': '#0a0e17',
-          'text-halo-width': 1.5,
-        },
-      })
+        // Sun direction label at the tip of the wedge
+        const tipPoint = movePoint(props.lat, props.lng, props.sunAzimuth, 2000)
+        map.addSource('sun-label', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [tipPoint[1], tipPoint[0]] },
+            properties: { label: `Sun ☀ ${Math.round(props.sunAzimuth)}°` },
+          },
+        })
+        map.addLayer({
+          id: 'sun-label-text',
+          type: 'symbol',
+          source: 'sun-label',
+          layout: {
+            'text-field': ['get', 'label'],
+            'text-size': 11,
+            'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
+            'text-offset': [0, -0.8],
+            'text-anchor': 'bottom',
+          },
+          paint: {
+            'text-color': '#f59e0b',
+            'text-halo-color': '#0a0e17',
+            'text-halo-width': 1.5,
+          },
+        })
+      } // end if (props.sunAzimuth != null)
 
       // Spot marker
       const markerEl = document.createElement('div')

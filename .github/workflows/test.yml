@@ -20,6 +20,10 @@ jobs:
         env:
           SUPABASE_URL: http://localhost:54321
           SUPABASE_KEY: test-anon-key
+          # @nuxtjs/supabase ≥2 expects SUPABASE_SECRET_KEY (was
+          # SUPABASE_SERVICE_KEY in older versions). Server endpoints
+          # using serverSupabaseServiceRole() throw without it.
+          SUPABASE_SECRET_KEY: test-secret-key
           NUXT_PUBLIC_SUPABASE_URL: http://localhost:54321
           NUXT_PUBLIC_SUPABASE_KEY: test-anon-key
           NUXT_PUBLIC_MAPBOX_TOKEN: pk.test
@@ -50,6 +54,10 @@ jobs:
         env:
           SUPABASE_URL: http://localhost:54321
           SUPABASE_KEY: test-anon-key
+          # @nuxtjs/supabase ≥2 expects SUPABASE_SECRET_KEY (was
+          # SUPABASE_SERVICE_KEY in older versions). Server endpoints
+          # using serverSupabaseServiceRole() throw without it.
+          SUPABASE_SECRET_KEY: test-secret-key
           NUXT_PUBLIC_SUPABASE_URL: http://localhost:54321
           NUXT_PUBLIC_SUPABASE_KEY: test-anon-key
           NUXT_PUBLIC_MAPBOX_TOKEN: pk.test
