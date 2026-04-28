@@ -665,8 +665,11 @@ const profileIcons: Record<ProfileId, string> = {
     </div>
 
     <!-- Lift the lightbox above the bottom nav so it isn't partially
-         hidden behind it. The 72 px matches BottomNav's content height
-         and the safe-area inset clears the iOS home indicator.
+         hidden behind it. Mirrors BottomNav's own padding calculation:
+            14 px (pt) + 47 px (icon+gap+label+gap+dot) + max(28, safe-area) (pb)
+            + 8 px gap = 69 + max(28px, safe-area).
+         On Android (no notch): bottom = 97 px, clearing the 89 px nav.
+         On iPhone (34 px safe area): bottom = 103 px, clearing the 95 px nav.
 
          Hidden while the horizon-check panel is open — the two panels
          occupy the same screen position so showing both just means the
@@ -675,7 +678,7 @@ const profileIcons: Record<ProfileId, string> = {
     <div
       v-if="lightboxSpot && !horizonCheckCoords"
       class="md:hidden absolute left-0 right-0 z-10 pointer-events-none"
-      style="bottom: calc(72px + env(safe-area-inset-bottom));"
+      style="bottom: calc(69px + max(28px, env(safe-area-inset-bottom)));"
     >
       <SelectedLightbox
         :name="lightboxSpot.name"
