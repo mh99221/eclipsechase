@@ -530,15 +530,22 @@ onUnmounted(() => { window.removeEventListener('resize', updateIsMobile) })
 const NAV_HEIGHT = 64
 const horizonBottomStyle = computed(() => {
   if (!isMobile.value) return {}
+  // The mobile bottom sheet is now hidden, so its height no longer
+  // contributes to the horizon panel's bottom offset — only the nav bar
+  // does. (Restore `sheetHeight.value +` here if the sheet is re-enabled.)
   return {
-    bottom: `${sheetHeight.value + NAV_HEIGHT + 16}px`,
-    transition: sheetDragging.value ? 'none' : 'bottom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    bottom: `${NAV_HEIGHT + 16}px`,
   }
 })
 
 // ─── Dynamic Horizon Check (Pro: click anywhere on map) ───
 const { isPro } = useProStatus()
 const horizonCheckCoords = ref<{ lat: number; lng: number } | null>(null)
+// Once the user has tapped the map at least once, suppress the
+// "Tap anywhere on the map…" hint forever. Without this, the brief
+// null → coords reset in handleMapClick can flash the hint back
+// between the first tap and the panel render.
+const horizonHintDismissed = ref(false)
 
 let horizonMarker: any = null
 onScopeDispose(() => { horizonMarker?.remove(); horizonMarker = null })
@@ -551,6 +558,7 @@ const offlineManagerRef = computed(() => offlineManagerMobile.value || offlineMa
 
 function handleMapClick(coords: { lat: number; lng: number }) {
   if (!isPro.value) return
+  horizonHintDismissed.value = true
 
   // Place crosshair marker
   const mapInstance = eclipseMapRef.value?.map
@@ -805,9 +813,14 @@ const profileIcons: Record<ProfileId, string> = {
       </div>
     </div>
 
-    <!-- ═══ Mobile: Peek Sheet (bottom drawer with pull-up) ═══ -->
+    <!--
+      Mobile bottom sheet hidden — the v0 MapChipStack at the top of the
+      map already exposes profile + cams + roads on mobile, making this
+      pullable sheet redundant. Kept the markup so it can be re-enabled
+      with a single class swap if we want a mobile legend later.
+    -->
     <div
-      class="sm:hidden absolute left-0 right-0 bottom-16 z-10"
+      class="hidden absolute left-0 right-0 bottom-16 z-10"
       :style="{ height: sheetHeight + 'px' }"
       :class="sheetDragging ? '' : 'transition-[height] duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]'"
     >
@@ -1011,7 +1024,7 @@ const profileIcons: Record<ProfileId, string> = {
     <!-- Pro hint: click to check horizon (client-only to avoid hydration mismatch) -->
     <ClientOnly>
       <div
-        v-if="isPro && !horizonCheckCoords"
+        v-if="isPro && !horizonCheckCoords && !horizonHintDismissed"
         class="absolute z-10 left-1/2 -translate-x-1/2 sm:bottom-[120px] pointer-events-none"
         :style="horizonBottomStyle"
       >
