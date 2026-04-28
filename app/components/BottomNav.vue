@@ -1,13 +1,39 @@
 <script setup lang="ts">
+import IconHome from './icons/IconHome.vue'
+import IconSpots from './icons/IconSpots.vue'
+import IconMap from './icons/IconMap.vue'
+import IconGuide from './icons/IconGuide.vue'
+import IconMe from './icons/IconMe.vue'
+import type { NavIcon } from '~/composables/useNavItems'
+
 const route = useRoute()
 const { isPro } = useProStatus()
 const { items, isActive } = useNavItems()
 
+// Pro-gated mobile nav: hidden on the public landing and for non-Pro
+// visitors. Desktop swaps to the masthead in BrandBar (handled by CSS).
 const showNav = computed(() => isPro.value && route.path !== '/')
+
+const iconMap: Record<NavIcon, ReturnType<typeof defineComponent>> = {
+  home:  IconHome,
+  spots: IconSpots,
+  map:   IconMap,
+  guide: IconGuide,
+  me:    IconMe,
+}
+
+// Light haptic on tap — PWA on iOS only fires this when the page is
+// installed to the home screen and the user has tapped recently. No-op
+// in browsers without the API. Guarded so SSR / older browsers skip it.
+function tapFeedback() {
+  if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+    try { navigator.vibrate(5) } catch { /* swallow rare WebKit reject */ }
+  }
+}
 </script>
 
 <template>
-  <nav v-if="showNav" class="bottom-nav" aria-label="Main navigation">
+  <nav v-if="showNav" class="bottom-nav" aria-label="Primary">
     <NuxtLink
       v-for="item in items"
       :key="item.to"
@@ -15,29 +41,11 @@ const showNav = computed(() => isPro.value && route.path !== '/')
       class="bottom-nav-item"
       :class="{ active: isActive(item.to) }"
       :aria-current="isActive(item.to) ? 'page' : undefined"
+      @click="tapFeedback"
     >
-      <!-- Home — eclipse motif (circle outline + dot) -->
-      <svg v-if="item.icon === 'home'" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
-        <circle cx="10" cy="10" r="6" />
-        <circle cx="14.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-      </svg>
-      <!-- Spots — pin -->
-      <svg v-else-if="item.icon === 'spots'" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M10 1c-3 0-5 2-5 5 0 4 5 9 5 9s5-5 5-9c0-3-2-5-5-5z" />
-        <circle cx="10" cy="6.5" r="1.6" />
-      </svg>
-      <!-- Map — globe / world -->
-      <svg v-else-if="item.icon === 'map'" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="2 5 2 18 7 15 13 18 18 15 18 2 13 5 7 2 2 5" />
-        <line x1="7" y1="2" x2="7" y2="15" />
-        <line x1="13" y1="5" x2="13" y2="18" />
-      </svg>
-      <!-- Guide — open book -->
-      <svg v-else-if="item.icon === 'guide'" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M2 3h5a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H2z" />
-        <path d="M18 3h-5a3 3 0 0 0-3 3v11a2 2 0 0 1 2-2h6z" />
-      </svg>
-      <span class="bottom-nav-label">{{ item.label }}</span>
+      <component :is="iconMap[item.icon]" class="bottom-nav-icon" aria-hidden="true" />
+      <span class="bottom-nav-label">{{ item.label.toUpperCase() }}</span>
+      <span class="bottom-nav-dot" aria-hidden="true" />
     </NuxtLink>
   </nav>
 </template>
@@ -45,10 +53,8 @@ const showNav = computed(() => isPro.value && route.path !== '/')
 <style scoped>
 .bottom-nav {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 72px;
+  inset: auto 0 0 0;
+  z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -56,43 +62,56 @@ const showNav = computed(() => isPro.value && route.path !== '/')
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid rgb(var(--border-subtle) / 0.08);
-  z-index: 30;
+  /* pt-3.5 + pb-7 from the spec, with safe-area override for notched phones. */
+  padding: 14px 0 28px;
+  padding-bottom: max(28px, env(safe-area-inset-bottom));
 }
 @media (min-width: 768px) {
   .bottom-nav { display: none; }
 }
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .bottom-nav {
-    height: calc(72px + env(safe-area-inset-bottom));
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-}
 
 .bottom-nav-item {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 8px 0;
-  min-height: 44px;
+  gap: 6px;
+  min-width: 44px;
+  padding: 4px 0;
   text-decoration: none;
   color: rgb(var(--ink-1) / 0.62);
   transition: color 0.2s ease;
 }
-.bottom-nav-item svg { color: inherit; }
 .bottom-nav-item:hover {
   color: rgb(var(--ink-1));
 }
 .bottom-nav-item.active {
   color: rgb(var(--accent));
 }
-.bottom-nav-label {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
+
+.bottom-nav-icon {
+  width: 20px;
+  height: 20px;
   color: inherit;
+}
+
+.bottom-nav-label {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  color: inherit;
+}
+
+/* 4px amber dot on the active tab; transparent when inactive (so the
+   layout doesn't shift between active states). */
+.bottom-nav-dot {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: transparent;
+}
+.bottom-nav-item.active .bottom-nav-dot {
+  background: rgb(var(--accent));
 }
 </style>

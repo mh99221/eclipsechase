@@ -62,6 +62,10 @@ export default {
         // BrandLogo + v0 prototype literal aliases — `text-text` resolves
         // to the cream ink-1 token so the v0-spec snippets work as-is.
         text: 'rgb(var(--ink-1) / <alpha-value>)',
+        // `text-text-dim` matches the v0 token name for secondary copy.
+        // Same value as text-ink-1 with /62 alpha — exposed under both
+        // names so the v0 snippets work without renaming.
+        'text-dim': 'rgba(232,229,220,0.62)',
       },
       fontFamily: {
         display: ['"Inter Tight"', '-apple-system', 'system-ui', 'sans-serif'],
