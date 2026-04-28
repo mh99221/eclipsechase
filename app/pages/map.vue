@@ -636,6 +636,8 @@ const profileIcons: Record<ProfileId, string> = {
         :focus-spot="focusSpot"
         :initial-center="restoreCenter"
         :initial-zoom="restoreZoom"
+        :selected-slug="selectedSlug"
+        :suppress-spot-popups="isMobile"
         class="absolute inset-0"
         @map-click="handleMapClick"
         @spot-select="onSpotSelect"
@@ -662,7 +664,14 @@ const profileIcons: Record<ProfileId, string> = {
       />
     </div>
 
-    <div v-if="lightboxSpot" class="md:hidden absolute left-0 right-0 bottom-0 z-10 pointer-events-none">
+    <!-- Lift the lightbox above the bottom nav so it isn't partially
+         hidden behind it. The 72 px matches BottomNav's content height
+         and the safe-area inset clears the iOS home indicator. -->
+    <div
+      v-if="lightboxSpot"
+      class="md:hidden absolute left-0 right-0 z-10 pointer-events-none"
+      style="bottom: calc(72px + env(safe-area-inset-bottom));"
+    >
       <SelectedLightbox
         :name="lightboxSpot.name"
         :slug="lightboxSpot.slug"

@@ -40,6 +40,12 @@ const props = defineProps<{
   focusSpot?: string | null
   initialCenter?: [number, number] | null
   initialZoom?: number | null
+  /** When true, spot-marker popups are not attached. Mobile uses the
+   *  bottom lightbox instead, so the popup would duplicate the same data. */
+  suppressSpotPopups?: boolean
+  /** Slug of the currently-selected spot. The matching marker renders
+   *  with a distinctive red pin so it's findable on the map. */
+  selectedSlug?: string | null
 }>()
 
 const emit = defineEmits<{
@@ -206,9 +212,26 @@ function renderSpotInto(el: HTMLElement, spot: Spot, rankInfo: RankInfo | undefi
   const hasRanking = !!rankInfo
   const isFiltered = rankInfo?.filtered === true
   const isTop3 = hasRanking && !isFiltered && rankInfo!.rank <= 3
+  const isSelected = !!props.selectedSlug && spot.slug === props.selectedSlug
 
-  el.setAttribute('aria-label', `${spot.name} viewing spot, ${formatDuration(spot.totality_duration_seconds)} totality${hasRanking && !isFiltered ? `, rank ${rankInfo!.rank}` : ''}`)
+  el.setAttribute('aria-label', `${spot.name} viewing spot, ${formatDuration(spot.totality_duration_seconds)} totality${hasRanking && !isFiltered ? `, rank ${rankInfo!.rank}` : ''}${isSelected ? ', selected' : ''}`)
   el.textContent = '' // clear any prior inner content
+
+  // Selected pin — distinctive red so the user can find their pick on
+  // the map at a glance. Slightly larger than the standard pin and with
+  // a softer halo. Wins regardless of ranking/filter state.
+  if (isSelected) {
+    el.style.cssText = `
+      width: 26px; height: 26px; border-radius: 50%;
+      background: ${colors.markerBg}; border: 2px solid #D85848;
+      box-shadow: 0 0 14px rgba(216, 88, 72, 0.5); cursor: pointer; z-index: 11;
+      display: flex; align-items: center; justify-content: center;
+    `
+    const inner = document.createElement('div')
+    inner.style.cssText = `width: 11px; height: 11px; border-radius: 50%; background: #D85848;`
+    el.appendChild(inner)
+    return
+  }
 
   // Sizes: 20% smaller than prior revision, inner dot sized at the
   // legend's 6/14 ratio (~43%) so map markers match the legend visual.
@@ -346,11 +369,14 @@ function updateSpotMarkers() {
       wireSpotPopupNavigation(popup)
       const marker = new mapboxgl.Marker({ element: el })
         .setLngLat([spot.lng, spot.lat])
-        .setPopup(popup)
         .addTo(map)
-      // Drive the v0 selected-lightbox on parent pages — emits before the
-      // popup opens. Listener bound once at marker creation; the slug is
-      // stable since it keys the marker cache.
+      // Attach the popup only when the parent isn't suppressing them.
+      // Mobile (where the SelectedLightbox renders the same data) sets
+      // suppressSpotPopups=true so we don't double up.
+      if (!props.suppressSpotPopups) marker.setPopup(popup)
+      // Drive the v0 selected-lightbox on parent pages — fires regardless
+      // of popup state. Listener bound once at marker creation; the slug
+      // is stable since it keys the marker cache.
       el.addEventListener('click', () => emit('spotSelect', spot.slug))
       cached = { marker, el, popup, minZoom }
       spotMarkers.set(spot.slug, cached)
@@ -395,6 +421,20 @@ watch(() => props.stations, updateMarkers, { deep: true })
 watch(() => props.spots, updateSpotMarkers)
 watch(() => props.rankedSpots, updateSpotMarkers, { deep: true })
 watch(() => props.historical, updateSpotMarkers, { deep: true })
+
+// Re-render spot markers when the selected slug changes so the
+// previously-selected pin reverts to its rank/default styling and the
+// new one picks up the red highlight.
+watch(() => props.selectedSlug, updateSpotMarkers)
+
+// Attach or detach popups across cached markers when the suppression
+// flag flips (e.g. user resizes from mobile to desktop without reload).
+watch(() => props.suppressSpotPopups, (suppress) => {
+  for (const cached of spotMarkers.values()) {
+    if (suppress) cached.marker.setPopup(undefined as any)
+    else cached.marker.setPopup(cached.popup)
+  }
+})
 
 const colorMode = useColorMode()
 const mapboxStyleFor = (mode: string) =>
