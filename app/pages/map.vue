@@ -666,9 +666,14 @@ const profileIcons: Record<ProfileId, string> = {
 
     <!-- Lift the lightbox above the bottom nav so it isn't partially
          hidden behind it. The 72 px matches BottomNav's content height
-         and the safe-area inset clears the iOS home indicator. -->
+         and the safe-area inset clears the iOS home indicator.
+
+         Hidden while the horizon-check panel is open — the two panels
+         occupy the same screen position so showing both just means the
+         horizon panel covers the lightbox. Closing the horizon check
+         restores it. -->
     <div
-      v-if="lightboxSpot"
+      v-if="lightboxSpot && !horizonCheckCoords"
       class="md:hidden absolute left-0 right-0 z-10 pointer-events-none"
       style="bottom: calc(72px + env(safe-area-inset-bottom));"
     >
