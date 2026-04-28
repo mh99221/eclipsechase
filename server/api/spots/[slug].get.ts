@@ -1,5 +1,5 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
-import { nearestGridPoint } from '~/server/utils/eclipseGrid'
+import { nearestGridPoint } from '../../utils/eclipseGrid'
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
