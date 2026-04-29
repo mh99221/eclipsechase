@@ -36,7 +36,11 @@ defineProps<{
   background: rgb(var(--bg));
   color: rgb(var(--ink-1));
   min-height: 100vh;
-  padding-top: 90px;
+  /* Match BrandBar's exact height so content sits flush below the bar
+     without a dark gap. BrandBar = top-padding (max 14px / safe-area-top)
+     + min-height 60px + bottom-padding 14px. Tracks the safe-area inset
+     automatically on notched devices so we don't need a hardcoded number. */
+  padding-top: calc(60px + max(14px, env(safe-area-inset-top)) + 14px);
   padding-bottom: 90px;
 }
 .page-shell.no-top    { padding-top: 0; }
