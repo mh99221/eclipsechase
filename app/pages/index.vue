@@ -101,9 +101,9 @@ onMounted(() => {
 
 const dataStripItems = [
   { color: 'bg-accent/60', label: 'data_strip.totality', value: 'data_strip.totality_value' },
-  { color: 'bg-ice/60', label: 'data_strip.sun_alt', value: 'data_strip.sun_alt_value' },
-  { color: 'bg-accent/60', label: 'data_strip.path', value: 'data_strip.path_value' },
-  { color: 'bg-red-400/60', label: 'data_strip.next', value: 'data_strip.next_value' },
+  { color: 'bg-ink-1/30',  label: 'data_strip.sun_alt',  value: 'data_strip.sun_alt_value' },
+  { color: 'bg-accent/60', label: 'data_strip.path',     value: 'data_strip.path_value' },
+  { color: 'bg-bad/60',    label: 'data_strip.next',     value: 'data_strip.next_value' },
 ]
 
 const features = computed(() => [
@@ -150,7 +150,9 @@ const features = computed(() => [
     <header class="relative min-h-[92vh] flex flex-col items-center justify-center px-4 pt-16 pb-12 overflow-hidden">
       <!-- Atmospheric gradient orbs -->
       <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-gradient-radial from-accent/[0.04] to-transparent blur-3xl pointer-events-none" />
-      <div class="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-ice/[0.02] blur-[100px] pointer-events-none" />
+      <!-- Cool sky-blue counterpoint to the warm top orb. Scoped to dark
+           theme only — on cream the blue tint clashes with the warm palette. -->
+      <div class="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full dark:bg-ice/[0.02] blur-[100px] pointer-events-none" />
 
       <!-- Eclipse illustration -->
       <EclipseHero class="mb-5 sm:mb-7" />
@@ -222,8 +224,11 @@ const features = computed(() => [
     <!-- FEATURES -->
     <!-- ═══════════════════════════════════════════ -->
     <section ref="featuresRef" class="relative py-20 sm:py-28">
-      <!-- Subtle topographic lines background — uses ice blue on dark, warm peach on light -->
-      <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.03] dark:opacity-[0.03] text-ice dark:text-ice">
+      <!-- Subtle topographic lines background — sky-blue accent only on
+           dark theme; light theme stays clean cream without it. The earlier
+           comment about "warm peach on light" was aspirational; never wired
+           up. Now scoped explicitly: invisible on light, faint on dark. -->
+      <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-0 dark:opacity-[0.03] dark:text-ice">
         <svg class="w-full h-full" viewBox="0 0 1000 600" preserveAspectRatio="none">
           <path v-for="i in 12" :key="i"
             :d="`M0 ${i * 50 + 20} Q250 ${i * 50 + (i % 2 === 0 ? -30 : 40)} 500 ${i * 50 + 10} Q750 ${i * 50 + (i % 2 === 0 ? 50 : -20)} 1000 ${i * 50 + 30}`"
@@ -258,10 +263,13 @@ const features = computed(() => [
           >
             <div class="flex items-start gap-6 sm:gap-10 py-7 sm:py-8 border-t border-border-subtle/40
                         transition-all duration-500 hover:bg-surface/30 px-4 sm:px-6 -mx-4 sm:-mx-6">
-              <!-- Number -->
+              <!-- Number — corona/ice alternation in dark theme; on light
+                   the cool ice doesn't fit the warm cream palette, so the
+                   non-corona variant flips to a neutral ink tint. The visual
+                   variety (warm vs muted) survives the theme flip. -->
               <span
                 class="font-mono text-xs tracking-wider transition-colors duration-300 pt-1 shrink-0"
-                :class="feature.accent === 'corona' ? 'text-accent/20 group-hover:text-accent/50' : 'text-ice/20 group-hover:text-ice/50'"
+                :class="feature.accent === 'corona' ? 'text-accent/20 group-hover:text-accent/50' : 'text-ink-1/20 group-hover:text-ink-1/50'"
               >
                 {{ feature.number }}
               </span>
@@ -321,13 +329,12 @@ const features = computed(() => [
     <footer class="border-t border-border-subtle/30 py-12">
       <div class="section-container">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <!-- Brand -->
+          <!-- Brand. Use the v0 BrandLogo mark (theme-aware crescent) but
+               keep the "EclipseChase.is" marketing wordmark — different
+               from BrandLogo's plain "ECLIPSECHASE" because the .is
+               domain hint matters on the landing page footer. -->
           <div class="flex items-center gap-3">
-            <svg class="w-5 h-5" viewBox="0 0 128 128" fill="none" aria-hidden="true">
-              <circle cx="64" cy="64" r="36" class="ec-logo-bg" />
-              <circle cx="64" cy="64" r="36" class="ec-logo-ring" stroke-width="3" opacity="0.6" />
-              <circle cx="96" cy="48" r="3" class="ec-logo-dot" opacity="0.8" />
-            </svg>
+            <BrandLogo icon-only :size="20" />
             <span class="font-display text-sm tracking-[0.2em] text-ink-3 uppercase">
               EclipseChase.is
             </span>
