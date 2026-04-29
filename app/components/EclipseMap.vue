@@ -40,18 +40,23 @@ const props = defineProps<{
   focusSpot?: string | null
   initialCenter?: [number, number] | null
   initialZoom?: number | null
-  /** When true, spot-marker popups are not attached. Mobile uses the
-   *  bottom lightbox instead, so the popup would duplicate the same data. */
-  suppressSpotPopups?: boolean
+  /** When true, station + spot marker popups are not attached. Mobile
+   *  uses the bottom dock instead, so popups would duplicate the same
+   *  data. Click events still fire so the parent can drive the dock. */
+  suppressPopups?: boolean
   /** Slug of the currently-selected spot. The matching marker renders
    *  with a distinctive red pin so it's findable on the map. */
   selectedSlug?: string | null
 }>()
 
+type StationData = NonNullable<typeof props.stations>[number]
+
 const emit = defineEmits<{
-  mapClick:   [coords: { lat: number; lng: number }]
-  /** Fired when a spot marker is clicked. Drives the v0 selected-lightbox. */
-  spotSelect: [slug: string]
+  mapClick:      [coords: { lat: number; lng: number }]
+  /** Fired when a spot marker is clicked. Drives the dock SPOT mode. */
+  spotSelect:    [slug: string]
+  /** Fired when a weather-station marker is clicked. Drives the dock WEATHER mode. */
+  weatherSelect: [station: StationData]
 }>()
 
 const router = useRouter()
@@ -70,8 +75,13 @@ interface CachedMarker {
   popup: mapboxgl.Popup
   minZoom: number
 }
+interface CachedStationMarker extends CachedMarker {
+  /** Latest station snapshot, kept current so click → weatherSelect
+   *  emits the freshest cloud-cover. */
+  station: StationData
+}
 
-const stationMarkers = new Map<string, CachedMarker>()
+const stationMarkers = new Map<string, CachedStationMarker>()
 const spotMarkers = new Map<string, CachedMarker>()
 
 /** Find nearest station's cloud cover for a given lat/lng */
@@ -107,7 +117,7 @@ function addEclipsePath() {
   })
 }
 
-type Station = NonNullable<typeof props.stations>[number]
+type Station = StationData
 
 function stationPopupHtml(station: Station): string {
   const color = cloudColor(station.cloud_cover)
@@ -160,12 +170,24 @@ function updateMarkers() {
       }).setHTML(stationPopupHtml(station))
       const marker = new mapboxgl.Marker({ element: el })
         .setLngLat([station.lng, station.lat])
-        .setPopup(popup)
         .addTo(map)
-      cached = { marker, el, popup, minZoom: minZooms[i]! }
+      // Popup attaches only when the parent isn't suppressing them.
+      // Mobile (where the dock renders the same data) sets
+      // suppressPopups=true so we don't double up.
+      if (!props.suppressPopups) marker.setPopup(popup)
+      // Always emit the click so the parent can drive the dock,
+      // regardless of popup state. Listener bound once at marker
+      // creation; the station_id is stable since it keys the cache.
+      const stationId = station.station_id
+      el.addEventListener('click', () => {
+        const current = stationMarkers.get(stationId)
+        if (current) emit('weatherSelect', current.station)
+      })
+      cached = { marker, el, popup, minZoom: minZooms[i]!, station }
       stationMarkers.set(station.station_id, cached)
     } else {
       cached.minZoom = minZooms[i]!
+      cached.station = station
       renderStationInto(cached.el, station)
       cached.popup.setHTML(stationPopupHtml(station))
     }
@@ -371,9 +393,9 @@ function updateSpotMarkers() {
         .setLngLat([spot.lng, spot.lat])
         .addTo(map)
       // Attach the popup only when the parent isn't suppressing them.
-      // Mobile (where the SelectedLightbox renders the same data) sets
-      // suppressSpotPopups=true so we don't double up.
-      if (!props.suppressSpotPopups) marker.setPopup(popup)
+      // Mobile (where the dock renders the same data) sets
+      // suppressPopups=true so we don't double up.
+      if (!props.suppressPopups) marker.setPopup(popup)
       // Drive the v0 selected-lightbox on parent pages — fires regardless
       // of popup state. Listener bound once at marker creation; the slug
       // is stable since it keys the marker cache.
@@ -429,8 +451,13 @@ watch(() => props.selectedSlug, updateSpotMarkers)
 
 // Attach or detach popups across cached markers when the suppression
 // flag flips (e.g. user resizes from mobile to desktop without reload).
-watch(() => props.suppressSpotPopups, (suppress) => {
+// Covers spot + station markers — both render dock equivalents on mobile.
+watch(() => props.suppressPopups, (suppress) => {
   for (const cached of spotMarkers.values()) {
+    if (suppress) cached.marker.setPopup(undefined as any)
+    else cached.marker.setPopup(cached.popup)
+  }
+  for (const cached of stationMarkers.values()) {
     if (suppress) cached.marker.setPopup(undefined as any)
     else cached.marker.setPopup(cached.popup)
   }

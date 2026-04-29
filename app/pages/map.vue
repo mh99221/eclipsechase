@@ -103,26 +103,131 @@ const rankedForMap = computed(() => {
 
 const activeProfileName = computed(() => PROFILES.find(p => p.id === selectedProfile.value)?.name || null)
 
-// v0 mobile chrome — chip stack + bottom selected lightbox.
-// Seeded from ?spot= URL param so deep links open with a selection;
-// pin clicks update it reactively via the EclipseMap spotSelect emit.
+// v0 mobile chrome — chip stack at top + bottom dock.
+// Seeded from ?spot= URL param so deep links open with a selection.
 const showWeatherV0 = ref(true) // visual-only toggle; cloud-cover overlay is always-on today
 const selectedSlug = ref<string | null>(focusSpot)
-function onSpotSelect(slug: string) {
-  selectedSlug.value = slug
-}
-const lightboxSpot = computed(() => {
+
+const selectedSpotData = computed(() => {
   if (!selectedSlug.value) return null
   return spotsData.value?.spots?.find((s: any) => s.slug === selectedSlug.value) ?? null
 })
-function lightboxCloud(spot: any): number | null {
-  return historicalWeatherData.value?.spots?.[spot.slug]?.avg_cloud_cover ?? null
+function spotHistoricalCloud(slug: string): number | null {
+  return historicalWeatherData.value?.spots?.[slug]?.avg_cloud_cover ?? null
 }
 
-// Close profile menu on Escape or click outside
+// ─── Map dock state ───
+// Mobile-only bottom dock that swaps content between five modes
+// (SPOT / WEATHER / ROADS / CAM / HORIZON). Mode is driven by what the
+// user taps on the map; ctx for each mode is populated below from the
+// tap target's data.
+type DockMode = 'spot' | 'weather' | 'roads' | 'cam' | 'horizon'
+const dockMode = ref<DockMode>('spot')
+const dockWeatherCtx = ref<{ name: string; cloud: number | null; updatedMinutes: number | null; visibilityKm: number | null } | null>(null)
+const dockRoadsCtx = ref<{ cond: 'good' | 'difficult' | 'closed' | 'unknown'; label: string; detail: string } | null>(null)
+const dockCamCtx = ref<{ id: string | number; name: string; dir: string; images: Array<{ url: string; description: string }>; idx: number } | null>(null)
+const dockHorizonCtx = ref<{ lat: number; lng: number; spotName: string | null } | null>(null)
+
+// Spot data shaped for DockSpot — uses historical 16-yr Aug-12 cloud
+// (matches the prior SelectedLightbox behaviour) so the SPOT mode shows
+// a stable climatology number rather than today's nearest-station cloud.
+const dockSpot = computed(() => {
+  const s = selectedSpotData.value
+  if (!s) return null
+  return {
+    slug: s.slug,
+    name: s.name,
+    lat: s.lat,
+    lng: s.lng,
+    totality_duration_seconds: s.totality_duration_seconds || 0,
+    cloud: spotHistoricalCloud(s.slug),
+  }
+})
+
+function onSpotSelect(slug: string) {
+  selectedSlug.value = slug
+  dockMode.value = 'spot'
+}
+
+function onWeatherSelect(station: any) {
+  // Mirror existing legend: cloud_cover may be null when no observation
+  // is available for this station. Visibility is on the API but rarely
+  // reported; we surface it when present, otherwise null.
+  dockWeatherCtx.value = {
+    name: station.name,
+    cloud: station.cloud_cover ?? null,
+    visibilityKm: station.visibility ?? null,
+    updatedMinutes: null,
+  }
+  dockMode.value = 'weather'
+}
+
+function onRoadSelect(ctx: { cond: 'good' | 'difficult' | 'closed' | 'unknown'; label: string; detail: string }) {
+  dockRoadsCtx.value = ctx
+  dockMode.value = 'roads'
+}
+
+function onCamSelect(cam: { id: number; name: string; images: Array<{ url: string; description: string }> }) {
+  // Use the most-recent description from the first image as the dir
+  // line; the cam itself doesn't carry a separate direction field.
+  const startIdx = camIndexById.get(cam.id as any) ?? 0
+  dockCamCtx.value = {
+    id: cam.id,
+    name: cam.name,
+    dir: cam.images[startIdx]?.description || cam.images[0]?.description || '',
+    images: cam.images,
+    idx: startIdx,
+  }
+  dockMode.value = 'cam'
+}
+function onCamStep(dir: 1 | -1) {
+  if (!dockCamCtx.value) return
+  const total = dockCamCtx.value.images.length
+  if (total === 0) return
+  const next = ((dockCamCtx.value.idx + dir) % total + total) % total
+  dockCamCtx.value.idx = next
+  camIndexById.set(dockCamCtx.value.id as any, next)
+}
+
+function onHorizonOpen() {
+  const s = dockSpot.value
+  if (!s) return
+  dockHorizonCtx.value = { lat: s.lat, lng: s.lng, spotName: s.name }
+  dockMode.value = 'horizon'
+}
+
+function onOpenFieldCard() {
+  const s = dockSpot.value
+  if (!s) return
+  // Pass current map view so /spots → "back to map" returns here.
+  const mapInst = eclipseMapRef.value?.map
+  if (mapInst) {
+    const c = mapInst.getCenter()
+    const z = mapInst.getZoom().toFixed(1)
+    router.push(`/spots/${s.slug}?mlat=${c.lat.toFixed(4)}&mlng=${c.lng.toFixed(4)}&mzoom=${z}`)
+  } else {
+    router.push(`/spots/${s.slug}`)
+  }
+}
+
+const router = useRouter()
+
+// Close profile menu on Escape or click outside.
+// Also: ← / → step the dock CAM carousel; Esc returns the dock to
+// SPOT mode (or closes it entirely when nothing is selected).
 function handleKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape' && profileMenuOpen.value) {
     profileMenuOpen.value = false
+    return
+  }
+  if (dockMode.value === 'cam' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+    onCamStep(e.key === 'ArrowLeft' ? -1 : 1)
+    e.preventDefault()
+    return
+  }
+  if (e.key === 'Escape' && dockMode.value !== 'spot') {
+    dockMode.value = 'spot'
+    if (horizonMarker) { horizonMarker.remove(); horizonMarker = null }
   }
 }
 function handleClickOutside() {
@@ -154,6 +259,11 @@ const showTraffic = ref(false)
 // `buildEnrichedRoads` and survive re-toggles alongside it.
 let trafficSegmentsCache: { segments: any[] } | null = null
 let trafficRoadsCache: any = null
+
+function normaliseCond(raw: string): 'good' | 'difficult' | 'closed' | 'unknown' {
+  if (raw === 'good' || raw === 'difficult' || raw === 'closed') return raw
+  return 'unknown'
+}
 
 function buildTrafficMarker(c: TrafficCondition, map: mapboxgl.Map): mapboxgl.Marker {
   const color = getTrafficColor(c.condition)
@@ -187,10 +297,23 @@ function buildTrafficMarker(c: TrafficCondition, map: mapboxgl.Map): mapboxgl.Ma
     </div>
   `)
 
-  return new mapboxgl.Marker({ element: el })
+  const marker = new mapboxgl.Marker({ element: el })
     .setLngLat([c.lng, c.lat])
-    .setPopup(popup)
     .addTo(map)
+
+  // Mobile drives the dock instead of opening a popup. Listener is bound
+  // once at marker creation; the condition snapshot is captured here
+  // since hazard data is static across renders.
+  if (!isMobile.value) marker.setPopup(popup)
+  el.addEventListener('click', () => {
+    if (!isMobile.value) return
+    onRoadSelect({
+      cond: normaliseCond(c.condition),
+      label: getTrafficLabel(c.condition),
+      detail: c.roadName ? `${c.roadName} · ${c.description}` : c.description,
+    })
+  })
+  return marker
 }
 
 /** Normalize a road name for fuzzy matching: lowercase, strip diacritics, trim */
@@ -289,6 +412,16 @@ function addRoadPolylines(map: any) {
     const condition = f.properties.condition || 'unknown'
     const color = getTrafficColor(condition)
     const name = f.properties.roadName || f.properties.roadRef || 'Road'
+    const refLabel = f.properties.roadRef ? `${name} (${f.properties.roadRef})` : name
+
+    if (isMobile.value) {
+      onRoadSelect({
+        cond: normaliseCond(condition),
+        label: getTrafficLabel(condition),
+        detail: refLabel,
+      })
+      return
+    }
 
     new mapboxgl.Popup({
       offset: 10,
@@ -300,7 +433,7 @@ function addRoadPolylines(map: any) {
       .setHTML(`
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
           <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${getTrafficLabel(condition)}</h3>
-          <p style="color: #94a3b8; margin: 0;">${name}${f.properties.roadRef ? ` (${f.properties.roadRef})` : ''}</p>
+          <p style="color: #94a3b8; margin: 0;">${refLabel}</p>
         </div>
       `)
       .addTo(map)
@@ -451,10 +584,17 @@ function buildCameraMarker(cam: CameraData, map: mapboxgl.Map): mapboxgl.Marker 
 
   popup.on('open', () => wireCameraPopup(popup, cam))
 
-  return new mapboxgl.Marker({ element: el })
+  const marker = new mapboxgl.Marker({ element: el })
     .setLngLat([cam.lng, cam.lat])
-    .setPopup(popup)
     .addTo(map)
+
+  // Mobile drives the dock CAM mode; desktop keeps the existing popup.
+  if (!isMobile.value) marker.setPopup(popup)
+  el.addEventListener('click', () => {
+    if (!isMobile.value) return
+    onCamSelect(cam)
+  })
+  return marker
 }
 
 useMapOverlay<CameraData>({
@@ -521,32 +661,17 @@ function sheetToggle() {
   sheetHeight.value = sheetHeight.value <= sheetSnapPoints[0] ? sheetSnapPoints[1] : sheetSnapPoints[0]
 }
 
-// Horizon panel bottom offset: follows sheet on mobile, fixed on desktop
+// Mobile vs desktop split. Mobile gets the bottom MapDock (no popups);
+// desktop keeps Mapbox popups for now (dock-on-desktop is future work).
 const isMobile = ref(false)
 function updateIsMobile() { isMobile.value = window.innerWidth < 640 }
 onMounted(() => { updateIsMobile(); window.addEventListener('resize', updateIsMobile) })
 onUnmounted(() => { window.removeEventListener('resize', updateIsMobile) })
 
-const NAV_HEIGHT = 64
-const horizonBottomStyle = computed(() => {
-  if (!isMobile.value) return {}
-  // The mobile bottom sheet is now hidden, so its height no longer
-  // contributes to the horizon panel's bottom offset — only the nav bar
-  // does. (Restore `sheetHeight.value +` here if the sheet is re-enabled.)
-  return {
-    bottom: `${NAV_HEIGHT + 16}px`,
-  }
-})
-
-// ─── Dynamic Horizon Check (Pro: click anywhere on map) ───
-const { isPro } = useProStatus()
-const horizonCheckCoords = ref<{ lat: number; lng: number } | null>(null)
-// Once the user has tapped the map at least once, suppress the
-// "Tap anywhere on the map…" hint forever. Without this, the brief
-// null → coords reset in handleMapClick can flash the hint back
-// between the first tap and the panel render.
-const horizonHintDismissed = ref(false)
-
+// ─── Bare-map tap → dock HORIZON mode ───
+// On mobile, tapping anywhere on the map drops a crosshair and opens
+// the HORIZON dock for that lat/lng (Pro only — the page is gated by
+// pro-gate middleware, so we don't need a runtime check here).
 let horizonMarker: any = null
 onScopeDispose(() => { horizonMarker?.remove(); horizonMarker = null })
 
@@ -557,18 +682,13 @@ const offlineManagerDesktop = ref<any>(null)
 const offlineManagerRef = computed(() => offlineManagerMobile.value || offlineManagerDesktop.value)
 
 function handleMapClick(coords: { lat: number; lng: number }) {
-  if (!isPro.value) return
-  horizonHintDismissed.value = true
-
-  // Place crosshair marker
+  // Place / move crosshair marker so the user sees what they tapped.
   const mapInstance = eclipseMapRef.value?.map
   if (mapInstance) {
     if (horizonMarker) horizonMarker.remove()
 
     const el = document.createElement('div')
-    el.style.cssText = `
-      width: 24px; height: 24px; position: relative;
-    `
+    el.style.cssText = `width: 24px; height: 24px; position: relative;`
     el.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="8" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3 2" fill="none" opacity="0.7"/>
       <line x1="12" y1="2" x2="12" y2="7" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
@@ -583,19 +703,10 @@ function handleMapClick(coords: { lat: number; lng: number }) {
       .addTo(mapInstance)
   }
 
-  // Trigger panel (use a key to force re-mount when clicking new location)
-  horizonCheckCoords.value = null
-  nextTick(() => {
-    horizonCheckCoords.value = coords
-  })
-}
-
-function closeHorizonCheck() {
-  horizonCheckCoords.value = null
-  if (horizonMarker) {
-    horizonMarker.remove()
-    horizonMarker = null
-  }
+  // Drive the dock into HORIZON mode for the tapped lat/lng. spotName
+  // is null because this is a bare-map tap, not a spot selection.
+  dockHorizonCtx.value = { lat: coords.lat, lng: coords.lng, spotName: null }
+  dockMode.value = 'horizon'
 }
 
 const profileIds = PROFILES.map(p => p.id)
@@ -637,10 +748,11 @@ const profileIcons: Record<ProfileId, string> = {
         :initial-center="restoreCenter"
         :initial-zoom="restoreZoom"
         :selected-slug="selectedSlug"
-        :suppress-spot-popups="isMobile"
+        :suppress-popups="isMobile"
         class="absolute inset-0"
         @map-click="handleMapClick"
         @spot-select="onSpotSelect"
+        @weather-select="onWeatherSelect"
       />
       <template #fallback>
         <div class="absolute inset-0 flex items-center justify-center">
@@ -664,27 +776,25 @@ const profileIcons: Record<ProfileId, string> = {
       />
     </div>
 
-    <!-- Lift the lightbox above the bottom nav so it isn't partially
-         hidden behind it. Mirrors BottomNav's own padding calculation:
-            14 px (pt) + 47 px (icon+gap+label+gap+dot) + max(28, safe-area) (pb)
-            + 8 px gap = 69 + max(28px, safe-area).
-         On Android (no notch): bottom = 97 px, clearing the 89 px nav.
-         On iPhone (34 px safe area): bottom = 103 px, clearing the 95 px nav.
-
-         Hidden while the horizon-check panel is open — the two panels
-         occupy the same screen position so showing both just means the
-         horizon panel covers the lightbox. Closing the horizon check
-         restores it. -->
+    <!-- Map dock — mobile-only bottom card that swaps content between
+         five modes (SPOT / WEATHER / ROADS / CAM / HORIZON). Lifted above
+         BottomNav so it clears the safe-area + 5-tab strip:
+            14px (pt) + 47px (icon+gap+label+gap+dot) + max(28, safe-area) (pb)
+            + 8px gap = 69 + max(28px, safe-area). -->
     <div
-      v-if="lightboxSpot && !horizonCheckCoords"
       class="md:hidden fixed left-0 right-0 z-20 pointer-events-none"
       style="bottom: calc(69px + max(28px, env(safe-area-inset-bottom)));"
     >
-      <SelectedLightbox
-        :name="lightboxSpot.name"
-        :slug="lightboxSpot.slug"
-        :totality-seconds="lightboxSpot.totality_duration_seconds || 0"
-        :cloud="lightboxCloud(lightboxSpot)"
+      <MapDock
+        :mode="dockMode"
+        :spot="dockSpot"
+        :weather-ctx="dockWeatherCtx"
+        :roads-ctx="dockRoadsCtx"
+        :cam-ctx="dockCamCtx"
+        :horizon-ctx="dockHorizonCtx"
+        @horizon-open="onHorizonOpen"
+        @open-field-card="onOpenFieldCard"
+        @cam-step="onCamStep"
       />
     </div>
 
@@ -1038,36 +1148,25 @@ const profileIcons: Record<ProfileId, string> = {
       </button>
     </div>
 
-    <!-- Pro hint: click to check horizon (client-only to avoid hydration mismatch) -->
-    <ClientOnly>
-      <div
-        v-if="isPro && !horizonCheckCoords && !horizonHintDismissed"
-        class="absolute z-10 left-1/2 -translate-x-1/2 sm:bottom-[120px] pointer-events-none"
-        :style="horizonBottomStyle"
-      >
-        <div class="px-3 py-1.5 rounded bg-surface-raised/80 backdrop-blur-sm border border-accent/20 text-[11px] font-mono text-accent/70">
-          {{ t('horizon.click_hint') }}
-        </div>
-      </div>
-    </ClientOnly>
-
-    <!-- Dynamic Horizon Check panel (Pro: click anywhere on map) -->
+    <!-- Desktop-only: Pro click-to-check-horizon panel still renders the
+         dynamic horizon overlay because the dock is mobile-only for now.
+         When the desktop dock lands, this block goes away too. -->
     <Transition name="fade">
       <div
-        v-if="horizonCheckCoords"
-        class="absolute z-20 sm:bottom-[80px] left-2 right-2 sm:left-auto sm:right-6 sm:w-[640px] sm:max-w-[calc(100vw-3rem)]"
-        :style="horizonBottomStyle"
+        v-if="dockMode === 'horizon' && dockHorizonCtx"
+        class="hidden sm:block absolute z-20 sm:bottom-[80px] sm:right-6 sm:w-[640px] sm:max-w-[calc(100vw-3rem)]"
       >
         <DynamicHorizonCheck
-          :key="`${horizonCheckCoords.lat},${horizonCheckCoords.lng}`"
-          :lat="horizonCheckCoords.lat"
-          :lng="horizonCheckCoords.lng"
-          @close="closeHorizonCheck"
+          :key="`${dockHorizonCtx.lat},${dockHorizonCtx.lng}`"
+          :lat="dockHorizonCtx.lat"
+          :lng="dockHorizonCtx.lng"
+          @close="dockHorizonCtx = null; dockMode = 'spot'"
         />
       </div>
     </Transition>
 
-    <!-- Camera lightbox (full-screen overlay, z-99999) -->
+    <!-- Camera lightbox (full-screen overlay, z-99999). Desktop-only —
+         mobile uses the dock CAM mode. -->
     <ClientOnly>
       <CameraLightbox
         :camera="activeLightboxCamera"
