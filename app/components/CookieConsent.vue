@@ -13,7 +13,7 @@ const visible = computed(() => mounted.value && !consentGiven.value)
 <template>
   <div
     v-if="visible"
-    class="fixed bottom-0 inset-x-0 z-50 bg-surface border-t border-border-subtle/40"
+    class="fixed bottom-0 inset-x-0 z-50 bg-surface-raised border-t border-border-subtle/40"
   >
     <div class="section-container py-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
       <p class="text-sm text-ink-2 flex-1">
@@ -24,7 +24,7 @@ const visible = computed(() => mounted.value && !consentGiven.value)
       </p>
       <div class="flex gap-2 shrink-0">
         <button
-          class="border border-border-subtle text-ink-3 font-mono text-xs uppercase tracking-wider px-4 py-2 rounded hover:border-slate-500 hover:text-ink-2 transition-colors"
+          class="border border-border-subtle/40 text-ink-3 font-mono text-xs uppercase tracking-wider px-4 py-2 rounded hover:border-slate-500 hover:text-ink-2 transition-colors"
           @click="setConsent('essential')"
         >
           {{ t('cookie.essential_only') }}

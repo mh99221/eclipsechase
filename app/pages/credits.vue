@@ -61,7 +61,7 @@ const licenseBadgeColor: Record<string, string> = {
             <div
               v-for="photo in spot.photos"
               :key="photo.filename"
-              class="flex items-start gap-4 bg-surface border border-border-subtle/60 rounded-lg p-4"
+              class="flex items-start gap-4 bg-surface-raised border border-border-subtle/60 rounded-lg p-4"
             >
               <!-- Thumbnail -->
               <img

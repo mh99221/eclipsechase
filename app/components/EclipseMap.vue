@@ -561,15 +561,17 @@ onUnmounted(() => {
 }
 
 .eclipse-popup .mapboxgl-popup-content {
-  background: rgb(var(--surface));
-  border: 1px solid rgb(var(--border-subtle) / 0.7);
+  /* `--surface` is the rgb triple meant for /0.04 tints; `--surface-raised`
+     is the solid panel colour (dark navy in dark, cream in light). */
+  background: rgb(var(--surface-raised));
+  border: 1px solid rgb(var(--border-subtle) / 0.4);
   border-radius: 4px;
   padding: 8px 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
 
 .eclipse-popup .mapboxgl-popup-tip {
-  border-top-color: rgb(var(--surface));
+  border-top-color: rgb(var(--surface-raised));
 }
 
 @media (max-width: 639px) {

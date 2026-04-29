@@ -330,13 +330,13 @@ function createDirectionWedge(lat: number, lng: number, azimuth: number, radiusM
 
 <template>
   <ClientOnly>
-    <div v-if="mapError" class="w-full rounded border border-border-subtle bg-surface flex items-center justify-center text-ink-3 font-mono text-sm" style="height: 400px;">
+    <div v-if="mapError" class="w-full rounded border border-border-subtle/40 bg-surface-raised flex items-center justify-center text-ink-3 font-mono text-sm" style="height: 400px;">
       {{ mapError }}
     </div>
     <div v-else class="relative">
       <div
         ref="mapContainer"
-        class="w-full rounded border border-border-subtle"
+        class="w-full rounded border border-border-subtle/40"
         style="height: 400px;"
       />
       <!-- Map controls overlay (top-left: bottom rows are reserved for the
@@ -363,7 +363,7 @@ function createDirectionWedge(lat: number, lng: number, azimuth: number, radiusM
       </div>
     </div>
     <template #fallback>
-      <div class="w-full rounded border border-border-subtle bg-surface flex items-center justify-center text-ink-3 font-mono text-sm" style="height: 400px;">
+      <div class="w-full rounded border border-border-subtle/40 bg-surface-raised flex items-center justify-center text-ink-3 font-mono text-sm" style="height: 400px;">
         Loading map…
       </div>
     </template>

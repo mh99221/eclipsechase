@@ -362,7 +362,7 @@ const ariaLabel = computed(() => {
     <!-- Tooltip -->
     <div
       v-if="tooltip && interactive"
-      class="absolute pointer-events-none bg-surface border border-border-subtle/60 rounded px-2 py-1 text-xs font-mono text-ink-2 whitespace-nowrap z-10"
+      class="absolute pointer-events-none bg-surface-raised border border-border-subtle/60 rounded px-2 py-1 text-xs font-mono text-ink-2 whitespace-nowrap z-10"
       :style="{ left: `${tooltip.x}px`, top: `${tooltip.y}px`, transform: 'translate(-50%, -100%)' }"
     >
       {{ tooltip.text }}

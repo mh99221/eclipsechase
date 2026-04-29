@@ -10,8 +10,8 @@ const { isPro, loading } = useProStatus()
 
 <template>
   <slot v-if="isPro" />
-  <div v-else-if="loading" class="animate-pulse bg-surface rounded h-32" />
-  <div v-else class="bg-surface border border-border-subtle/40 rounded px-6 py-8 text-center">
+  <div v-else-if="loading" class="animate-pulse bg-surface-raised rounded h-32" />
+  <div v-else class="bg-surface-raised border border-border-subtle/40 rounded px-6 py-8 text-center">
     <p class="font-mono text-xs tracking-[0.2em] text-ink-3 uppercase mb-3">
       {{ t('pro.unlock') }}
     </p>

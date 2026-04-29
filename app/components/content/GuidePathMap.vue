@@ -102,17 +102,17 @@ onUnmounted(() => {
 
 <template>
   <ClientOnly class="my-8">
-    <div v-if="mapError" class="w-full rounded border border-border-subtle bg-surface flex items-center justify-center text-ink-3 font-mono text-sm" style="height: 400px;">
+    <div v-if="mapError" class="w-full rounded border border-border-subtle/40 bg-surface-raised flex items-center justify-center text-ink-3 font-mono text-sm" style="height: 400px;">
       {{ mapError }}
     </div>
     <div
       v-else
       ref="mapContainer"
-      class="w-full rounded border border-border-subtle"
+      class="w-full rounded border border-border-subtle/40"
       style="height: 400px;"
     />
     <template #fallback>
-      <div class="w-full rounded border border-border-subtle bg-surface flex items-center justify-center text-ink-3 font-mono text-sm" style="height: 400px;">
+      <div class="w-full rounded border border-border-subtle/40 bg-surface-raised flex items-center justify-center text-ink-3 font-mono text-sm" style="height: 400px;">
         Loading map…
       </div>
     </template>

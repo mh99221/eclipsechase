@@ -113,7 +113,7 @@ function retry() {
     </div>
 
     <!-- Restore form -->
-    <div v-else class="bg-surface border border-border-subtle/40 rounded p-6">
+    <div v-else class="bg-surface-raised border border-border-subtle/40 rounded p-6">
       <h3 class="font-display text-lg font-semibold text-ink-1 mb-1">
         Restore Purchase
       </h3>
@@ -128,12 +128,12 @@ function retry() {
             v-model="email"
             type="email"
             placeholder="you@example.com"
-            class="flex-1 px-4 py-2.5 rounded bg-bg border border-border-subtle text-ink-1 placeholder-slate-600 font-mono text-sm focus:outline-none focus:border-accent/50 transition-colors"
+            class="flex-1 px-4 py-2.5 rounded bg-bg border border-border-subtle/40 text-ink-1 placeholder-slate-600 font-mono text-sm focus:outline-none focus:border-accent/50 transition-colors"
             @keydown.enter="sendCode"
           >
           <button
             :disabled="submitting"
-            class="px-4 py-2.5 rounded bg-bg border border-border-subtle text-ink-1 font-mono text-sm hover:border-accent/50 transition-colors disabled:opacity-50 whitespace-nowrap"
+            class="px-4 py-2.5 rounded bg-bg border border-border-subtle/40 text-ink-1 font-mono text-sm hover:border-accent/50 transition-colors disabled:opacity-50 whitespace-nowrap"
             @click="sendCode"
           >
             <span v-if="submitting">...</span>
@@ -163,7 +163,7 @@ function retry() {
             type="text"
             inputmode="numeric"
             maxlength="1"
-            class="w-11 h-13 text-center text-xl font-display font-bold rounded bg-bg border border-border-subtle text-ink-1 focus:outline-none focus:border-accent/50 transition-colors"
+            class="w-11 h-13 text-center text-xl font-display font-bold rounded bg-bg border border-border-subtle/40 text-ink-1 focus:outline-none focus:border-accent/50 transition-colors"
             @input="handleDigitInput(i, $event)"
             @keydown="handleKeydown(i, $event)"
           >

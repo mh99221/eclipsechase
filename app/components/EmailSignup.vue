@@ -56,7 +56,7 @@ async function handleSubmit() {
             aria-label="Email address"
             :placeholder="t('signup.placeholder')"
             :disabled="status === 'loading'"
-            class="w-full px-5 py-4 bg-surface border border-border-subtle
+            class="w-full px-5 py-4 bg-surface-raised/40 border border-border-subtle/40
                    text-ink-1 placeholder:text-ink-3 font-display text-base tracking-wide
                    focus:outline-none focus:border-accent/40 focus:shadow-[0_0_20px_rgb(var(--accent)/0.12)]
                    disabled:opacity-50 transition-all duration-300"

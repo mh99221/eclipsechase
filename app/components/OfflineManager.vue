@@ -166,7 +166,7 @@ function cancel() {
 </script>
 
 <template>
-  <div v-if="!isDismissed" class="bg-surface border border-border-subtle/40 rounded px-4 py-3 relative">
+  <div v-if="!isDismissed" class="bg-surface-raised border border-border-subtle/40 rounded px-4 py-3 relative">
     <!-- Close button -->
     <button
       v-if="!isDownloading"
@@ -204,7 +204,7 @@ function cancel() {
         <button
           v-if="!dataCached"
           :disabled="isCachingData"
-          class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-border-subtle text-ink-3 hover:text-ink-2 hover:border-slate-500 transition-colors disabled:opacity-50"
+          class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-border-subtle/40 text-ink-3 hover:text-ink-2 hover:border-slate-500 transition-colors disabled:opacity-50"
           @click="cacheData"
         >
           <span v-if="isCachingData">{{ t('offline.caching_data') }}</span>
@@ -288,7 +288,7 @@ function cancel() {
       <button
         v-if="!dataCached"
         :disabled="isCachingData"
-        class="mt-2 font-mono text-xs tracking-wider px-3 py-2 rounded border border-border-subtle text-ink-3 hover:text-ink-2 hover:border-slate-500 transition-colors disabled:opacity-50"
+        class="mt-2 font-mono text-xs tracking-wider px-3 py-2 rounded border border-border-subtle/40 text-ink-3 hover:text-ink-2 hover:border-slate-500 transition-colors disabled:opacity-50"
         @click="cacheData"
       >
         <span v-if="isCachingData">{{ t('offline.caching_data') }}</span>

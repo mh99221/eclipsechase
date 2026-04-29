@@ -491,8 +491,10 @@ function buildCameraPopupHTML(cam: CameraData, currentIndex: number): string {
 
   // Theme-aware colours (dark → cream auto-swap via CSS custom props).
   // Button/dot accent stays ice #7dd3fc — constant across themes.
+  // The bare CSS-var triples need explicit alphas: --border-subtle is
+  // `255 255 255` in dark / `17 20 28` in light, intended for /0.x tints.
   const btnBg = 'rgb(var(--surface-raised))'
-  const border = 'rgb(var(--border-subtle))'
+  const border = 'rgb(var(--border-subtle) / 0.4)'
   const meta = 'rgb(var(--ink-3))'
   const body = 'rgb(var(--ink-2))'
 

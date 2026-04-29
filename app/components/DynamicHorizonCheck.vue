@@ -54,7 +54,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="bg-surface border border-border-subtle/40 rounded p-4 max-w-2xl w-full">
+  <div class="bg-surface-raised border border-border-subtle/40 rounded p-4 max-w-2xl w-full">
     <!-- Close button -->
     <div class="flex justify-between items-center mb-3">
       <h3 class="font-display text-sm font-semibold text-ink-1">{{ t('horizon.section_title') }}</h3>
