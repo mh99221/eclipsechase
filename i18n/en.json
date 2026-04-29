@@ -4,6 +4,27 @@
     "description": "Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland."
   },
   "v0": {
+    "pro_compare": {
+      "header": "WHAT'S IN PRO",
+      "free_col": "FREE",
+      "pro_col": "PRO €9.99",
+      "section_plan": "Plan your day in advance",
+      "section_decide": "Decide on the day",
+      "section_road": "On the road",
+      "row_plan_browse": "Browse every viewing spot with photos & full details",
+      "row_plan_times": "Exact totality times, sun position & horizon profile per spot",
+      "row_plan_history": "10-year historical cloud cover for August 12",
+      "row_plan_guide": "Long-form eclipse guide",
+      "row_decide_map": "Live cloud-cover map, refreshed every 15 min",
+      "row_decide_personalised": "Personalised \"best spot for you right now\"",
+      "row_decide_horizon": "Tap anywhere on the map for an instant horizon check",
+      "row_decide_roads": "Live road conditions + roadside camera feeds",
+      "row_decide_dashboard": "One-glance dashboard: countdown + best region + your top 3",
+      "row_road_offline": "Offline map (keeps working without signal)",
+      "tagline": "A one-time €9.99 unlocks everything. No subscription, no renewal.",
+      "included": "included",
+      "not_included": "not included"
+    },
     "home": {
       "eyebrow": "ECLIPSE 2026",
       "best_conditions_now": "BEST CONDITIONS NOW",

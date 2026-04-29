@@ -52,11 +52,39 @@ async function handleCheckout() {
   }
 }
 
-const features = [
-  { label: t('pro.feature_map'), description: t('pro.feature_map_desc') },
-  { label: t('pro.feature_recs'), description: t('pro.feature_recs_desc') },
-  { label: t('pro.feature_offline'), description: t('pro.feature_offline_desc') },
-  { label: t('pro.feature_roads'), description: t('pro.feature_roads_desc') },
+// Three-bucket comparison shown above the price card. Order matters:
+// "Plan in advance" first (everything you ALREADY get free, reduces buyer
+// anxiety), then "Decide on the day" (the conversion-driver — every row
+// is Pro-only and answers a real day-of question), then "On the road"
+// (practical PWA polish). Row labels live in v0.pro_compare.* — Icelandic
+// falls back to English for the v0.* namespace via Nuxt i18n.
+type CompareRow = { key: string; free: boolean; pro: boolean }
+const compareSections: Array<{ titleKey: string; rows: CompareRow[] }> = [
+  {
+    titleKey: 'section_plan',
+    rows: [
+      { key: 'row_plan_browse', free: true, pro: true },
+      { key: 'row_plan_times', free: true, pro: true },
+      { key: 'row_plan_history', free: true, pro: true },
+      { key: 'row_plan_guide', free: true, pro: true },
+    ],
+  },
+  {
+    titleKey: 'section_decide',
+    rows: [
+      { key: 'row_decide_map', free: false, pro: true },
+      { key: 'row_decide_personalised', free: false, pro: true },
+      { key: 'row_decide_horizon', free: false, pro: true },
+      { key: 'row_decide_roads', free: false, pro: true },
+      { key: 'row_decide_dashboard', free: false, pro: true },
+    ],
+  },
+  {
+    titleKey: 'section_road',
+    rows: [
+      { key: 'row_road_offline', free: false, pro: true },
+    ],
+  },
 ]
 </script>
 
@@ -85,33 +113,43 @@ const features = [
           </p>
         </div>
 
-        <!-- Feature list -->
-        <div class="grid gap-3 mb-12">
-          <div
-            v-for="feature in features"
-            :key="feature.label"
-            class="flex items-start gap-3 bg-surface border border-border-subtle/40 rounded px-4 py-4"
-          >
-            <svg
-              class="w-5 h-5 text-accent shrink-0 mt-0.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2.5"
-              aria-hidden="true"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-            <div>
-              <p class="font-display font-semibold text-ink-1 text-sm sm:text-base">
-                {{ feature.label }}
-              </p>
-              <p class="text-xs sm:text-sm text-ink-3 mt-0.5">
-                {{ feature.description }}
-              </p>
-            </div>
-          </div>
-        </div>
+        <!-- Free vs Pro comparison.
+             Three-bucket teaser: shared features (reassurance) → Pro-only
+             day-of features (conversion) → PWA polish. Drives off the
+             compareSections data + v0.pro_compare.* i18n keys. -->
+        <Card class="compare-card">
+          <CardTitle>{{ t('v0.pro_compare.header') }}</CardTitle>
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th />
+                <th scope="col">{{ t('v0.pro_compare.free_col') }}</th>
+                <th scope="col">{{ t('v0.pro_compare.pro_col') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template v-for="section in compareSections" :key="section.titleKey">
+                <tr class="section-row">
+                  <th scope="rowgroup" colspan="3">{{ t(`v0.pro_compare.${section.titleKey}`) }}</th>
+                </tr>
+                <tr v-for="row in section.rows" :key="row.key">
+                  <th scope="row" class="row-l">{{ t(`v0.pro_compare.${row.key}`) }}</th>
+                  <td class="row-v" :data-state="row.free ? 'yes' : 'no'">
+                    <span :aria-label="row.free ? t('v0.pro_compare.included') : t('v0.pro_compare.not_included')">
+                      {{ row.free ? '✓' : '—' }}
+                    </span>
+                  </td>
+                  <td class="row-v" :data-state="row.pro ? 'yes' : 'no'">
+                    <span :aria-label="row.pro ? t('v0.pro_compare.included') : t('v0.pro_compare.not_included')">
+                      {{ row.pro ? '✓' : '—' }}
+                    </span>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+          <p class="compare-tagline">{{ t('v0.pro_compare.tagline') }}</p>
+        </Card>
 
         <!-- Price card + Checkout -->
         <div class="bg-surface border border-accent/20 rounded-lg p-6 sm:p-8 text-center">
@@ -175,3 +213,70 @@ const features = [
     <AppFooter />
   </div>
 </template>
+
+<style scoped>
+.compare-card {
+  margin-bottom: 32px;
+}
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.compare-table thead th {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: rgb(var(--ink-1) / 0.62);
+  text-transform: uppercase;
+  font-weight: 500;
+  text-align: center;
+  padding-bottom: 10px;
+  width: 64px;
+}
+.compare-table thead th:first-child { width: auto; }
+
+/* Section header row spans all three columns and provides the visual
+   group break. The :first-child guard kills the top border so the first
+   group sits flush under the column headers. */
+.compare-table .section-row th {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgb(var(--ink-1));
+  text-align: left;
+  padding: 14px 0 4px;
+  border-top: 1px solid rgb(var(--border-subtle) / 0.08);
+}
+.compare-table tbody tr.section-row:first-child th {
+  border-top: 0;
+  padding-top: 4px;
+}
+
+.compare-table .row-l {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: rgb(var(--ink-1) / 0.85);
+  text-align: left;
+  padding: 6px 12px 6px 0;
+}
+.compare-table .row-v {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  padding: 6px 0;
+}
+.compare-table .row-v[data-state='yes'] { color: rgb(var(--good)); }
+.compare-table .row-v[data-state='no']  { color: rgb(var(--ink-1) / 0.32); }
+
+.compare-tagline {
+  margin-top: 18px;
+  text-align: center;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgb(var(--ink-1) / 0.62);
+}
+</style>
