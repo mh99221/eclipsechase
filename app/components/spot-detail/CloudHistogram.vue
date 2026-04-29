@@ -38,7 +38,14 @@ function band(c: number): 'good' | 'warn' | 'bad' {
 </template>
 
 <style scoped>
-.histo { display: flex; flex-direction: column; gap: 14px; }
+.histo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  /* Breathing room above the bars so they don't kiss the CardTitle when a
+     spot has near-100% cloud-cover years (full-height bars). */
+  padding-top: 10px;
+}
 .bars {
   display: flex;
   align-items: flex-end;
