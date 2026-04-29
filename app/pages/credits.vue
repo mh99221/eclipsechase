@@ -41,15 +41,12 @@ const licenseBadgeColor: Record<string, string> = {
 </script>
 
 <template>
-  <div class="relative noise min-h-screen pt-[72px]">
-    <!-- Content -->
-    <article class="section-container max-w-3xl py-12 sm:py-20">
+  <PageShell screen="credits" width="reading">
+    <article class="legal-body">
       <h1 class="font-display text-3xl sm:text-4xl font-bold text-ink-1 mb-2">
         Photo Credits
       </h1>
-      <p class="text-sm font-mono text-ink-3 mb-10">
-        Attribution for all photographs used on EclipseChase.is.
-      </p>
+      <Eyebrow tone="dim" class="mb-10">Attribution for all photographs used on EclipseChase.is.</Eyebrow>
 
       <div class="space-y-10">
         <p v-if="spots.length === 0" class="text-ink-2 text-base">
@@ -128,5 +125,17 @@ const licenseBadgeColor: Record<string, string> = {
     </article>
 
     <AppFooter />
-  </div>
+  </PageShell>
 </template>
+
+<style scoped>
+.legal-body {
+  padding: 32px 16px 16px;
+}
+@media (min-width: 768px) {
+  .legal-body {
+    padding: 64px 24px 32px;
+  }
+}
+</style>
+
