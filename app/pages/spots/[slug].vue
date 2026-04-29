@@ -137,6 +137,11 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
       />
 
       <template v-if="activeTab === 'overview'">
+        <Card v-if="spot.description">
+          <CardTitle>{{ t('v0.spot_detail.card_about') }}</CardTitle>
+          <p class="card-prose">{{ spot.description }}</p>
+        </Card>
+        <div v-if="spot.description" class="spacer-8" />
         <Card>
           <CardTitle>{{ t('v0.spot_detail.card_contact') }}</CardTitle>
           <ContactList
@@ -151,9 +156,6 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
           <CardTitle>{{ t('v0.spot_detail.card_logistics') }}</CardTitle>
           <LogisticsRows :spot="spot" />
         </Card>
-        <div v-if="spot.description" class="description-block">
-          {{ spot.description }}
-        </div>
       </template>
 
       <template v-else-if="activeTab === 'sky'">
@@ -206,12 +208,15 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
 }
 .spacer-8 { height: 8px; }
 
-.description-block {
+/* Description body inside the About Card. Slightly less dim than the
+   prior floating-paragraph treatment because the surrounding Card frame
+   already provides separation from the page bg. */
+.card-prose {
   font-family: 'Inter Tight', system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.55;
-  color: rgb(var(--ink-1) / 0.62);
-  padding: 16px 0 0;
+  color: rgb(var(--ink-1) / 0.85);
+  margin: 0;
 }
 
 .dial-missing,
