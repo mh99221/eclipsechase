@@ -101,9 +101,7 @@ const compareSections: Array<{ titleKey: string; rows: CompareRow[] }> = [
 
       <!-- Header -->
       <div class="mb-12">
-        <span class="font-mono text-xs tracking-[0.3em] text-accent/60 uppercase">
-          {{ t('pro.unlock') }}
-        </span>
+        <Eyebrow tone="accent">{{ t('pro.unlock') }}</Eyebrow>
         <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-ink-1 mt-2 mb-4">
           {{ t('pro.heading') }}
         </h1>
@@ -150,46 +148,43 @@ const compareSections: Array<{ titleKey: string; rows: CompareRow[] }> = [
         <p class="compare-tagline">{{ t('v0.pro_compare.tagline') }}</p>
       </Card>
 
-      <!-- Price card + Checkout -->
-      <div class="bg-surface border border-accent/20 rounded-lg p-6 sm:p-8 text-center">
-        <div class="mb-6">
-          <div class="font-display text-5xl sm:text-6xl font-bold text-ink-1">
-            &euro;9.99
-          </div>
-          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mt-3">
-            {{ t('pro.price') }}
-          </p>
-        </div>
+      <!-- Price card + Checkout. Custom .price-card surface rather than a
+           bare <Card>: hero pricing wants stronger accent emphasis and
+           larger padding than Card's 14 px default. Uses the same
+           surface/border idiom as Card so it sits in the same v0 family. -->
+      <div class="price-card">
+        <Eyebrow tone="accent" align="center">{{ t('pro.price') }}</Eyebrow>
+        <div class="price-amount">&euro;9.99</div>
 
         <!-- Withdrawal waiver checkbox -->
-        <div class="max-w-sm mx-auto mb-4 text-left">
-          <label class="flex items-start gap-2.5 cursor-pointer">
+        <div class="price-waiver">
+          <label class="price-waiver-label">
             <input
               v-model="waiverAccepted"
               type="checkbox"
-              class="mt-1 shrink-0 accent-corona"
+              class="price-waiver-cb"
             >
-            <span class="text-xs text-ink-3 leading-relaxed">
+            <span>
               {{ t('pro.withdrawal_waiver_pre') }}
-              <NuxtLink to="/terms" class="text-accent hover:text-accent-strong transition-colors">{{ t('pro.terms_link_text') }}</NuxtLink>
+              <NuxtLink to="/terms">{{ t('pro.terms_link_text') }}</NuxtLink>
               {{ t('pro.withdrawal_waiver_and') }}
-              <NuxtLink to="/privacy" class="text-accent hover:text-accent-strong transition-colors">{{ t('pro.privacy_link_text') }}</NuxtLink>.
+              <NuxtLink to="/privacy">{{ t('pro.privacy_link_text') }}</NuxtLink>.
             </span>
           </label>
         </div>
 
         <!-- Error -->
-        <p v-if="checkoutError" class="text-sm font-mono text-status-red mb-4">
+        <p v-if="checkoutError" class="price-error">
           {{ checkoutError }}
         </p>
 
         <!-- Checkout button -->
         <button
           :disabled="checkoutSubmitting || !waiverAccepted"
-          class="btn-corona w-full max-w-sm text-base py-3.5 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="price-cta"
           @click="handleCheckout"
         >
-          <span v-if="checkoutSubmitting" class="inline-flex items-center gap-2">
+          <span v-if="checkoutSubmitting" class="price-cta-loading">
             <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
@@ -199,9 +194,7 @@ const compareSections: Array<{ titleKey: string; rows: CompareRow[] }> = [
           <span v-else>{{ t('pro.get_access') }}</span>
         </button>
 
-        <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-3 mt-4">
-          {{ t('pro.stripe_note') }}
-        </p>
+        <p class="price-stripe-note">{{ t('pro.stripe_note') }}</p>
       </div>
 
       <!-- Restore Purchase -->
@@ -289,5 +282,122 @@ const compareSections: Array<{ titleKey: string; rows: CompareRow[] }> = [
   font-size: 13px;
   line-height: 1.45;
   color: rgb(var(--ink-1) / 0.62);
+}
+
+/* ── Price card ─────────────────────────────────────────────────
+   Same v0 surface idiom as Card.vue (translucent fill on top of
+   page bg, soft border, 12 px radius) but with accent-tinted
+   border for emphasis and roomier padding so the €9.99 reads as
+   the page's primary CTA. */
+.price-card {
+  background: rgb(var(--surface) / 0.04);
+  border: 1px solid rgb(var(--accent) / 0.22);
+  border-radius: 12px;
+  padding: 24px 18px;
+  text-align: center;
+  margin-bottom: 32px;
+}
+@media (min-width: 768px) {
+  .price-card { padding: 36px 32px; }
+}
+
+.price-amount {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 56px;
+  font-weight: 700;
+  color: rgb(var(--ink-1));
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 10px 0 24px;
+}
+@media (min-width: 768px) {
+  .price-amount { font-size: 68px; }
+}
+
+.price-waiver {
+  max-width: 320px;
+  margin: 0 auto 14px;
+  text-align: left;
+}
+.price-waiver-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+/* Checkbox uses the semantic --accent token in both themes via
+   accent-color. Replaces the legacy `accent-corona` Tailwind class
+   which pinned to the dark-only #f59e0b. */
+.price-waiver-cb {
+  margin-top: 3px;
+  flex-shrink: 0;
+  accent-color: rgb(var(--accent));
+}
+.price-waiver-label > span {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgb(var(--ink-1) / 0.62);
+}
+.price-waiver-label a {
+  color: rgb(var(--accent));
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.price-waiver-label a:hover {
+  color: rgb(var(--accent-strong));
+}
+
+.price-error {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  color: rgb(var(--bad));
+  margin-bottom: 14px;
+}
+
+/* Replaces .btn-corona — that helper hardcodes the dark-theme amber
+   gradient, so it doesn't follow into the light theme. This CTA uses
+   the semantic --accent / --accent-ink pair like every other v0 CTA
+   (see SelectedLightbox `.lb-cta`). */
+.price-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 320px;
+  min-height: 48px;
+  padding: 14px 18px;
+  background: rgb(var(--accent));
+  color: rgb(var(--accent-ink));
+  border: 0;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.price-cta:hover:not(:disabled) {
+  background: rgb(var(--accent-strong));
+}
+.price-cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.price-cta-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-stripe-note {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  color: rgb(var(--ink-1) / 0.42);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-top: 16px;
 }
 </style>
