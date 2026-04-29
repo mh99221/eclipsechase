@@ -1,6 +1,15 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { fetchForecasts, forecastsToRows, STATION_IDS } from '../../utils/vedur'
 
+/**
+ * @deprecated as a per-request hot path. Synchronously fetches all 55
+ * stations' forecasts from vedur.is on every call. Use
+ * /api/weather/forecast-timeline instead — that one reads the
+ * cron-fed `weather_forecasts` table from Supabase without hitting
+ * upstream. Kept for ad-hoc/manual refresh during dev. See CLAUDE.md
+ * "vedur.is call volume" for fair-use math before wiring this into
+ * any user-facing flow.
+ */
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseServiceRole(event)
 

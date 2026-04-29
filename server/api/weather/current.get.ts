@@ -1,6 +1,16 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { fetchObservations, STATION_IDS } from '../../utils/vedur'
 
+/**
+ * @deprecated as a per-request hot path. Synchronously fetches all 55
+ * stations from vedur.is on every call — fine for the cron pipeline,
+ * dangerous for user-driven traffic. No app code reads this endpoint
+ * today; UI consumers should hit /api/weather/cloud-cover (Supabase
+ * read, no upstream call) or /api/weather/forecast-timeline instead.
+ * Kept around so server-side scripts and ad-hoc debug calls have a
+ * direct vedur.is shortcut, but callers must respect the upstream
+ * fair-use ceiling — see CLAUDE.md "vedur.is call volume" for math.
+ */
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseServiceRole(event)
 

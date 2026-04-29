@@ -593,6 +593,18 @@ GET https://xmlweather.vedur.is/?op_w=xml&type=forec&lang=en&view=xml&ids=1;990;
 # Reykjavík (11), Reykjanes (12), Borgarfjörður (6), Snæfellsnes (7), Westfjords (19)
 ```
 
+**vedur.is call volume (fair-use audit, closes spec §10 q3):**
+
+| Source | Frequency | Calls/day |
+|---|---|---|
+| `/api/tasks/ingest-weather` cron (GitHub Actions, every 15 min) — fetches obs + forecasts in one batch each | 96 runs × 2 calls | **192** |
+| `/api/weather/cloud-cover` | Pure Supabase read | **0** upstream |
+| `/api/weather/forecast-timeline` | Pure Supabase read | **0** upstream |
+| `/api/weather/current` | Synchronously hits vedur — **deprecated**, no app consumer; manual/dev only | ~0 |
+| `/api/weather/forecast` | Synchronously hits vedur — **deprecated**, no app consumer; manual/dev only | ~0 |
+
+**Total ~192 batched requests/day** (one every ~7.5 min) at full traffic, well within any reasonable shared-API courtesy ceiling. Each request is a single XML payload with all 55 station IDs comma-joined — vedur.is serves these as one response, not 55. If we ever wire `current.get` or `forecast.get` into a hot path, recompute the budget; both are flagged with `@deprecated` in their JSDoc to discourage that.
+
 ### Vegagerðin Road Conditions
 ```
 # Road conditions + road cameras from vegagerdin.is

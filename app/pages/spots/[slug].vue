@@ -193,6 +193,8 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
             totality_duration_seconds: spot.totality_duration_seconds,
           }"
           :history="spotHistory"
+          :horizon-check="horizonCheck"
+          @tab-change="(tab: TabKey) => activeTab = tab"
         />
       </template>
 
