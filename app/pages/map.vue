@@ -677,7 +677,7 @@ const profileIcons: Record<ProfileId, string> = {
          restores it. -->
     <div
       v-if="lightboxSpot && !horizonCheckCoords"
-      class="md:hidden absolute left-0 right-0 z-10 pointer-events-none"
+      class="md:hidden fixed left-0 right-0 z-20 pointer-events-none"
       style="bottom: calc(69px + max(28px, env(safe-area-inset-bottom)));"
     >
       <SelectedLightbox
