@@ -97,7 +97,15 @@ useHead({
 })
 
 type TabKey = 'overview' | 'sky' | 'weather' | 'plan'
-const activeTab = ref<TabKey>('overview')
+
+// Default to Overview, but jump straight to Weather if the URL carries an
+// `?asOf=…` forecast preview override — those links are only useful on the
+// Weather tab, so opening on Overview wastes the demo. Reading from
+// route.query at setup time is sufficient: if the user manually clicks
+// another tab, their selection wins from then on.
+const initialTab: TabKey
+  = typeof route.query.asOf === 'string' ? 'weather' : 'overview'
+const activeTab = ref<TabKey>(initialTab)
 
 // Advisories — collapsed by default; the badge in the hero toggles the
 // expanded list rendered by AdvisoriesBlock. Critical (bad-level)

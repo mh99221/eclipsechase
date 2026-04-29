@@ -13,10 +13,12 @@
  * thresholds, the path's earliest C2 is the right anchor.
  *
  * Preview override: pass `?asOf=YYYY-MM-DD` (or any Date-parseable string)
- * to simulate being at that calendar instant. Gated to `import.meta.dev`
- * by default, plus an opt-in `NUXT_PUBLIC_ALLOW_FORECAST_PREVIEW=1` so
- * Vercel preview branches can demo phase transitions without exposing the
- * override on production. Tests bypass this entire path by passing an
+ * to simulate being at that calendar instant. Always-on — the PreviewBadge
+ * banner makes the override state highly visible, the canonical URL on
+ * each spot detail page strips query params so SEO can't pick up
+ * simulated phases as duplicate content, and the URL-param shape makes
+ * sharing demo links across all environments (local dev, Vercel preview,
+ * production) trivial. Tests bypass the runtime path by passing an
  * explicit `now` ref.
  */
 import { computed, ref, type Ref } from 'vue'
@@ -51,12 +53,9 @@ export function useForecastPhase(now?: Ref<Date>): UseForecastPhaseReturn {
   // Runtime mode: read the URL once and let Vue's reactivity pick up the
   // route-query updates that the router pushes on navigation.
   const route = import.meta.client ? useRoute() : null
-  const config = useRuntimeConfig()
-  const allowPreview
-    = import.meta.dev || config.public.allowForecastPreview === '1'
 
   const previewDate = computed<Date | null>(() => {
-    if (!allowPreview || !route) return null
+    if (!route) return null
     const asOf = route.query.asOf
     if (typeof asOf !== 'string') return null
     const parsed = new Date(asOf)

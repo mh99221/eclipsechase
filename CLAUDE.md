@@ -60,7 +60,7 @@ The 5-profile recommendation engine (Photographer / Family / Hiker / Sky Chaser 
 
 **Gate implementation**: `pro-gate` middleware checks `useProStatus().isPro`. Non-Pro visitors hitting `/dashboard`, `/map`, or `/me` are redirected to `/pro`. In dev, the gate bypasses by default; set `NUXT_PUBLIC_BYPASS_PRO_GATE=0` in `.env` to test the real gate locally.
 
-**Forecast phase preview**: the spot detail Weather tab is phase-aware (climatology / subseasonal / extended / reliable / nowcast — see `app/composables/useForecastPhase.ts`). To QA non-current phases without waiting for the calendar, append `?asOf=YYYY-MM-DD` to the URL — the composable simulates being at that date and the right phase component renders. Active in dev by default; set `NUXT_PUBLIC_ALLOW_FORECAST_PREVIEW=1` to also allow it on Vercel preview branches. Production prod ignores the param. A striped amber `PreviewBadge` appears at the top of the Weather tab whenever the override is active.
+**Forecast phase preview**: the spot detail Weather tab is phase-aware (climatology / subseasonal / extended / reliable / nowcast — see `app/composables/useForecastPhase.ts`). To QA non-current phases without waiting for the calendar, append `?asOf=YYYY-MM-DD` (or any `Date.parse`-able string) to any spot URL — the composable simulates being at that date and the right phase component renders. Always on in every environment; the page also auto-switches to the Weather tab when `?asOf=` is present. A striped amber `PreviewBadge` appears at the top of the Weather tab whenever the override is active. Canonical URLs strip query params so search engines don't index simulated phases as duplicate content.
 
 ## File Structure (Actual)
 

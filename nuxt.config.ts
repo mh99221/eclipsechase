@@ -158,14 +158,6 @@ export default defineNuxtConfig({
       // NUXT_PUBLIC_BYPASS_PRO_GATE=0 locally to test the real gate.
       // Prod never bypasses regardless.
       bypassProGate: '',
-      // Forecast phase preview override. Lets `?asOf=YYYY-MM-DD` URL
-      // queries simulate being at a different point in the eclipse
-      // timeline so we can QA the subseasonal/extended/reliable/nowcast
-      // phase UIs before the calendar reaches them. Always on in dev;
-      // set NUXT_PUBLIC_ALLOW_FORECAST_PREVIEW=1 on Vercel preview
-      // branches to enable there. Production prod (no flag) ignores
-      // the param.
-      allowForecastPreview: '',
     },
   },
 })
