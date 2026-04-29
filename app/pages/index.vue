@@ -135,7 +135,7 @@ const features = computed(() => [
 </script>
 
 <template>
-  <div class="relative noise">
+  <div class="relative">
     <!-- Starfield only makes sense on the dark astronomy theme; hidden in light. -->
     <ClientOnly>
       <div class="dark:block hidden">
@@ -149,7 +149,7 @@ const features = computed(() => [
     <!-- ═══════════════════════════════════════════ -->
     <header class="relative min-h-[92vh] flex flex-col items-center justify-center px-4 pt-16 pb-12 overflow-hidden">
       <!-- Atmospheric gradient orbs -->
-      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-gradient-radial from-corona/[0.04] to-transparent blur-3xl pointer-events-none" />
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-gradient-radial from-accent/[0.04] to-transparent blur-3xl pointer-events-none" />
       <div class="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-ice/[0.02] blur-[100px] pointer-events-none" />
 
       <!-- Eclipse illustration -->
@@ -165,7 +165,7 @@ const features = computed(() => [
         </p>
         <h1 class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[0.95] text-ink-1">
           {{ t('hero.title') }}<br>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-corona to-corona-bright">{{ t('hero.title_accent') }}</span>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-strong">{{ t('hero.title_accent') }}</span>
         </h1>
         <p class="mt-5 sm:mt-6 text-base text-ink-3 leading-relaxed max-w-xl mx-auto font-light">
           {{ t('hero.subtitle') }}
@@ -279,7 +279,7 @@ const features = computed(() => [
               <!-- Arrow -->
               <div class="hidden sm:flex items-center pt-1.5 shrink-0">
                 <svg
-                  class="w-4 h-4 text-void-border group-hover:text-accent/40 transition-all duration-300 group-hover:translate-x-1"
+                  class="w-4 h-4 text-border-subtle/40 group-hover:text-accent/40 transition-all duration-300 group-hover:translate-x-1"
                   fill="none" viewBox="0 0 24 24" stroke="currentColor"
                 >
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
