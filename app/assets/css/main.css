@@ -178,42 +178,28 @@
 }
 
 @layer components {
+  /* Primary CTA. Used by EmailSignup (landing), ProUpgradeButton, and
+     /pro/success. Used to render a 3-stop amber gradient with a brighten
+     -on-hover ::before overlay — those were dark-theme marketing flourish
+     that doesn't translate to cream (gradient over a warm cream bg looked
+     muddy). Now flat-coloured with semantic --accent / --accent-ink so
+     light theme works; preserved Inter Tight + uppercase + 2 px radius
+     so the existing chunky-CTA visual identity survives the swap. The
+     hover glow uses the accent at 35% / 12% so it tints amber-ish in
+     dark and burnt-amber-ish in light without hardcoded hex. */
   .btn-corona {
-    @apply relative inline-flex items-center justify-center px-8 py-3.5
+    @apply inline-flex items-center justify-center px-8 py-3.5
            font-semibold text-sm tracking-wide uppercase
-           text-gray-900 overflow-hidden
            transition-all duration-300 focus:outline-none;
     font-family: 'Inter Tight', system-ui, sans-serif;
-    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%);
+    background: rgb(var(--accent));
+    color: rgb(var(--accent-ink));
     border-radius: 2px;
-  }
-  .btn-corona::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, #fbbf24 0%, #fef3c7 50%, #fbbf24 100%);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .btn-corona:hover::before {
-    opacity: 1;
-  }
-  .btn-corona span {
-    position: relative;
-    z-index: 1;
   }
   .btn-corona:hover {
-    box-shadow: 0 0 30px rgba(245, 158, 11, 0.4), 0 0 60px rgba(245, 158, 11, 0.1);
+    background: rgb(var(--accent-strong));
+    box-shadow: 0 0 24px rgb(var(--accent) / 0.35), 0 0 48px rgb(var(--accent) / 0.12);
     transform: translateY(-1px);
-  }
-
-  .btn-ghost {
-    @apply inline-flex items-center justify-center px-8 py-3.5
-           font-medium text-sm tracking-wide uppercase
-           text-slate-300 border border-slate-700/50
-           transition-all duration-300 focus:outline-none;
-    font-family: 'Inter Tight', system-ui, sans-serif;
-    border-radius: 2px;
   }
 
   .section-container {
