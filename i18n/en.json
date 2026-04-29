@@ -27,6 +27,7 @@
     },
     "forecast": {
       "phase_eyebrow": "T-{days}",
+      "preview_eyebrow": "PREVIEW",
       "phase_label_climatology": "Climatology phase",
       "phase_label_subseasonal": "Sub-seasonal phase",
       "phase_label_extended": "Extended deterministic phase",

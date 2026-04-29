@@ -26,12 +26,16 @@ defineProps<{
   history: SpotHistory | null
 }>()
 
-const { phase, daysUntil } = useForecastPhase()
+const { phase, daysUntil, isPreview } = useForecastPhase()
 const { isPro } = useProStatus()
 </script>
 
 <template>
   <div class="forecast-section">
+    <!-- Preview badge — only visible when ?asOf= is active in dev or on a
+         preview deploy with the env flag set. Production never sees it. -->
+    <PreviewBadge v-if="isPreview" :phase="phase" :days-until="daysUntil" />
+
     <PhaseNotice :phase="phase" :days-until="daysUntil" />
     <div class="spacer-8" />
 

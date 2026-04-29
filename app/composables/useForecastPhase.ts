@@ -11,6 +11,13 @@
  * The exact second varies a few seconds per spot (longitude); the per-spot
  * value is enriched on the spot API response from grid.json. For phase
  * thresholds, the path's earliest C2 is the right anchor.
+ *
+ * Preview override: pass `?asOf=YYYY-MM-DD` (or any Date-parseable string)
+ * to simulate being at that calendar instant. Gated to `import.meta.dev`
+ * by default, plus an opt-in `NUXT_PUBLIC_ALLOW_FORECAST_PREVIEW=1` so
+ * Vercel preview branches can demo phase transitions without exposing the
+ * override on production. Tests bypass this entire path by passing an
+ * explicit `now` ref.
  */
 import { computed, ref, type Ref } from 'vue'
 
@@ -23,19 +30,54 @@ export type ForecastPhase =
   | 'reliable'      // 1–7 days — HARMONIE-AROME hourly + ensemble narrowing
   | 'nowcast'       // < 1 day  — live obs + satellite imagery
 
-export function useForecastPhase(now: Ref<Date> = ref(new Date())) {
-  const daysUntil = computed(() =>
-    (ECLIPSE_DATE.getTime() - now.value.getTime()) / 86_400_000,
-  )
+interface UseForecastPhaseReturn {
+  phase: Readonly<Ref<ForecastPhase>>
+  daysUntil: Readonly<Ref<number>>
+  isPreview: Readonly<Ref<boolean>>
+}
 
-  const phase = computed<ForecastPhase>(() => {
-    const d = daysUntil.value
-    if (d > 30) return 'climatology'
-    if (d > 15) return 'subseasonal'
-    if (d > 7) return 'extended'
-    if (d > 1) return 'reliable'
-    return 'nowcast'
+export function useForecastPhase(now?: Ref<Date>): UseForecastPhaseReturn {
+  // Test-mode short-circuit: when caller passes an explicit `now`, skip the
+  // Nuxt-context hooks (useRoute / useRuntimeConfig) entirely. Lets vitest
+  // exercise the threshold logic without mocking the runtime.
+  if (now) {
+    const daysUntil = computed(
+      () => (ECLIPSE_DATE.getTime() - now.value.getTime()) / 86_400_000,
+    )
+    const phase = computed<ForecastPhase>(() => phaseFromDays(daysUntil.value))
+    return { phase, daysUntil, isPreview: ref(false) }
+  }
+
+  // Runtime mode: read the URL once and let Vue's reactivity pick up the
+  // route-query updates that the router pushes on navigation.
+  const route = import.meta.client ? useRoute() : null
+  const config = useRuntimeConfig()
+  const allowPreview
+    = import.meta.dev || config.public.allowForecastPreview === '1'
+
+  const previewDate = computed<Date | null>(() => {
+    if (!allowPreview || !route) return null
+    const asOf = route.query.asOf
+    if (typeof asOf !== 'string') return null
+    const parsed = new Date(asOf)
+    return Number.isNaN(parsed.getTime()) ? null : parsed
   })
 
-  return { phase, daysUntil }
+  const effectiveNow = computed<Date>(() => previewDate.value ?? new Date())
+
+  const daysUntil = computed(
+    () => (ECLIPSE_DATE.getTime() - effectiveNow.value.getTime()) / 86_400_000,
+  )
+  const phase = computed<ForecastPhase>(() => phaseFromDays(daysUntil.value))
+  const isPreview = computed(() => previewDate.value !== null)
+
+  return { phase, daysUntil, isPreview }
+}
+
+function phaseFromDays(d: number): ForecastPhase {
+  if (d > 30) return 'climatology'
+  if (d > 15) return 'subseasonal'
+  if (d > 7) return 'extended'
+  if (d > 1) return 'reliable'
+  return 'nowcast'
 }
