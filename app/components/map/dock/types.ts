@@ -26,16 +26,20 @@ export interface DockWeatherCtx {
   visibilityKm: number | null
 }
 
-export type RoadCondition = 'good' | 'difficult' | 'closed' | 'unknown'
+import type { TrafficCondition } from '~/utils/traffic'
 
 export interface DockRoadsCtx {
-  /** Normalised condition bucket. */
-  cond: RoadCondition
+  /** Normalised condition bucket — reuses the existing traffic union
+   *  so the dock and the rest of the traffic stack stay in lockstep. */
+  cond: TrafficCondition
   /** Human label (already localised) — e.g. "Difficult". */
   label: string
   /** Sub-label — road name, hazard description, etc. */
   detail: string
 }
+
+/** Re-exported so dock-mode consumers don't need a second import. */
+export type { TrafficCondition } from '~/utils/traffic'
 
 export interface DockCamImage {
   url: string

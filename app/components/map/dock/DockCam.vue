@@ -21,7 +21,7 @@ const counter = computed(() => total.value === 0 ? '' : `${safeIdx.value + 1} / 
   <div>
     <DockHeader eyebrow="Live cam" dot-var="good" :meta="counter" />
 
-    <div class="title">{{ ctx.name }}</div>
+    <div class="title title--with-sub">{{ ctx.name }}</div>
     <div class="dir" v-if="ctx.dir">{{ ctx.dir }}</div>
 
     <div class="frame">
@@ -68,14 +68,7 @@ const counter = computed(() => total.value === 0 ? '' : `${safeIdx.value + 1} / 
 </template>
 
 <style scoped>
-.title {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: rgb(var(--ink-1));
-  margin-bottom: 4px;
-}
+/* `.title` comes from MapDock's shared style. */
 .dir {
   font-family: 'Inter Tight', system-ui, sans-serif;
   font-size: 12px;

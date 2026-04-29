@@ -52,23 +52,7 @@ const blurb = computed(() => {
 </template>
 
 <style scoped>
-.title {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: rgb(var(--ink-1));
-  margin-bottom: 10px;
-}
-.strip {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  padding: 10px 0;
-  border-top: 1px solid rgb(var(--border-subtle) / 0.08);
-  border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
-  margin-bottom: 12px;
-}
+/* `.title` and `.strip` come from MapDock's shared style. */
 .blurb {
   font-family: 'Inter Tight', system-ui, sans-serif;
   font-size: 12px;

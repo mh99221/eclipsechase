@@ -39,52 +39,15 @@ const scoreLabel = computed(() => score.value == null ? '—' : String(score.val
     </div>
 
     <div class="actions">
-      <button class="btn-ghost" type="button" @click="emit('horizon-open')">HORIZON</button>
+      <button class="btn-ghost btn-ghost--cta-pair" type="button" @click="emit('horizon-open')">HORIZON</button>
       <button class="btn-cta" type="button" @click="emit('open-field-card')">OPEN FIELD CARD →</button>
     </div>
   </div>
 </template>
 
 <style scoped>
-.title {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: rgb(var(--ink-1));
-  margin-bottom: 10px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.strip {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  padding: 10px 0;
-  border-top: 1px solid rgb(var(--border-subtle) / 0.08);
-  border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
-  margin-bottom: 12px;
-}
-.actions {
-  display: flex;
-  gap: 8px;
-}
-.btn-ghost {
-  flex: none;
-  padding: 12px 14px;
-  border: 1px solid rgb(var(--border-subtle) / 0.16);
-  background: transparent;
-  border-radius: 8px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  color: rgb(var(--ink-1));
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.btn-ghost:hover { background: rgb(var(--surface) / 0.5); }
+/* `.title`, `.strip`, `.btn-ghost` come from MapDock's shared style. */
+.actions { display: flex; gap: 8px; }
 .btn-cta {
   flex: 1;
   padding: 12px;

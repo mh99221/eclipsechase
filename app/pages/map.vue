@@ -4,8 +4,16 @@ definePageMeta({ middleware: ['pro-gate'] })
 import mapboxgl from 'mapbox-gl'
 import { CLOUD_COVER_LEVELS, CLOUD_COVER_NO_DATA } from '~/utils/eclipse'
 import { conditionPriority, getTrafficColor, getTrafficLabel } from '~/utils/traffic'
+import type { TrafficCondition } from '~/utils/traffic'
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId } from '~/composables/useRecommendation'
+import type {
+  DockMode,
+  DockWeatherCtx,
+  DockRoadsCtx,
+  DockCamCtx,
+  DockHorizonCtx,
+} from '~/components/map/dock/types'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -120,13 +128,13 @@ function spotHistoricalCloud(slug: string): number | null {
 // Mobile-only bottom dock that swaps content between five modes
 // (SPOT / WEATHER / ROADS / CAM / HORIZON). Mode is driven by what the
 // user taps on the map; ctx for each mode is populated below from the
-// tap target's data.
-type DockMode = 'spot' | 'weather' | 'roads' | 'cam' | 'horizon'
+// tap target's data. Types live in app/components/map/dock/types.ts so
+// the dock components and this page agree on shape.
 const dockMode = ref<DockMode>('spot')
-const dockWeatherCtx = ref<{ name: string; cloud: number | null; updatedMinutes: number | null; visibilityKm: number | null } | null>(null)
-const dockRoadsCtx = ref<{ cond: 'good' | 'difficult' | 'closed' | 'unknown'; label: string; detail: string } | null>(null)
-const dockCamCtx = ref<{ id: string | number; name: string; dir: string; images: Array<{ url: string; description: string }>; idx: number } | null>(null)
-const dockHorizonCtx = ref<{ lat: number; lng: number; spotName: string | null } | null>(null)
+const dockWeatherCtx = ref<DockWeatherCtx | null>(null)
+const dockRoadsCtx = ref<DockRoadsCtx | null>(null)
+const dockCamCtx = ref<DockCamCtx | null>(null)
+const dockHorizonCtx = ref<DockHorizonCtx | null>(null)
 
 // Spot data shaped for DockSpot — uses historical 16-yr Aug-12 cloud
 // (matches the prior SelectedLightbox behaviour) so the SPOT mode shows
@@ -162,15 +170,15 @@ function onWeatherSelect(station: any) {
   dockMode.value = 'weather'
 }
 
-function onRoadSelect(ctx: { cond: 'good' | 'difficult' | 'closed' | 'unknown'; label: string; detail: string }) {
+function onRoadSelect(ctx: DockRoadsCtx) {
   dockRoadsCtx.value = ctx
   dockMode.value = 'roads'
 }
 
 function onCamSelect(cam: { id: number; name: string; images: Array<{ url: string; description: string }> }) {
-  // Use the most-recent description from the first image as the dir
-  // line; the cam itself doesn't carry a separate direction field.
-  const startIdx = camIndexById.get(cam.id as any) ?? 0
+  // Use the description from the first image as the dir line; the cam
+  // itself doesn't carry a separate direction field.
+  const startIdx = camIndexById.get(cam.id) ?? 0
   dockCamCtx.value = {
     id: cam.id,
     name: cam.name,
@@ -186,7 +194,7 @@ function onCamStep(dir: 1 | -1) {
   if (total === 0) return
   const next = ((dockCamCtx.value.idx + dir) % total + total) % total
   dockCamCtx.value.idx = next
-  camIndexById.set(dockCamCtx.value.id as any, next)
+  camIndexById.set(dockCamCtx.value.id, next)
 }
 
 function onHorizonOpen() {
@@ -260,7 +268,7 @@ const showTraffic = ref(false)
 let trafficSegmentsCache: { segments: any[] } | null = null
 let trafficRoadsCache: any = null
 
-function normaliseCond(raw: string): 'good' | 'difficult' | 'closed' | 'unknown' {
+function normaliseCond(raw: string): TrafficCondition {
   if (raw === 'good' || raw === 'difficult' || raw === 'closed') return raw
   return 'unknown'
 }
@@ -470,9 +478,11 @@ interface CameraData { id: string; name: string; lat: number; lng: number; image
 const activeLightboxCamera = ref<CameraData | null>(null)
 const lightboxStartIndex = ref(0)
 
-// Per-camera carousel index, keyed by camera id. Lives at module scope
-// so it survives popup close/reopen (Mapbox reuses the popup DOM on reopen).
-const camIndexById = new Map<string, number>()
+// Per-camera carousel index, keyed by camera id (CameraData.id is a
+// number from the Vegagerðin API). Lives at module scope so it survives
+// popup close/reopen (Mapbox reuses the popup DOM on reopen) and so the
+// dock CAM mode picks up the same index as the desktop popup.
+const camIndexById = new Map<number, number>()
 
 function buildCameraPopupHTML(cam: CameraData, currentIndex: number): string {
   const imgs = cam.images

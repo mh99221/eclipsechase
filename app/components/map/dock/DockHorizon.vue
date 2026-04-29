@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref, watch } from 'vue'
 import DockHeader from './DockHeader.vue'
 import type { HorizonCheckResponse } from '~/types/horizon'
 import type { DockHorizonCtx } from './types'
@@ -10,28 +10,38 @@ const loading = ref(true)
 const error = ref<'pro_required' | 'outside_coverage' | 'outside_path' | 'failed' | null>(null)
 const result = ref<HorizonCheckResponse | null>(null)
 
-watchEffect(async () => {
-  loading.value = true
-  error.value = null
-  result.value = null
-  try {
-    const data = await $fetch<HorizonCheckResponse>('/api/horizon/check', {
-      method: 'POST',
-      body: { lat: props.ctx.lat, lng: props.ctx.lng },
-    })
-    if (!data.in_totality_path) {
-      error.value = 'outside_path'
-    } else {
-      result.value = data
+// Watch only the coordinates — spotName-only changes (e.g. switching
+// between two co-located spots) shouldn't refetch since the API request
+// is keyed solely by lat/lng. Each fetch tags itself with `requestId`
+// so a slow earlier response can't overwrite a fresher result if the
+// user taps a new location while one is still in flight.
+let requestId = 0
+watch(
+  () => [props.ctx.lat, props.ctx.lng] as const,
+  async ([lat, lng]) => {
+    const id = ++requestId
+    loading.value = true
+    error.value = null
+    result.value = null
+    try {
+      const data = await $fetch<HorizonCheckResponse>('/api/horizon/check', {
+        method: 'POST',
+        body: { lat, lng },
+      })
+      if (id !== requestId) return
+      if (!data.in_totality_path) error.value = 'outside_path'
+      else result.value = data
+    } catch (e: any) {
+      if (id !== requestId) return
+      if (e?.statusCode === 401 || e?.statusCode === 403) error.value = 'pro_required'
+      else if (e?.statusCode === 422) error.value = 'outside_coverage'
+      else error.value = 'failed'
+    } finally {
+      if (id === requestId) loading.value = false
     }
-  } catch (e: any) {
-    if (e?.statusCode === 401 || e?.statusCode === 403) error.value = 'pro_required'
-    else if (e?.statusCode === 422) error.value = 'outside_coverage'
-    else error.value = 'failed'
-  } finally {
-    loading.value = false
-  }
-})
+  },
+  { immediate: true },
+)
 
 // ─── Chart geometry ───
 // Viewport: 320×130 SVG. Y-axis maps elevation degrees to screen y.
@@ -128,7 +138,7 @@ const navigateUrl = computed(() =>
   <div>
     <DockHeader eyebrow="Horizon view" :dot-var="verdictTone" :meta="props.ctx.spotName ? 'Spot' : 'Tap'" />
 
-    <div class="title" :data-tone="verdictTone">{{ titleText }}</div>
+    <div class="title title--small" :data-tone="verdictTone">{{ titleText }}</div>
     <div v-if="subtitleText" class="subtitle">{{ subtitleText }}</div>
 
     <div class="chart">
@@ -209,14 +219,14 @@ const navigateUrl = computed(() =>
     <div class="actions">
       <a
         v-if="peakfinderUrl"
-        class="btn-ghost"
+        class="btn-ghost btn-ghost--half"
         :href="peakfinderUrl"
         target="_blank"
         rel="noopener"
       >PEAKFINDER ↗</a>
-      <span v-else class="btn-ghost btn-ghost--disabled">PEAKFINDER ↗</span>
+      <span v-else class="btn-ghost btn-ghost--half btn-ghost--disabled">PEAKFINDER ↗</span>
       <a
-        class="btn-ghost"
+        class="btn-ghost btn-ghost--half"
         :href="navigateUrl"
         target="_blank"
         rel="noopener"
@@ -226,17 +236,7 @@ const navigateUrl = computed(() =>
 </template>
 
 <style scoped>
-.title {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  margin-bottom: 2px;
-  color: rgb(var(--ink-1));
-}
-.title[data-tone='good'] { color: rgb(var(--good)); }
-.title[data-tone='warn'] { color: rgb(var(--warn)); }
-.title[data-tone='bad']  { color: rgb(var(--bad)); }
+/* `.title`, `.btn-ghost` come from MapDock's shared style. */
 .subtitle {
   font-family: 'Inter Tight', system-ui, sans-serif;
   font-size: 13px;
@@ -268,23 +268,4 @@ const navigateUrl = computed(() =>
   text-transform: uppercase;
 }
 .actions { display: flex; gap: 8px; }
-.btn-ghost {
-  flex: 1;
-  padding: 10px 12px;
-  border: 1px solid rgb(var(--border-subtle) / 0.16);
-  background: transparent;
-  border-radius: 8px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  color: rgb(var(--ink-1));
-  text-align: center;
-  text-transform: uppercase;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.btn-ghost:hover { background: rgb(var(--surface) / 0.5); }
-.btn-ghost--disabled { opacity: 0.4; pointer-events: none; }
 </style>
