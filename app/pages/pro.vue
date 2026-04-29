@@ -89,132 +89,143 @@ const compareSections: Array<{ titleKey: string; rows: CompareRow[] }> = [
 </script>
 
 <template>
-  <div class="relative noise min-h-screen pt-[72px]">
-    <main class="pb-20">
-      <div class="section-container max-w-3xl py-8 sm:py-16">
-        <!-- Cancelled banner -->
-        <div
-          v-if="cancelled"
-          class="mb-8 px-4 py-3 ec-banner-warn text-sm font-mono"
-        >
-          {{ t('pro.cancelled') }}
-        </div>
-
-        <!-- Header -->
-        <div class="mb-12">
-          <span class="font-mono text-xs tracking-[0.3em] text-accent/60 uppercase">
-            {{ t('pro.unlock') }}
-          </span>
-          <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-ink-1 mt-2 mb-4">
-            {{ t('pro.heading') }}
-          </h1>
-          <p class="text-base sm:text-lg text-ink-3 max-w-xl">
-            {{ t('pro.subtitle') }}
-          </p>
-        </div>
-
-        <!-- Free vs Pro comparison.
-             Three-bucket teaser: shared features (reassurance) → Pro-only
-             day-of features (conversion) → PWA polish. Drives off the
-             compareSections data + v0.pro_compare.* i18n keys. -->
-        <Card class="compare-card">
-          <CardTitle>{{ t('v0.pro_compare.header') }}</CardTitle>
-          <table class="compare-table">
-            <thead>
-              <tr>
-                <th />
-                <th scope="col">{{ t('v0.pro_compare.free_col') }}</th>
-                <th scope="col">{{ t('v0.pro_compare.pro_col') }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-for="section in compareSections" :key="section.titleKey">
-                <tr class="section-row">
-                  <th scope="rowgroup" colspan="3">{{ t(`v0.pro_compare.${section.titleKey}`) }}</th>
-                </tr>
-                <tr v-for="row in section.rows" :key="row.key">
-                  <th scope="row" class="row-l">{{ t(`v0.pro_compare.${row.key}`) }}</th>
-                  <td class="row-v" :data-state="row.free ? 'yes' : 'no'">
-                    <span :aria-label="row.free ? t('v0.pro_compare.included') : t('v0.pro_compare.not_included')">
-                      {{ row.free ? '✓' : '—' }}
-                    </span>
-                  </td>
-                  <td class="row-v" :data-state="row.pro ? 'yes' : 'no'">
-                    <span :aria-label="row.pro ? t('v0.pro_compare.included') : t('v0.pro_compare.not_included')">
-                      {{ row.pro ? '✓' : '—' }}
-                    </span>
-                  </td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
-          <p class="compare-tagline">{{ t('v0.pro_compare.tagline') }}</p>
-        </Card>
-
-        <!-- Price card + Checkout -->
-        <div class="bg-surface border border-accent/20 rounded-lg p-6 sm:p-8 text-center">
-          <div class="mb-6">
-            <div class="font-display text-5xl sm:text-6xl font-bold text-ink-1">
-              &euro;9.99
-            </div>
-            <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mt-3">
-              {{ t('pro.price') }}
-            </p>
-          </div>
-
-          <!-- Withdrawal waiver checkbox -->
-          <div class="max-w-sm mx-auto mb-4 text-left">
-            <label class="flex items-start gap-2.5 cursor-pointer">
-              <input
-                v-model="waiverAccepted"
-                type="checkbox"
-                class="mt-1 shrink-0 accent-corona"
-              >
-              <span class="text-xs text-ink-3 leading-relaxed">
-                {{ t('pro.withdrawal_waiver_pre') }}
-                <NuxtLink to="/terms" class="text-accent hover:text-accent-strong transition-colors">{{ t('pro.terms_link_text') }}</NuxtLink>
-                {{ t('pro.withdrawal_waiver_and') }}
-                <NuxtLink to="/privacy" class="text-accent hover:text-accent-strong transition-colors">{{ t('pro.privacy_link_text') }}</NuxtLink>.
-              </span>
-            </label>
-          </div>
-
-          <!-- Error -->
-          <p v-if="checkoutError" class="text-sm font-mono text-status-red mb-4">
-            {{ checkoutError }}
-          </p>
-
-          <!-- Checkout button -->
-          <button
-            :disabled="checkoutSubmitting || !waiverAccepted"
-            class="btn-corona w-full max-w-sm text-base py-3.5 disabled:opacity-50 disabled:cursor-not-allowed"
-            @click="handleCheckout"
-          >
-            <span v-if="checkoutSubmitting" class="inline-flex items-center gap-2">
-              <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-              <span>{{ t('pro.processing') }}</span>
-            </span>
-            <span v-else>{{ t('pro.get_access') }}</span>
-          </button>
-
-          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-3 mt-4">
-            {{ t('pro.stripe_note') }}
-          </p>
-        </div>
-
-        <!-- Restore Purchase -->
-        <RestorePurchase />
+  <PageShell screen="pro" width="reading">
+    <div class="pro-body">
+      <!-- Cancelled banner -->
+      <div
+        v-if="cancelled"
+        class="mb-8 px-4 py-3 ec-banner-warn text-sm font-mono"
+      >
+        {{ t('pro.cancelled') }}
       </div>
-    </main>
+
+      <!-- Header -->
+      <div class="mb-12">
+        <span class="font-mono text-xs tracking-[0.3em] text-accent/60 uppercase">
+          {{ t('pro.unlock') }}
+        </span>
+        <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-ink-1 mt-2 mb-4">
+          {{ t('pro.heading') }}
+        </h1>
+        <p class="text-base sm:text-lg text-ink-3 max-w-xl">
+          {{ t('pro.subtitle') }}
+        </p>
+      </div>
+
+      <!-- Free vs Pro comparison.
+           Three-bucket teaser: shared features (reassurance) → Pro-only
+           day-of features (conversion) → PWA polish. Drives off the
+           compareSections data + v0.pro_compare.* i18n keys. -->
+      <Card class="compare-card">
+        <CardTitle>{{ t('v0.pro_compare.header') }}</CardTitle>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th />
+              <th scope="col">{{ t('v0.pro_compare.free_col') }}</th>
+              <th scope="col">{{ t('v0.pro_compare.pro_col') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template v-for="section in compareSections" :key="section.titleKey">
+              <tr class="section-row">
+                <th scope="rowgroup" colspan="3">{{ t(`v0.pro_compare.${section.titleKey}`) }}</th>
+              </tr>
+              <tr v-for="row in section.rows" :key="row.key">
+                <th scope="row" class="row-l">{{ t(`v0.pro_compare.${row.key}`) }}</th>
+                <td class="row-v" :data-state="row.free ? 'yes' : 'no'">
+                  <span :aria-label="row.free ? t('v0.pro_compare.included') : t('v0.pro_compare.not_included')">
+                    {{ row.free ? '✓' : '—' }}
+                  </span>
+                </td>
+                <td class="row-v" :data-state="row.pro ? 'yes' : 'no'">
+                  <span :aria-label="row.pro ? t('v0.pro_compare.included') : t('v0.pro_compare.not_included')">
+                    {{ row.pro ? '✓' : '—' }}
+                  </span>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+        <p class="compare-tagline">{{ t('v0.pro_compare.tagline') }}</p>
+      </Card>
+
+      <!-- Price card + Checkout -->
+      <div class="bg-surface border border-accent/20 rounded-lg p-6 sm:p-8 text-center">
+        <div class="mb-6">
+          <div class="font-display text-5xl sm:text-6xl font-bold text-ink-1">
+            &euro;9.99
+          </div>
+          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mt-3">
+            {{ t('pro.price') }}
+          </p>
+        </div>
+
+        <!-- Withdrawal waiver checkbox -->
+        <div class="max-w-sm mx-auto mb-4 text-left">
+          <label class="flex items-start gap-2.5 cursor-pointer">
+            <input
+              v-model="waiverAccepted"
+              type="checkbox"
+              class="mt-1 shrink-0 accent-corona"
+            >
+            <span class="text-xs text-ink-3 leading-relaxed">
+              {{ t('pro.withdrawal_waiver_pre') }}
+              <NuxtLink to="/terms" class="text-accent hover:text-accent-strong transition-colors">{{ t('pro.terms_link_text') }}</NuxtLink>
+              {{ t('pro.withdrawal_waiver_and') }}
+              <NuxtLink to="/privacy" class="text-accent hover:text-accent-strong transition-colors">{{ t('pro.privacy_link_text') }}</NuxtLink>.
+            </span>
+          </label>
+        </div>
+
+        <!-- Error -->
+        <p v-if="checkoutError" class="text-sm font-mono text-status-red mb-4">
+          {{ checkoutError }}
+        </p>
+
+        <!-- Checkout button -->
+        <button
+          :disabled="checkoutSubmitting || !waiverAccepted"
+          class="btn-corona w-full max-w-sm text-base py-3.5 disabled:opacity-50 disabled:cursor-not-allowed"
+          @click="handleCheckout"
+        >
+          <span v-if="checkoutSubmitting" class="inline-flex items-center gap-2">
+            <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <span>{{ t('pro.processing') }}</span>
+          </span>
+          <span v-else>{{ t('pro.get_access') }}</span>
+        </button>
+
+        <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-3 mt-4">
+          {{ t('pro.stripe_note') }}
+        </p>
+      </div>
+
+      <!-- Restore Purchase -->
+      <RestorePurchase />
+    </div>
 
     <AppFooter />
-  </div>
+  </PageShell>
 </template>
 
 <style scoped>
+/* Content padding inside PageShell. Mirrors the legacy `py-8 sm:py-16
+   + section-container` rhythm so the visual cadence of header → cards
+   → footer matches what the page had on its noise-textured legacy
+   chrome — but now under v0's BrandBar/BottomNav. */
+.pro-body {
+  padding: 32px 16px;
+}
+@media (min-width: 768px) {
+  .pro-body {
+    padding: 64px 24px;
+  }
+}
+
 .compare-card {
   margin-bottom: 32px;
 }
