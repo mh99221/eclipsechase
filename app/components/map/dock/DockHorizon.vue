@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, useId, watch } from 'vue'
 import DockHeader from './DockHeader.vue'
 import type { HorizonCheckResponse } from '~/types/horizon'
+import { computeSunTrajectory, formatUtcTime } from '~/utils/solar'
+import type { SunTrajectoryPoint } from '~/utils/solar'
 import type { DockHorizonCtx } from './types'
 
 const props = defineProps<{ ctx: DockHorizonCtx }>()
@@ -55,45 +57,93 @@ const yGrid = [
   { deg:  0, label: '0°'  },
 ] as const
 
-// X-axis: spans 90° centred on the sun azimuth (matches sweep ±45°).
-const xRange = computed(() => {
-  const r = result.value
-  // Default to ~250° (the WSW totality azimuth in Iceland) when no data.
-  const center = r?.sun_azimuth ?? 250
+// X-axis spans the actual sweep range (the API returns 91 points across
+// ±45° around the sun azimuth). Falls back to a synthetic range when no
+// data is loaded yet so the axis labels can still render.
+const sweepRange = computed(() => {
+  const sweep = result.value?.sweep
+  if (sweep?.length) {
+    let min = sweep[0]!.azimuth
+    let max = sweep[0]!.azimuth
+    for (const p of sweep) {
+      if (p.azimuth < min) min = p.azimuth
+      if (p.azimuth > max) max = p.azimuth
+    }
+    return { min, max }
+  }
+  const center = result.value?.sun_azimuth ?? 250
   return { min: center - 45, max: center + 45 }
 })
-const azToX = (az: number) => {
-  const { min, max } = xRange.value
+function azToX(az: number): number {
+  const { min, max } = sweepRange.value
+  if (max === min) return 160
   const t = (az - min) / (max - min)
   return Math.max(0, Math.min(1, t)) * 320
 }
+function altToY(alt: number): number {
+  return Y_DEG_TO_PX(Math.max(0, Math.min(38, alt)))
+}
 
-// Build the terrain polyline d="M …" from real sweep points.
-const terrainPath = computed(() => {
+// Terrain silhouette — closes back to the chart floor so it can be filled.
+const terrainFillPath = computed(() => {
   const sweep = result.value?.sweep
   if (!sweep?.length) return null
-  const pts = sweep
-    .slice()
-    .sort((a, b) => a.azimuth - b.azimuth)
-    .map(p => `${azToX(p.azimuth).toFixed(1)} ${Y_DEG_TO_PX(p.horizon_angle).toFixed(1)}`)
-  return 'M ' + pts.join(' L ')
-})
-const terrainFillPath = computed(() => {
-  const tp = terrainPath.value
-  if (!tp) return null
-  return `${tp} L 320 130 L 0 130 Z`
+  const sorted = sweep.slice().sort((a, b) => a.azimuth - b.azimuth)
+  const startX = azToX(sorted[0]!.azimuth).toFixed(1)
+  const endX = azToX(sorted[sorted.length - 1]!.azimuth).toFixed(1)
+  const inner = sorted.map(p => `${azToX(p.azimuth).toFixed(1)},${altToY(p.horizon_angle).toFixed(1)}`).join(' L ')
+  return `M ${startX},114 L ${inner} L ${endX},114 Z`
 })
 
-// Sun position dot.
-const sunPos = computed(() => {
+// Sun trajectory across the eclipse afternoon, restricted to the chart's
+// azimuth window. Same source of truth as HorizonProfile so the two charts
+// agree on where the sun actually goes — instead of a decorative arc.
+const sunTrajectory = computed<SunTrajectoryPoint[]>(() => {
+  const { min, max } = sweepRange.value
+  return computeSunTrajectory(props.ctx.lat, props.ctx.lng, min, max)
+})
+
+const trajectoryPath = computed(() => {
+  const pts = sunTrajectory.value
+  if (pts.length < 2) return null
+  return pts
+    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${azToX(p.azimuth).toFixed(1)} ${altToY(p.altitude).toFixed(1)}`)
+    .join(' ')
+})
+
+// Hourly dots + labels along the trajectory. Tight chart width means we
+// drop labels too close to the edges; the dot still renders.
+const trajectoryHourMarkers = computed(() => {
+  const pts = sunTrajectory.value
+  const out: { x: number; y: number; label: string; showLabel: boolean }[] = []
+  for (const p of pts) {
+    if (Math.round(p.utcHours * 60) % 60 !== 0) continue
+    const x = azToX(p.azimuth)
+    const y = altToY(p.altitude)
+    out.push({ x, y, label: formatUtcTime(p.utcHours), showLabel: x > 22 && x < 298 })
+  }
+  return out
+})
+
+// Snap the sun marker onto the trajectory arc so it doesn't drift off it
+// when sun_azimuth lands between sample points.
+const sunMarker = computed(() => {
   const r = result.value
   if (!r) return null
-  return { x: azToX(r.sun_azimuth), y: Y_DEG_TO_PX(r.sun_altitude), alt: r.sun_altitude }
+  const pts = sunTrajectory.value
+  if (!pts.length) return { x: azToX(r.sun_azimuth), y: altToY(r.sun_altitude), alt: r.sun_altitude }
+  let best = pts[0]!
+  let bestDist = Math.abs(best.azimuth - r.sun_azimuth)
+  for (const p of pts) {
+    const d = Math.abs(p.azimuth - r.sun_azimuth)
+    if (d < bestDist) { best = p; bestDist = d }
+  }
+  return { x: azToX(best.azimuth), y: altToY(best.altitude), alt: r.sun_altitude }
 })
 
 // X-axis tick labels at 5 evenly-spaced bearings.
 const xLabels = computed(() => {
-  const { min, max } = xRange.value
+  const { min, max } = sweepRange.value
   const ticks: { x: number; label: string }[] = []
   for (let i = 0; i < 5; i++) {
     const az = min + (i / 4) * (max - min)
@@ -132,6 +182,10 @@ const subtitleText = computed(() => {
 const peakfinderUrl = computed(() => result.value?.peakfinder_url ?? null)
 const navigateUrl = computed(() =>
   `https://www.google.com/maps/dir/?api=1&destination=${props.ctx.lat},${props.ctx.lng}`)
+
+// Unique id so multiple instances don't share the same gradient def.
+const uid = useId()
+const gradientId = `dock-horizon-sky-${uid}`
 </script>
 
 <template>
@@ -143,13 +197,23 @@ const navigateUrl = computed(() =>
 
     <div class="chart">
       <svg viewBox="0 0 320 130" preserveAspectRatio="none" class="chart-svg">
+        <defs>
+          <linearGradient :id="gradientId" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0f172a" />
+            <stop offset="100%" stop-color="#1e293b" />
+          </linearGradient>
+        </defs>
+
+        <!-- Sky background -->
+        <rect x="0" y="0" width="320" height="130" :fill="`url(#${gradientId})`" />
+
         <!-- Y-axis grid + labels -->
         <line
           v-for="row in yGrid"
           :key="`y-${row.deg}`"
           :x1="0" :y1="Y_DEG_TO_PX(row.deg)"
           :x2="320" :y2="Y_DEG_TO_PX(row.deg)"
-          stroke="rgb(255 255 255 / 0.08)"
+          stroke="#1e293b"
           stroke-width="0.5"
           stroke-dasharray="2,3"
         />
@@ -158,36 +222,58 @@ const navigateUrl = computed(() =>
           :key="`yl-${row.deg}`"
           x="6" :y="Y_DEG_TO_PX(row.deg)"
           font-size="8"
-          fill="rgb(232 229 220 / 0.42)"
+          fill="#64748b"
           font-family="JetBrains Mono"
         >{{ row.label }}</text>
 
-        <!-- Terrain (real DEM-derived) -->
-        <template v-if="terrainPath && terrainFillPath">
-          <path :d="terrainFillPath" fill="rgb(var(--totality))" fill-opacity="0.28" />
-          <path :d="terrainPath" stroke="rgb(var(--totality))" stroke-width="1" fill="none" />
+        <!-- Sun trajectory (real ephemeris) — dashed amber arc -->
+        <path
+          v-if="trajectoryPath"
+          :d="trajectoryPath"
+          fill="none"
+          stroke="#fbbf24"
+          stroke-width="1"
+          stroke-dasharray="3,2"
+          opacity="0.4"
+        />
+        <!-- Hourly markers + time labels along the trajectory -->
+        <template v-for="(m, i) in trajectoryHourMarkers" :key="`hr-${i}`">
+          <circle :cx="m.x" :cy="m.y" r="1.8" fill="#fbbf24" opacity="0.6" />
+          <text
+            v-if="m.showLabel"
+            :x="m.x"
+            :y="m.y - 5"
+            font-size="7"
+            fill="#f59e0b"
+            font-family="JetBrains Mono"
+            text-anchor="middle"
+            opacity="0.85"
+          >{{ m.label }}</text>
         </template>
 
-        <!-- Sun arc (decorative, dashed) -->
+        <!-- Terrain silhouette (real DEM) — slate fill, lighter stroke -->
         <path
-          d="M 0 88 Q 160 30 320 70"
-          stroke="rgb(var(--accent))"
+          v-if="terrainFillPath"
+          :d="terrainFillPath"
+          fill="#1a2232"
+          stroke="#334155"
           stroke-width="1"
-          stroke-dasharray="2,2"
-          fill="none"
-          opacity="0.7"
         />
 
-        <!-- Sun position dot + label -->
-        <template v-if="sunPos">
-          <circle :cx="sunPos.x" :cy="sunPos.y" r="5" fill="rgb(var(--accent))" />
+        <!-- Sun marker — halo + core, snapped to the trajectory arc -->
+        <template v-if="sunMarker">
+          <circle :cx="sunMarker.x" :cy="sunMarker.y" r="9"   fill="#f59e0b" opacity="0.18" />
+          <circle :cx="sunMarker.x" :cy="sunMarker.y" r="5.5" fill="#f59e0b" opacity="0.32" />
+          <circle :cx="sunMarker.x" :cy="sunMarker.y" r="3.5" fill="#f59e0b" />
           <text
-            :x="sunPos.x + 8"
-            :y="Math.max(10, sunPos.y - 2)"
+            :x="sunMarker.x"
+            :y="Math.max(10, sunMarker.y - 10)"
             font-size="9"
-            fill="rgb(var(--accent))"
+            font-weight="600"
+            fill="#f59e0b"
             font-family="JetBrains Mono"
-          >{{ sunPos.alt.toFixed(0) }}° SUN</text>
+            text-anchor="middle"
+          >{{ sunMarker.alt.toFixed(0) }}° SUN</text>
         </template>
 
         <!-- X-axis labels -->
@@ -197,7 +283,7 @@ const navigateUrl = computed(() =>
           :x="Math.max(8, Math.min(312, t.x))"
           y="124"
           font-size="8"
-          fill="rgb(232 229 220 / 0.42)"
+          fill="#64748b"
           font-family="JetBrains Mono"
           :text-anchor="i === 0 ? 'start' : i === xLabels.length - 1 ? 'end' : 'middle'"
         >{{ t.label }}</text>
@@ -207,7 +293,7 @@ const navigateUrl = computed(() =>
           v-if="loading"
           x="160" y="68"
           font-size="11"
-          fill="rgb(232 229 220 / 0.62)"
+          fill="#94a3b8"
           font-family="JetBrains Mono"
           text-anchor="middle"
         >Loading…</text>
@@ -249,7 +335,6 @@ const navigateUrl = computed(() =>
   margin-bottom: 10px;
   border-radius: 8px;
   overflow: hidden;
-  background: rgb(var(--surface) / 0.5);
   border: 1px solid rgb(var(--border-subtle) / 0.16);
 }
 .chart-svg {
