@@ -20,7 +20,7 @@ Domain: **eclipsechase.is** (registered, deployed on Vercel with custom domain +
 - **Purchase restoration**: Email + 6-digit OTP code via Resend
 - **Analytics**: Umami (privacy-friendly, cookie consent gated)
 - **i18n**: English (primary), Icelandic (secondary). v0 redesign keys live under the `v0.*` namespace; Icelandic falls back to English for that namespace via Nuxt i18n's lazy fallback.
-- **Design direction**: Mobile-first. Dark theme is default (astronomy convention) with a fully-implemented light "Dawn Horizon" theme switchable via `@nuxtjs/color-mode` (`ec-color-mode` localStorage key). v0 visual redesign was merged — all pages now use shared chrome (`PageShell` + `BrandBar` + `BottomNav`) instead of per-page inline `<nav>`. The legacy "Page Design Patterns" below describes the pre-v0 baseline still present in some places.
+- **Design direction**: Mobile-first. Dark theme is default (astronomy convention) with a fully-implemented light "Dawn Horizon" theme switchable via `@nuxtjs/color-mode` (`ec-color-mode` localStorage key). v0 visual redesign was merged — all gated and content pages now use shared chrome (`PageShell` + `BrandBar` + `BottomNav`) instead of per-page inline `<nav>`. The marketing landing (`/`) intentionally remains full-bleed (no PageShell) for hero/Starfield/gradient orb effects, but uses semantic tokens throughout. The "Legacy chrome" section in Page Design Patterns is kept as historical reference only — no page uses it now.
 - **Budget**: Under €5K total, mostly my own dev time (evenings/weekends)
 - **Builder**: Solo developer, I'm an IT consultant
 
@@ -486,14 +486,22 @@ provided by `useNavItems()`; icons in `app/components/icons/`.
 - `wide` (1120 px) — grid pages (spots list).
 - `full` — edge-to-edge (live map).
 
-### Legacy chrome (pre-v0, still on /pro, /index, legal pages)
+### Legacy chrome (historical reference — no longer in use)
+
+The pattern below is the pre-v0 baseline. As of `b1d667c`, no page
+uses it: /pro, /privacy, /terms, /credits all migrated to PageShell;
+/index dropped the `noise` class and switched its remaining
+`from-corona`/`text-void-border` palette refs to semantic tokens
+while staying full-bleed (no PageShell — its 92vh hero needs to flow
+edge-to-edge). Kept here so the design vocabulary is decipherable if
+you ever encounter it in old branches or seed data.
 
 ```html
 <div class="relative noise min-h-screen">
 ```
-Every legacy page uses the `noise` class for the grain texture overlay
+Legacy pages used the `noise` class for the grain texture overlay
 and `relative` positioning. Never use `bg-void` as the wrapper — the
-noise class provides the background.
+noise class provided the background.
 
 ```html
 <nav class="flex items-center justify-between px-6 sm:px-10 py-5">
