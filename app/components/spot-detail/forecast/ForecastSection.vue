@@ -22,7 +22,15 @@ interface SpotHistory {
 }
 
 defineProps<{
-  spot: { lat: number; lng: number; slug: string }
+  spot: {
+    lat: number
+    lng: number
+    slug: string
+    // Optional, only consumed by ForecastNowcast for the per-spot
+    // totality countdown. Falls back to path's earliest C2 if absent.
+    totality_start?: string | null
+    totality_duration_seconds?: number | null
+  }
   history: SpotHistory | null
 }>()
 
@@ -46,7 +54,7 @@ const { isPro } = useProStatus()
     <template v-if="isPro">
       <ForecastSubseasonal v-if="phase === 'subseasonal'" :spot="spot" />
       <ForecastExtended v-else-if="phase === 'extended'" :spot="spot" />
-      <ForecastNowcast v-else-if="phase === 'nowcast'" />
+      <ForecastNowcast v-else-if="phase === 'nowcast'" :spot="spot" />
       <!-- Reliable phase + climatology phase fall-through both render the
            live short-range forecast. The component itself swaps in a
            "this is local conditions, not the eclipse-day forecast" line

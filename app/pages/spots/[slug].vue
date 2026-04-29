@@ -184,7 +184,16 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
       </template>
 
       <template v-else-if="activeTab === 'weather'">
-        <ForecastSection :spot="{ lat: spot.lat, lng: spot.lng, slug }" :history="spotHistory" />
+        <ForecastSection
+          :spot="{
+            lat: spot.lat,
+            lng: spot.lng,
+            slug,
+            totality_start: spot.totality_start,
+            totality_duration_seconds: spot.totality_duration_seconds,
+          }"
+          :history="spotHistory"
+        />
       </template>
 
       <template v-else-if="activeTab === 'plan'">
