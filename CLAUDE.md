@@ -31,12 +31,17 @@ Domain: **eclipsechase.is** (registered, deployed on Vercel with custom domain +
 **Free tier** (public, SEO-indexed):
 - `/` — Landing page with countdown, email signup
 - `/guide` — Long-form SEO guide (Nuxt Content markdown)
-- `/spots/[slug]` — Individual viewing spot pages
+- `/spots` — Spots list (browse all, profile pills visible but selecting one prompts upgrade)
+- `/spots/[slug]` — Individual viewing spot detail (full DetailTabs: Overview / Sky / Weather / Plan)
+- `/pro`, `/pro/success` — Upgrade page + post-checkout activation
 - `/privacy`, `/terms`, `/credits` — Legal & attribution pages
 
 **Pro tier** (€9.99 one-time, behind Stripe paywall):
-- `/map` — Live weather map with cloud cover, station markers, eclipse path overlay, road conditions, cameras
-- `/recommend` — Personalized "where should I go?" recommendation engine
+- `/dashboard` — Countdown grid + "best region right now" + checklist + top-3 spots
+- `/map` — Live weather map (cloud cover, station markers, eclipse path overlay, road conditions, camera feeds, dynamic horizon check, profile-ranked spot overlay)
+- `/me` — Theme toggle, restore purchase, sign-out
+
+The 5-profile recommendation engine (Photographer / Family / Hiker / Sky Chaser / First-Timer) is no longer a standalone `/recommend` route — it's embedded in `/map` (mobile chip stack + ranked overlay) and `/spots` (selection re-orders the list). Profile pills on `/spots` are visible to free users as a teaser; selecting one triggers the upgrade prompt.
 
 **Why PWA-only (no native app)**:
 - 5-month timeline for a single-event product doesn't justify native investment
@@ -53,7 +58,7 @@ Domain: **eclipsechase.is** (registered, deployed on Vercel with custom domain +
 5. Client verifies JWT with embedded public key (no server roundtrip needed)
 6. Restore: email → 6-digit OTP via Resend → verify → fresh JWT issued
 
-**Gate implementation**: `pro-gate` middleware checks `useProStatus().isPro`. Non-Pro visitors hitting `/map` or `/recommend` are redirected to `/pro`.
+**Gate implementation**: `pro-gate` middleware checks `useProStatus().isPro`. Non-Pro visitors hitting `/dashboard`, `/map`, or `/me` are redirected to `/pro`. In dev, the gate bypasses by default; set `NUXT_PUBLIC_BYPASS_PRO_GATE=0` in `.env` to test the real gate locally.
 
 ## File Structure (Actual)
 
