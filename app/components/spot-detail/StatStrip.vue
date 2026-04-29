@@ -45,14 +45,16 @@ const verdictUpper = computed(() => props.horizonVerdict ? props.horizonVerdict.
 }
 .v-totality, .v-sun, .v-horizon {
   font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 22px;          /* equalised — the 1.4fr column already gives
+                               TOTALITY more horizontal weight; doubling
+                               that with a larger font reads chaotic. */
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   margin-top: 6px;
   letter-spacing: -0.005em;
 }
-.v-totality { font-size: 26px; color: rgb(var(--totality)); }
-.v-sun      { font-size: 22px; color: rgb(var(--ink-1)); }
-.v-horizon  { font-size: 18px; }
+.v-totality { color: rgb(var(--totality)); }
+.v-sun      { color: rgb(var(--ink-1)); }
 .v-horizon[data-verdict='clear']    { color: rgb(var(--good)); }
 .v-horizon[data-verdict='marginal'] { color: rgb(var(--warn)); }
 .v-horizon[data-verdict='risky']    { color: rgb(var(--warn)); }

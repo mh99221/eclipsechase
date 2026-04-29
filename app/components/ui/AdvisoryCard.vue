@@ -23,8 +23,11 @@ function glyph(level: 'bad' | 'warn' | 'info'): string {
 <style scoped>
 .advisory {
   display: grid;
-  grid-template-columns: 28px 1fr;
-  gap: 10px;
+  /* Icon column widened from 28→36 px so the 24 px icon (with its
+     10 px left margin) fits without overflowing into the gap. Gap
+     bumped to 14 px so the title isn't right up against the icon. */
+  grid-template-columns: 36px 1fr;
+  gap: 14px;
   align-items: flex-start;
   padding: 12px 12px 12px 0;
   background: rgb(var(--surface) / 0.04);
