@@ -175,11 +175,9 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
         </Card>
       </template>
 
-      <Card v-else-if="activeTab === 'weather'">
-        <CardTitle>{{ t('v0.spot_detail.card_cloud_cover') }}</CardTitle>
-        <CloudHistogram v-if="spotHistory?.years?.length" :years="spotHistory.years" />
-        <div v-else class="weather-missing">Historical weather data not available for this spot.</div>
-      </Card>
+      <template v-else-if="activeTab === 'weather'">
+        <ForecastSection :spot="{ lat: spot.lat, lng: spot.lng, slug }" :history="spotHistory" />
+      </template>
 
       <template v-else-if="activeTab === 'plan'">
         <AlternatesList :current="spot" :spots="allSpots" />
@@ -219,8 +217,7 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
   margin: 0;
 }
 
-.dial-missing,
-.weather-missing {
+.dial-missing {
   font-family: 'Inter Tight', system-ui, sans-serif;
   font-size: 13px;
   color: rgb(var(--ink-1) / 0.42);
