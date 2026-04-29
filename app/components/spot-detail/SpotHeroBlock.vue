@@ -22,7 +22,13 @@ defineProps<{
       <div class="spot-hero-veil" aria-hidden="true" />
     </div>
     <div class="spot-hero-meta">
-      <div class="spot-hero-kicker">{{ kicker ?? '● SPOT' }}</div>
+      <!-- Kicker row — flex container so consumers can mount trailing
+           controls (e.g. the AdvisoriesBadge) on the right via the
+           `meta-end` slot without restructuring the hero. -->
+      <div class="spot-hero-kicker-row">
+        <span class="spot-hero-kicker">{{ kicker ?? '● SPOT' }}</span>
+        <slot name="meta-end" />
+      </div>
       <h1 class="spot-hero-name">{{ name }}</h1>
       <div class="spot-hero-region">{{ region }}</div>
     </div>
@@ -68,12 +74,19 @@ defineProps<{
   background: linear-gradient(180deg, transparent 30%, rgb(var(--glass-strong) / 0.92) 100%);
 }
 .spot-hero-meta { padding: 20px 16px 8px; }
+.spot-hero-kicker-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  min-height: 20px;          /* keeps height stable when no slot content */
+}
 .spot-hero-kicker {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 10px;
   color: rgb(var(--accent));
   letter-spacing: 0.2em;
-  margin-bottom: 8px;
   text-transform: uppercase;
 }
 .spot-hero-name {

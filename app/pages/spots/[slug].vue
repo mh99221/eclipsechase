@@ -98,6 +98,12 @@ useHead({
 
 type TabKey = 'overview' | 'sky' | 'weather' | 'plan'
 const activeTab = ref<TabKey>('overview')
+
+// Advisories — collapsed by default; the badge in the hero toggles the
+// expanded list rendered by AdvisoriesBlock. Critical (bad-level)
+// entries always render inline regardless of this state.
+const advisoriesExpanded = ref(false)
+const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(warnings)
 </script>
 
 <template>
@@ -107,9 +113,19 @@ const activeTab = ref<TabKey>('overview')
       :region="regionLabel(spot.region)"
       :hero="heroPhoto"
       :kicker="t('v0.spot_detail.kicker')"
-    />
+    >
+      <template #meta-end>
+        <AdvisoriesBadge
+          v-if="advisoriesCount > 0"
+          :count="advisoriesCount"
+          :level="advisoriesTopLevel"
+          :expanded="advisoriesExpanded"
+          @toggle="advisoriesExpanded = !advisoriesExpanded"
+        />
+      </template>
+    </SpotHeroBlock>
 
-    <AdvisoriesBlock :warnings="warnings" />
+    <AdvisoriesBlock :warnings="warnings" :expanded="advisoriesExpanded" />
 
     <DetailTabs v-model="activeTab" />
 

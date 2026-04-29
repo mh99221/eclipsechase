@@ -1,78 +1,88 @@
 <script setup lang="ts">
+import { toRef } from 'vue'
 import AdvisoryCard from '~/components/ui/AdvisoryCard.vue'
-import Eyebrow from '~/components/ui/Eyebrow.vue'
-
-type Level = 'bad' | 'warn' | 'info'
-type RawWarning = string | { level?: string; title?: string; body?: string }
+import { useAdvisories, type RawAdvisory } from '~/composables/useAdvisories'
 
 const props = defineProps<{
+  warnings: RawAdvisory[]
   /**
-   * Mixed-shape input. Old rows are plain strings; rows migrated by
-   * scripts/migrations/004-advisories-shape.sql are
-   * {level, title, body} objects. Component normalises both.
+   * Driven by parent — controls whether the full expanded list shows.
+   * Critical (bad-level) entries always render inline regardless.
    */
-  warnings: RawWarning[]
+  expanded?: boolean
 }>()
 
-function isLevel(v: unknown): v is Level {
-  return v === 'bad' || v === 'warn' || v === 'info'
-}
-
-interface Advisory {
-  level: Level
-  title: string
-  body: string
-}
-
-const normalized = computed<Advisory[]>(() => {
-  const out: Advisory[] = []
-  for (const w of props.warnings ?? []) {
-    if (typeof w === 'string') {
-      // Legacy shape: render as info-level with the string as title.
-      if (w.trim()) out.push({ level: 'info', title: w, body: '' })
-      continue
-    }
-    if (w && typeof w === 'object' && typeof w.title === 'string' && w.title.trim()) {
-      out.push({
-        level: isLevel(w.level) ? w.level : 'info',
-        title: w.title,
-        body: typeof w.body === 'string' ? w.body : '',
-      })
-    }
-  }
-  return out
-})
-
-const count = computed(() => normalized.value.length)
+const { normalized, critical, count } = useAdvisories(toRef(props, 'warnings'))
 </script>
 
 <template>
   <section v-if="count > 0" class="advisories-block">
-    <Eyebrow variant="dash">ADVISORIES · {{ count }}</Eyebrow>
-    <div class="advisories-list">
-      <AdvisoryCard
-        v-for="(a, i) in normalized"
-        :key="i"
-        :level="a.level"
-        :title="a.title"
-        :body="a.body || undefined"
-      />
-    </div>
+    <!-- Critical (bad-level) — always inline so they can't be missed
+         even when the rest of the list is collapsed behind the badge. -->
+    <AdvisoryCard
+      v-for="(a, i) in critical"
+      :key="`crit-${i}`"
+      :level="a.level"
+      :title="a.title"
+      :body="a.body || undefined"
+    />
+
+    <!-- Full list — revealed when the AdvisoriesBadge is toggled in the
+         hero. Repeats the critical entries above, accepting that small
+         redundancy in exchange for "expanded view = the entire list,
+         no carve-outs to remember". -->
+    <Transition name="advisories-expand">
+      <div v-if="expanded" id="advisories-list" class="advisories-expanded">
+        <AdvisoryCard
+          v-for="(a, i) in normalized"
+          :key="`all-${i}`"
+          :level="a.level"
+          :title="a.title"
+          :body="a.body || undefined"
+        />
+      </div>
+    </Transition>
   </section>
 </template>
 
 <style scoped>
-.advisories-block { padding: 0 16px 14px; }
-.advisories-block :deep(.eyebrow) { margin: 4px 0 8px; }
-.advisories-list {
+.advisories-block {
+  padding: 0 16px 14px;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
+.advisories-expanded {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+}
 
-/* Desktop overrides — after base rules. */
+/* Animated max-height + opacity expand. The 1500px ceiling is far above
+   any realistic advisory count (typically 0–6 cards) so growth feels
+   uncapped without dynamic measurement. */
+.advisories-expand-enter-active,
+.advisories-expand-leave-active {
+  transition: max-height 0.22s ease-out, opacity 0.18s ease-out;
+}
+.advisories-expand-enter-from,
+.advisories-expand-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+.advisories-expand-enter-to,
+.advisories-expand-leave-from {
+  max-height: 1500px;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .advisories-expand-enter-active,
+  .advisories-expand-leave-active { transition: none; }
+}
+
 @media (min-width: 768px) {
-  .advisories-block { padding: 0 24px 18px; }
-  .advisories-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .advisories-block { padding: 0 24px 18px; gap: 8px; }
+  .advisories-expanded { gap: 8px; }
 }
 </style>
