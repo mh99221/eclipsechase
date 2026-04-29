@@ -44,8 +44,8 @@ const { isPro } = useProStatus()
 
     <!-- Phase-specific card, Pro-gated. -->
     <template v-if="isPro">
-      <ForecastSubseasonal v-if="phase === 'subseasonal'" />
-      <ForecastExtended v-else-if="phase === 'extended'" />
+      <ForecastSubseasonal v-if="phase === 'subseasonal'" :spot="spot" />
+      <ForecastExtended v-else-if="phase === 'extended'" :spot="spot" />
       <ForecastNowcast v-else-if="phase === 'nowcast'" />
       <!-- Reliable phase + climatology phase fall-through both render the
            live short-range forecast. The component itself swaps in a
