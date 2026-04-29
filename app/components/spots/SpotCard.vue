@@ -83,7 +83,8 @@ const heroSrcset = computed(() => {
 .spot-card-veil {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 30%, rgba(7, 10, 18, 0.92) 100%);
+  /* Photo veil — dark in both themes; sits on the photo, not page bg. */
+  background: linear-gradient(180deg, transparent 30%, rgb(var(--glass-strong) / 0.92) 100%);
 }
 .spot-card-region-badge,
 .spot-card-cloud-badge {
@@ -93,7 +94,7 @@ const heroSrcset = computed(() => {
   color: #fff;
   padding: 3px 8px;
   border-radius: 4px;
-  background: rgba(7, 10, 18, 0.65);
+  background: rgb(var(--glass-chip) / 0.65);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   letter-spacing: 0.1em;

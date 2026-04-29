@@ -57,12 +57,13 @@ const score = computed(() => {
   right: 0;
   bottom: 0;
   padding: 40px 14px 16px;
-  background: linear-gradient(180deg, rgba(7, 10, 18, 0) 0%, rgba(7, 10, 18, 0.88) 60%, rgba(7, 10, 18, 0.96) 100%);
+  /* Veil sits on the dark map; stays dark in both themes per spec §1. */
+  background: linear-gradient(180deg, rgb(var(--glass) / 0) 0%, rgb(var(--glass) / 0.88) 60%, rgb(var(--glass) / 0.96) 100%);
   pointer-events: none;
   z-index: 5;
 }
 .lb-card {
-  background: rgb(11 14 22 / 0.92);
+  background: rgb(var(--glass-strong) / 0.92);
   border: 1px solid rgb(var(--border-subtle) / 0.08);
   border-radius: 14px;
   padding: 14px;
@@ -136,7 +137,9 @@ const score = computed(() => {
   width: 100%;
   padding: 12px;
   background: rgb(var(--accent));
-  color: #0a0a0a;
+  /* Text on the burnt-amber CTA. Light theme flips this to cream so
+     the label stays readable on amber in both modes. */
+  color: rgb(var(--accent-ink));
   border: 0;
   border-radius: 8px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;

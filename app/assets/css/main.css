@@ -49,44 +49,70 @@
 
     --chart-track:    255 255 255;  /* used with /0.06 alpha     */
 
+    /* Accent ink — text/icons sitting ON `accent` fills (CTA buttons).
+       Light theme flips to cream so dark-amber stays readable. */
+    --accent-ink:     10  10  10;   /* #0a0a0a near-black        */
+
+    /* Glass scrims — used by floating panes that sit on dark imagery
+       (map overlays, photo lightboxes). Stay dark in BOTH themes since
+       the surfaces underneath them are dark photos / map tiles. */
+    --glass:          7   10  18;   /* /0.78 alpha — primary glass */
+    --glass-strong:   11  14  22;   /* /0.92 alpha — heavier glass  */
+    --glass-chip:     7   10  18;   /* /0.65 alpha — chips on photos */
+
     --selection-bg:   232 154 60;
     --selection-ink:  232 229 220;
     --body-gradient:  radial-gradient(ellipse at 50% 0%, #0a1320 0%, #070A12 70%);
   }
 
   /* ══════════════════════════════════════════════════════════
-     LIGHT theme — v0 "Dawn Horizon" (UNVERIFIED, no toggle in UI)
-     Values from eclipsechase-v0-prototype/tokens.jsx THEMES.light
+     LIGHT theme — Dawn Horizon (cream paper / navy ink / burnt amber)
+     Per CLAUDE_CODE_LIGHT_THEME_SPEC.md §2. Reasoning:
+     - cream `#F4EEDD` reads as "field notebook," harmonizes with amber
+     - deep navy ink `#11141C` keeps brand DNA from the dark theme
+     - burnt amber `#B8651A` (~5.2:1 on cream) replaces thin dark-theme amber
+     - deep moss totality `#5A5A38` doesn't melt into cream
+     - weather lights re-tuned to forest / ochre / brick (less saturated)
      ══════════════════════════════════════════════════════════ */
   html.light {
-    --bg:             240 235 220;  /* #F0EBDC parchment         */
-    --bg-elevated:    255 255 255;
-    --surface:        7   10  18;   /* used with /0.04 alpha     */
-    --surface-solid:  255 255 255;
-    --surface-raised: 247 239 220;  /* legacy compat             */
-    --border-subtle:  7   10  18;   /* used with /0.10 alpha     */
-    --border-strong:  7   10  18;   /* used with /0.20 alpha     */
+    --bg:             244 238 221;  /* #F4EEDD warm cream paper    */
+    --bg-elevated:    251 246 232;  /* #FBF6E8 nav strip — lifted  */
+    --surface:        17  20  28;   /* used with /0.04 alpha       */
+    --surface-solid:  255 255 255;  /* opaque (modals)             */
+    --surface-raised: 247 239 220;  /* legacy compat               */
+    --border-subtle:  17  20  28;   /* used with /0.10 alpha       */
+    --border-strong:  17  20  28;   /* used with /0.20 alpha       */
 
-    --ink-1:          13  16  24;   /* #0D1018                   */
-    --ink-2:          13  16  24;   /* used with /0.62 alpha     */
-    --ink-3:          13  16  24;   /* used with /0.42 alpha     */
+    --ink-1:          17  20  28;   /* #11141C deep navy ink       */
+    --ink-2:          17  20  28;   /* used with /0.62 alpha       */
+    --ink-3:          17  20  28;   /* used with /0.42 alpha       */
 
-    --accent:         184 106 28;   /* #B86A1C deeper amber      */
-    --accent-strong:  184 106 28;
-    --accent-soft:    184 106 28;   /* /0.14 alpha               */
+    --accent:         184 101 26;   /* #B8651A burnt amber         */
+    --accent-strong:  184 101 26;
+    --accent-soft:    184 101 26;   /* /0.14 alpha (accentDim)     */
 
-    --totality:       90  90  56;   /* #5A5A38 deeper olive      */
-    --cream:          138 122 69;   /* #8A7A45                   */
+    --totality:       90  90  56;   /* #5A5A38 deep moss olive     */
+    --cream:          138 115 69;   /* #8A7345 brown-cream sec.    */
 
-    --good:           79  138 90;   /* #4F8A5A                   */
-    --warn:           184 154 46;   /* #B89A2E                   */
-    --bad:            163 58  42;   /* #A33A2A                   */
+    --good:           63  122 76;   /* #3F7A4C forest green        */
+    --warn:           168 138 31;   /* #A88A1F ochre               */
+    --bad:            163 58  42;   /* #A33A2A brick red           */
 
-    --chart-track:    13  16  24;   /* /0.06 alpha               */
+    --chart-track:    17  20  28;   /* /0.06 alpha                 */
 
-    --selection-bg:   184 106 28;
-    --selection-ink:  13  16  24;
-    --body-gradient:  #F0EBDC;
+    /* Accent ink: cream on burnt-amber CTA buttons in light mode. */
+    --accent-ink:     251 246 232;  /* #FBF6E8                     */
+
+    /* Glass scrims — STAY DARK in light mode too. They sit over dark
+       photos (spot cards) and dark map tiles (map overlays), not over
+       the cream page bg. Inverting them would lose contrast on imagery. */
+    --glass:          7   10  18;   /* /0.78 alpha                 */
+    --glass-strong:   11  14  22;   /* /0.92 alpha                 */
+    --glass-chip:     7   10  18;   /* /0.65 alpha                 */
+
+    --selection-bg:   184 101 26;
+    --selection-ink:  244 238 221;
+    --body-gradient:  #F4EEDD;
   }
 
   /* Default (pre-hydration / SSR fallback) — mirrors DARK v0. @nuxtjs/color-mode
@@ -112,6 +138,10 @@
     --warn: 229 192 74;
     --bad: 216 88 72;
     --chart-track: 255 255 255;
+    --accent-ink: 10 10 10;
+    --glass: 7 10 18;
+    --glass-strong: 11 14 22;
+    --glass-chip: 7 10 18;
     --selection-bg: 232 154 60;
     --selection-ink: 232 229 220;
     --body-gradient: radial-gradient(ellipse at 50% 0%, #0a1320 0%, #070A12 70%);

@@ -66,6 +66,15 @@ export default {
         // Same value as text-ink-1 with /62 alpha — exposed under both
         // names so the v0 snippets work without renaming.
         'text-dim': 'rgba(232,229,220,0.62)',
+
+        // Light-theme additions (CLAUDE_CODE_LIGHT_THEME_SPEC.md §3):
+        // - accent-ink: text/icons sitting ON `accent` fills (CTA labels)
+        // - glass / glass-strong / glass-chip: scrims for photo/map overlays.
+        //   Stay dark in both themes since they sit over dark imagery.
+        'accent-ink':   'rgb(var(--accent-ink) / <alpha-value>)',
+        glass:          'rgb(var(--glass) / <alpha-value>)',
+        'glass-strong': 'rgb(var(--glass-strong) / <alpha-value>)',
+        'glass-chip':   'rgb(var(--glass-chip) / <alpha-value>)',
       },
       fontFamily: {
         display: ['"Inter Tight"', '-apple-system', 'system-ui', 'sans-serif'],

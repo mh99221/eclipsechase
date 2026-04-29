@@ -63,7 +63,9 @@ defineProps<{
 .spot-hero-veil {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 30%, rgba(7,10,18,0.92) 100%);
+  /* Photo veil — stays dark in both themes since it's sitting over a
+     dark hero photo, not over the page bg. Per LIGHT_THEME_SPEC §1. */
+  background: linear-gradient(180deg, transparent 30%, rgb(var(--glass-strong) / 0.92) 100%);
 }
 .spot-hero-meta { padding: 20px 16px 8px; }
 .spot-hero-kicker {
