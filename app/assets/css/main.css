@@ -3,22 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    /* Legacy named tokens — kept for anything still referencing them
-       directly. The canonical theme-aware values live in the theme blocks
-       below. */
-    --void: #050810;
-    --void-deep: #030508;
-    --void-surface: #0a1020;
-    --void-elevated: #111a2e;
-    --void-border: #1a2540;
-    --corona: #f59e0b;
-    --corona-bright: #fbbf24;
-    --corona-pale: #fef3c7;
-    --corona-dim: #b45309;
-    --ice: #7dd3fc;
-  }
-
   /* ══════════════════════════════════════════════════════════
      DARK theme — v0 (astronomy canonical, brand default)
      Values from eclipsechase-v0-prototype/tokens.jsx THEMES.dark
@@ -362,13 +346,4 @@
   }
 
   /* Horizontal rule with eclipse motif */
-  .eclipse-divider {
-    @apply relative flex items-center justify-center my-20;
-  }
-  .eclipse-divider::before,
-  .eclipse-divider::after {
-    content: '';
-    @apply flex-1 h-px;
-    background: linear-gradient(90deg, transparent, var(--void-border), transparent);
-  }
 }

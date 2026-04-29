@@ -819,7 +819,7 @@ const profileIcons: Record<ProfileId, string> = {
       </div>
       <div v-if="showCameras" class="mt-3 pt-2.5 border-t border-border-subtle/40">
         <div class="flex items-center gap-2">
-          <span class="w-4 h-4 rounded-full border-2 border-ice bg-surface-raised flex items-center justify-center shrink-0">
+          <span class="w-4 h-4 rounded-full border-2 border-[#7dd3fc] bg-surface-raised flex items-center justify-center shrink-0">
             <svg width="8" height="8" viewBox="0 0 16 16" fill="none" class="shrink-0">
               <circle cx="8" cy="8" r="5" stroke="#7dd3fc" stroke-width="1.5" fill="none" />
               <circle cx="8" cy="8" r="2" fill="#7dd3fc" />
@@ -882,7 +882,7 @@ const profileIcons: Record<ProfileId, string> = {
             :aria-label="showCameras ? t('map.cams_on') : t('map.cams_off')"
             class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded border font-mono text-[11px] tracking-wider transition-all active:scale-95"
             :class="showCameras
-              ? 'border-ice/30 bg-ice/8 text-ice'
+              ? 'border-[#7dd3fc]/30 bg-[#7dd3fc]/[0.08] text-[#7dd3fc]'
               : 'border-border-subtle/30 bg-bg/40 text-ink-3'"
             @click="showCameras = !showCameras"
           >
@@ -990,7 +990,7 @@ const profileIcons: Record<ProfileId, string> = {
                 </template>
                 <!-- Conditional: camera -->
                 <div v-if="showCameras" class="flex items-center gap-2" :class="{ 'mt-1.5 pt-1.5 border-t border-border-subtle/30': !showTraffic }">
-                  <span class="w-3.5 h-3.5 rounded-full border-2 border-ice bg-surface-raised flex items-center justify-center shrink-0">
+                  <span class="w-3.5 h-3.5 rounded-full border-2 border-[#7dd3fc] bg-surface-raised flex items-center justify-center shrink-0">
                     <svg width="7" height="7" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" stroke="#7dd3fc" stroke-width="1.5" fill="none" /><circle cx="8" cy="8" r="2" fill="#7dd3fc" /></svg>
                   </span>
                   <span class="text-[11px] font-mono text-ink-2">{{ t('map.road_camera') }}</span>

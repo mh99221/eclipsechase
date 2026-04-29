@@ -72,7 +72,6 @@ eclipse-chaser/
 │   │   ├── dashboard.vue            # v0 home redesign — countdown grid, checklist, top-3 spots
 │   │   ├── guide.vue                # Nuxt Content renderer for guide.md (v0 typography pass + TOC chips)
 │   │   ├── map.vue                  # Live weather map (Pro-gated; mobile chip stack + selected lightbox)
-│   │   ├── map-proto.vue            # Map prototype (legacy)
 │   │   ├── me.vue                   # Pro user profile / settings (theme toggle, restore, sign-out)
 │   │   ├── recommend.vue            # Spot recommendation engine (Pro-gated)
 │   │   ├── pro.vue                  # Pro upgrade page (pricing, waiver, Stripe checkout)
@@ -411,17 +410,6 @@ Each chip bundles colour + border + soft background; add the
 structural classes yourself (`font-mono text-xs tracking-wider px-2.5
 py-1.5 rounded border`).
 
-### Legacy palette (dark-only, being phased out)
-
-Still valid where we've hardcoded dark styling. Prefer the semantic
-token for new work.
-
-```
-void-*:    #050810 / deep / surface / elevated / border
-corona-*:  #f59e0b / bright / pale / dim / glow      (amber accent)
-ice-*:     #7dd3fc / dim / faint                     (sky blue)
-```
-
 ### Typography
 
 ```
@@ -579,13 +567,11 @@ Variants: `ec-banner-warn`, `ec-banner-error`, `ec-banner-info`.
 ```
 
 ### What NOT to do
-- Never hardcode `text-white` / `text-slate-*` / `bg-void` — use `text-ink-1/2/3`, `bg-surface`, etc. so light mode works
-- Never use the legacy `corona` / `void-*` tokens for *new* code — prefer `accent` / `bg` / `surface`
-- Never use `bg-void` as the page wrapper — always use `noise`
+- Never hardcode `text-white` / `text-slate-*` / specific Tailwind palette colors for theme-aware UI — use `text-ink-1/2/3`, `bg-surface`, etc. so light mode works
 - Never use monospace (IBM Plex Mono) for body text/paragraphs — only for labels, metadata, code, and data
-- Never use text-based logo ("EclipseChase.is") — always use the SVG eclipse icon + wordmark
+- Never use text-based logo ("EclipseChase.is") in chrome — always use the SVG eclipse icon + wordmark via `<BrandLogo>` (the marketing landing footer is the one exception, by design)
 - Never use `rounded-xl` or `rounded-lg` on cards — use `rounded` (exception: price cards with special emphasis)
-- Never use `pt-24` for content offset — nav is not fixed
+- Never use `pt-24` for content offset — `PageShell` already handles BrandBar clearance via its own padding calc
 
 ## External APIs Reference
 

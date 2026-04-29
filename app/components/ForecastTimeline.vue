@@ -63,7 +63,7 @@ function cloudLabel(cover: number | null): string {
         <!-- Bar -->
         <div
           class="w-full rounded-t transition-all"
-          :class="isEclipseWindow(fc.valid_time) ? 'ring-1 ring-corona/50' : ''"
+          :class="isEclipseWindow(fc.valid_time) ? 'ring-1 ring-accent/50' : ''"
           :style="{
             height: `${Math.max((fc.cloud_cover ?? 50) / 100 * 40, 4)}px`,
             backgroundColor: timelineColor(fc.cloud_cover),

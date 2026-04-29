@@ -62,7 +62,7 @@ onUnmounted(() => { document.removeEventListener('keydown', onKeydown) })
           <span class="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-3">Road camera</span>
         </div>
         <button
-          class="bg-void-surface border border-void-border rounded text-ink-3 hover:text-ink-1 transition-colors font-mono text-xs px-3.5 py-1.5 cursor-pointer"
+          class="bg-[#0a1020] border border-[#1a2540] rounded text-ink-3 hover:text-ink-1 transition-colors font-mono text-xs px-3.5 py-1.5 cursor-pointer"
           @click="close"
         >
           Close
@@ -74,11 +74,11 @@ onUnmounted(() => { document.removeEventListener('keydown', onKeydown) })
         <img
           :src="current.url"
           :alt="current.description"
-          class="max-w-[90vw] max-h-[70vh] rounded border border-void-border object-contain block"
+          class="max-w-[90vw] max-h-[70vh] rounded border border-[#1a2540] object-contain block"
         />
         <template v-if="hasMultiple">
           <button
-            class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded border border-void-border text-ice text-xl cursor-pointer"
+            class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded border border-[#1a2540] text-[#7dd3fc] text-xl cursor-pointer"
             style="background: rgba(5, 8, 16, 0.8); backdrop-filter: blur(4px);"
             aria-label="Previous image"
             @click.stop="prev"
@@ -86,7 +86,7 @@ onUnmounted(() => { document.removeEventListener('keydown', onKeydown) })
             &#8249;
           </button>
           <button
-            class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded border border-void-border text-ice text-xl cursor-pointer"
+            class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded border border-[#1a2540] text-[#7dd3fc] text-xl cursor-pointer"
             style="background: rgba(5, 8, 16, 0.8); backdrop-filter: blur(4px);"
             aria-label="Next image"
             @click.stop="next"

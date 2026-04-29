@@ -152,7 +152,7 @@ const features = computed(() => [
       <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-gradient-radial from-accent/[0.04] to-transparent blur-3xl pointer-events-none" />
       <!-- Cool sky-blue counterpoint to the warm top orb. Scoped to dark
            theme only — on cream the blue tint clashes with the warm palette. -->
-      <div class="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full dark:bg-ice/[0.02] blur-[100px] pointer-events-none" />
+      <div class="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full dark:bg-[#7dd3fc]/[0.02] blur-[100px] pointer-events-none" />
 
       <!-- Eclipse illustration -->
       <EclipseHero class="mb-5 sm:mb-7" />
@@ -228,7 +228,7 @@ const features = computed(() => [
            dark theme; light theme stays clean cream without it. The earlier
            comment about "warm peach on light" was aspirational; never wired
            up. Now scoped explicitly: invisible on light, faint on dark. -->
-      <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-0 dark:opacity-[0.03] dark:text-ice">
+      <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-0 dark:opacity-[0.03] dark:text-[#7dd3fc]">
         <svg class="w-full h-full" viewBox="0 0 1000 600" preserveAspectRatio="none">
           <path v-for="i in 12" :key="i"
             :d="`M0 ${i * 50 + 20} Q250 ${i * 50 + (i % 2 === 0 ? -30 : 40)} 500 ${i * 50 + 10} Q750 ${i * 50 + (i % 2 === 0 ? 50 : -20)} 1000 ${i * 50 + 30}`"

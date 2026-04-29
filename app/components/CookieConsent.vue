@@ -30,7 +30,7 @@ const visible = computed(() => mounted.value && !consentGiven.value)
           {{ t('cookie.essential_only') }}
         </button>
         <button
-          class="bg-accent text-void font-mono text-xs uppercase tracking-wider px-4 py-2 rounded hover:bg-accent-bright transition-colors"
+          class="bg-accent text-accent-ink font-mono text-xs uppercase tracking-wider px-4 py-2 rounded hover:bg-accent-strong transition-colors"
           @click="setConsent('all')"
         >
           {{ t('cookie.accept_all') }}
