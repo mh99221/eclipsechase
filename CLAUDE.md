@@ -19,8 +19,8 @@ Domain: **eclipsechase.is** (registered, deployed on Vercel with custom domain +
 - **Pro auth**: RS256 JWT stored in IndexedDB (no Supabase Auth — "purchase is the key")
 - **Purchase restoration**: Email + 6-digit OTP code via Resend
 - **Analytics**: Umami (privacy-friendly, cookie consent gated)
-- **i18n**: English (primary), Icelandic (secondary)
-- **Design direction**: Dark theme (astronomy convention), mobile-first
+- **i18n**: English (primary), Icelandic (secondary). v0 redesign keys live under the `v0.*` namespace; Icelandic falls back to English for that namespace via Nuxt i18n's lazy fallback.
+- **Design direction**: Mobile-first. Dark theme is default (astronomy convention) with a fully-implemented light "Dawn Horizon" theme switchable via `@nuxtjs/color-mode` (`ec-color-mode` localStorage key). v0 visual redesign was merged — all pages now use shared chrome (`PageShell` + `BrandBar` + `BottomNav`) instead of per-page inline `<nav>`. The legacy "Page Design Patterns" below describes the pre-v0 baseline still present in some places.
 - **Budget**: Under €5K total, mostly my own dev time (evenings/weekends)
 - **Builder**: Solo developer, I'm an IT consultant
 
@@ -64,26 +64,33 @@ eclipse-chaser/
 ├── app/
 │   ├── pages/
 │   │   ├── index.vue                # Landing page (hero, countdown, features, email signup)
-│   │   ├── guide.vue                # Nuxt Content renderer for guide.md
-│   │   ├── map.vue                  # Live weather map (Pro-gated)
+│   │   ├── dashboard.vue            # v0 home redesign — countdown grid, checklist, top-3 spots
+│   │   ├── guide.vue                # Nuxt Content renderer for guide.md (v0 typography pass + TOC chips)
+│   │   ├── map.vue                  # Live weather map (Pro-gated; mobile chip stack + selected lightbox)
 │   │   ├── map-proto.vue            # Map prototype (legacy)
+│   │   ├── me.vue                   # Pro user profile / settings (theme toggle, restore, sign-out)
 │   │   ├── recommend.vue            # Spot recommendation engine (Pro-gated)
 │   │   ├── pro.vue                  # Pro upgrade page (pricing, waiver, Stripe checkout)
 │   │   ├── pro/success.vue          # Post-checkout activation + token display
-│   │   ├── spots/[slug].vue         # Individual viewing spot detail pages
+│   │   ├── spots/index.vue          # Spots list (hero photos, sort/filter, region groups)
+│   │   ├── spots/[slug].vue         # Individual viewing spot detail (DetailTabs: Overview / Sky / Weather / Plan)
 │   │   ├── privacy.vue              # Privacy policy (GDPR-compliant)
 │   │   ├── terms.vue                # Terms of service
 │   │   └── credits.vue              # Photo/data attribution
 │   ├── components/
-│   │   ├── CountdownBar.vue         # Eclipse countdown widget
+│   │   ├── PageShell.vue            # v0 chrome — page wrapper (width modes: reading/wide/full, top/bottom clearance)
+│   │   ├── BrandBar.vue             # v0 chrome — top bar (60px), partial-eclipse logo + ECLIPSECHASE wordmark
+│   │   ├── BrandLogo.vue            # SVG partial-eclipse glyph (clipPath crescent)
+│   │   ├── BottomNav.vue            # v0 mobile TabBar (5 slots: Home/Spots/Map/Guide/Me; ME currently hidden)
+│   │   ├── CountdownBar.vue         # Eclipse countdown widget (legacy index.vue)
 │   │   ├── EclipseHero.vue          # SVG eclipse illustration with corona animation
-│   │   ├── EclipseMap.vue           # Mapbox GL wrapper (weather, spots, roads, cameras)
+│   │   ├── EclipseMap.vue           # Mapbox GL wrapper (weather, spots, roads, cameras, selected-pin)
 │   │   ├── EmailSignup.vue          # Landing page email form
 │   │   ├── Starfield.vue            # Animated background starfield
 │   │   ├── WeatherIcon.vue          # SVG cloud cover icons
 │   │   ├── ForecastTimeline.vue     # Hourly weather forecast chart
-│   │   ├── SpotLocationMap.vue      # Focused map for spot detail page
-│   │   ├── SpotPhotoHero.vue        # Full-width hero photo
+│   │   ├── SpotLocationMap.vue      # Focused map for spot detail page (totality path overlay)
+│   │   ├── SpotPhotoHero.vue        # Full-width hero photo (preserves intrinsic ratio on mobile)
 │   │   ├── SpotPhotoGallery.vue     # Photo grid with captions/credits
 │   │   ├── PhotoCredit.vue          # Attribution line (photographer, license)
 │   │   ├── HorizonProfile.vue       # Horizon sweep visualization (91 azimuth points)
@@ -98,6 +105,31 @@ eclipse-chaser/
 │   │   ├── CookieConsent.vue        # GDPR cookie consent banner (Umami analytics)
 │   │   ├── UserMenu.vue             # User dropdown menu
 │   │   ├── CameraLightbox.vue       # Full-screen road camera viewer (keyboard nav + carousel)
+│   │   ├── icons/                   # Nav-icon SFCs (one per BottomNav slot)
+│   │   │   └── Icon{Home,Spots,Map,Guide,Me}.vue
+│   │   ├── ui/                      # v0 shared primitives
+│   │   │   ├── Card.vue             # Surface frame (bg surface/0.04, border/0.08, radius 12, padding 14)
+│   │   │   ├── CardTitle.vue        # Mono 10px / tracking 0.14em / uppercase eyebrow
+│   │   │   ├── AdvisoryCard.vue     # Severity-tinted advisory row (level/title/body)
+│   │   │   ├── CloudBar.vue         # Inline cloud-percentage bar (status colours)
+│   │   │   ├── Eyebrow.vue          # Reusable mono eyebrow label
+│   │   │   ├── Pill.vue             # Pill chip (status/info/accent variants)
+│   │   │   ├── Stat.vue             # Big-number stat (label + value + status colour)
+│   │   │   └── StatusDot.vue        # Coloured status dot (good/marginal/bad)
+│   │   ├── spot-detail/             # /spots/[slug] section components
+│   │   │   ├── SpotHeroBlock.vue    # Hero photo + name + region kicker; meta-end slot for badge
+│   │   │   ├── DetailTabs.vue       # Overview / Sky / Weather / Plan tab strip
+│   │   │   ├── StatStrip.vue        # 3-stat strip (totality / sun alt / horizon verdict)
+│   │   │   ├── ContactList.vue      # C1 / totality start / totality end / C4 timetable
+│   │   │   ├── LogisticsRows.vue    # Parking / cell / terrain / services / hike rows
+│   │   │   ├── HorizonDial.vue      # Sun-position dial (alt + az)
+│   │   │   ├── CloudHistogram.vue   # Pre-computed historical cloud-cover bars
+│   │   │   ├── AlternatesList.vue   # Nearby alternate spots ranked by totality + cloud
+│   │   │   ├── AdvisoriesBadge.vue  # Severity-tinted pill in hero (count + chevron, aria-expanded)
+│   │   │   └── AdvisoriesBlock.vue  # Expandable advisory list (mounts only when expanded)
+│   │   ├── map/                     # /map section components
+│   │   │   ├── MapChipStack.vue     # Mobile top chip stack (profile/weather/traffic/cameras toggles)
+│   │   │   └── SelectedLightbox.vue # Mobile bottom card for selected spot (fixed, above nav)
 │   │   ├── content/GuidePathMap.vue # Eclipse path map embedded in guide.md
 │   │   └── OgImage/OgImageDefault.satori.vue  # Satori-based OG image generation
 │   ├── composables/
@@ -107,14 +139,20 @@ eclipse-chaser/
 │   │   ├── useLocation.ts           # GPS geolocation (defaults to Reykjavik)
 │   │   ├── useCountdown.ts          # Real-time countdown to eclipse
 │   │   ├── useOfflineStatus.ts      # Online/offline state + SW cache ages
-│   │   └── useAnalyticsConsent.ts   # Cookie consent state + Umami script loader
+│   │   ├── useAnalyticsConsent.ts   # Cookie consent state + Umami script loader
+│   │   ├── useAdvisories.ts         # Normalises legacy string[] + migrated {level,title,body}[] shapes; exposes count/topLevel
+│   │   ├── useNavItems.ts           # BottomNav tab list (NAV_ITEMS_HIDDEN currently masks ME)
+│   │   └── useGoBack.ts             # Back-button helper for spot detail / guide chapter pages
 │   ├── utils/
-│   │   ├── eclipse.ts               # Shared helpers (formatDuration, cloudColor, compassDirection, etc.)
+│   │   ├── eclipse.ts               # Shared helpers (formatDuration, cloudColor, compassDirection, regionLabel, parseJsonb)
 │   │   ├── mapLayers.ts             # Mapbox GL layer definitions
 │   │   ├── mapMarkers.ts            # Zoom-visibility buckets + min-zoom helpers for HTML markers
 │   │   ├── proStorage.ts            # IndexedDB token storage (save/get/remove)
 │   │   ├── solar.ts                 # Solar calculations
-│   │   └── traffic.ts               # Road-condition colours, labels, priority
+│   │   ├── theme.ts                 # Color-mode helpers (toggle, persist via ec-color-mode key)
+│   │   ├── traffic.ts               # Road-condition colours, labels, priority
+│   │   ├── v0.ts                    # v0 design utilities (cloudToStatus, etc.)
+│   │   └── weather.ts               # Cloud-cover banding helpers (good/warn/bad thresholds)
 │   ├── middleware/
 │   │   └── pro-gate.ts              # Route guard: redirect non-Pro to /pro
 │   └── types/
@@ -152,11 +190,12 @@ eclipse-chaser/
 │   ├── utils/
 │   │   ├── vedur.ts                 # vedur.is XML API (55 stations, observations, forecasts)
 │   │   ├── vegagerdin.ts            # Road conditions API (DATEX II)
-│   │   ├── horizon.ts              # Horizon computation (pre-computed grid lookup)
+│   │   ├── horizon.ts               # Horizon computation (pre-computed grid lookup)
 │   │   ├── dem.ts                   # Digital elevation model utilities
 │   │   ├── jwt.ts                   # RS256 JWT generation (cached private key)
 │   │   ├── email.ts                 # Resend email (welcome, restore code) + maskEmail/hashEmail helpers
-│   │   └── rateLimit.ts            # In-memory rate limiter (resets on deploy)
+│   │   ├── eclipseGrid.ts           # Load + nearest-point lookup for eclipse-data/grid.json (totality_start, c1, c4)
+│   │   └── rateLimit.ts             # In-memory rate limiter (resets on deploy)
 │   └── data/dem/                    # DEM binary (ÍslandsDEM v1.0, gitignored)
 ├── content/
 │   └── guide.md                     # Long-form eclipse guide (Nuxt Content)
@@ -166,14 +205,18 @@ eclipse-chaser/
 │   ├── favicon.svg                  # Eclipse icon
 │   └── eclipse-data/
 │       ├── path.geojson             # Eclipse totality path polygon
-│       ├── grid.json                # ~500 pre-computed eclipse points (135 KB)
+│       ├── grid.json                # ~500 pre-computed eclipse points incl. C1/C4 contact times
 │       ├── horizon-grid.json        # Pre-computed horizon data (6.2 MB)
+│       ├── historical-weather.json  # 10-year Aug-12 cloud-cover history per curated spot
 │       └── roads.geojson            # Icelandic road network (1 MB)
 ├── scripts/
 │   ├── schema.sql                   # Full Supabase schema (source of truth)
 │   ├── migrations/
-│   │   └── 003-pro-purchases.sql    # Migration: pro_users → pro_purchases + restore_codes
-│   ├── compute-eclipse-grid.py      # Skyfield: generate eclipse geometry
+│   │   ├── 003-pro-purchases.sql    # Migration: pro_users → pro_purchases + restore_codes
+│   │   ├── 004-advisories-shape.sql # Migrate viewing_spots.warnings: string[] → {level,title,body}[]
+│   │   └── 005-advisories-levels.sql # Seed bad/warn levels per curated spot (uses CTE + jsonb_array_elements WITH ORDINALITY)
+│   ├── compute-eclipse-grid.py      # Skyfield: generate eclipse geometry (incl. C1/C4 via bisect_contact, ~1s precision)
+│   ├── fetch-historical-weather.mjs # Pre-compute Aug-12 cloud-cover history per spot → historical-weather.json
 │   ├── generate-grid-fast.py        # Optimized grid generation
 │   ├── precompute-horizon-grid.ts   # DEM → horizon-grid.json (91-point sweep)
 │   ├── compute-horizon-checks.py    # Alternative horizon computation
@@ -260,7 +303,17 @@ CREATE TABLE eclipse_grid (
 -- Curated viewing spots with human-written descriptions
 -- Additional columns added via migrations: spot_type, difficulty, elevation_gain_m,
 -- trail_distance_km, trail_time_minutes, trailhead_lat/lng, photos (JSONB),
--- horizon_check (JSONB)
+-- horizon_check (JSONB), warnings (JSONB — see below).
+--
+-- C1 (partial begins) and C4 (partial ends) are NOT stored on viewing_spots.
+-- They're enriched at request time by server/api/spots/[slug].get.ts via
+-- nearestGridPoint() against public/eclipse-data/grid.json — the grid is the
+-- source of truth for eclipse geometry (Skyfield bisection, ~1s precision).
+--
+-- warnings is JSONB with two historical shapes: legacy string[] (raw labels)
+-- and migrated {level: 'info'|'warn'|'bad', title, body}[]. Migration 004
+-- converted shape; 005 seeded severity levels per spot. Client normalises
+-- both shapes via useAdvisories() so rollouts stay safe.
 CREATE TABLE viewing_spots (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
@@ -317,19 +370,29 @@ CREATE TABLE restore_codes (
 
 Two layers coexist in `tailwind.config.ts`, both pointing at CSS
 variables defined in `app/assets/css/main.css` (dark is default; light
-is activated via `html.light` from `@nuxtjs/color-mode`).
+"Dawn Horizon" is activated via `html.light` from `@nuxtjs/color-mode`,
+storage key `ec-color-mode`). Light theme is fully implemented per
+`CLAUDE_CODE_LIGHT_THEME_SPEC.md` — cream #F4EEDD bg, deep navy
+ink #11141C, burnt amber #B8651A accent, deep moss totality, forest /
+ochre / brick weather palette.
 
 ### Semantic tokens (preferred — theme-aware)
 
 Use these for any new code so styling follows light/dark mode
-automatically. Dark → parchment/cream swap is real.
+automatically. Dark → cream swap is real.
 
 ```
-Surfaces:  bg / surface / surface-raised / border-subtle
+Surfaces:  bg / bg-elevated / surface / surface-raised / border-subtle
 Text:      ink-1 (headlines) / ink-2 (body) / ink-3 (meta)
-Accent:    accent / accent-strong / accent-soft
-Status:    text-status-green / text-status-amber / text-status-red
+Accent:    accent / accent-strong / accent-soft / accent-ink
+Glass:     glass / glass-strong / glass-chip   (intentional dark scrims; do not invert)
+Status:    text-status-green / text-status-amber / text-status-red / good / warn / bad / totality
 ```
+
+`accent-ink` is the readable text colour on the burnt-amber CTA — flips
+to cream in light theme so labels stay legible on amber. The `glass*`
+tokens stay dark in both themes by spec — they layer over the dark
+Mapbox map style.
 
 ### Utility classes (defined in main.css)
 
@@ -357,9 +420,18 @@ ice-*:     #7dd3fc / dim / faint                     (sky blue)
 ### Typography
 
 ```
-Display: Manrope (400-800)
-Mono:    IBM Plex Mono (400-600)
+v0 redesign:
+  Display:  Inter Tight (400-700) — body / headings / stat values
+  Mono:     JetBrains Mono (400-600) — eyebrows, labels, data, CTAs
+
+Legacy (still on /pro, /privacy, /terms, /credits):
+  Display:  Manrope (400-800)
+  Mono:     IBM Plex Mono (400-600)
 ```
+
+The v0 wordmark in `BrandLogo.vue` is Inter Tight 13px / weight 600 /
+letter-spacing 2px (per the v0.jsx prototype, NOT mono — earlier spec
+drafts said JetBrains Mono but the prototype implementation wins).
 
 ### Animations
 
@@ -367,17 +439,57 @@ Mono:    IBM Plex Mono (400-600)
 corona-pulse (4s), drift-slow (60s), fade-in-up (0.8s), fade-in (1s)
 ```
 
-## Page Design Patterns (MUST FOLLOW)
+## Page Design Patterns
 
-All pages share a consistent design system. When creating or modifying pages, follow these patterns exactly:
+The v0 visual redesign was merged in PR #4. New / refactored pages
+should use the v0 chrome (`PageShell` + `BrandBar` + `BottomNav`).
+Legacy patterns below the v0 section are still in place on /pro,
+/privacy, /terms, /credits, /index — keep them consistent if you
+edit those files; otherwise prefer v0.
 
-### Page wrapper
+### v0 chrome (current — use for new work)
+
+**Page wrapper:** wrap page bodies in `<PageShell>` from
+`app/components/PageShell.vue`. Props: `screen` (analytics id),
+`width: 'reading' | 'wide' | 'full'` (caps content at 768 / 1120 / no
+limit on tablet+), `noTop` / `noBottom` to drop the BrandBar /
+BottomNav clearance for full-bleed pages.
+
+```vue
+<PageShell screen="spot-detail" width="reading">
+  <!-- page content -->
+</PageShell>
+```
+
+`PageShell` calculates top padding as
+`calc(60px + max(14px, env(safe-area-inset-top)) + 14px)` so content
+sits flush below the BrandBar without a dark gap, even on notched
+phones. Bottom padding is 90 px on mobile (clears the TabBar) and
+32 px on tablet+ where the TabBar is hidden.
+
+**Top chrome (BrandBar):** rendered in `app.vue`, fixed at top, 60 px.
+Capped at 768 px inner-row width on desktop. Renders `BrandLogo` +
+"ECLIPSECHASE" wordmark.
+
+**Bottom chrome (BottomNav):** mobile only (`md:hidden`), `position:
+fixed; inset: auto 0 0 0`. Five tabs (Home / Spots / Map / Guide / Me),
+ME currently hidden via `useNavItems().NAV_ITEMS_HIDDEN`. Items
+provided by `useNavItems()`; icons in `app/components/icons/`.
+
+**Width tokens** on tablet+:
+- `reading` (768 px) — long-scroll editorial pages (guide, spot detail, dashboard).
+- `wide` (1120 px) — grid pages (spots list).
+- `full` — edge-to-edge (live map).
+
+### Legacy chrome (pre-v0, still on /pro, /index, legal pages)
+
 ```html
 <div class="relative noise min-h-screen">
 ```
-Every page uses the `noise` class for the grain texture overlay and `relative` positioning. Never use `bg-void` as the wrapper — the noise class provides the background.
+Every legacy page uses the `noise` class for the grain texture overlay
+and `relative` positioning. Never use `bg-void` as the wrapper — the
+noise class provides the background.
 
-### Navigation
 ```html
 <nav class="flex items-center justify-between px-6 sm:px-10 py-5">
   <NuxtLink to="/" class="flex items-center gap-3 group">
@@ -390,7 +502,6 @@ Every page uses the `noise` class for the grain texture overlay and `relative` p
       ECLIPSECHASE
     </span>
   </NuxtLink>
-  <!-- Optional right-side link -->
   <NuxtLink to="/map" class="text-xs font-mono text-slate-400 hover:text-corona transition-colors tracking-wider">
     VIEW ON MAP
   </NuxtLink>
@@ -511,6 +622,10 @@ GET https://xmlweather.vedur.is/?op_w=xml&type=forec&lang=en&view=xml&ids=1;990;
 # Maximum totality duration in Iceland: ~2m15s (computed via Skyfield, 5s resolution)
 # Sun altitude at totality: ~24° (range 23.6-25.7° across path)
 # Sun azimuth at totality: ~250° WSW (Skyfield-computed; earlier refs citing 285° were incorrect)
+# C1 (partial begins) and C4 (partial ends) per grid point are computed via
+#   bisection in scripts/compute-eclipse-grid.py with ~1s precision and stored
+#   in grid.json. Loaded by server/utils/eclipseGrid.ts; spot detail API
+#   enriches each spot's response with the nearest-point c1/c4.
 # Next Iceland eclipse: 2196 (170 years away)
 ```
 
@@ -532,22 +647,37 @@ nuxt-og-image 6.0.1           # Dynamic OG images
 ## What's Built (All Working)
 
 - Landing page with countdown, email signup, feature showcase
-- Guide page (Nuxt Content markdown with embedded map component)
+- Dashboard (v0 home redesign) — countdown grid, prep checklist, top-3 spots
+- Guide page (Nuxt Content markdown with embedded map; v0 typography pass + TOC chip strip)
+- Spots list with hero photos, sort/filter, region groups (v0 redesign)
+- Spot detail page with `DetailTabs` (Overview / Sky / Weather / Plan):
+    - About card + Contact times (incl. high-precision C1/C4) + Logistics
+    - Sun-position dial + 91-point horizon profile
+    - 10-year historical cloud cover histogram (pre-computed)
+    - Nearby alternates ranked by totality + cloud + map
+    - Severity-graded advisories collapsed into a hero badge
 - Interactive map with weather stations, cloud cover, eclipse path overlay, road conditions, cameras, spot markers
+    - Mobile chip stack (profile / weather / traffic / cameras toggles)
+    - Mobile selected-spot lightbox (fixed, anchored above the TabBar)
+    - Selected pin in red, dynamic horizon-check overlay, hint dismissal on first tap
 - Recommendation engine with 5 viewer profiles (Photographer, Family, Hiker, Sky Chaser, First-Timer)
-- Viewing spot detail pages with photos, horizon visualization, eclipse stats, nearby stations
 - Horizon checking system (pre-computed grid, 91-point azimuth sweep, verdict badges)
+- High-precision C1/C4 contact times via Skyfield bisection (~1s) in `grid.json`
+- Pre-computed historical cloud cover (10 yrs of Aug-12 data per spot)
+- v0 visual redesign across all gated pages (chrome: `PageShell` + `BrandBar` + `BottomNav`)
+- Light "Dawn Horizon" theme — full implementation per `CLAUDE_CODE_LIGHT_THEME_SPEC.md`, color-mode toggle on /me
 - Pro tier with Stripe Checkout (€9.99 one-time payment)
 - JWT-based Pro auth (RS256, IndexedDB, offline-capable)
 - Purchase restoration (email → 6-digit OTP → fresh JWT)
 - Service Worker with offline support (API caching, tile caching, precaching)
-- Weather data ingestion from vedur.is (observations + forecasts)
+- Weather data ingestion from vedur.is (observations + forecasts) — driven by GitHub Actions every 15 min, Vercel Cron daily fallback
 - Road conditions + camera feeds from Vegagerðin
 - Privacy policy, terms of service, credits pages
 - Cookie consent (Umami analytics)
 - OG image generation (Satori)
 - Dynamic sitemap
-- i18n (English + Icelandic)
+- i18n (English + Icelandic; v0 keys under `v0.*` namespace, Icelandic falls back to English)
+- CI: vitest + playwright via `.github/workflows/test.yml`
 - Deployed to Vercel with custom domain + SSL
 
 ## What To Build Next
