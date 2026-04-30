@@ -113,8 +113,16 @@ const activeProfileName = computed(() => PROFILES.find(p => p.id === selectedPro
 
 // v0 mobile chrome — chip stack at top + bottom dock.
 // Seeded from ?spot= URL param so deep links open with a selection.
-const showWeatherV0 = ref(true) // visual-only toggle; cloud-cover overlay is always-on today
+// `showWeatherV0` toggles the cloud-cover weather glyphs (the per-station
+// markers that paint Iceland with sun / partly / overcast icons).
+const showWeatherV0 = ref(true)
 const selectedSlug = ref<string | null>(focusSpot)
+
+// Dock can be fully dismissed via the close button. Any subsequent map
+// interaction (spot pin, station, road, cam, or bare-map tap) brings
+// it back automatically. Starts visible so the first paint shows the
+// SELECTED card (or the "tap anywhere" empty state).
+const dockDismissed = ref(false)
 
 const selectedSpotData = computed(() => {
   if (!selectedSlug.value) return null
@@ -155,6 +163,7 @@ const dockSpot = computed(() => {
 function onSpotSelect(slug: string) {
   selectedSlug.value = slug
   dockMode.value = 'spot'
+  dockDismissed.value = false
 }
 
 function onWeatherSelect(station: any) {
@@ -168,11 +177,13 @@ function onWeatherSelect(station: any) {
     updatedMinutes: null,
   }
   dockMode.value = 'weather'
+  dockDismissed.value = false
 }
 
 function onRoadSelect(ctx: DockRoadsCtx) {
   dockRoadsCtx.value = ctx
   dockMode.value = 'roads'
+  dockDismissed.value = false
 }
 
 function onCamSelect(cam: { id: number; name: string; images: Array<{ url: string; description: string }> }) {
@@ -187,6 +198,7 @@ function onCamSelect(cam: { id: number; name: string; images: Array<{ url: strin
     idx: startIdx,
   }
   dockMode.value = 'cam'
+  dockDismissed.value = false
 }
 function onCamStep(dir: 1 | -1) {
   if (!dockCamCtx.value) return
@@ -202,14 +214,16 @@ function onHorizonOpen() {
   if (!s) return
   dockHorizonCtx.value = { lat: s.lat, lng: s.lng, spotName: s.name }
   dockMode.value = 'horizon'
+  dockDismissed.value = false
 }
 
 function onDockClose() {
-  // Returns the dock to its default SPOT card. In spot mode this is a
-  // no-op visually but still emits — the close button is rendered in
-  // every mode for affordance consistency. Also clears the bare-map
-  // crosshair if the user had one dropped from a HORIZON-mode tap.
-  dockMode.value = 'spot'
+  // Fully dismiss the dock. Any subsequent map interaction will bring
+  // it back via the onSpotSelect / onWeatherSelect / onRoadSelect /
+  // onCamSelect / handleMapClick handlers (each clears `dockDismissed`).
+  // Also clears the bare-map crosshair so a HORIZON-mode tap doesn't
+  // leave its pin behind on the map.
+  dockDismissed.value = true
   if (horizonMarker) { horizonMarker.remove(); horizonMarker = null }
 }
 
@@ -728,6 +742,7 @@ function handleMapClick(coords: { lat: number; lng: number }) {
   // is null because this is a bare-map tap, not a spot selection.
   dockHorizonCtx.value = { lat: coords.lat, lng: coords.lng, spotName: null }
   dockMode.value = 'horizon'
+  dockDismissed.value = false
 }
 
 const profileIds = PROFILES.map(p => p.id)
@@ -761,7 +776,7 @@ const profileIcons: Record<ProfileId, string> = {
     <ClientOnly>
       <EclipseMap
         ref="eclipseMapRef"
-        :stations="stations"
+        :stations="showWeatherV0 ? stations : []"
         :spots="spotsData?.spots || []"
         :ranked-spots="rankedForMap"
         :historical="historicalWeatherData?.spots || null"
@@ -803,6 +818,7 @@ const profileIcons: Record<ProfileId, string> = {
             14px (pt) + 47px (icon+gap+label+gap+dot) + max(28, safe-area) (pb)
             + 8px gap = 69 + max(28px, safe-area). -->
     <div
+      v-if="!dockDismissed"
       class="md:hidden fixed left-0 right-0 z-20 pointer-events-none"
       style="bottom: calc(69px + max(28px, env(safe-area-inset-bottom)));"
     >
