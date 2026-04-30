@@ -17,14 +17,6 @@ const updatedLabel = computed(() => {
   if (m < 1) return 'Now'
   return `${m} min`
 })
-
-const blurb = computed(() => {
-  const c = props.ctx.cloud
-  if (c == null) return 'Awaiting recent observation from this station.'
-  if (c < 30) return 'Clear sky window expected through C2.'
-  if (c < 60) return 'Broken cloud — track high-pressure pockets nearby.'
-  return 'High overcast risk — review Plan B alternates.'
-})
 </script>
 
 <template>
@@ -38,18 +30,9 @@ const blurb = computed(() => {
       <DockStat label="Visibility" :value="visLabel" />
       <DockStat label="Updated" :value="updatedLabel" tone="dim" mono />
     </div>
-
-    <p class="blurb">Live · {{ blurb }}</p>
   </div>
 </template>
 
 <style scoped>
 /* `.title` and `.strip` come from MapDock's shared style. */
-.blurb {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 12px;
-  line-height: 1.45;
-  color: rgb(var(--ink-1) / 0.62);
-  margin: 0;
-}
 </style>
