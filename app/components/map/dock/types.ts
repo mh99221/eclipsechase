@@ -34,6 +34,10 @@ export interface DockRoadsCtx {
   label: string
   /** Sub-label — road name, hazard description, etc. */
   detail: string
+  /** ISO8601 timestamp of the latest condition reading from vegagerdin
+   *  for this road/hazard. Null when the click target had no fresh
+   *  reading (e.g. unknown segments). */
+  updatedAt: string | null
 }
 
 /** Re-exported so dock-mode consumers don't need a second import. */

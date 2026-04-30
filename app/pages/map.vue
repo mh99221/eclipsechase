@@ -301,7 +301,7 @@ const legendItems = [
 ]
 
 // Traffic / road conditions layer
-interface TrafficCondition { lat: number; lng: number; condition: string; roadName?: string; description: string }
+interface TrafficCondition { lat: number; lng: number; condition: string; roadName?: string; description: string; updatedAt?: string }
 
 const showTraffic = ref(false)
 
@@ -365,6 +365,7 @@ function buildTrafficMarker(c: TrafficCondition, map: mapboxgl.Map): mapboxgl.Ma
       cond: normaliseCond(c.condition),
       label: getTrafficLabel(c.condition),
       detail: c.roadName ? `${c.roadName} · ${c.description}` : c.description,
+      updatedAt: c.updatedAt ?? null,
     })
   })
   return marker
@@ -382,13 +383,14 @@ let enrichedRoadsCache: any = null
 function buildEnrichedRoads(): any {
   if (!trafficRoadsCache || !trafficSegmentsCache?.segments?.length) return null
 
-  // Build a lookup: normalized road name → worst condition
-  const conditionLookup = new Map<string, string>()
+  // Build a lookup: normalized road name → { worst condition, updatedAt }.
+  // Worst condition wins on collisions; we keep its timestamp alongside.
+  const segLookup = new Map<string, { condition: string; updatedAt: string | null }>()
   for (const seg of trafficSegmentsCache.segments) {
     const key = normalizeRoadName(seg.sectionName || seg.roadName)
-    const existing = conditionLookup.get(key)
-    if (!existing || conditionPriority(seg.condition) > conditionPriority(existing)) {
-      conditionLookup.set(key, seg.condition)
+    const existing = segLookup.get(key)
+    if (!existing || conditionPriority(seg.condition) > conditionPriority(existing.condition)) {
+      segLookup.set(key, { condition: seg.condition, updatedAt: seg.updatedAt ?? null })
     }
   }
 
@@ -398,18 +400,20 @@ function buildEnrichedRoads(): any {
     const normRef = f.properties.roadRef ? normalizeRoadName(f.properties.roadRef) : ''
 
     let matched = 'unknown'
-    for (const [segKey, condition] of conditionLookup) {
+    let matchedUpdated: string | null = null
+    for (const [segKey, info] of segLookup) {
       if ((normName && (segKey.includes(normName) || normName.includes(segKey))) ||
           (normRef && segKey.includes(normRef))) {
-        if (conditionPriority(condition) > conditionPriority(matched)) {
-          matched = condition
+        if (conditionPriority(info.condition) > conditionPriority(matched)) {
+          matched = info.condition
+          matchedUpdated = info.updatedAt
         }
       }
     }
 
     return {
       ...f,
-      properties: { ...f.properties, condition: matched },
+      properties: { ...f.properties, condition: matched, updated_at: matchedUpdated },
     }
   })
 
@@ -473,6 +477,7 @@ function addRoadPolylines(map: any) {
         cond: normaliseCond(condition),
         label: getTrafficLabel(condition),
         detail: refLabel,
+        updatedAt: f.properties.updated_at ?? null,
       })
       return
     }
