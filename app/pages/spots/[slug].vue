@@ -140,7 +140,6 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
     <div class="spot-body">
       <StatStrip
         :totality-seconds="spot.totality_duration_seconds"
-        :sun-altitude="spot.sun_altitude"
         :cloud-pct="spotHistory?.avg_cloud_cover ?? null"
       />
 

@@ -6,7 +6,6 @@ import { cloudToStatus } from '~/utils/v0'
 
 const props = defineProps<{
   totalitySeconds: number
-  sunAltitude: number | null
   /** 10-year Aug 12 historical mean cloud cover (0–100), or null if no data. */
   cloudPct: number | null
 }>()
@@ -22,10 +21,6 @@ const cloudLabel = computed(() => props.cloudPct == null ? '—' : `${Math.round
       <div class="v-totality">{{ formatDuration(totalitySeconds) }}</div>
     </Card>
     <Card>
-      <div class="lbl">{{ $t('v0.spot_detail.stat_sun_alt') }}</div>
-      <div class="v-sun">{{ sunAltitude != null ? `${sunAltitude.toFixed(1)}°` : '—' }}</div>
-    </Card>
-    <Card>
       <div class="lbl">10-yr Aug 12</div>
       <div class="v-cloud">
         <WeatherIcon :cloud-cover="cloudPct" :size="22" />
@@ -38,7 +33,7 @@ const cloudLabel = computed(() => props.cloudPct == null ? '—' : `${Math.round
 <style scoped>
 .stat-strip {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 6px;
   margin-bottom: 12px;
 }
@@ -49,7 +44,7 @@ const cloudLabel = computed(() => props.cloudPct == null ? '—' : `${Math.round
   color: rgb(var(--ink-1) / 0.42);
   text-transform: uppercase;
 }
-.v-totality, .v-sun, .v-cloud {
+.v-totality, .v-cloud {
   font-family: 'Inter Tight', system-ui, sans-serif;
   font-size: 22px;
   font-weight: 700;
@@ -58,7 +53,6 @@ const cloudLabel = computed(() => props.cloudPct == null ? '—' : `${Math.round
   letter-spacing: -0.005em;
 }
 .v-totality { color: rgb(var(--totality)); }
-.v-sun      { color: rgb(var(--ink-1)); }
 .v-cloud {
   display: flex;
   align-items: center;
