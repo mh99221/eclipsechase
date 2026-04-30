@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import StatusDot from '~/components/ui/StatusDot.vue'
-import CloudBar from '~/components/ui/CloudBar.vue'
 import { cloudToStatus } from '~/utils/v0'
 import { formatDuration, regionLabel } from '~/utils/eclipse'
 
@@ -15,7 +13,7 @@ const props = defineProps<{
 }>()
 
 const status = computed(() => cloudToStatus(props.cloud))
-const cloudPct = computed(() => props.cloud ?? 0)
+const cloudLabel = computed(() => props.cloud == null ? '— cloud' : `${props.cloud}% cloud`)
 const heroSrc = computed(() => props.heroFilename ? `/images/spots/${props.heroFilename}` : null)
 const heroSrcset = computed(() => {
   if (!props.heroFilename) return undefined
@@ -25,7 +23,7 @@ const heroSrcset = computed(() => {
 </script>
 
 <template>
-  <NuxtLink :to="`/spots/${slug}`" class="spot-card" :aria-label="`${name} — ${formatDuration(durationSeconds)} totality`">
+  <NuxtLink :to="`/spots/${slug}`" class="spot-card" :aria-label="`${name} — ${formatDuration(durationSeconds)} totality, ${cloudLabel}`">
     <img
       v-if="heroSrc"
       :src="heroSrc"
@@ -41,17 +39,12 @@ const heroSrcset = computed(() => {
     <div class="spot-card-veil" aria-hidden="true" />
 
     <div class="spot-card-region-badge">{{ regionLabel(region).toUpperCase() }}</div>
-    <div class="spot-card-cloud-badge">
-      <StatusDot :status="status" :size="7" />
-      <span v-if="cloud != null">{{ cloud }}% cloud</span>
-      <span v-else>— cloud</span>
-    </div>
 
     <div class="spot-card-bottom">
       <div class="spot-card-name">{{ name }}</div>
       <div class="spot-card-bottom-row">
         <div class="spot-card-dur">{{ formatDuration(durationSeconds) }}</div>
-        <div class="spot-card-bar"><CloudBar :cloud="cloudPct" :segments="12" /></div>
+        <div class="spot-card-cloud" :data-status="status">{{ cloudLabel }}</div>
       </div>
     </div>
   </NuxtLink>
@@ -86,10 +79,10 @@ const heroSrcset = computed(() => {
   /* Photo veil — dark in both themes; sits on the photo, not page bg. */
   background: linear-gradient(180deg, transparent 30%, rgb(var(--glass-strong) / 0.92) 100%);
 }
-.spot-card-region-badge,
-.spot-card-cloud-badge {
+.spot-card-region-badge {
   position: absolute;
   top: 12px;
+  left: 14px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   color: #fff;
   padding: 3px 8px;
@@ -98,18 +91,8 @@ const heroSrcset = computed(() => {
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   letter-spacing: 0.1em;
-  z-index: 1;
-}
-.spot-card-region-badge {
-  left: 14px;
   font-size: 9.5px;
-}
-.spot-card-cloud-badge {
-  right: 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10px;
+  z-index: 1;
 }
 .spot-card-bottom {
   position: absolute;
@@ -129,6 +112,7 @@ const heroSrcset = computed(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 14px;
 }
 .spot-card-dur {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
@@ -138,8 +122,15 @@ const heroSrcset = computed(() => {
   font-weight: 600;
   white-space: nowrap;
 }
-.spot-card-bar {
-  flex: 1;
-  margin-left: 14px;
+.spot-card-cloud {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-align: right;
 }
+.spot-card-cloud[data-status='good'] { color: rgb(var(--good)); }
+.spot-card-cloud[data-status='marginal'] { color: rgb(var(--warn)); }
+.spot-card-cloud[data-status='bad'] { color: rgb(var(--bad)); }
 </style>
