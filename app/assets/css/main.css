@@ -37,12 +37,21 @@
        Light theme flips to cream so dark-amber stays readable. */
     --accent-ink:     10  10  10;   /* #0a0a0a near-black        */
 
-    /* Glass scrims — used by floating panes that sit on dark imagery
-       (map overlays, photo lightboxes). Stay dark in BOTH themes since
-       the surfaces underneath them are dark photos / map tiles. */
+    /* Glass scrims — used by floating panes that sit on dark photo
+       imagery (spot card hero, spot detail hero). Stay dark in BOTH
+       themes since the photos underneath them are dark in both modes. */
     --glass:          7   10  18;   /* /0.78 alpha — primary glass */
     --glass-strong:   11  14  22;   /* /0.92 alpha — heavier glass  */
     --glass-chip:     7   10  18;   /* /0.65 alpha — chips on photos */
+
+    /* Map-overlay panes — same role as glass but theme-aware, since the
+       map style swaps to light tiles in light mode (EclipseMap.vue line
+       477). Used by MapDock, SelectedLightbox, MapChipStack pills,
+       and the map markers' inner fill. */
+    --map-pane:        7   10  18;   /* /0.78–0.96 alpha — gradient veil */
+    --map-pane-strong: 11  14  22;   /* /0.92 alpha — card/dock surface */
+    --map-pane-chip:   7   10  18;   /* /0.7 alpha  — pill/chip surface */
+    --map-marker-bg:   5   8   16;   /* solid #050810 — marker inner */
 
     --selection-bg:   232 154 60;
     --selection-ink:  232 229 220;
@@ -88,11 +97,19 @@
     --accent-ink:     251 246 232;  /* #FBF6E8                     */
 
     /* Glass scrims — STAY DARK in light mode too. They sit over dark
-       photos (spot cards) and dark map tiles (map overlays), not over
-       the cream page bg. Inverting them would lose contrast on imagery. */
+       photos (spot cards, spot detail hero), not over the cream bg.
+       Inverting them would lose contrast on those photos. */
     --glass:          7   10  18;   /* /0.78 alpha                 */
     --glass-strong:   11  14  22;   /* /0.92 alpha                 */
     --glass-chip:     7   10  18;   /* /0.65 alpha                 */
+
+    /* Map-overlay panes — INVERT to cream in light mode so the dock,
+       selected-spot lightbox, and chip stack read as warm paper over
+       the light Mapbox tiles instead of dropping a dark hole on cream. */
+    --map-pane:        244 238 221; /* #F4EEDD cream — gradient veil  */
+    --map-pane-strong: 251 246 232; /* #FBF6E8 lifted — card surface  */
+    --map-pane-chip:   251 246 232; /* #FBF6E8 lifted — pill surface  */
+    --map-marker-bg:   244 238 221; /* solid cream — marker inner     */
 
     --selection-bg:   184 101 26;
     --selection-ink:  244 238 221;
@@ -126,6 +143,10 @@
     --glass: 7 10 18;
     --glass-strong: 11 14 22;
     --glass-chip: 7 10 18;
+    --map-pane: 7 10 18;
+    --map-pane-strong: 11 14 22;
+    --map-pane-chip: 7 10 18;
+    --map-marker-bg: 5 8 16;
     --selection-bg: 232 154 60;
     --selection-ink: 232 229 220;
     --body-gradient: radial-gradient(ellipse at 50% 0%, #0a1320 0%, #070A12 70%);

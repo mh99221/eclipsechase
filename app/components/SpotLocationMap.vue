@@ -105,30 +105,34 @@ function queryAndAddPOIs() {
     const el = document.createElement('div')
     el.className = 'poi-marker'
     el.title = name || cat.label
+    // Marker border uses theme-aware --map-marker-bg so it doesn't
+     // disappear into the cream tiles in light mode.
     el.style.cssText = `
       width: 24px; height: 24px; border-radius: 50%;
       background: ${cat.color}; color: #fff;
       display: flex; align-items: center; justify-content: center;
       font-size: 11px; font-weight: 700; line-height: 1;
-      border: 2px solid #050810;
+      border: 2px solid rgb(var(--map-marker-bg));
       box-shadow: 0 1px 4px rgba(0,0,0,0.5);
       cursor: pointer; z-index: 5;
       font-family: system-ui, sans-serif;
     `
     el.textContent = cat.icon
 
+    const ink = `rgb(var(--ink-1))`
+    const inkDim = `rgb(var(--ink-1) / 0.62)`
     const popup = new mapboxgl.Popup({
       offset: 14,
       closeButton: false,
       maxWidth: '200px',
       className: 'eclipse-popup',
     }).setHTML(`
-      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: ${ink}; padding: 4px;">
         <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
           <span style="width: 16px; height: 16px; border-radius: 50%; background: ${cat.color}; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #fff; flex-shrink: 0;">${cat.icon}</span>
           <span style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 13px;">${name || cat.label}</span>
         </div>
-        <p style="color: #94a3b8; margin: 0; font-size: 11px;">${cat.label}</p>
+        <p style="color: ${inkDim}; margin: 0; font-size: 11px;">${cat.label}</p>
       </div>
     `)
 

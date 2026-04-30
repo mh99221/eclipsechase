@@ -138,9 +138,9 @@ const emit = defineEmits<{
   right: 0;
   bottom: 0;
   padding: 40px 14px 16px;
-  /* Bottom-anchored gradient fades the map below the dock. Stays dark in
-     both themes — the dock layers over the dark Mapbox style by design. */
-  background: linear-gradient(180deg, rgb(var(--glass) / 0) 0%, rgb(var(--glass) / 0.88) 60%, rgb(var(--glass) / 0.96) 100%);
+  /* Bottom-anchored gradient fades the map below the dock. Theme-aware
+     via `--map-pane` — dark over the dark map style, cream over light. */
+  background: linear-gradient(180deg, rgb(var(--map-pane) / 0) 0%, rgb(var(--map-pane) / 0.88) 60%, rgb(var(--map-pane) / 0.96) 100%);
   pointer-events: none;
   z-index: 5;
 }
@@ -148,7 +148,7 @@ const emit = defineEmits<{
   /* `relative` is the anchor for the absolute-positioned DockCloseButton
      which sits 10px from the top-right of the card. */
   position: relative;
-  background: rgb(var(--glass-strong) / 0.92);
+  background: rgb(var(--map-pane-strong) / 0.92);
   border: 1px solid rgb(var(--border-subtle) / 0.08);
   border-radius: 14px;
   backdrop-filter: blur(12px);

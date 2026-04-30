@@ -14,6 +14,9 @@ const safeIdx = computed(() => {
   return i < 0 ? i + t : i
 })
 const current = computed(() => props.ctx.images[safeIdx.value] ?? null)
+// Subtitle reflects the angle currently shown — falls back to the
+// camera's primary `dir` blurb when the carousel has no image.
+const subtitle = computed(() => current.value?.description || props.ctx.dir || '')
 </script>
 
 <template>
@@ -21,7 +24,7 @@ const current = computed(() => props.ctx.images[safeIdx.value] ?? null)
     <DockHeader eyebrow="Live cam" dot-var="good" />
 
     <div class="title title--with-sub">{{ ctx.name }}</div>
-    <div class="dir" v-if="ctx.dir">{{ ctx.dir }}</div>
+    <div class="dir" v-if="subtitle">{{ subtitle }}</div>
 
     <div class="frame">
       <img
@@ -33,10 +36,6 @@ const current = computed(() => props.ctx.images[safeIdx.value] ?? null)
         loading="lazy"
       >
       <div v-else class="frame-empty">No image available</div>
-      <div class="hud-top">
-        <span>{{ ctx.name }}</span>
-        <span v-if="current?.description" class="hud-desc">{{ current.description }}</span>
-      </div>
     </div>
 
     <div class="ctrls">
@@ -98,48 +97,31 @@ const current = computed(() => props.ctx.images[safeIdx.value] ?? null)
   justify-content: center;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 11px;
-  color: rgb(255 255 255 / 0.7);
-}
-.hud-top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  padding: 4px 8px;
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  background: rgb(0 0 0 / 0.55);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  color: #fff;
-  text-transform: uppercase;
-}
-.hud-desc {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 60%;
+  /* `--ink-1` is the inverse-of-surface ink (cream over the dark cam
+     gradient, navy in light theme) — readable on either backdrop. */
+  color: rgb(var(--ink-1) / 0.7);
 }
 .ctrls {
   display: flex;
   align-items: center;
   gap: 8px;
 }
+/* Carousel arrows match the dock's ghost-button style: transparent fill
+   + subtle border, hover lifts to a faint ink-1 tint. Same visual family
+   as `.btn-ghost` in MapDock so the dock feels uniform. */
 .step {
   width: 36px;
   height: 36px;
   border-radius: 8px;
   border: 1px solid rgb(var(--border-subtle) / 0.16);
-  background: rgb(var(--surface) / 0.5);
+  background: transparent;
   color: rgb(var(--ink-1));
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 16px;
   cursor: pointer;
   transition: background 0.15s;
 }
-.step:hover:not(:disabled) { background: rgb(var(--border-subtle) / 0.3); }
+.step:hover:not(:disabled) { background: rgb(var(--ink-1) / 0.06); }
 .step:disabled { opacity: 0.4; cursor: default; }
 .dots {
   flex: 1;

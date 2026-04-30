@@ -35,7 +35,9 @@ defineProps<{
 .pill[data-size='md'] { padding: 6px 12px; font-size: 11px; letter-spacing: 0.045em; }
 
 .pill[data-surface='glass'] {
-  background: rgb(7 10 18 / 0.7);
+  /* Theme-aware via `--map-pane-chip` — dark scrim over the dark map
+     style, cream pane over the light style. Dark in dark, cream in light. */
+  background: rgb(var(--map-pane-chip) / 0.7);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
@@ -45,7 +47,7 @@ defineProps<{
   border-color: rgb(var(--accent));
 }
 .pill[data-surface='glass'][data-active='true'] {
-  background: rgb(232 154 60 / 0.18);
+  background: rgb(var(--accent) / 0.18);
 }
 
 .pill:focus-visible {

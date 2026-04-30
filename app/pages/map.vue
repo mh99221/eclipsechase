@@ -326,7 +326,7 @@ function buildTrafficMarker(c: TrafficCondition, map: mapboxgl.Map): mapboxgl.Ma
   el.setAttribute('aria-label', `${c.roadName || 'Road'}: ${c.description}`)
   el.style.cssText = `
     width: 18px; height: 18px; border-radius: 50%;
-    background: #050810; border: 2px solid ${color};
+    background: rgb(var(--map-marker-bg)); border: 2px solid ${color};
     box-shadow: 0 0 8px ${color}40;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
   `
@@ -627,7 +627,7 @@ function buildCameraMarker(cam: CameraData, map: mapboxgl.Map): mapboxgl.Marker 
   el.setAttribute('aria-label', `${cam.name} road camera`)
   el.style.cssText = `
     width: 20px; height: 20px; border-radius: 50%;
-    background: #050810; border: 2px solid #7dd3fc;
+    background: rgb(var(--map-marker-bg)); border: 2px solid #7dd3fc;
     box-shadow: 0 0 8px rgba(125, 211, 252, 0.25);
     cursor: pointer; display: flex; align-items: center; justify-content: center;
   `

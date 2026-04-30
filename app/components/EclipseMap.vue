@@ -124,13 +124,17 @@ type Station = StationData
 
 function stationPopupHtml(station: Station): string {
   const color = cloudColor(station.cloud_cover)
+  // Use semantic token vars inline so the popup body follows light/dark
+  // mode (popup container background already swaps via .eclipse-popup).
+  const ink = `rgb(var(--ink-1))`
+  const inkDim = `rgb(var(--ink-1) / 0.62)`
   return `
-    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: ${ink}; padding: 4px;">
       <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 6px;">${station.name}</h3>
       <dl style="margin: 0; display: flex; flex-direction: column; gap: 2px;">
-        ${station.cloud_cover != null ? `<div><dt style="display:inline;color:#94a3b8;">Cloud cover:</dt> <dd style="display:inline;color:${color};margin:0;">${station.cloud_cover}%</dd></div>` : ''}
-        ${station.temp != null ? `<div><dt style="display:inline;color:#94a3b8;">Temp:</dt> <dd style="display:inline;margin:0;">${station.temp}°C</dd></div>` : ''}
-        ${station.wind_speed != null ? `<div><dt style="display:inline;color:#94a3b8;">Wind:</dt> <dd style="display:inline;margin:0;">${station.wind_speed} m/s ${station.wind_dir || ''}</dd></div>` : ''}
+        ${station.cloud_cover != null ? `<div><dt style="display:inline;color:${inkDim};">Cloud cover:</dt> <dd style="display:inline;color:${color};margin:0;">${station.cloud_cover}%</dd></div>` : ''}
+        ${station.temp != null ? `<div><dt style="display:inline;color:${inkDim};">Temp:</dt> <dd style="display:inline;margin:0;">${station.temp}°C</dd></div>` : ''}
+        ${station.wind_speed != null ? `<div><dt style="display:inline;color:${inkDim};">Wind:</dt> <dd style="display:inline;margin:0;">${station.wind_speed} m/s ${station.wind_dir || ''}</dd></div>` : ''}
       </dl>
     </div>
   `

@@ -28,17 +28,19 @@ defineEmits<{ close: [] }>()
   width: 28px;
   height: 28px;
   border-radius: 9999px;
-  background: rgb(255 255 255 / 0.04);
-  border: 1px solid rgb(255 255 255 / 0.08);
-  /* `--ink-1` is the ink token; the 0.62 alpha matches the rest of the
-     dock's "dim" text (eyebrow meta, stat labels). */
+  /* `--ink-1` is the inverse-of-surface token (cream on dark dock,
+     navy on cream dock), so a low-alpha tint of it reads as a faint
+     nudge against the surface in both themes. */
+  background: rgb(var(--ink-1) / 0.04);
+  border: 1px solid rgb(var(--ink-1) / 0.08);
+  /* The 0.62 alpha matches the rest of the dock's "dim" text. */
   color: rgb(var(--ink-1) / 0.62);
   cursor: pointer;
   transition: background-color 120ms linear, color 120ms linear, border-color 120ms linear;
 }
 .dock-close:hover {
-  background: rgb(255 255 255 / 0.08);
-  border-color: rgb(255 255 255 / 0.16);
+  background: rgb(var(--ink-1) / 0.08);
+  border-color: rgb(var(--ink-1) / 0.16);
   color: rgb(var(--ink-1));
 }
 .dock-close:focus-visible {

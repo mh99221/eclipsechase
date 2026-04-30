@@ -57,13 +57,14 @@ const score = computed(() => {
   right: 0;
   bottom: 0;
   padding: 40px 14px 16px;
-  /* Veil sits on the dark map; stays dark in both themes per spec §1. */
-  background: linear-gradient(180deg, rgb(var(--glass) / 0) 0%, rgb(var(--glass) / 0.88) 60%, rgb(var(--glass) / 0.96) 100%);
+  /* Theme-aware via `--map-pane` — dark over the dark map style,
+     cream over the light map style (EclipseMap.vue line 477). */
+  background: linear-gradient(180deg, rgb(var(--map-pane) / 0) 0%, rgb(var(--map-pane) / 0.88) 60%, rgb(var(--map-pane) / 0.96) 100%);
   pointer-events: none;
   z-index: 5;
 }
 .lb-card {
-  background: rgb(var(--glass-strong) / 0.92);
+  background: rgb(var(--map-pane-strong) / 0.92);
   border: 1px solid rgb(var(--border-subtle) / 0.08);
   border-radius: 14px;
   padding: 14px;
