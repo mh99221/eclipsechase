@@ -10,7 +10,6 @@ const props = defineProps<{ ctx: DockWeatherCtx }>()
 const status = computed(() => cloudToStatus(props.ctx.cloud))
 
 const cloudLabel = computed(() => props.ctx.cloud == null ? '—' : `${props.ctx.cloud}%`)
-const visLabel = computed(() => props.ctx.visibilityKm == null ? '—' : `${props.ctx.visibilityKm} km`)
 const updatedLabel = computed(() => {
   const m = props.ctx.updatedMinutes
   if (m == null) return '—'
@@ -25,14 +24,17 @@ const updatedLabel = computed(() => {
 
     <div class="title">{{ ctx.name }}</div>
 
-    <div class="strip">
+    <div class="strip strip--two">
       <DockStat label="Cloud" :value="cloudLabel" :tone="status" />
-      <DockStat label="Visibility" :value="visLabel" />
       <DockStat label="Updated" :value="updatedLabel" tone="dim" mono />
     </div>
   </div>
 </template>
 
 <style scoped>
-/* `.title` and `.strip` come from MapDock's shared style. */
+/* `.title` and base `.strip` (3-col) come from MapDock's shared style;
+   WEATHER only has 2 stats, so override the column count locally.
+   The doubled-class selector beats the shared `.dock-card .strip`
+   (same specificity) regardless of stylesheet order. */
+.strip.strip--two { grid-template-columns: 1fr 1fr; }
 </style>

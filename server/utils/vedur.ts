@@ -97,6 +97,11 @@ export function forecastsToRows(forecasts: VedurForecast[]) {
 
 export async function fetchObservations(stationIds: string[] = STATION_IDS): Promise<VedurObservation[]> {
   const ids = stationIds.join(';')
+  // Params: F=wind speed, D=wind dir, T=temp, R=precip. Cloud cover and
+  // visibility (N, V) come back empty for our 55 automatic stations —
+  // those fields are only populated by manned synoptic stations, none
+  // of which are on the eclipse path. Cloud comes from the forecast
+  // endpoint instead; visibility we don't surface.
   const url = `${VEDUR_BASE}/?op_w=xml&type=obs&lang=en&view=xml&ids=${ids}&params=F;D;T;R`
 
   const xml = await fetchWithTimeout(url, 'vedur.is observations request failed')

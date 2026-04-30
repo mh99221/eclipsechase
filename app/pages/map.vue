@@ -39,7 +39,15 @@ useHead({
 // and cloud-cover overlays populate reactively as each response lands.
 const { data: stationsData } = useFetch('/api/weather/stations', { lazy: true, server: false })
 const { data: spotsData, error: spotsError } = useFetch('/api/spots', { lazy: true, server: false })
-const { data: cloudData, refresh: refreshCloud } = useFetch('/api/weather/cloud-cover', { lazy: true, server: false })
+const { data: cloudData, refresh: refreshCloud } = useFetch<{
+  cloud_cover: Array<{
+    station_id: string
+    cloud_cover: number | null
+    observed_at: string | null
+  }>
+  stale: boolean
+  fetched_at: string | null
+}>('/api/weather/cloud-cover', { lazy: true, server: false })
 const { data: historicalWeatherData } = useFetch<{ spots: Record<string, { clear_years: number; total_years: number; avg_cloud_cover: number | null }> }>(
   '/eclipse-data/historical-weather.json',
   { lazy: true, server: false, key: 'historical-weather' },
@@ -48,24 +56,33 @@ const { data: historicalWeatherData } = useFetch<{ spots: Record<string, { clear
 const showSpotError = ref(false)
 watch(spotsError, (err) => { if (err) showSpotError.value = true })
 
-// Merge station metadata with cloud cover
+// Merge station metadata with cloud cover (forecast — vedur doesn't
+// observe cloud for our automatic stations) and the latest observation
+// timestamp (real per-station, used by the WEATHER dock for "Updated").
 const stations = computed(() => {
   const stationList = stationsData.value?.stations || []
   const cloudCover = cloudData.value?.cloud_cover || []
 
-  const coverByStation = new Map<string, number | null>()
+  const byStation = new Map<string, { cloud_cover: number | null; observed_at: string | null }>()
   for (const cc of cloudCover) {
-    coverByStation.set(cc.station_id, cc.cloud_cover)
+    byStation.set(cc.station_id, {
+      cloud_cover: cc.cloud_cover,
+      observed_at: cc.observed_at,
+    })
   }
 
-  return stationList.map((s: any) => ({
-    station_id: s.id,
-    name: s.name,
-    lat: s.lat,
-    lng: s.lng,
-    region: s.region,
-    cloud_cover: coverByStation.get(s.id) ?? null,
-  }))
+  return stationList.map((s: any) => {
+    const merged = byStation.get(s.id)
+    return {
+      station_id: s.id,
+      name: s.name,
+      lat: s.lat,
+      lng: s.lng,
+      region: s.region,
+      cloud_cover: merged?.cloud_cover ?? null,
+      observed_at: merged?.observed_at ?? null,
+    }
+  })
 })
 
 // Auto-refresh cloud cover every 15 minutes
@@ -167,14 +184,18 @@ function onSpotSelect(slug: string) {
 }
 
 function onWeatherSelect(station: any) {
-  // Mirror existing legend: cloud_cover may be null when no observation
-  // is available for this station. Visibility is on the API but rarely
-  // reported; we surface it when present, otherwise null.
+  // cloud_cover comes from the nearest forecast slot; observed_at is the
+  // station's most recent live observation (temp/wind), used to compute
+  // "Updated N min ago". Either can be null.
+  let updatedMinutes: number | null = null
+  if (station.observed_at) {
+    const ageMs = Date.now() - new Date(station.observed_at).getTime()
+    if (ageMs >= 0) updatedMinutes = Math.round(ageMs / 60000)
+  }
   dockWeatherCtx.value = {
     name: station.name,
     cloud: station.cloud_cover ?? null,
-    visibilityKm: station.visibility ?? null,
-    updatedMinutes: null,
+    updatedMinutes,
   }
   dockMode.value = 'weather'
   dockDismissed.value = false

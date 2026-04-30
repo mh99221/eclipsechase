@@ -22,8 +22,6 @@ export interface DockWeatherCtx {
   cloud: number | null
   /** Most-recent observation age in minutes (for "UPDATED N MIN"). */
   updatedMinutes: number | null
-  /** Visibility in km, if the station reports it. */
-  visibilityKm: number | null
 }
 
 import type { TrafficCondition } from '~/utils/traffic'

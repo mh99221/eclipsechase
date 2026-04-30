@@ -16,6 +16,9 @@ const props = defineProps<{
     temp?: number | null
     wind_speed?: number | null
     wind_dir?: string | null
+    /** ISO8601 timestamp of this station's latest observation, used by
+     *  the WEATHER dock for "Updated N min ago". Null when no obs yet. */
+    observed_at?: string | null
   }>
   spots?: Array<{
     id: string
