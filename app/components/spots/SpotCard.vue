@@ -43,8 +43,14 @@ const heroSrcset = computed(() => {
     <div class="spot-card-bottom">
       <div class="spot-card-name">{{ name }}</div>
       <div class="spot-card-bottom-row">
-        <div class="spot-card-dur">{{ formatDuration(durationSeconds) }}</div>
-        <div class="spot-card-cloud" :data-status="status">{{ cloudLabel }}</div>
+        <div class="spot-card-stat">
+          <div class="spot-card-stat-l">Totality</div>
+          <div class="spot-card-dur">{{ formatDuration(durationSeconds) }}</div>
+        </div>
+        <div class="spot-card-stat spot-card-stat--right">
+          <div class="spot-card-stat-l">10-yr Aug 12</div>
+          <div class="spot-card-cloud" :data-status="status">{{ cloudLabel }}</div>
+        </div>
       </div>
     </div>
   </NuxtLink>
@@ -110,9 +116,21 @@ const heroSrcset = computed(() => {
 }
 .spot-card-bottom-row {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 14px;
+}
+.spot-card-stat { min-width: 0; }
+.spot-card-stat--right { text-align: right; }
+.spot-card-stat-l {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: rgb(255 255 255 / 0.55);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  white-space: nowrap;
 }
 .spot-card-dur {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
@@ -128,7 +146,6 @@ const heroSrcset = computed(() => {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-  text-align: right;
 }
 .spot-card-cloud[data-status='good'] { color: rgb(var(--good)); }
 .spot-card-cloud[data-status='marginal'] { color: rgb(var(--warn)); }
