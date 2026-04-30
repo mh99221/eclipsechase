@@ -815,7 +815,7 @@ const profileIcons: Record<ProfileId, string> = {
       <!-- Desktop top-right controls: layer toggles + Profile selector.
            Hidden on mobile (the bottom sheet provides the same controls). -->
       <div class="relative flex items-center justify-end gap-2 px-4 sm:px-6 py-3">
-        <div class="pointer-events-auto hidden sm:flex items-center gap-2">
+        <div class="pointer-events-auto hidden md:flex items-center gap-2">
           <button
             :aria-pressed="showCameras"
             :aria-label="showCameras ? t('map.cams_on') : t('map.cams_off')"
@@ -839,7 +839,7 @@ const profileIcons: Record<ProfileId, string> = {
             {{ showTraffic ? t('map.roads_on') : t('map.roads_off') }}
           </button>
         </div>
-        <div class="pointer-events-auto hidden sm:block" @click.stop>
+        <div class="pointer-events-auto hidden md:block" @click.stop>
           <button
             class="text-xs font-mono tracking-wider px-2.5 py-1.5 rounded transition-all border"
             :class="activeProfileName
@@ -887,7 +887,7 @@ const profileIcons: Record<ProfileId, string> = {
     </div>
 
     <!-- ═══ Desktop: legend (hidden on mobile) ═══ -->
-    <div class="hidden sm:block absolute bottom-[84px] left-6 z-10 bg-surface-raised/90 backdrop-blur-sm border border-border-subtle/50 rounded px-4 py-3 max-h-[calc(100dvh-220px)] overflow-y-auto text-xs">
+    <div class="hidden md:block absolute bottom-[84px] left-6 z-10 bg-surface-raised/90 backdrop-blur-sm border border-border-subtle/50 rounded px-4 py-3 max-h-[calc(100dvh-220px)] overflow-y-auto text-xs">
       <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-2.5">{{ t('map.cloud_cover') }}</p>
       <div class="flex flex-col gap-1.5">
         <div v-for="item in legendItems" :key="item.label" class="flex items-center gap-2">
@@ -1130,7 +1130,7 @@ const profileIcons: Record<ProfileId, string> = {
     </div>
 
     <!-- Offline download manager (desktop) -->
-    <div class="absolute top-32 left-4 sm:left-6 z-10 w-64 hidden sm:block">
+    <div class="absolute top-32 left-6 z-10 w-64 hidden md:block">
       <OfflineManager :map="eclipseMapRef?.map" @downloading="tileDownloading = $event" ref="offlineManagerDesktop" />
     </div>
 
@@ -1166,7 +1166,7 @@ const profileIcons: Record<ProfileId, string> = {
     <Transition name="fade">
       <div
         v-if="dockMode === 'horizon' && dockHorizonCtx"
-        class="hidden sm:block absolute z-20 sm:bottom-[80px] sm:right-6 sm:w-[640px] sm:max-w-[calc(100vw-3rem)]"
+        class="hidden md:block absolute z-20 md:bottom-[80px] md:right-6 md:w-[640px] md:max-w-[calc(100vw-3rem)]"
       >
         <DynamicHorizonCheck
           :key="`${dockHorizonCtx.lat},${dockHorizonCtx.lng}`"
