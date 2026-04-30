@@ -1,20 +1,27 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import DockHeader from './DockHeader.vue'
-import DockStat from './DockStat.vue'
 import { cloudToStatus } from '~/utils/v0'
 import type { DockWeatherCtx } from './types'
 
 const props = defineProps<{ ctx: DockWeatherCtx }>()
 
 const status = computed(() => cloudToStatus(props.ctx.cloud))
+const tone = computed<'good' | 'warn' | 'bad' | 'ink'>(() =>
+  props.ctx.cloud == null ? 'ink' : status.value,
+)
 
-const cloudLabel = computed(() => props.ctx.cloud == null ? '—' : `${props.ctx.cloud}%`)
+const title = computed(() =>
+  props.ctx.cloud == null ? 'No reading' : `${props.ctx.cloud}% cloud`,
+)
+
 const updatedLabel = computed(() => {
   const m = props.ctx.updatedMinutes
-  if (m == null) return '—'
-  if (m < 1) return 'Now'
-  return `${m} min`
+  if (m == null) return null
+  if (m < 1) return 'Updated just now'
+  if (m < 60) return `Updated ${m} min ago`
+  const hr = Math.round(m / 60)
+  return `Updated ${hr} h ago`
 })
 </script>
 
@@ -22,19 +29,25 @@ const updatedLabel = computed(() => {
   <div>
     <DockHeader eyebrow="Weather" :dot-var="status" />
 
-    <div class="title">{{ ctx.name }}</div>
-
-    <div class="strip strip--two">
-      <DockStat label="Cloud" :value="cloudLabel" :tone="status" />
-      <DockStat label="Updated" :value="updatedLabel" tone="dim" mono />
-    </div>
+    <div class="title title--with-sub" :data-tone="tone">{{ title }}</div>
+    <div class="detail">{{ ctx.name }}</div>
+    <div v-if="updatedLabel" class="updated">{{ updatedLabel }}</div>
   </div>
 </template>
 
 <style scoped>
-/* `.title` and base `.strip` (3-col) come from MapDock's shared style;
-   WEATHER only has 2 stats, so override the column count locally.
-   The doubled-class selector beats the shared `.dock-card .strip`
-   (same specificity) regardless of stylesheet order. */
-.strip.strip--two { grid-template-columns: 1fr 1fr; }
+/* `.title` comes from MapDock's shared style. */
+.detail {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13px;
+  color: rgb(var(--ink-1) / 0.62);
+  margin-bottom: 4px;
+}
+.updated {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-1) / 0.42);
+}
 </style>
