@@ -141,7 +141,7 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
       <StatStrip
         :totality-seconds="spot.totality_duration_seconds"
         :sun-altitude="spot.sun_altitude"
-        :horizon-verdict="horizonCheck?.verdict ?? null"
+        :cloud-pct="spotHistory?.avg_cloud_cover ?? null"
       />
 
       <template v-if="activeTab === 'overview'">

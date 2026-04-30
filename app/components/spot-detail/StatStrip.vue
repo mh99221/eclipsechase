@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import Card from '~/components/ui/Card.vue'
+import WeatherIcon from '~/components/WeatherIcon.vue'
 import { formatDuration } from '~/utils/eclipse'
-import type { HorizonVerdict } from '~/types/horizon'
+import { cloudToStatus } from '~/utils/v0'
 
 const props = defineProps<{
   totalitySeconds: number
   sunAltitude: number | null
-  horizonVerdict: HorizonVerdict | null
+  /** 10-year Aug 12 historical mean cloud cover (0–100), or null if no data. */
+  cloudPct: number | null
 }>()
 
-const verdictUpper = computed(() => props.horizonVerdict ? props.horizonVerdict.toUpperCase() : '—')
+const cloudStatus = computed(() => cloudToStatus(props.cloudPct))
+const cloudLabel = computed(() => props.cloudPct == null ? '—' : `${Math.round(props.cloudPct)}%`)
 </script>
 
 <template>
@@ -23,8 +26,11 @@ const verdictUpper = computed(() => props.horizonVerdict ? props.horizonVerdict.
       <div class="v-sun">{{ sunAltitude != null ? `${sunAltitude.toFixed(1)}°` : '—' }}</div>
     </Card>
     <Card>
-      <div class="lbl">{{ $t('v0.spot_detail.stat_horizon') }}</div>
-      <div class="v-horizon" :data-verdict="horizonVerdict ?? 'unknown'">{{ verdictUpper }}</div>
+      <div class="lbl">10-yr Aug 12</div>
+      <div class="v-cloud">
+        <WeatherIcon :cloud-cover="cloudPct" :size="22" />
+        <span :data-status="cloudStatus">{{ cloudLabel }}</span>
+      </div>
     </Card>
   </div>
 </template>
@@ -43,11 +49,9 @@ const verdictUpper = computed(() => props.horizonVerdict ? props.horizonVerdict.
   color: rgb(var(--ink-1) / 0.42);
   text-transform: uppercase;
 }
-.v-totality, .v-sun, .v-horizon {
+.v-totality, .v-sun, .v-cloud {
   font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 22px;          /* equalised — the 1.4fr column already gives
-                               TOTALITY more horizontal weight; doubling
-                               that with a larger font reads chaotic. */
+  font-size: 22px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   margin-top: 6px;
@@ -55,9 +59,15 @@ const verdictUpper = computed(() => props.horizonVerdict ? props.horizonVerdict.
 }
 .v-totality { color: rgb(var(--totality)); }
 .v-sun      { color: rgb(var(--ink-1)); }
-.v-horizon[data-verdict='clear']    { color: rgb(var(--good)); }
-.v-horizon[data-verdict='marginal'] { color: rgb(var(--warn)); }
-.v-horizon[data-verdict='risky']    { color: rgb(var(--warn)); }
-.v-horizon[data-verdict='blocked']  { color: rgb(var(--bad)); }
-.v-horizon[data-verdict='unknown']  { color: rgb(var(--ink-1) / 0.42); }
+.v-cloud {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  /* the icon owns its own colour; the percentage flips between
+     good / warn / bad based on the same band as the spots list */
+  color: rgb(var(--ink-1));
+}
+.v-cloud span[data-status='good'] { color: rgb(var(--good)); }
+.v-cloud span[data-status='marginal'] { color: rgb(var(--warn)); }
+.v-cloud span[data-status='bad'] { color: rgb(var(--bad)); }
 </style>
