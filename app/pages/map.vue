@@ -204,6 +204,15 @@ function onHorizonOpen() {
   dockMode.value = 'horizon'
 }
 
+function onDockClose() {
+  // Returns the dock to its default SPOT card. In spot mode this is a
+  // no-op visually but still emits — the close button is rendered in
+  // every mode for affordance consistency. Also clears the bare-map
+  // crosshair if the user had one dropped from a HORIZON-mode tap.
+  dockMode.value = 'spot'
+  if (horizonMarker) { horizonMarker.remove(); horizonMarker = null }
+}
+
 function onOpenFieldCard() {
   const s = dockSpot.value
   if (!s) return
@@ -807,6 +816,7 @@ const profileIcons: Record<ProfileId, string> = {
         @horizon-open="onHorizonOpen"
         @open-field-card="onOpenFieldCard"
         @cam-step="onCamStep"
+        @close="onDockClose"
       />
     </div>
 

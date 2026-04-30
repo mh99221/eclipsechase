@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DockCloseButton from './DockCloseButton.vue'
 import DockSpot from './DockSpot.vue'
 import DockWeather from './DockWeather.vue'
 import DockRoads from './DockRoads.vue'
@@ -26,12 +27,16 @@ const emit = defineEmits<{
   'horizon-open':    []
   'open-field-card': []
   'cam-step':        [dir: 1 | -1]
+  /** Close button — parent dismisses whatever mode is active and
+   *  returns to the default SPOT card. No-op visually in spot mode. */
+  'close':           []
 }>()
 </script>
 
 <template>
   <div class="dock-veil">
     <div class="dock-card" role="region" aria-label="Map dock">
+      <DockCloseButton @close="emit('close')" />
       <div class="dock-inner">
         <DockSpot
           v-if="mode === 'spot' && spot"
@@ -140,6 +145,9 @@ const emit = defineEmits<{
   z-index: 5;
 }
 .dock-card {
+  /* `relative` is the anchor for the absolute-positioned DockCloseButton
+     which sits 10px from the top-right of the card. */
+  position: relative;
   background: rgb(var(--glass-strong) / 0.92);
   border: 1px solid rgb(var(--border-subtle) / 0.08);
   border-radius: 14px;
