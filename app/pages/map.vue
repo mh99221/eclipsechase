@@ -334,9 +334,11 @@ function buildTrafficMarker(c: TrafficCondition, map: mapboxgl.Map): mapboxgl.Ma
 
   // Mobile drives the dock instead of opening a popup. Listener is bound
   // once at marker creation; the condition snapshot is captured here
-  // since hazard data is static across renders.
+  // since hazard data is static across renders. stopPropagation defends
+  // against the click also reaching Mapbox's bare-map handler.
   if (!isMobile.value) marker.setPopup(popup)
-  el.addEventListener('click', () => {
+  el.addEventListener('click', (e) => {
+    e.stopPropagation()
     if (!isMobile.value) return
     onRoadSelect({
       cond: normaliseCond(c.condition),
@@ -624,8 +626,11 @@ function buildCameraMarker(cam: CameraData, map: mapboxgl.Map): mapboxgl.Marker 
     .addTo(map)
 
   // Mobile drives the dock CAM mode; desktop keeps the existing popup.
+  // stopPropagation defends against the click also reaching Mapbox's
+  // bare-map handler.
   if (!isMobile.value) marker.setPopup(popup)
-  el.addEventListener('click', () => {
+  el.addEventListener('click', (e) => {
+    e.stopPropagation()
     if (!isMobile.value) return
     onCamSelect(cam)
   })

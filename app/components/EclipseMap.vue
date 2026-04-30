@@ -178,8 +178,12 @@ function updateMarkers() {
       // Always emit the click so the parent can drive the dock,
       // regardless of popup state. Listener bound once at marker
       // creation; the station_id is stable since it keys the cache.
+      // stopPropagation defends against the click also reaching the
+      // map's bare-map handler — without it, an upstream race could
+      // overwrite the dock mode the parent just set.
       const stationId = station.station_id
-      el.addEventListener('click', () => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation()
         const current = stationMarkers.get(stationId)
         if (current) emit('weatherSelect', current.station)
       })
@@ -399,7 +403,9 @@ function updateSpotMarkers() {
       // Drive the v0 selected-lightbox on parent pages — fires regardless
       // of popup state. Listener bound once at marker creation; the slug
       // is stable since it keys the marker cache.
-      el.addEventListener('click', () => emit('spotSelect', spot.slug))
+      // stopPropagation: same defence as station markers — prevents
+      // Mapbox's bare-map click from racing with this emit.
+      el.addEventListener('click', (e) => { e.stopPropagation(); emit('spotSelect', spot.slug) })
       cached = { marker, el, popup, minZoom }
       spotMarkers.set(spot.slug, cached)
     } else {
@@ -510,9 +516,13 @@ onMounted(() => {
     const openPopups = document.querySelectorAll('.mapboxgl-popup')
     if (openPopups.length > 0) return
 
-    // Check if click target is a marker element
+    // Check if click target is a marker element. The named classes are
+    // the ones we set ourselves; `.mapboxgl-marker` is Mapbox's auto-
+    // applied class — we include it as a catch-all so any HTML marker
+    // click (including ones we forgot to tag) is treated as a marker
+    // click and never falls through to the bare-map handler.
     const target = e.originalEvent.target as HTMLElement
-    if (target.closest('.station-marker, .spot-marker, .traffic-marker, .camera-marker')) return
+    if (target.closest('.station-marker, .spot-marker, .traffic-marker, .camera-marker, .mapboxgl-marker')) return
 
     emit('mapClick', { lat: e.lngLat.lat, lng: e.lngLat.lng })
   })
