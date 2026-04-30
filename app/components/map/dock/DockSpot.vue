@@ -46,17 +46,17 @@ const scoreLabel = computed(() => score.value == null ? '—' : String(score.val
 .actions { display: flex; gap: 8px; }
 .btn-cta {
   flex: 1;
-  padding: 12px;
+  padding: 14px;
   border: 0;
   background: rgb(var(--accent));
   color: rgb(var(--accent-ink));
   border-radius: 8px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.14em;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 48px;
   text-transform: uppercase;
   transition: background 0.15s;
 }

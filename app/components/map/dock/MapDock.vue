@@ -106,12 +106,12 @@ const emit = defineEmits<{
   margin-bottom: 12px;
 }
 .dock-card .btn-ghost {
-  padding: 10px 12px;
+  padding: 12px 14px;
   border: 1px solid rgb(var(--border-subtle) / 0.16);
   background: transparent;
   border-radius: 8px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.12em;
   color: rgb(var(--ink-1));
@@ -124,7 +124,7 @@ const emit = defineEmits<{
 .dock-card .btn-ghost:hover { background: rgb(var(--surface) / 0.5); }
 .dock-card .btn-ghost--disabled { opacity: 0.4; pointer-events: none; }
 /* SPOT mode pairs a fixed-width HORIZON button with a flex-1 CTA. */
-.dock-card .btn-ghost--cta-pair { padding: 12px 14px; flex: none; }
+.dock-card .btn-ghost--cta-pair { padding: 14px 16px; flex: none; }
 /* ROADS uses one full-width button. */
 .dock-card .btn-ghost--full { width: 100%; }
 /* HORIZON has a 2-button row that splits available width 50/50. */
