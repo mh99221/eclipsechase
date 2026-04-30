@@ -27,7 +27,7 @@ const styling = computed<RoadStyling>(() => STYLING_BY_COND[props.ctx.cond] ?? S
 
 <template>
   <div>
-    <DockHeader eyebrow="Roads" :dot-var="styling.dot" meta="Live" />
+    <DockHeader eyebrow="Roads" :dot-var="styling.dot" />
 
     <div class="title title--with-sub" :data-tone="styling.tone">{{ ctx.label }}</div>
     <div class="detail">{{ ctx.detail }}</div>

@@ -190,7 +190,7 @@ const gradientId = `dock-horizon-sky-${uid}`
 
 <template>
   <div>
-    <DockHeader eyebrow="Horizon view" :dot-var="verdictTone" :meta="props.ctx.spotName ? 'Spot' : 'Tap'" />
+    <DockHeader eyebrow="Horizon view" :dot-var="verdictTone" />
 
     <div class="title title--small" :data-tone="verdictTone">{{ titleText }}</div>
     <div v-if="subtitleText" class="subtitle">{{ subtitleText }}</div>

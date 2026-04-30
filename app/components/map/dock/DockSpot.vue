@@ -24,11 +24,7 @@ const scoreLabel = computed(() => score.value == null ? '—' : String(score.val
 
 <template>
   <div>
-    <DockHeader
-      eyebrow="Selected"
-      :dot-var="status"
-      :meta="`${totalityLabel} totality`"
-    />
+    <DockHeader eyebrow="Selected" :dot-var="status" />
 
     <div class="title">{{ spot.name }}</div>
 

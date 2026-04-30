@@ -14,12 +14,11 @@ const safeIdx = computed(() => {
   return i < 0 ? i + t : i
 })
 const current = computed(() => props.ctx.images[safeIdx.value] ?? null)
-const counter = computed(() => total.value === 0 ? '' : `${safeIdx.value + 1} / ${total.value}`)
 </script>
 
 <template>
   <div>
-    <DockHeader eyebrow="Live cam" dot-var="good" :meta="counter" />
+    <DockHeader eyebrow="Live cam" dot-var="good" />
 
     <div class="title title--with-sub">{{ ctx.name }}</div>
     <div class="dir" v-if="ctx.dir">{{ ctx.dir }}</div>

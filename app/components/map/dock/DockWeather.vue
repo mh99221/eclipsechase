@@ -9,14 +9,6 @@ const props = defineProps<{ ctx: DockWeatherCtx }>()
 
 const status = computed(() => cloudToStatus(props.ctx.cloud))
 
-const glyphLabel = computed(() => {
-  const c = props.ctx.cloud
-  if (c == null) return 'No data'
-  if (c < 30) return 'Clear'
-  if (c < 60) return 'Partial'
-  return 'Overcast'
-})
-
 const cloudLabel = computed(() => props.ctx.cloud == null ? '—' : `${props.ctx.cloud}%`)
 const visLabel = computed(() => props.ctx.visibilityKm == null ? '—' : `${props.ctx.visibilityKm} km`)
 const updatedLabel = computed(() => {
@@ -37,7 +29,7 @@ const blurb = computed(() => {
 
 <template>
   <div>
-    <DockHeader eyebrow="Weather" :dot-var="status" :meta="glyphLabel" />
+    <DockHeader eyebrow="Weather" :dot-var="status" />
 
     <div class="title">{{ ctx.name }}</div>
 

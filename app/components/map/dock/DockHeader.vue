@@ -24,10 +24,6 @@ defineProps<{
   justify-content: space-between;
   margin-bottom: 8px;
   gap: 8px;
-  /* Clear the 28px DockCloseButton in the top-right (10px inset from
-     card edge + 28px wide = 38px reserved; .dock-inner already pads
-     14px, so we add another 24px here so meta text never collides). */
-  padding-right: 24px;
 }
 .hd-eyebrow {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
