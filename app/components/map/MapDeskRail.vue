@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import MapChipStack from './MapChipStack.vue'
 import MapDock from './dock/MapDock.vue'
 import type {
   DockMode,
@@ -11,12 +10,6 @@ import type {
 } from './dock/types'
 
 defineProps<{
-  // Layer-toggle chip state (overlay row only — profile selector is
-  // mounted separately in the page top-right).
-  showWeather: boolean
-  showTraffic: boolean
-  showCameras: boolean
-  // Dock state
   mode: DockMode
   spot: DockSpotData | null
   weatherCtx: DockWeatherCtx | null
@@ -26,11 +19,6 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  // Chip
-  'update:showWeather':     [boolean]
-  'update:showTraffic':     [boolean]
-  'update:showCameras':     [boolean]
-  // Dock
   'horizon-open':    []
   'open-field-card': []
   'cam-step':        [dir: 1 | -1]
@@ -40,20 +28,6 @@ const emit = defineEmits<{
 
 <template>
   <aside class="desk-rail" aria-label="Map controls">
-    <div class="rail-section">
-      <MapChipStack
-        variant="rail"
-        rows="overlays"
-        :selected-profile="null"
-        :show-weather="showWeather"
-        :show-traffic="showTraffic"
-        :show-cameras="showCameras"
-        @update:show-weather="emit('update:showWeather', $event)"
-        @update:show-traffic="emit('update:showTraffic', $event)"
-        @update:show-cameras="emit('update:showCameras', $event)"
-      />
-    </div>
-    <div class="rail-divider" />
     <div class="rail-dock">
       <MapDock
         variant="rail"
@@ -102,31 +76,16 @@ const emit = defineEmits<{
     scrollbar-width: thin;
   }
 }
-.rail-section {
-  padding: 14px 12px 10px;
-}
-/* Neutralise the mobile chip-stack's absolute positioning when used
-   inside the rail. We can't rely on the chip-stack's own variant
-   styles in dev because Vite occasionally serves stale scoped CSS
-   when HMR is broken; the deep override is robust. */
-.rail-section :deep(.chip-stack) {
-  position: static !important;
-  top: auto !important;
-  left: auto !important;
-  right: auto !important;
-}
-.rail-section :deep(.chip-stack .row) {
-  flex-wrap: wrap;
-  overflow-x: visible;
-}
-.rail-divider {
-  height: 1px;
-  background: rgb(var(--border-subtle) / 0.16);
-  margin: 0 12px;
-}
 .rail-dock {
   flex: 1;
   min-height: 0;
+}
+@media (min-width: 768px) {
+  /* Clear the absolutely-positioned status pill that floats over the
+     rail's top-left corner (status-stack at top:74, ~28 px tall + gap). */
+  .rail-dock {
+    padding-top: 50px;
+  }
 }
 
 @media (max-width: 900px) {

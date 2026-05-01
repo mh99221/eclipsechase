@@ -116,9 +116,11 @@ const emit = defineEmits<{
     /* 60 (fixed BrandBar height) + 14 (gap) — clears the top nav. */
     top: 74px;
     right: 14px;
-    flex-direction: row;
+    align-items: flex-end;
     pointer-events: none;
   }
+  /* Default flex-direction: column (from base rule) stacks profiles row
+     above the overlays row. Each `.row` stays internally horizontal. */
   .chip-stack[data-variant='topright'] .row {
     flex-wrap: nowrap;
     pointer-events: auto;

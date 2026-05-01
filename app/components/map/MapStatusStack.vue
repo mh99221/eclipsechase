@@ -58,15 +58,16 @@ const weatherLabel = computed(() => {
 @media (min-width: 768px) {
   .status-stack {
     position: absolute;
-    /* 74 (chip-stack top, clears 60 px BrandBar) + ~28 (sm pill height)
-       + 8 (gap) = 110; round to 112. */
-    top: 112px;
-    right: 14px;
+    /* Top-left corner of the map area (mirrors the topright chip stack).
+       Sits above the rail (z-index 11 vs rail's 10) so the pill floats
+       over the rail's top-left without being clipped. */
+    top: 74px;
+    left: 14px;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-start;
     gap: 6px;
-    z-index: 10;
+    z-index: 11;
   }
 }
 .pill {

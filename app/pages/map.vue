@@ -878,35 +878,32 @@ const profileIcons: Record<ProfileId, string> = {
       </div>
     </div>
 
-    <!-- ═══ Desktop left rail (overlay chips + dock) — component owns its own md+ visibility ═══ -->
+    <!-- ═══ Desktop left rail (dock only) — component owns its own md+ visibility ═══ -->
     <MapDeskRail
-      :show-weather="showWeatherV0"
-      :show-traffic="showTraffic"
-      :show-cameras="showCameras"
       :mode="dockMode"
       :spot="dockSpot"
       :weather-ctx="dockWeatherCtx"
       :roads-ctx="dockRoadsCtx"
       :cam-ctx="dockCamCtx"
       :horizon-ctx="dockHorizonCtx"
-      @update:show-weather="showWeatherV0 = $event"
-      @update:show-traffic="showTraffic = $event"
-      @update:show-cameras="showCameras = $event"
       @horizon-open="onHorizonOpen"
       @open-field-card="onOpenFieldCard"
       @cam-step="onCamStep"
       @close="onDockClose"
     />
 
-    <!-- ═══ Desktop top-right: profile selector (single horizontal row) ═══ -->
+    <!-- ═══ Desktop top-right: profile selector + layer toggles, stacked ═══ -->
     <MapChipStack
       variant="topright"
-      rows="profiles"
+      rows="all"
       :selected-profile="selectedProfile"
       :show-weather="showWeatherV0"
       :show-traffic="showTraffic"
       :show-cameras="showCameras"
       @update:selected-profile="selectedProfile = $event; if (selectedProfile) requestGps()"
+      @update:show-weather="showWeatherV0 = $event"
+      @update:show-traffic="showTraffic = $event"
+      @update:show-cameras="showCameras = $event"
     />
 
     <!-- ═══ Desktop top-right status stack — weather freshness only ═══ -->
