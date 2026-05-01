@@ -2,6 +2,8 @@
 import Pill from '~/components/ui/Pill.vue'
 import { PROFILES, type ProfileId } from '~/composables/useRecommendation'
 
+const { t } = useI18n()
+
 withDefaults(defineProps<{
   selectedProfile: ProfileId | null
   showWeather: boolean
@@ -29,6 +31,7 @@ const emit = defineEmits<{
 <template>
   <div class="chip-stack" :data-variant="variant" aria-label="Map filters">
     <div v-if="rows !== 'overlays'" class="row">
+      <span class="row-label">{{ t('map.viewer_profile') }}:</span>
       <Pill
         :active="selectedProfile === null"
         size="sm"
@@ -45,6 +48,7 @@ const emit = defineEmits<{
       >{{ p.name.toUpperCase() }}</Pill>
     </div>
     <div v-if="rows !== 'profiles'" class="row">
+      <span class="row-label">{{ t('map.filters') }}:</span>
       <Pill
         :active="showWeather"
         size="sm"
@@ -93,6 +97,29 @@ const emit = defineEmits<{
   gap: 6px;
   pointer-events: auto;
 }
+.row-label {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-3));
+  white-space: nowrap;
+  align-self: center;
+  pointer-events: none;
+  /* Default: hidden. Only the topright variant surfaces the labels —
+     mobile has no room and the rail variant has been retired. */
+  display: none;
+}
+.chip-stack[data-variant='topright'] .row-label {
+  display: inline-block;
+  margin-right: 2px;
+  /* Theme-aware ink with a faint glass scrim so the label is readable
+     over both dark Mapbox tiles and light theme. */
+  background: rgb(var(--map-pane-chip, 11 14 22) / 0.5);
+  padding: 4px 8px;
+  border-radius: 99px;
+  color: rgb(var(--ink-1) / 0.7);
+}
 .chip-stack[data-variant='mobile'] .row {
   overflow-x: auto;
   scrollbar-width: none;
@@ -113,9 +140,11 @@ const emit = defineEmits<{
   .chip-stack[data-variant='topright'] {
     display: flex;
     position: absolute;
-    /* 60 (fixed BrandBar height) + 14 (gap) — clears the top nav. */
-    top: 74px;
-    right: 14px;
+    /* Symmetric edge spacing: 24 px from both the top of the map (below
+       the 60 px BrandBar) and the right edge. Mirrors the status pill
+       at top:84 / left:24. */
+    top: 84px;
+    right: 24px;
     align-items: flex-end;
     pointer-events: none;
   }
@@ -124,6 +153,7 @@ const emit = defineEmits<{
   .chip-stack[data-variant='topright'] .row {
     flex-wrap: nowrap;
     pointer-events: auto;
+    align-items: center;
   }
 }
 </style>

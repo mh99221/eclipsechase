@@ -58,11 +58,11 @@ const weatherLabel = computed(() => {
 @media (min-width: 768px) {
   .status-stack {
     position: absolute;
-    /* Top-left corner of the map area (mirrors the topright chip stack).
-       Sits above the rail (z-index 11 vs rail's 10) so the pill floats
-       over the rail's top-left without being clipped. */
-    top: 74px;
-    left: 14px;
+    /* Symmetric edge spacing: 24 px from both the top of the map (below
+       the 60 px BrandBar) and the left edge. Mirrors the topright chip
+       stack at top:84 / right:24. */
+    top: 84px;
+    left: 24px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;

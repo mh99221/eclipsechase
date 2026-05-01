@@ -139,6 +139,12 @@ const activeProfileName = computed(() => PROFILES.find(p => p.id === selectedPro
 // markers that paint Iceland with sun / partly / overcast icons).
 const showWeatherV0 = ref(true)
 const selectedSlug = ref<string | null>(focusSpot)
+// Selection ids per overlay type — used by EclipseMap to highlight the
+// matching marker (station) and by traffic/cam marker click handlers
+// (via toggleSelectedAttr) to apply the [data-selected] state for CSS.
+const selectedStationId = ref<string | null>(null)
+const selectedCamId = ref<number | null>(null)
+const selectedTrafficKey = ref<string | null>(null)
 
 // Dock can be fully dismissed via the close button. Any subsequent map
 // interaction (spot pin, station, road, cam, or bare-map tap) brings
@@ -202,12 +208,14 @@ function onWeatherSelect(station: any) {
     cloud: station.cloud_cover ?? null,
     updatedMinutes,
   }
+  selectedStationId.value = station.station_id ?? null
   dockMode.value = 'weather'
   dockDismissed.value = false
 }
 
-function onRoadSelect(ctx: DockRoadsCtx) {
+function onRoadSelect(ctx: DockRoadsCtx, key: string | null = null) {
   dockRoadsCtx.value = ctx
+  selectedTrafficKey.value = key
   dockMode.value = 'roads'
   dockDismissed.value = false
 }
@@ -223,6 +231,7 @@ function onCamSelect(cam: { id: number; name: string; images: Array<{ url: strin
     images: cam.images,
     idx: startIdx,
   }
+  selectedCamId.value = cam.id
   dockMode.value = 'cam'
   dockDismissed.value = false
 }
@@ -250,8 +259,26 @@ function onDockClose() {
   // Also clears the bare-map crosshair so a HORIZON-mode tap doesn't
   // leave its pin behind on the map.
   dockDismissed.value = true
+  // Drop any [data-selected] highlights — close = nothing selected.
+  selectedSlug.value = null
+  selectedStationId.value = null
+  selectedCamId.value = null
+  selectedTrafficKey.value = null
   if (horizonMarker) { horizonMarker.remove(); horizonMarker = null }
 }
+
+// Selection-highlight watchers: flip [data-selected] on the matching
+// marker DOM element so CSS can render a glowing ring without
+// recreating any markers. Registries are populated in
+// build{Traffic,Camera}Marker.
+watch(selectedTrafficKey, (next, prev) => {
+  if (prev) trafficMarkerEls.get(prev)?.removeAttribute('data-selected')
+  if (next) trafficMarkerEls.get(next)?.setAttribute('data-selected', 'true')
+})
+watch(selectedCamId, (next, prev) => {
+  if (prev != null) cameraMarkerEls.get(prev)?.removeAttribute('data-selected')
+  if (next != null) cameraMarkerEls.get(next)?.setAttribute('data-selected', 'true')
+})
 
 function onOpenFieldCard() {
   const s = dockSpot.value
@@ -317,6 +344,16 @@ const showTraffic = ref(false)
 let trafficSegmentsCache: { segments: any[] } | null = null
 let trafficRoadsCache: any = null
 
+// Marker DOM element registries — used by selection watchers to flip
+// the [data-selected] attribute on the previously-selected marker
+// without recreating any markers.
+const trafficMarkerEls = new Map<string, HTMLElement>()
+const cameraMarkerEls = new Map<number, HTMLElement>()
+
+function trafficKey(c: TrafficCondition): string {
+  return `${c.lat.toFixed(5)},${c.lng.toFixed(5)}`
+}
+
 function normaliseCond(raw: string): TrafficCondition {
   if (raw === 'good' || raw === 'difficult' || raw === 'closed') return raw
   return 'unknown'
@@ -341,28 +378,18 @@ function buildTrafficMarker(c: TrafficCondition, map: mapboxgl.Map): mapboxgl.Ma
     <rect x="7.25" y="5.5" width="1.5" height="3.5" rx="0.75" fill="${color}"/>
   </svg>`
 
-  const popup = new mapboxgl.Popup({
-    offset: 14,
-    closeButton: false,
-    maxWidth: 'min(220px, 85vw)',
-    className: 'eclipse-popup',
-  }).setHTML(`
-    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
-      <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${getTrafficLabel(c.condition)}</h3>
-      ${c.roadName ? `<p style="color: #94a3b8; margin: 0 0 4px;">${c.roadName}</p>` : ''}
-      <p style="color: #cbd5e1; margin: 0;">${c.description}</p>
-    </div>
-  `)
-
   const marker = new mapboxgl.Marker({ element: el })
     .setLngLat([c.lng, c.lat])
     .addTo(map)
 
-  // Click always drives the dock (mobile + desktop rail) — same pattern
-  // spots/weather use. Desktop additionally shows the Mapbox popup so
-  // hazard details surface inline at the marker. stopPropagation defends
-  // against the click also reaching Mapbox's bare-map handler.
-  if (!isMobile.value) marker.setPopup(popup)
+  // Register the marker element under a stable key so the selection
+  // watcher can flip [data-selected] when the dock-popup target changes.
+  const key = trafficKey(c)
+  trafficMarkerEls.set(key, el)
+  if (selectedTrafficKey.value === key) el.dataset.selected = 'true'
+
+  // Click drives the dock popup (mobile + desktop). stopPropagation
+  // defends against the click also reaching Mapbox's bare-map handler.
   el.addEventListener('click', (e) => {
     e.stopPropagation()
     onRoadSelect({
@@ -370,7 +397,7 @@ function buildTrafficMarker(c: TrafficCondition, map: mapboxgl.Map): mapboxgl.Ma
       label: getTrafficLabel(c.condition),
       detail: c.roadName ? `${c.roadName} · ${c.description}` : c.description,
       updatedAt: c.updatedAt ?? null,
-    })
+    }, key)
   })
   return marker
 }
@@ -472,36 +499,16 @@ function addRoadPolylines(map: any) {
     if (target?.closest('.traffic-marker, .camera-marker, .spot-marker, .station-marker')) return
     const f = e.features[0]
     const condition = f.properties.condition || 'unknown'
-    const color = getTrafficColor(condition)
     const name = f.properties.roadName || f.properties.roadRef || 'Road'
     const refLabel = f.properties.roadRef ? `${name} (${f.properties.roadRef})` : name
 
-    // Always drive the dock — same pattern spots/weather use.
+    // Drive the dock popup — no more inline Mapbox popup at the click point.
     onRoadSelect({
       cond: normaliseCond(condition),
       label: getTrafficLabel(condition),
       detail: refLabel,
       updatedAt: f.properties.updated_at ?? null,
     })
-
-    // Desktop: also show the inline popup at the click point so the
-    // segment label is visible without scanning the rail.
-    if (!isMobile.value) {
-      new mapboxgl.Popup({
-        offset: 10,
-        closeButton: false,
-        maxWidth: 'min(220px, 85vw)',
-        className: 'eclipse-popup',
-      })
-        .setLngLat(e.lngLat)
-        .setHTML(`
-          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
-            <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${getTrafficLabel(condition)}</h3>
-            <p style="color: #94a3b8; margin: 0;">${refLabel}</p>
-          </div>
-        `)
-        .addTo(map)
-    }
   }
   roadEnterHandler = () => { map.getCanvas().style.cursor = 'pointer' }
   roadLeaveHandler = () => { map.getCanvas().style.cursor = '' }
@@ -642,26 +649,16 @@ function buildCameraMarker(cam: CameraData, map: mapboxgl.Map): mapboxgl.Marker 
     <circle cx="8" cy="8" r="2" fill="#7dd3fc"/>
   </svg>`
 
-  const startIndex = camIndexById.get(cam.id) ?? 0
-
-  const popup = new mapboxgl.Popup({
-    offset: 14,
-    closeButton: false,
-    maxWidth: 'min(300px, 85vw)',
-    className: 'eclipse-popup',
-  }).setHTML(buildCameraPopupHTML(cam, startIndex))
-
-  popup.on('open', () => wireCameraPopup(popup, cam))
-
   const marker = new mapboxgl.Marker({ element: el })
     .setLngLat([cam.lng, cam.lat])
     .addTo(map)
 
-  // Click always drives the dock CAM mode (mobile + desktop rail) — same
-  // pattern spots/weather use. Desktop also keeps the inline popup with
-  // image carousel + click-to-enlarge. stopPropagation defends against
-  // the click also reaching Mapbox's bare-map handler.
-  if (!isMobile.value) marker.setPopup(popup)
+  // Register so the selection watcher can flip [data-selected].
+  cameraMarkerEls.set(cam.id, el)
+  if (selectedCamId.value === cam.id) el.dataset.selected = 'true'
+
+  // Click drives the dock popup. stopPropagation defends against the
+  // click also reaching Mapbox's bare-map handler.
   el.addEventListener('click', (e) => {
     e.stopPropagation()
     onCamSelect(cam)
@@ -824,7 +821,8 @@ const profileIcons: Record<ProfileId, string> = {
         :initial-center="restoreCenter"
         :initial-zoom="restoreZoom"
         :selected-slug="dockMode === 'spot' ? selectedSlug : null"
-        :suppress-popups="isMobile"
+        :selected-station-id="dockMode === 'weather' ? selectedStationId : null"
+        :suppress-popups="true"
         class="absolute inset-0 z-0"
         @map-click="handleMapClick"
         @spot-select="onSpotSelect"
@@ -1187,8 +1185,10 @@ const profileIcons: Record<ProfileId, string> = {
    scoped CSS; offline manager only renders inside this wrapper. */
 .map-legend-anchor {
   position: absolute;
+  /* Lift above the Mapbox logo (~22 px tall) and attribution badge
+     that sit at the very bottom-left of the map style. */
   left: 14px;
-  bottom: 14px;
+  bottom: 36px;
   z-index: 10;
   display: flex;
   align-items: flex-end;
@@ -1196,6 +1196,19 @@ const profileIcons: Record<ProfileId, string> = {
 }
 @media (max-width: 767px) {
   .map-legend-anchor { display: none; }
+}
+</style>
+
+<!-- Non-scoped: Mapbox markers live OUTSIDE the Vue template tree
+     (attached directly to the canvas container via `.addTo(map)`),
+     so scoped CSS can't reach them. -->
+<style>
+.traffic-marker[data-selected='true'],
+.camera-marker[data-selected='true'] {
+  box-shadow: 0 0 0 3px #D85848, 0 0 14px 4px rgba(216, 88, 72, 0.45);
+  transform: scale(1.18);
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+  z-index: 3;
 }
 </style>
 

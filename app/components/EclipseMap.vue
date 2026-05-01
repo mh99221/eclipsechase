@@ -50,6 +50,9 @@ const props = defineProps<{
   /** Slug of the currently-selected spot. The matching marker renders
    *  with a distinctive red pin so it's findable on the map. */
   selectedSlug?: string | null
+  /** id of the currently-selected weather station — same red-highlight
+   *  treatment as the selected spot. */
+  selectedStationId?: string | null
 }>()
 
 type StationData = NonNullable<typeof props.stations>[number]
@@ -142,9 +145,16 @@ function stationPopupHtml(station: Station): string {
 
 function renderStationInto(el: HTMLElement, station: Station) {
   const color = cloudColor(station.cloud_cover)
-  el.style.cssText = `cursor: pointer; line-height: 0; opacity: 0.6; z-index: 0; filter: drop-shadow(0 0 6px ${color}55) drop-shadow(0 0 14px ${color}30);`
+  const isSelected = !!props.selectedStationId && station.station_id === props.selectedStationId
+  // Selected station: red ring + halo (same accent as the selected spot
+  // pin) so it's findable when the dock-popup shows its data.
+  if (isSelected) {
+    el.style.cssText = `cursor: pointer; line-height: 0; opacity: 1; z-index: 3; filter: drop-shadow(0 0 6px #D85848) drop-shadow(0 0 14px #D85848aa);`
+  } else {
+    el.style.cssText = `cursor: pointer; line-height: 0; opacity: 0.6; z-index: 0; filter: drop-shadow(0 0 6px ${color}55) drop-shadow(0 0 14px ${color}30);`
+  }
   el.innerHTML = weatherSvgHtml(station.cloud_cover, 42)
-  el.setAttribute('aria-label', `${station.name} weather station${station.cloud_cover != null ? `, ${station.cloud_cover}% cloud cover` : ''}`)
+  el.setAttribute('aria-label', `${station.name} weather station${station.cloud_cover != null ? `, ${station.cloud_cover}% cloud cover` : ''}${isSelected ? ', selected' : ''}`)
 }
 
 function updateMarkers() {
@@ -453,6 +463,7 @@ function focusOnSpot(slug: string) {
 }
 
 watch(() => props.stations, updateMarkers, { deep: true })
+watch(() => props.selectedStationId, updateMarkers)
 watch(() => props.spots, updateSpotMarkers)
 watch(() => props.rankedSpots, updateSpotMarkers, { deep: true })
 watch(() => props.historical, updateSpotMarkers, { deep: true })
