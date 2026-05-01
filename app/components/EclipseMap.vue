@@ -146,12 +146,23 @@ function stationPopupHtml(station: Station): string {
 function renderStationInto(el: HTMLElement, station: Station) {
   const color = cloudColor(station.cloud_cover)
   const isSelected = !!props.selectedStationId && station.station_id === props.selectedStationId
-  // Selected station: red ring + halo (same accent as the selected spot
-  // pin) so it's findable when the dock-popup shows its data.
+  // Set styles via individual properties — `el.style.cssText = "..."`
+  // would clobber the `transform` Mapbox writes onto this same element
+  // for positioning, and outside of a map move/zoom event Mapbox does
+  // not re-apply that transform. The selection watcher fires from a
+  // pure data change (no map event), so wiping cssText leaves the
+  // marker stuck at (0, 0) until the user pans.
+  el.style.cursor = 'pointer'
+  el.style.lineHeight = '0'
   if (isSelected) {
-    el.style.cssText = `cursor: pointer; line-height: 0; opacity: 1; z-index: 3; filter: drop-shadow(0 0 6px #D85848) drop-shadow(0 0 14px #D85848aa);`
+    // Selected: red ring + halo (matches selected-spot pin styling).
+    el.style.opacity = '1'
+    el.style.zIndex = '3'
+    el.style.filter = 'drop-shadow(0 0 6px #D85848) drop-shadow(0 0 14px #D85848aa)'
   } else {
-    el.style.cssText = `cursor: pointer; line-height: 0; opacity: 0.6; z-index: 0; filter: drop-shadow(0 0 6px ${color}55) drop-shadow(0 0 14px ${color}30);`
+    el.style.opacity = '0.6'
+    el.style.zIndex = '0'
+    el.style.filter = `drop-shadow(0 0 6px ${color}55) drop-shadow(0 0 14px ${color}30)`
   }
   el.innerHTML = weatherSvgHtml(station.cloud_cover, 42)
   el.setAttribute('aria-label', `${station.name} weather station${station.cloud_cover != null ? `, ${station.cloud_cover}% cloud cover` : ''}${isSelected ? ', selected' : ''}`)
