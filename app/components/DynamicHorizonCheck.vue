@@ -104,20 +104,6 @@ onMounted(async () => {
 
         <div class="flex items-center gap-2 mt-3">
           <a
-            :href="result.peakfinder_url"
-            target="_blank"
-            rel="noopener"
-            class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded border border-border-subtle/40 text-xs font-mono text-ink-3 hover:text-ink-1 hover:border-accent/40 transition-colors"
-          >
-            <svg class="w-3.5 h-3.5 text-accent/60 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            PeakFinder
-            <svg class="w-3 h-3 text-ink-3/70 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </a>
-          <a
             :href="navigateUrl"
             target="_blank"
             rel="noopener"

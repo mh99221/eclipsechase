@@ -390,7 +390,10 @@ html.light .grid-line { stroke: rgba(42, 31, 20, 0.08); }
 .altitude-label       { fill: #64748b; }
 html.light .altitude-label { fill: #8b7d7d; }
 
-.terrain       { fill: #1a2232; stroke: #334155; }
+/* Dark mode: darker terrain fill + brighter stroke so the silhouette
+   reads clearly against the deep-navy sky gradient. Light mode
+   unchanged (purple-brown on cream/yellow already has good contrast). */
+.terrain       { fill: #08101e; stroke: #475569; }
 html.light .terrain { fill: #3d3449; stroke: #6e5d5d; }
 
 .compass-label        { fill: #64748b; }

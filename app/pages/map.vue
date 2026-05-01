@@ -869,8 +869,12 @@ const profileIcons: Record<ProfileId, string> = {
       />
     </div>
 
-    <!-- Network status banner (only visible when offline or data is stale). -->
-    <div class="absolute top-[72px] left-0 right-0 z-10 pointer-events-none">
+    <!-- Network status banner (only visible when offline or data is stale).
+         Positioned below the topright chip stack on desktop (top:84 +
+         ~70 px stack height ≈ 160) and below the mobile chip stack on
+         mobile (top:72 + ~70 px stack height ≈ 150). Single safe value
+         that clears both. -->
+    <div class="offline-banner-wrap absolute left-0 right-0 z-10 pointer-events-none">
       <div class="offline-banner-anchor pointer-events-auto px-4 sm:px-6">
         <OfflineBanner />
       </div>
@@ -1165,6 +1169,12 @@ const profileIcons: Record<ProfileId, string> = {
   right: 0;
   z-index: 10;
   pointer-events: none;
+}
+/* Banner sits below both the mobile chip stack (top 72 + ~70 px) and
+   the desktop topright chip stack (top 84 + ~70 px). 160 clears both
+   with breathing room. */
+.offline-banner-wrap {
+  top: 160px;
 }
 .mobile-dock-anchor {
   position: fixed;

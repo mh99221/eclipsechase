@@ -187,12 +187,6 @@ useHead({
                   <td class="py-2.5 pr-4 align-top text-ink-2">Privacy-friendly analytics (hosted by Umami, cloud.umami.is)</td>
                   <td class="py-2.5 pr-4 align-top text-ink-2"><a href="https://umami.is/privacy" target="_blank" rel="noopener" class="text-accent hover:text-accent-strong transition-colors">umami.is/privacy</a></td>
                 </tr>
-                <tr class="border-b border-border-subtle/40">
-                  <td class="py-2.5 pr-4 align-top text-ink-1 font-medium">PeakFinder (external link)</td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">Coordinates passed in URL (user-initiated)</td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">Horizon obstruction visualization</td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">User navigates to peakfinder.com voluntarily</td>
-                </tr>
               </tbody>
             </table>
           </div>

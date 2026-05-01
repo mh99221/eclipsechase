@@ -179,7 +179,6 @@ const subtitleText = computed(() => {
   return props.ctx.spotName ? `${clearance} · ${props.ctx.spotName}` : clearance
 })
 
-const peakfinderUrl = computed(() => result.value?.peakfinder_url ?? null)
 const navigateUrl = computed(() =>
   `https://www.google.com/maps/dir/?api=1&destination=${props.ctx.lat},${props.ctx.lng}`)
 
@@ -199,8 +198,8 @@ const gradientId = `dock-horizon-sky-${uid}`
       <svg viewBox="0 0 320 130" preserveAspectRatio="none" class="chart-svg">
         <defs>
           <linearGradient :id="gradientId" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#0f172a" />
-            <stop offset="100%" stop-color="#1e293b" />
+            <stop offset="0%" class="sky-top" />
+            <stop offset="100%" class="sky-bottom" />
           </linearGradient>
         </defs>
 
@@ -213,7 +212,7 @@ const gradientId = `dock-horizon-sky-${uid}`
           :key="`y-${row.deg}`"
           :x1="0" :y1="Y_DEG_TO_PX(row.deg)"
           :x2="320" :y2="Y_DEG_TO_PX(row.deg)"
-          stroke="#1e293b"
+          class="grid-line"
           stroke-width="0.5"
           stroke-dasharray="2,3"
         />
@@ -222,7 +221,7 @@ const gradientId = `dock-horizon-sky-${uid}`
           :key="`yl-${row.deg}`"
           x="6" :y="Y_DEG_TO_PX(row.deg)"
           font-size="8"
-          fill="#64748b"
+          class="axis-label"
           font-family="JetBrains Mono"
         >{{ row.label }}</text>
 
@@ -244,19 +243,18 @@ const gradientId = `dock-horizon-sky-${uid}`
             :x="m.x"
             :y="m.y - 5"
             font-size="7"
-            fill="#f59e0b"
+            class="trajectory-label"
             font-family="JetBrains Mono"
             text-anchor="middle"
             opacity="0.85"
           >{{ m.label }}</text>
         </template>
 
-        <!-- Terrain silhouette (real DEM) — slate fill, lighter stroke -->
+        <!-- Terrain silhouette (real DEM) — theme-aware fill + stroke -->
         <path
           v-if="terrainFillPath"
           :d="terrainFillPath"
-          fill="#1a2232"
-          stroke="#334155"
+          class="terrain"
           stroke-width="1"
         />
 
@@ -283,7 +281,7 @@ const gradientId = `dock-horizon-sky-${uid}`
           :x="Math.max(8, Math.min(312, t.x))"
           y="124"
           font-size="8"
-          fill="#64748b"
+          class="axis-label"
           font-family="JetBrains Mono"
           :text-anchor="i === 0 ? 'start' : i === xLabels.length - 1 ? 'end' : 'middle'"
         >{{ t.label }}</text>
@@ -293,7 +291,7 @@ const gradientId = `dock-horizon-sky-${uid}`
           v-if="loading"
           x="160" y="68"
           font-size="11"
-          fill="#94a3b8"
+          class="loading-label"
           font-family="JetBrains Mono"
           text-anchor="middle"
         >Loading…</text>
@@ -304,15 +302,7 @@ const gradientId = `dock-horizon-sky-${uid}`
 
     <div class="actions">
       <a
-        v-if="peakfinderUrl"
-        class="btn-ghost btn-ghost--half"
-        :href="peakfinderUrl"
-        target="_blank"
-        rel="noopener"
-      >PEAKFINDER ↗</a>
-      <span v-else class="btn-ghost btn-ghost--half btn-ghost--disabled">PEAKFINDER ↗</span>
-      <a
-        class="btn-ghost btn-ghost--half"
+        class="btn-ghost btn-ghost--full"
         :href="navigateUrl"
         target="_blank"
         rel="noopener"
@@ -353,4 +343,30 @@ const gradientId = `dock-horizon-sky-${uid}`
   text-transform: uppercase;
 }
 .actions { display: flex; gap: 8px; }
+
+/* Theme-aware horizon chart colours — mirror HorizonProfile so the
+   light theme uses the dawn-yellow gradient (matches spot detail) and
+   the dark theme uses a deep navy with a darker terrain fill so the
+   silhouette is clearly distinct from the sky. */
+.sky-top    { stop-color: #0f172a; }
+.sky-bottom { stop-color: #1e293b; }
+html.light .sky-top    { stop-color: #fde68a; }
+html.light .sky-bottom { stop-color: #faf5eb; }
+
+.grid-line { stroke: #2a3548; }
+html.light .grid-line { stroke: rgba(42, 31, 20, 0.12); }
+
+.axis-label { fill: #94a3b8; }
+html.light .axis-label { fill: #6b5d5d; }
+
+.trajectory-label { fill: #f59e0b; }
+html.light .trajectory-label { fill: #c2410c; }
+
+.loading-label { fill: #94a3b8; }
+html.light .loading-label { fill: #6b5d5d; }
+
+/* Terrain — darker than sky in dark mode for clear silhouette;
+   warm purple-brown on the cream/yellow sky in light mode. */
+.terrain { fill: #08101e; stroke: #475569; }
+html.light .terrain { fill: #3d3449; stroke: #6e5d5d; }
 </style>

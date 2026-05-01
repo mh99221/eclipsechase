@@ -16,7 +16,7 @@ withDefaults(defineProps<{
   variant?: 'mobile' | 'rail' | 'topright'
   /** Which rows to render. Default 'all' for mobile compatibility.
    *  `profiles` — only the profile selector row (ALL / Photographer / …).
-   *  `overlays` — only the layer-toggle row (WEATHER / ROADS / LIVE CAMS). */
+   *  `overlays` — only the layer-toggle row (WEATHER / ROADS / ROAD CAMS). */
   rows?: 'all' | 'profiles' | 'overlays'
 }>(), { variant: 'mobile', rows: 'all' })
 
@@ -66,7 +66,7 @@ const emit = defineEmits<{
         size="sm"
         surface="glass"
         @click="emit('update:showCameras', !showCameras)"
-      >LIVE CAMS</Pill>
+      >ROAD CAMS</Pill>
     </div>
   </div>
 </template>

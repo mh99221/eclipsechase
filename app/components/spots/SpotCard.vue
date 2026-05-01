@@ -135,7 +135,12 @@ const heroSrcset = computed(() => {
 .spot-card-dur {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 16px;
-  color: rgb(var(--totality));
+  /* Hard-coded dark-theme values regardless of theme — these readouts
+     sit on the dark photo veil (glass-strong, intentionally dark in
+     both themes), so the deep light-theme palette would wash out.
+     Keeping the vibrant dark-theme colours here is the same approach
+     used for the glass-* tokens. */
+  color: #8F8C61;
   font-variant-numeric: tabular-nums;
   font-weight: 600;
   white-space: nowrap;
@@ -147,7 +152,7 @@ const heroSrcset = computed(() => {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.spot-card-cloud[data-status='good'] { color: rgb(var(--good)); }
-.spot-card-cloud[data-status='marginal'] { color: rgb(var(--warn)); }
-.spot-card-cloud[data-status='bad'] { color: rgb(var(--bad)); }
+.spot-card-cloud[data-status='good']     { color: #78D888; }
+.spot-card-cloud[data-status='marginal'] { color: #E5C04A; }
+.spot-card-cloud[data-status='bad']      { color: #D85848; }
 </style>
