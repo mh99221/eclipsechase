@@ -21,7 +21,7 @@ const subtitle = computed(() => current.value?.description || props.ctx.dir || '
 
 <template>
   <div>
-    <DockHeader eyebrow="Live cam" dot-var="good" />
+    <DockHeader eyebrow="Road cam" dot-var="good" />
 
     <div class="title title--with-sub">{{ ctx.name }}</div>
     <div class="dir" v-if="subtitle">{{ subtitle }}</div>
