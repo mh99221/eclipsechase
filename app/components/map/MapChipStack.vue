@@ -113,7 +113,8 @@ const emit = defineEmits<{
   .chip-stack[data-variant='topright'] {
     display: flex;
     position: absolute;
-    top: 14px;
+    /* 60 (fixed BrandBar height) + 14 (gap) — clears the top nav. */
+    top: 74px;
     right: 14px;
     flex-direction: row;
     pointer-events: none;

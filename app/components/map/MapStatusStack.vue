@@ -58,8 +58,9 @@ const weatherLabel = computed(() => {
 @media (min-width: 768px) {
   .status-stack {
     position: absolute;
-    /* 14 (chip-stack top) + ~28 (sm pill height) + 8 (gap) = 50; round to 52. */
-    top: 52px;
+    /* 74 (chip-stack top, clears 60 px BrandBar) + ~28 (sm pill height)
+       + 8 (gap) = 110; round to 112. */
+    top: 112px;
     right: 14px;
     display: flex;
     flex-direction: column;
