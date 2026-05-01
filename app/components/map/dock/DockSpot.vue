@@ -46,7 +46,7 @@ const scoreLabel = computed(() => score.value == null ? '—' : String(score.val
 .actions { display: flex; gap: 8px; }
 .btn-cta {
   flex: 1;
-  padding: 14px;
+  padding: 8px 14px;
   border: 0;
   background: rgb(var(--accent));
   color: rgb(var(--accent-ink));
@@ -56,7 +56,6 @@ const scoreLabel = computed(() => score.value == null ? '—' : String(score.val
   font-weight: 600;
   letter-spacing: 0.14em;
   cursor: pointer;
-  min-height: 48px;
   text-transform: uppercase;
   transition: background 0.15s;
 }

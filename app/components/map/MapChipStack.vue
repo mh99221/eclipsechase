@@ -112,13 +112,11 @@ const emit = defineEmits<{
 }
 .chip-stack[data-variant='topright'] .row-label {
   display: inline-block;
-  margin-right: 2px;
-  /* Theme-aware ink with a faint glass scrim so the label is readable
-     over both dark Mapbox tiles and light theme. */
-  background: rgb(var(--map-pane-chip, 11 14 22) / 0.5);
-  padding: 4px 8px;
-  border-radius: 99px;
-  color: rgb(var(--ink-1) / 0.7);
+  margin-right: 6px;
+  color: rgb(var(--ink-1) / 0.78);
+  /* No pill background — plain text. Subtle shadow keeps the label
+     legible over varied Mapbox tiles. */
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.65);
 }
 .chip-stack[data-variant='mobile'] .row {
   overflow-x: auto;
