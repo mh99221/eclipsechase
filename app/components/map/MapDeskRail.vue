@@ -87,7 +87,7 @@ const emit = defineEmits<{
     top: 60px; /* below BrandBar */
     left: 0;
     bottom: 0;
-    width: 320px;
+    width: 416px;
     z-index: 10;
     display: flex;
     flex-direction: column;
@@ -133,7 +133,7 @@ const emit = defineEmits<{
 
 @media (max-width: 900px) {
   .desk-rail {
-    width: 280px;
+    width: 364px;
   }
 }
 </style>

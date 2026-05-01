@@ -17,6 +17,7 @@ import type {
 import MapDeskRail from '~/components/map/MapDeskRail.vue'
 import MapStatusStack from '~/components/map/MapStatusStack.vue'
 import MapLegend from '~/components/map/MapLegend.vue'
+import MapOfflineCard from '~/components/map/MapOfflineCard.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -275,10 +276,6 @@ function handleKeydown(e: KeyboardEvent) {
     profileMenuOpen.value = false
     return
   }
-  if (e.key === 'Escape' && offlinePopoverOpen.value) {
-    offlinePopoverOpen.value = false
-    return
-  }
   if (dockMode.value === 'cam' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
     onCamStep(e.key === 'ArrowLeft' ? -1 : 1)
     e.preventDefault()
@@ -291,7 +288,6 @@ function handleKeydown(e: KeyboardEvent) {
 }
 function handleClickOutside() {
   if (profileMenuOpen.value) profileMenuOpen.value = false
-  if (offlinePopoverOpen.value) offlinePopoverOpen.value = false
 }
 onMounted(() => {
   document.addEventListener('keydown', handleKeydown)
@@ -754,14 +750,8 @@ const tileDownloading = ref(false)
 const offlineManagerMobile = ref<any>(null)
 const offlineManagerDesktop = ref<any>(null)
 const offlineManagerRef = computed(() => offlineManagerMobile.value || offlineManagerDesktop.value)
-// Desktop offline popover (toggled from the top-right status pill).
-const offlinePopoverOpen = ref(false)
-
-// Status-stack inputs (desktop only). `hasCachedTiles` mirrors the
-// internal heuristic in OfflineManager.vue (>10% of estimated tiles).
-const { tileCount, isWeatherStale } = useOfflineStatus()
-const ESTIMATED_TILE_COUNT = 1338
-const hasCachedTiles = computed(() => tileCount.value > ESTIMATED_TILE_COUNT * 0.1)
+// Status-stack input (desktop only).
+const { isWeatherStale } = useOfflineStatus()
 const weatherFetchedAt = computed(() => cloudData.value?.fetched_at ?? null)
 
 function handleMapClick(coords: { lat: number; lng: number }) {
@@ -908,33 +898,22 @@ const profileIcons: Record<ProfileId, string> = {
       @close="onDockClose"
     />
 
-    <!-- ═══ Desktop top-right status stack — component owns its own md+ visibility ═══ -->
-    <div @click.stop>
-      <MapStatusStack
-        :weather-fetched-at="weatherFetchedAt"
-        :weather-stale="cloudData?.stale === true || isWeatherStale"
-        :has-cached-tiles="hasCachedTiles"
-        :is-downloading="tileDownloading"
-        @toggle-offline="offlinePopoverOpen = !offlinePopoverOpen"
-      />
-      <Transition name="fade">
-        <div
-          v-if="offlinePopoverOpen"
-          class="offline-popover"
-          @click.stop
-        >
-          <OfflineManager :map="eclipseMapRef?.map" @downloading="tileDownloading = $event" ref="offlineManagerDesktop" />
-        </div>
-      </Transition>
-    </div>
+    <!-- ═══ Desktop top-right status stack — weather freshness only ═══ -->
+    <MapStatusStack
+      :weather-fetched-at="weatherFetchedAt"
+      :weather-stale="cloudData?.stale === true || isWeatherStale"
+    />
 
-    <!-- ═══ Desktop: collapsible legend — component owns its own md+ visibility ═══ -->
+    <!-- ═══ Desktop bottom-left: legend + offline manager ═══ -->
     <div class="map-legend-anchor">
       <MapLegend
         :legend-items="legendItems"
         :show-traffic="showTraffic"
         :show-cameras="showCameras"
       />
+      <div class="offline-manager-slot">
+        <MapOfflineCard :map="eclipseMapRef?.map" @downloading="tileDownloading = $event" ref="offlineManagerDesktop" />
+      </div>
     </div>
 
     <!--
@@ -1193,37 +1172,33 @@ const profileIcons: Record<ProfileId, string> = {
   .mobile-dock-anchor { display: none; }
 }
 
-/* Legend anchor: bottom-left, sits to the right of the desk-rail (320 px wide).
-   Hidden on mobile via the legend's own scoped CSS — the wrapper itself stays
-   in the DOM; positioning here only affects layout when the legend renders. */
+/* Legend + offline manager anchor: bottom-left, sits to the right of the
+   desk-rail (416 px wide @ md+, 364 px @ 768–900). Hidden on mobile via
+   the legend's own scoped CSS; offline manager only renders inside this
+   wrapper, so it inherits the same hidden state. */
 .map-legend-anchor {
   position: absolute;
-  left: 336px;
+  left: 432px;
   bottom: 24px;
   z-index: 10;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
 }
+/* MapOfflineCard provides its own width; slot is just a flex item. */
 @media (max-width: 767px) {
   .map-legend-anchor { display: none; }
 }
 @media (min-width: 768px) and (max-width: 900px) {
-  .map-legend-anchor { left: 296px; } /* rail narrows to 280 px under 900 */
-}
-
-/* Offline popover anchored under the status stack pill. */
-.offline-popover {
-  position: absolute;
-  top: 56px;
-  right: 14px;
-  width: 288px;
-  z-index: 20;
-}
-@media (max-width: 767px) {
-  .offline-popover { display: none; }
+  .map-legend-anchor { left: 380px; } /* rail narrows to 364 px under 900 */
 }
 
 /* Push the network-status banner clear of the rail on desktop. */
 @media (min-width: 768px) {
-  .offline-banner-anchor { padding-left: 336px; }
+  .offline-banner-anchor { padding-left: 432px; }
+}
+@media (min-width: 768px) and (max-width: 900px) {
+  .offline-banner-anchor { padding-left: 380px; }
 }
 </style>
 

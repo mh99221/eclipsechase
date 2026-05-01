@@ -8,13 +8,7 @@ const props = defineProps<{
   weatherFetchedAt: string | null
   /** True when the cloud-cover endpoint is serving stale data. */
   weatherStale: boolean
-  /** Whether Mapbox tiles are present in the offline cache. */
-  hasCachedTiles: boolean
-  /** Whether the offline tile download is currently running. */
-  isDownloading: boolean
 }>()
-
-const emit = defineEmits<{ 'toggle-offline': [] }>()
 
 // Re-tick once a minute so "N min ago" updates without polling.
 const now = ref(Date.now())
@@ -45,13 +39,6 @@ const weatherLabel = computed(() => {
   if (m < 1) return t('map.weather_just_now')
   return t('map.weather_updated_ago', { minutes: m })
 })
-
-const offlineDot = computed<'good' | 'warn'>(() => (props.hasCachedTiles ? 'good' : 'warn'))
-const offlineLabel = computed(() => {
-  if (props.isDownloading) return t('map.offline_downloading')
-  if (props.hasCachedTiles) return t('map.offline_ready')
-  return t('map.offline_download')
-})
 </script>
 
 <template>
@@ -60,17 +47,6 @@ const offlineLabel = computed(() => {
       <span class="dot" :data-tone="weatherDot" />
       <span class="label">{{ weatherLabel }}</span>
     </div>
-    <button
-      type="button"
-      class="pill"
-      data-kind="action"
-      :data-tone="offlineDot"
-      :aria-label="offlineLabel"
-      @click="emit('toggle-offline')"
-    >
-      <span class="dot" :data-tone="offlineDot" />
-      <span class="label">{{ offlineLabel }}</span>
-    </button>
   </div>
 </template>
 
