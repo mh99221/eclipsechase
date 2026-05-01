@@ -1185,10 +1185,11 @@ const profileIcons: Record<ProfileId, string> = {
    scoped CSS; offline manager only renders inside this wrapper. */
 .map-legend-anchor {
   position: absolute;
-  /* Lift above the Mapbox logo (~22 px tall) and attribution badge
-     that sit at the very bottom-left of the map style. */
+  /* Mapbox logo + attribution have been re-anchored to bottom-center
+     (see the global style block below), so the bottom-left corner is
+     ours again — drop back down to the edge with breathing room. */
   left: 14px;
-  bottom: 36px;
+  bottom: 14px;
   z-index: 10;
   display: flex;
   align-items: flex-end;
@@ -1209,6 +1210,26 @@ const profileIcons: Record<ProfileId, string> = {
   transform: scale(1.18);
   transition: box-shadow 0.18s ease, transform 0.18s ease;
   z-index: 3;
+}
+
+/* Re-anchor Mapbox's bottom controls to bottom-center so the legend +
+   offline-maps cards (bottom-left) and the dock popup (bottom-right)
+   reclaim the full corners. The default Mapbox container slots are
+   `.mapboxgl-ctrl-bottom-left` (logo) and `.mapboxgl-ctrl-bottom-right`
+   (attribution); we slide both toward the centre using fixed-width
+   transforms so they sit side-by-side at the bottom middle. */
+.mapboxgl-ctrl-bottom-left,
+.mapboxgl-ctrl-bottom-right {
+  bottom: 0;
+}
+.mapboxgl-ctrl-bottom-left {
+  left: 50%;
+  right: auto;
+  transform: translateX(-100%);
+}
+.mapboxgl-ctrl-bottom-right {
+  right: auto;
+  left: 50%;
 }
 </style>
 

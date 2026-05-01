@@ -463,7 +463,20 @@ function focusOnSpot(slug: string) {
 }
 
 watch(() => props.stations, updateMarkers, { deep: true })
-watch(() => props.selectedStationId, updateMarkers)
+// Targeted re-render on selection change: only the station that lost
+// selection and the one that gained it. Avoids the full updateMarkers
+// cycle (which recomputes minZooms + applyZoomVisibility) so the rest
+// of the markers don't briefly flicker / re-evaluate visibility.
+watch(() => props.selectedStationId, (next, prev) => {
+  if (prev) {
+    const c = stationMarkers.get(prev)
+    if (c) renderStationInto(c.el, c.station)
+  }
+  if (next) {
+    const c = stationMarkers.get(next)
+    if (c) renderStationInto(c.el, c.station)
+  }
+})
 watch(() => props.spots, updateSpotMarkers)
 watch(() => props.rankedSpots, updateSpotMarkers, { deep: true })
 watch(() => props.historical, updateSpotMarkers, { deep: true })

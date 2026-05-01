@@ -72,9 +72,10 @@ const hasContent = computed(() => {
   .dock-popup {
     display: block;
     position: fixed;
-    /* Lift well above the Mapbox attribution badge (~24 px tall, ~10 px
-       inset from viewport edge) at bottom-right. */
-    bottom: 44px;
+    /* Mapbox attribution is now centred along the bottom (see global
+       style in map.vue), so the bottom-right corner is ours — drop back
+       to the edge with breathing room. */
+    bottom: 14px;
     right: 14px;
     z-index: 12;
     /* Solid fallback first, then theme-aware var override — same defensive
