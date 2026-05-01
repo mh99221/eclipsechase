@@ -674,6 +674,10 @@ useMapOverlay<CameraData>({
     return cameras
   },
   buildMarker: (cam, { map }) => buildCameraMarker(cam, map),
+  onDeactivate: () => {
+    cameraMarkerEls.clear()
+    selectedCamId.value = null
+  },
 })
 
 useMapOverlay<TrafficCondition>({
@@ -691,7 +695,11 @@ useMapOverlay<TrafficCondition>({
   },
   buildMarker: (c, { map }) => buildTrafficMarker(c, map),
   onActivate: (map) => addRoadPolylines(map),
-  onDeactivate: (map) => removeRoadPolylines(map),
+  onDeactivate: (map) => {
+    removeRoadPolylines(map)
+    trafficMarkerEls.clear()
+    selectedTrafficKey.value = null
+  },
 })
 
 // ─── Mobile Peek Sheet ───

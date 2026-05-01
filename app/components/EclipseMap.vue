@@ -143,15 +143,14 @@ function stationPopupHtml(station: Station): string {
   `
 }
 
-function renderStationInto(el: HTMLElement, station: Station) {
+// Apply just the selection-dependent style props (opacity / z-index /
+// filter / aria) to a station marker element. Set via individual
+// properties so Mapbox's `transform` (positioning) on this same element
+// is preserved — `el.style.cssText = "..."` would clobber it, and
+// outside of a map move/zoom event Mapbox does not re-apply transform.
+function applyStationStyle(el: HTMLElement, station: Station) {
   const color = cloudColor(station.cloud_cover)
   const isSelected = !!props.selectedStationId && station.station_id === props.selectedStationId
-  // Set styles via individual properties — `el.style.cssText = "..."`
-  // would clobber the `transform` Mapbox writes onto this same element
-  // for positioning, and outside of a map move/zoom event Mapbox does
-  // not re-apply that transform. The selection watcher fires from a
-  // pure data change (no map event), so wiping cssText leaves the
-  // marker stuck at (0, 0) until the user pans.
   el.style.cursor = 'pointer'
   el.style.lineHeight = '0'
   if (isSelected) {
@@ -164,8 +163,12 @@ function renderStationInto(el: HTMLElement, station: Station) {
     el.style.zIndex = '0'
     el.style.filter = `drop-shadow(0 0 6px ${color}55) drop-shadow(0 0 14px ${color}30)`
   }
-  el.innerHTML = weatherSvgHtml(station.cloud_cover, 42)
   el.setAttribute('aria-label', `${station.name} weather station${station.cloud_cover != null ? `, ${station.cloud_cover}% cloud cover` : ''}${isSelected ? ', selected' : ''}`)
+}
+
+function renderStationInto(el: HTMLElement, station: Station) {
+  applyStationStyle(el, station)
+  el.innerHTML = weatherSvgHtml(station.cloud_cover, 42)
 }
 
 function updateMarkers() {
@@ -474,18 +477,19 @@ function focusOnSpot(slug: string) {
 }
 
 watch(() => props.stations, updateMarkers, { deep: true })
-// Targeted re-render on selection change: only the station that lost
-// selection and the one that gained it. Avoids the full updateMarkers
-// cycle (which recomputes minZooms + applyZoomVisibility) so the rest
-// of the markers don't briefly flicker / re-evaluate visibility.
+// Targeted style toggle on selection change — touches only the
+// previously-selected and newly-selected markers, and only updates
+// styles (no SVG re-render). Avoids the full updateMarkers cycle
+// (which recomputes minZooms + applyZoomVisibility) and the wasted
+// innerHTML rebuild that renderStationInto would do.
 watch(() => props.selectedStationId, (next, prev) => {
   if (prev) {
     const c = stationMarkers.get(prev)
-    if (c) renderStationInto(c.el, c.station)
+    if (c) applyStationStyle(c.el, c.station)
   }
   if (next) {
     const c = stationMarkers.get(next)
-    if (c) renderStationInto(c.el, c.station)
+    if (c) applyStationStyle(c.el, c.station)
   }
 })
 watch(() => props.spots, updateSpotMarkers)
