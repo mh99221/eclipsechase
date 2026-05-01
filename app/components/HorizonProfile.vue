@@ -376,28 +376,24 @@ const ariaLabel = computed(() => {
 </template>
 
 <style scoped>
-/* Horizon SVG — theme-aware styling via classes on each <line>, <path>,
-   <text>, and <stop>. Dark mode keeps the deep-space sky; light mode
-   uses a soft dawn gradient. */
-.sky-top    { stop-color: #0f172a; }
-.sky-bottom { stop-color: #1e293b; }
-html.light .sky-top    { stop-color: #fde68a; }  /* warm pale yellow */
-html.light .sky-bottom { stop-color: #faf5eb; }  /* fade into the bg   */
+/* Horizon SVG — theme-aware styling via shared tokens (main.css) plus
+   a few HorizonProfile-specific labels. Dark mode keeps the deep-space
+   sky; light mode uses a soft dawn gradient. */
+.sky-top    { stop-color: rgb(var(--horizon-sky-top)); }
+.sky-bottom { stop-color: rgb(var(--horizon-sky-bottom)); }
+.terrain    {
+  fill:   rgb(var(--horizon-terrain-fill));
+  stroke: rgb(var(--horizon-terrain-stroke));
+}
+.compass-label-active { fill: rgb(var(--horizon-accent)); }
 
-.grid-line       { stroke: #1e293b; }
-html.light .grid-line { stroke: rgba(42, 31, 20, 0.08); }
-
-.altitude-label       { fill: #64748b; }
-html.light .altitude-label { fill: #8b7d7d; }
-
-/* Dark mode: darker terrain fill + brighter stroke so the silhouette
-   reads clearly against the deep-navy sky gradient. Light mode
-   unchanged (purple-brown on cream/yellow already has good contrast). */
-.terrain       { fill: #08101e; stroke: #475569; }
-html.light .terrain { fill: #3d3449; stroke: #6e5d5d; }
-
-.compass-label        { fill: #64748b; }
-.compass-label-active { fill: #f59e0b; }
-html.light .compass-label        { fill: #8b7d7d; }
-html.light .compass-label-active { fill: #c2410c; }
+/* HorizonProfile-specific: this chart is large (700×360 default) so the
+   labels and grid use slightly darker slate than DockHorizon's smaller
+   chart can afford. */
+.grid-line                { stroke: #1e293b; }
+.altitude-label,
+.compass-label            { fill: #64748b; }
+html.light .grid-line     { stroke: rgba(42, 31, 20, 0.08); }
+html.light .altitude-label,
+html.light .compass-label { fill: #8b7d7d; }
 </style>

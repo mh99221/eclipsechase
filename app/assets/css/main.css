@@ -56,6 +56,15 @@
     --selection-bg:   232 154 60;
     --selection-ink:  232 229 220;
     --body-gradient:  radial-gradient(ellipse at 50% 0%, #0a1320 0%, #070A12 70%);
+
+    /* Horizon-chart shared tokens — used by HorizonProfile (spot detail)
+       and DockHorizon (map dock-popup). Keeps the two charts visually
+       in sync on theme changes without duplicating hex literals. */
+    --horizon-sky-top:        15  23  42;   /* #0F172A deep navy        */
+    --horizon-sky-bottom:     30  41  59;   /* #1E293B navy-slate       */
+    --horizon-terrain-fill:    8  16  30;   /* #08101E darker than sky  */
+    --horizon-terrain-stroke: 71  85  105;  /* #475569 visible silhouette */
+    --horizon-accent:         245 158 11;   /* #F59E0B amber sun + active */
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -114,6 +123,13 @@
     --selection-bg:   184 101 26;
     --selection-ink:  244 238 221;
     --body-gradient:  #F4EEDD;
+
+    /* Horizon-chart light overrides — dawn-yellow sky + warm terrain. */
+    --horizon-sky-top:        253 230 138;  /* #FDE68A pale dawn yellow */
+    --horizon-sky-bottom:     250 245 235;  /* #FAF5EB fades into bg    */
+    --horizon-terrain-fill:    61  52 73;   /* #3D3449 warm purple-brown */
+    --horizon-terrain-stroke: 110  93 93;   /* #6E5D5D rosy-grey edge   */
+    --horizon-accent:         194  65 12;   /* #C2410C deep burnt orange */
   }
 
   /* Default (pre-hydration / SSR fallback) — mirrors DARK v0. @nuxtjs/color-mode
@@ -150,6 +166,11 @@
     --selection-bg: 232 154 60;
     --selection-ink: 232 229 220;
     --body-gradient: radial-gradient(ellipse at 50% 0%, #0a1320 0%, #070A12 70%);
+    --horizon-sky-top: 15 23 42;
+    --horizon-sky-bottom: 30 41 59;
+    --horizon-terrain-fill: 8 16 30;
+    --horizon-terrain-stroke: 71 85 105;
+    --horizon-accent: 245 158 11;
 
     font-family: 'Inter Tight', system-ui, sans-serif;
     background-color: rgb(var(--bg));

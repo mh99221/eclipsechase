@@ -344,29 +344,22 @@ const gradientId = `dock-horizon-sky-${uid}`
 }
 .actions { display: flex; gap: 8px; }
 
-/* Theme-aware horizon chart colours — mirror HorizonProfile so the
-   light theme uses the dawn-yellow gradient (matches spot detail) and
-   the dark theme uses a deep navy with a darker terrain fill so the
-   silhouette is clearly distinct from the sky. */
-.sky-top    { stop-color: #0f172a; }
-.sky-bottom { stop-color: #1e293b; }
-html.light .sky-top    { stop-color: #fde68a; }
-html.light .sky-bottom { stop-color: #faf5eb; }
+/* Theme-aware horizon chart colours via shared tokens (main.css). */
+.sky-top    { stop-color: rgb(var(--horizon-sky-top)); }
+.sky-bottom { stop-color: rgb(var(--horizon-sky-bottom)); }
+.terrain    {
+  fill:   rgb(var(--horizon-terrain-fill));
+  stroke: rgb(var(--horizon-terrain-stroke));
+}
+.trajectory-label { fill: rgb(var(--horizon-accent)); }
 
-.grid-line { stroke: #2a3548; }
-html.light .grid-line { stroke: rgba(42, 31, 20, 0.12); }
-
-.axis-label { fill: #94a3b8; }
-html.light .axis-label { fill: #6b5d5d; }
-
-.trajectory-label { fill: #f59e0b; }
-html.light .trajectory-label { fill: #c2410c; }
-
-.loading-label { fill: #94a3b8; }
+/* DockHorizon-specific: the chart is small (320×130) so the labels and
+   grid get slightly brighter slate values than HorizonProfile uses to
+   stay legible at this size. */
+.grid-line       { stroke: #2a3548; }
+.axis-label,
+.loading-label   { fill: #94a3b8; }
+html.light .grid-line     { stroke: rgba(42, 31, 20, 0.12); }
+html.light .axis-label,
 html.light .loading-label { fill: #6b5d5d; }
-
-/* Terrain — darker than sky in dark mode for clear silhouette;
-   warm purple-brown on the cream/yellow sky in light mode. */
-.terrain { fill: #08101e; stroke: #475569; }
-html.light .terrain { fill: #3d3449; stroke: #6e5d5d; }
 </style>
