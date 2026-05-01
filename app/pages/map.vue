@@ -14,7 +14,7 @@ import type {
   DockCamCtx,
   DockHorizonCtx,
 } from '~/components/map/dock/types'
-import MapDeskRail from '~/components/map/MapDeskRail.vue'
+import MapDockPopup from '~/components/map/MapDockPopup.vue'
 import MapStatusStack from '~/components/map/MapStatusStack.vue'
 import MapLegend from '~/components/map/MapLegend.vue'
 import MapOfflineCard from '~/components/map/MapOfflineCard.vue'
@@ -878,14 +878,15 @@ const profileIcons: Record<ProfileId, string> = {
       </div>
     </div>
 
-    <!-- ═══ Desktop left rail (dock only) — component owns its own md+ visibility ═══ -->
-    <MapDeskRail
+    <!-- ═══ Desktop bottom-right popup — appears only on selection ═══ -->
+    <MapDockPopup
       :mode="dockMode"
       :spot="dockSpot"
       :weather-ctx="dockWeatherCtx"
       :roads-ctx="dockRoadsCtx"
       :cam-ctx="dockCamCtx"
       :horizon-ctx="dockHorizonCtx"
+      :dismissed="dockDismissed"
       @horizon-open="onHorizonOpen"
       @open-field-card="onOpenFieldCard"
       @cam-step="onCamStep"
@@ -1180,33 +1181,21 @@ const profileIcons: Record<ProfileId, string> = {
   .mobile-dock-anchor { display: none; }
 }
 
-/* Legend + offline manager anchor: bottom-left, sits to the right of the
-   desk-rail (416 px wide @ md+, 364 px @ 768–900). Hidden on mobile via
-   the legend's own scoped CSS; offline manager only renders inside this
-   wrapper, so it inherits the same hidden state. */
+/* Legend + offline manager anchor: bottom-left of the map. The rail is
+   gone now that the dock content lives in a bottom-right popup, so the
+   legend reclaims the corner. Hidden on mobile via the legend's own
+   scoped CSS; offline manager only renders inside this wrapper. */
 .map-legend-anchor {
   position: absolute;
-  left: 432px;
-  bottom: 24px;
+  left: 14px;
+  bottom: 14px;
   z-index: 10;
   display: flex;
   align-items: flex-end;
   gap: 12px;
 }
-/* MapOfflineCard provides its own width; slot is just a flex item. */
 @media (max-width: 767px) {
   .map-legend-anchor { display: none; }
-}
-@media (min-width: 768px) and (max-width: 900px) {
-  .map-legend-anchor { left: 380px; } /* rail narrows to 364 px under 900 */
-}
-
-/* Push the network-status banner clear of the rail on desktop. */
-@media (min-width: 768px) {
-  .offline-banner-anchor { padding-left: 432px; }
-}
-@media (min-width: 768px) and (max-width: 900px) {
-  .offline-banner-anchor { padding-left: 380px; }
 }
 </style>
 
