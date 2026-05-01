@@ -18,6 +18,7 @@ import MapDeskRail from '~/components/map/MapDeskRail.vue'
 import MapStatusStack from '~/components/map/MapStatusStack.vue'
 import MapLegend from '~/components/map/MapLegend.vue'
 import MapOfflineCard from '~/components/map/MapOfflineCard.vue'
+import MapChipStack from '~/components/map/MapChipStack.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -877,9 +878,8 @@ const profileIcons: Record<ProfileId, string> = {
       </div>
     </div>
 
-    <!-- ═══ Desktop left rail — component owns its own md+ visibility ═══ -->
+    <!-- ═══ Desktop left rail (overlay chips + dock) — component owns its own md+ visibility ═══ -->
     <MapDeskRail
-      :selected-profile="selectedProfile"
       :show-weather="showWeatherV0"
       :show-traffic="showTraffic"
       :show-cameras="showCameras"
@@ -889,7 +889,6 @@ const profileIcons: Record<ProfileId, string> = {
       :roads-ctx="dockRoadsCtx"
       :cam-ctx="dockCamCtx"
       :horizon-ctx="dockHorizonCtx"
-      @update:selected-profile="selectedProfile = $event; if (selectedProfile) requestGps()"
       @update:show-weather="showWeatherV0 = $event"
       @update:show-traffic="showTraffic = $event"
       @update:show-cameras="showCameras = $event"
@@ -897,6 +896,17 @@ const profileIcons: Record<ProfileId, string> = {
       @open-field-card="onOpenFieldCard"
       @cam-step="onCamStep"
       @close="onDockClose"
+    />
+
+    <!-- ═══ Desktop top-right: profile selector (single horizontal row) ═══ -->
+    <MapChipStack
+      variant="topright"
+      rows="profiles"
+      :selected-profile="selectedProfile"
+      :show-weather="showWeatherV0"
+      :show-traffic="showTraffic"
+      :show-cameras="showCameras"
+      @update:selected-profile="selectedProfile = $event; if (selectedProfile) requestGps()"
     />
 
     <!-- ═══ Desktop top-right status stack — weather freshness only ═══ -->

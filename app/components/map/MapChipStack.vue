@@ -9,9 +9,14 @@ withDefaults(defineProps<{
   showCameras: boolean
   /** Layout variant.
    *  `mobile` (default) — absolutely positioned at the top of the map.
-   *  `rail`           — flush inside the desktop left rail, no positioning. */
-  variant?: 'mobile' | 'rail'
-}>(), { variant: 'mobile' })
+   *  `rail`           — flush inside the desktop left rail, no positioning.
+   *  `topright`       — single horizontal row anchored top-right (md+ only). */
+  variant?: 'mobile' | 'rail' | 'topright'
+  /** Which rows to render. Default 'all' for mobile compatibility.
+   *  `profiles` — only the profile selector row (ALL / Photographer / …).
+   *  `overlays` — only the layer-toggle row (WEATHER / ROADS / LIVE CAMS). */
+  rows?: 'all' | 'profiles' | 'overlays'
+}>(), { variant: 'mobile', rows: 'all' })
 
 const emit = defineEmits<{
   'update:selectedProfile': [ProfileId | null]
@@ -23,7 +28,7 @@ const emit = defineEmits<{
 
 <template>
   <div class="chip-stack" :data-variant="variant" aria-label="Map filters">
-    <div class="row">
+    <div v-if="rows !== 'overlays'" class="row">
       <Pill
         :active="selectedProfile === null"
         size="sm"
@@ -39,7 +44,7 @@ const emit = defineEmits<{
         @click="emit('update:selectedProfile', p.id)"
       >{{ p.name.toUpperCase() }}</Pill>
     </div>
-    <div class="row">
+    <div v-if="rows !== 'profiles'" class="row">
       <Pill
         :active="showWeather"
         size="sm"
@@ -96,5 +101,26 @@ const emit = defineEmits<{
 /* Rail variant wraps chips into multiple rows when the rail is narrow. */
 .chip-stack[data-variant='rail'] .row {
   flex-wrap: wrap;
+}
+
+/* Top-right variant — single horizontal row anchored to the top-right
+   corner of the map area. Hidden below md (mobile uses the chip stack
+   at the top of the map). */
+.chip-stack[data-variant='topright'] {
+  display: none;
+}
+@media (min-width: 768px) {
+  .chip-stack[data-variant='topright'] {
+    display: flex;
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    flex-direction: row;
+    pointer-events: none;
+  }
+  .chip-stack[data-variant='topright'] .row {
+    flex-wrap: nowrap;
+    pointer-events: auto;
+  }
 }
 </style>

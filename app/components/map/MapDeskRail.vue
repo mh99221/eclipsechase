@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import MapChipStack from './MapChipStack.vue'
 import MapDock from './dock/MapDock.vue'
-import type { ProfileId } from '~/composables/useRecommendation'
 import type {
   DockMode,
   DockSpotData,
@@ -12,8 +11,8 @@ import type {
 } from './dock/types'
 
 defineProps<{
-  // Chip state
-  selectedProfile: ProfileId | null
+  // Layer-toggle chip state (overlay row only — profile selector is
+  // mounted separately in the page top-right).
   showWeather: boolean
   showTraffic: boolean
   showCameras: boolean
@@ -28,7 +27,6 @@ defineProps<{
 
 const emit = defineEmits<{
   // Chip
-  'update:selectedProfile': [ProfileId | null]
   'update:showWeather':     [boolean]
   'update:showTraffic':     [boolean]
   'update:showCameras':     [boolean]
@@ -45,11 +43,11 @@ const emit = defineEmits<{
     <div class="rail-section">
       <MapChipStack
         variant="rail"
-        :selected-profile="selectedProfile"
+        rows="overlays"
+        :selected-profile="null"
         :show-weather="showWeather"
         :show-traffic="showTraffic"
         :show-cameras="showCameras"
-        @update:selected-profile="emit('update:selectedProfile', $event)"
         @update:show-weather="emit('update:showWeather', $event)"
         @update:show-traffic="emit('update:showTraffic', $event)"
         @update:show-cameras="emit('update:showCameras', $event)"
