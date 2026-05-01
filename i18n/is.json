@@ -177,7 +177,17 @@
     "viewer_profile": "Áhorfendaprófíll",
     "click_details": "Smelltu til að sjá nánar",
     "click_enlarge": "Smelltu á mynd til að stækka",
-    "close": "Loka"
+    "close": "Loka",
+    "legend": "Skýringar",
+    "collapse_legend": "Loka skýringum",
+    "expand_legend": "Opna skýringar",
+    "weather_updated_ago": "Veður uppfært fyrir {minutes} mín",
+    "weather_just_now": "Veður uppfært núna",
+    "weather_loading": "Hleður veðri…",
+    "weather_stale": "Veðurgögn úreld",
+    "offline_ready": "Tilbúið án nettengingar",
+    "offline_download": "Sækja kortaflísar",
+    "offline_downloading": "Sækir flísar…"
   },
   "pro": {
     "title": "Fáðu Pro",

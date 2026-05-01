@@ -322,7 +322,17 @@
     "viewer_profile": "Viewer Profile",
     "click_details": "Click for details",
     "click_enlarge": "Click image to enlarge",
-    "close": "Close"
+    "close": "Close",
+    "legend": "Legend",
+    "collapse_legend": "Collapse legend",
+    "expand_legend": "Expand legend",
+    "weather_updated_ago": "Weather updated {minutes} min ago",
+    "weather_just_now": "Weather updated just now",
+    "weather_loading": "Loading weather…",
+    "weather_stale": "Weather data stale",
+    "offline_ready": "Offline ready",
+    "offline_download": "Download offline tiles",
+    "offline_downloading": "Downloading tiles…"
   },
   "pro": {
     "title": "Go Pro",

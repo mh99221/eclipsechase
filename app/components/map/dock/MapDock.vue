@@ -14,14 +14,18 @@ import type {
   DockHorizonCtx,
 } from './types'
 
-defineProps<{
+withDefaults(defineProps<{
   mode: DockMode
   spot: DockSpotData | null
   weatherCtx: DockWeatherCtx | null
   roadsCtx: DockRoadsCtx | null
   camCtx: DockCamCtx | null
   horizonCtx: DockHorizonCtx | null
-}>()
+  /** Layout variant.
+   *  `mobile` (default) — bottom-anchored card with gradient veil, used by /map on mobile.
+   *  `rail`           — flush card inside the desktop left rail; no veil, no border-radius. */
+  variant?: 'mobile' | 'rail'
+}>(), { variant: 'mobile' })
 
 const emit = defineEmits<{
   'horizon-open':    []
@@ -34,8 +38,8 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="dock-veil">
-    <div class="dock-card" role="region" aria-label="Map dock">
+  <div class="dock-veil" :data-variant="variant">
+    <div class="dock-card" :data-variant="variant" role="region" aria-label="Map dock">
       <DockCloseButton @close="emit('close')" />
       <div class="dock-inner">
         <DockSpot
@@ -132,7 +136,7 @@ const emit = defineEmits<{
 </style>
 
 <style scoped>
-.dock-veil {
+.dock-veil[data-variant='mobile'] {
   position: absolute;
   left: 0;
   right: 0;
@@ -144,17 +148,29 @@ const emit = defineEmits<{
   pointer-events: none;
   z-index: 5;
 }
+/* Rail variant: no veil, no positioning — the parent rail places it. */
+.dock-veil[data-variant='rail'] {
+  pointer-events: auto;
+}
 .dock-card {
   /* `relative` is the anchor for the absolute-positioned DockCloseButton
      which sits 10px from the top-right of the card. */
   position: relative;
+  pointer-events: auto;
+  overflow: hidden;
+}
+.dock-card[data-variant='mobile'] {
   background: rgb(var(--map-pane-strong) / 0.92);
   border: 1px solid rgb(var(--border-subtle) / 0.08);
   border-radius: 14px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  pointer-events: auto;
-  overflow: hidden;
+}
+/* Rail variant: flush card; the rail itself provides the surface. */
+.dock-card[data-variant='rail'] {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
 }
 .dock-inner { padding: 14px; }
 .dock-empty {

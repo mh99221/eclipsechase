@@ -14,6 +14,9 @@ import type {
   DockCamCtx,
   DockHorizonCtx,
 } from '~/components/map/dock/types'
+import MapDeskRail from '~/components/map/MapDeskRail.vue'
+import MapStatusStack from '~/components/map/MapStatusStack.vue'
+import MapLegend from '~/components/map/MapLegend.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -272,6 +275,10 @@ function handleKeydown(e: KeyboardEvent) {
     profileMenuOpen.value = false
     return
   }
+  if (e.key === 'Escape' && offlinePopoverOpen.value) {
+    offlinePopoverOpen.value = false
+    return
+  }
   if (dockMode.value === 'cam' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
     onCamStep(e.key === 'ArrowLeft' ? -1 : 1)
     e.preventDefault()
@@ -284,6 +291,7 @@ function handleKeydown(e: KeyboardEvent) {
 }
 function handleClickOutside() {
   if (profileMenuOpen.value) profileMenuOpen.value = false
+  if (offlinePopoverOpen.value) offlinePopoverOpen.value = false
 }
 onMounted(() => {
   document.addEventListener('keydown', handleKeydown)
@@ -746,6 +754,15 @@ const tileDownloading = ref(false)
 const offlineManagerMobile = ref<any>(null)
 const offlineManagerDesktop = ref<any>(null)
 const offlineManagerRef = computed(() => offlineManagerMobile.value || offlineManagerDesktop.value)
+// Desktop offline popover (toggled from the top-right status pill).
+const offlinePopoverOpen = ref(false)
+
+// Status-stack inputs (desktop only). `hasCachedTiles` mirrors the
+// internal heuristic in OfflineManager.vue (>10% of estimated tiles).
+const { tileCount, isWeatherStale } = useOfflineStatus()
+const ESTIMATED_TILE_COUNT = 1338
+const hasCachedTiles = computed(() => tileCount.value > ESTIMATED_TILE_COUNT * 0.1)
+const weatherFetchedAt = computed(() => cloudData.value?.fetched_at ?? null)
 
 function handleMapClick(coords: { lat: number; lng: number }) {
   // Place / move crosshair marker so the user sees what they tapped.
@@ -828,9 +845,8 @@ const profileIcons: Record<ProfileId, string> = {
       </template>
     </ClientOnly>
 
-    <!-- v0 mobile chrome — chip stack at top, lightbox at bottom.
-         Hidden on desktop; existing desktop floating controls remain in place. -->
-    <div class="md:hidden absolute top-[72px] left-0 right-0 z-10 pointer-events-none">
+    <!-- v0 mobile chrome — chip stack at top, dock at bottom. -->
+    <div class="mobile-chip-anchor">
       <MapChipStack
         :selected-profile="selectedProfile"
         :show-weather="showWeatherV0"
@@ -844,14 +860,10 @@ const profileIcons: Record<ProfileId, string> = {
     </div>
 
     <!-- Map dock — mobile-only bottom card that swaps content between
-         five modes (SPOT / WEATHER / ROADS / CAM / HORIZON). Lifted above
-         BottomNav so it clears the safe-area + 5-tab strip:
-            14px (pt) + 47px (icon+gap+label+gap+dot) + max(28, safe-area) (pb)
-            + 8px gap = 69 + max(28px, safe-area). -->
+         five modes (SPOT / WEATHER / ROADS / CAM / HORIZON). -->
     <div
       v-if="!dockDismissed"
-      class="md:hidden fixed left-0 right-0 z-20 pointer-events-none"
-      style="bottom: calc(69px + max(28px, env(safe-area-inset-bottom)));"
+      class="mobile-dock-anchor"
     >
       <MapDock
         :mode="dockMode"
@@ -867,146 +879,62 @@ const profileIcons: Record<ProfileId, string> = {
       />
     </div>
 
-    <!-- Floats below the global top nav (72px, fixed, z-50). -->
+    <!-- Network status banner (only visible when offline or data is stale). -->
     <div class="absolute top-[72px] left-0 right-0 z-10 pointer-events-none">
-      <!-- Desktop top-right controls: layer toggles + Profile selector.
-           Hidden on mobile (the bottom sheet provides the same controls). -->
-      <div class="relative flex items-center justify-end gap-2 px-4 sm:px-6 py-3">
-        <div class="pointer-events-auto hidden md:flex items-center gap-2">
-          <button
-            :aria-pressed="showCameras"
-            :aria-label="showCameras ? t('map.cams_on') : t('map.cams_off')"
-            class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
-            :class="showCameras
-              ? 'ec-chip-blue bg-surface-raised/90'
-              : 'text-ink-3 bg-surface-raised/90 border-border-subtle/50 hover:text-ink-1'"
-            @click="showCameras = !showCameras"
-          >
-            {{ showCameras ? t('map.cams_on') : t('map.cams_off') }}
-          </button>
-          <button
-            :aria-pressed="showTraffic"
-            :aria-label="showTraffic ? t('map.roads_on') : t('map.roads_off')"
-            class="font-mono text-xs tracking-wider px-2.5 py-1.5 rounded transition-all border"
-            :class="showTraffic
-              ? 'text-accent bg-surface-raised/90 border-accent/40'
-              : 'text-ink-3 bg-surface-raised/90 border-border-subtle/50 hover:text-ink-1'"
-            @click="showTraffic = !showTraffic"
-          >
-            {{ showTraffic ? t('map.roads_on') : t('map.roads_off') }}
-          </button>
-        </div>
-        <div class="pointer-events-auto hidden md:block" @click.stop>
-          <button
-            class="text-xs font-mono tracking-wider px-2.5 py-1.5 rounded transition-all border"
-            :class="activeProfileName
-              ? 'text-accent bg-surface-raised/90 border-accent/40'
-              : 'text-ink-3 bg-surface-raised/90 border-border-subtle/50 hover:text-ink-1'"
-            :aria-expanded="profileMenuOpen"
-            aria-haspopup="true"
-            aria-controls="profile-menu"
-            @click="profileMenuOpen = !profileMenuOpen"
-          >
-            {{ activeProfileName || t('map.profile') }}
-            <span class="ml-1 text-[10px]" aria-hidden="true">{{ profileMenuOpen ? '▲' : '▼' }}</span>
-          </button>
-          <div
-            v-if="profileMenuOpen"
-            id="profile-menu"
-            role="menu"
-            class="absolute right-4 sm:right-6 top-full mt-1 bg-surface-raised/95 backdrop-blur-sm border border-border-subtle/60 rounded py-1 min-w-[140px] z-20"
-          >
-            <button
-              v-for="profile in PROFILES"
-              :key="profile.id"
-              role="menuitem"
-              class="w-full text-left px-3 py-1.5 text-xs font-mono transition-colors"
-              :class="selectedProfile === profile.id ? 'text-accent' : 'text-ink-3 hover:text-ink-1'"
-              @click="selectedProfile = selectedProfile === profile.id ? null : profile.id as ProfileId; profileMenuOpen = false; if (selectedProfile) requestGps()"
-            >
-              {{ profile.name }}
-            </button>
-            <button
-              v-if="selectedProfile"
-              role="menuitem"
-              class="w-full text-left px-3 py-1.5 text-xs font-mono text-ink-3 hover:text-ink-2 border-t border-border-subtle/40 mt-1 pt-1.5 transition-colors"
-              @click="selectedProfile = null; profileMenuOpen = false"
-            >
-              {{ t('map.clear_profile') }}
-            </button>
-          </div>
-        </div>
-      </div>
-      <!-- Offline banner (only visible when offline or stale) -->
-      <div class="pointer-events-auto px-4 sm:px-6">
+      <div class="offline-banner-anchor pointer-events-auto px-4 sm:px-6">
         <OfflineBanner />
       </div>
     </div>
 
-    <!-- ═══ Desktop: legend (hidden on mobile) ═══ -->
-    <div class="hidden md:block absolute bottom-[84px] left-6 z-10 bg-surface-raised/90 backdrop-blur-sm border border-border-subtle/50 rounded px-4 py-3 max-h-[calc(100dvh-220px)] overflow-y-auto text-xs">
-      <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-2.5">{{ t('map.cloud_cover') }}</p>
-      <div class="flex flex-col gap-1.5">
-        <div v-for="item in legendItems" :key="item.label" class="flex items-center gap-2">
-          <WeatherIcon :cloud-cover="item.cloudCover" :size="20" class="shrink-0" />
-          <span class="text-xs font-mono text-ink-2">{{ item.label }}</span>
+    <!-- ═══ Desktop left rail — component owns its own md+ visibility ═══ -->
+    <MapDeskRail
+      :selected-profile="selectedProfile"
+      :show-weather="showWeatherV0"
+      :show-traffic="showTraffic"
+      :show-cameras="showCameras"
+      :mode="dockMode"
+      :spot="dockSpot"
+      :weather-ctx="dockWeatherCtx"
+      :roads-ctx="dockRoadsCtx"
+      :cam-ctx="dockCamCtx"
+      :horizon-ctx="dockHorizonCtx"
+      @update:selected-profile="selectedProfile = $event; if (selectedProfile) requestGps()"
+      @update:show-weather="showWeatherV0 = $event"
+      @update:show-traffic="showTraffic = $event"
+      @update:show-cameras="showCameras = $event"
+      @horizon-open="onHorizonOpen"
+      @open-field-card="onOpenFieldCard"
+      @cam-step="onCamStep"
+      @close="onDockClose"
+    />
+
+    <!-- ═══ Desktop top-right status stack — component owns its own md+ visibility ═══ -->
+    <div @click.stop>
+      <MapStatusStack
+        :weather-fetched-at="weatherFetchedAt"
+        :weather-stale="cloudData?.stale === true || isWeatherStale"
+        :has-cached-tiles="hasCachedTiles"
+        :is-downloading="tileDownloading"
+        @toggle-offline="offlinePopoverOpen = !offlinePopoverOpen"
+      />
+      <Transition name="fade">
+        <div
+          v-if="offlinePopoverOpen"
+          class="offline-popover"
+          @click.stop
+        >
+          <OfflineManager :map="eclipseMapRef?.map" @downloading="tileDownloading = $event" ref="offlineManagerDesktop" />
         </div>
-      </div>
-      <div class="mt-3 pt-2.5 border-t border-border-subtle/40">
-        <div class="flex items-center gap-2 mb-1">
-          <span class="w-3.5 h-3.5 rounded-full border-2 border-accent bg-surface-raised flex items-center justify-center shrink-0">
-            <span class="w-1.5 h-1.5 rounded-full bg-accent" />
-          </span>
-          <span class="text-xs font-mono text-ink-2">{{ t('map.viewing_spot') }}</span>
-        </div>
-        <div class="flex items-center gap-2 mb-1">
-          <span class="w-4 h-0 border-t border-dashed border-accent/40" />
-          <span class="text-xs font-mono text-ink-2">{{ t('map.totality_path') }}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="w-4 h-0 border-t-2 border-accent-strong/60" />
-          <span class="text-xs font-mono text-ink-2">{{ t('map.centerline') }}</span>
-        </div>
-      </div>
-      <div v-if="showTraffic" class="mt-3 pt-2.5 border-t border-border-subtle/40">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-2">{{ t('map.road_conditions') }}</p>
-        <div class="flex items-center gap-2 mb-1">
-          <span class="w-4 h-0 border-t-2 border-green-500" />
-          <span class="text-xs font-mono text-ink-2">{{ t('map.road_good') }}</span>
-        </div>
-        <div class="flex items-center gap-2 mb-1">
-          <span class="w-4 h-0 border-t-2 border-orange-500" />
-          <span class="text-xs font-mono text-ink-2">{{ t('map.road_difficult') }}</span>
-        </div>
-        <div class="flex items-center gap-2 mb-1">
-          <span class="w-4 h-0 border-t-2 border-red-500" />
-          <span class="text-xs font-mono text-ink-2">{{ t('map.road_closed') }}</span>
-        </div>
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mt-2 mb-2">{{ t('map.road_warnings') }}</p>
-        <div class="flex items-center gap-2 mb-1">
-          <span class="w-3 h-3 rounded-full border-2 border-orange-500 bg-surface-raised shrink-0" />
-          <span class="text-xs font-mono text-ink-2">{{ t('map.hazard') }}</span>
-        </div>
-        <div class="flex items-center gap-2 mb-1">
-          <span class="w-3 h-3 rounded-full border-2 border-red-500 bg-surface-raised shrink-0" />
-          <span class="text-xs font-mono text-ink-2">{{ t('map.closed') }}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full border-2 border-gray-500 bg-surface-raised shrink-0" />
-          <span class="text-xs font-mono text-ink-2">{{ t('map.other') }}</span>
-        </div>
-      </div>
-      <div v-if="showCameras" class="mt-3 pt-2.5 border-t border-border-subtle/40">
-        <div class="flex items-center gap-2">
-          <span class="w-4 h-4 rounded-full border-2 border-[#7dd3fc] bg-surface-raised flex items-center justify-center shrink-0">
-            <svg width="8" height="8" viewBox="0 0 16 16" fill="none" class="shrink-0">
-              <circle cx="8" cy="8" r="5" stroke="#7dd3fc" stroke-width="1.5" fill="none" />
-              <circle cx="8" cy="8" r="2" fill="#7dd3fc" />
-            </svg>
-          </span>
-          <span class="text-xs font-mono text-ink-2">{{ t('map.road_camera') }}</span>
-        </div>
-      </div>
+      </Transition>
+    </div>
+
+    <!-- ═══ Desktop: collapsible legend — component owns its own md+ visibility ═══ -->
+    <div class="map-legend-anchor">
+      <MapLegend
+        :legend-items="legendItems"
+        :show-traffic="showTraffic"
+        :show-cameras="showCameras"
+      />
     </div>
 
     <!--
@@ -1186,11 +1114,6 @@ const profileIcons: Record<ProfileId, string> = {
       </div>
     </div>
 
-    <!-- Offline download manager (desktop) -->
-    <div class="absolute top-32 left-6 z-10 w-64 hidden md:block">
-      <OfflineManager :map="eclipseMapRef?.map" @downloading="tileDownloading = $event" ref="offlineManagerDesktop" />
-    </div>
-
     <!-- Full-screen download overlay -->
     <div
       v-if="tileDownloading"
@@ -1216,23 +1139,6 @@ const profileIcons: Record<ProfileId, string> = {
         {{ t('offline.cancel') }}
       </button>
     </div>
-
-    <!-- Desktop-only: Pro click-to-check-horizon panel still renders the
-         dynamic horizon overlay because the dock is mobile-only for now.
-         When the desktop dock lands, this block goes away too. -->
-    <Transition name="fade">
-      <div
-        v-if="dockMode === 'horizon' && dockHorizonCtx"
-        class="hidden md:block absolute z-20 md:bottom-[80px] md:right-6 md:w-[640px] md:max-w-[calc(100vw-3rem)]"
-      >
-        <DynamicHorizonCheck
-          :key="`${dockHorizonCtx.lat},${dockHorizonCtx.lng}`"
-          :lat="dockHorizonCtx.lat"
-          :lng="dockHorizonCtx.lng"
-          @close="dockHorizonCtx = null; dockMode = 'spot'"
-        />
-      </div>
-    </Transition>
 
     <!-- Camera lightbox (full-screen overlay, z-99999). Desktop-only —
          mobile uses the dock CAM mode. -->
@@ -1262,5 +1168,63 @@ const profileIcons: Record<ProfileId, string> = {
     </Transition>
   </div>
 </template>
+
+<style scoped>
+/* Mobile-only chrome anchors. Component-level visibility (vs. Tailwind
+   `md:hidden`) so the layout is robust to JIT-utility quirks in dev. */
+.mobile-chip-anchor {
+  position: absolute;
+  top: 72px;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+.mobile-dock-anchor {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(69px + max(28px, env(safe-area-inset-bottom)));
+  z-index: 20;
+  pointer-events: none;
+}
+@media (min-width: 768px) {
+  .mobile-chip-anchor,
+  .mobile-dock-anchor { display: none; }
+}
+
+/* Legend anchor: bottom-left, sits to the right of the desk-rail (320 px wide).
+   Hidden on mobile via the legend's own scoped CSS — the wrapper itself stays
+   in the DOM; positioning here only affects layout when the legend renders. */
+.map-legend-anchor {
+  position: absolute;
+  left: 336px;
+  bottom: 24px;
+  z-index: 10;
+}
+@media (max-width: 767px) {
+  .map-legend-anchor { display: none; }
+}
+@media (min-width: 768px) and (max-width: 900px) {
+  .map-legend-anchor { left: 296px; } /* rail narrows to 280 px under 900 */
+}
+
+/* Offline popover anchored under the status stack pill. */
+.offline-popover {
+  position: absolute;
+  top: 56px;
+  right: 14px;
+  width: 288px;
+  z-index: 20;
+}
+@media (max-width: 767px) {
+  .offline-popover { display: none; }
+}
+
+/* Push the network-status banner clear of the rail on desktop. */
+@media (min-width: 768px) {
+  .offline-banner-anchor { padding-left: 336px; }
+}
+</style>
 
 

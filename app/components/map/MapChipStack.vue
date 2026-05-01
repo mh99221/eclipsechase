@@ -2,12 +2,16 @@
 import Pill from '~/components/ui/Pill.vue'
 import { PROFILES, type ProfileId } from '~/composables/useRecommendation'
 
-defineProps<{
+withDefaults(defineProps<{
   selectedProfile: ProfileId | null
   showWeather: boolean
   showTraffic: boolean
   showCameras: boolean
-}>()
+  /** Layout variant.
+   *  `mobile` (default) — absolutely positioned at the top of the map.
+   *  `rail`           — flush inside the desktop left rail, no positioning. */
+  variant?: 'mobile' | 'rail'
+}>(), { variant: 'mobile' })
 
 const emit = defineEmits<{
   'update:selectedProfile': [ProfileId | null]
@@ -18,7 +22,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="chip-stack" aria-label="Map filters">
+  <div class="chip-stack" :data-variant="variant" aria-label="Map filters">
     <div class="row">
       <Pill
         :active="selectedProfile === null"
@@ -59,23 +63,38 @@ const emit = defineEmits<{
 </template>
 
 <style scoped>
+/* Position rules below are variant-scoped — see [data-variant] selectors. */
 .chip-stack {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  right: 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   pointer-events: none;
   z-index: 5;
 }
+.chip-stack[data-variant='mobile'] {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+}
+.chip-stack[data-variant='rail'] {
+  position: static !important;
+  top: auto;
+  left: auto;
+  right: auto;
+}
 .row {
   display: flex;
   gap: 6px;
-  overflow-x: auto;
   pointer-events: auto;
+}
+.chip-stack[data-variant='mobile'] .row {
+  overflow-x: auto;
   scrollbar-width: none;
 }
-.row::-webkit-scrollbar { display: none; }
+.chip-stack[data-variant='mobile'] .row::-webkit-scrollbar { display: none; }
+/* Rail variant wraps chips into multiple rows when the rail is narrow. */
+.chip-stack[data-variant='rail'] .row {
+  flex-wrap: wrap;
+}
 </style>
