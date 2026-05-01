@@ -12,12 +12,15 @@ const props = defineProps<{
 const emit = defineEmits<{ downloading: [active: boolean] }>()
 
 const STORAGE_KEY = 'ec-map-offline-open'
-const open = ref(true)
+// Collapsed by default — the OfflineManager UI is large and only relevant
+// when the user is actively prepping for offline use. Persisted toggle
+// state still wins on subsequent loads.
+const open = ref(false)
 
 onMounted(() => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved === '0') open.value = false
+    if (saved === '1') open.value = true
   } catch { /* localStorage unavailable; keep default */ }
 })
 

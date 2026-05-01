@@ -357,14 +357,13 @@ function buildTrafficMarker(c: TrafficCondition, map: mapboxgl.Map): mapboxgl.Ma
     .setLngLat([c.lng, c.lat])
     .addTo(map)
 
-  // Mobile drives the dock instead of opening a popup. Listener is bound
-  // once at marker creation; the condition snapshot is captured here
-  // since hazard data is static across renders. stopPropagation defends
+  // Click always drives the dock (mobile + desktop rail) — same pattern
+  // spots/weather use. Desktop additionally shows the Mapbox popup so
+  // hazard details surface inline at the marker. stopPropagation defends
   // against the click also reaching Mapbox's bare-map handler.
   if (!isMobile.value) marker.setPopup(popup)
   el.addEventListener('click', (e) => {
     e.stopPropagation()
-    if (!isMobile.value) return
     onRoadSelect({
       cond: normaliseCond(c.condition),
       label: getTrafficLabel(c.condition),
@@ -476,30 +475,32 @@ function addRoadPolylines(map: any) {
     const name = f.properties.roadName || f.properties.roadRef || 'Road'
     const refLabel = f.properties.roadRef ? `${name} (${f.properties.roadRef})` : name
 
-    if (isMobile.value) {
-      onRoadSelect({
-        cond: normaliseCond(condition),
-        label: getTrafficLabel(condition),
-        detail: refLabel,
-        updatedAt: f.properties.updated_at ?? null,
-      })
-      return
-    }
-
-    new mapboxgl.Popup({
-      offset: 10,
-      closeButton: false,
-      maxWidth: 'min(220px, 85vw)',
-      className: 'eclipse-popup',
+    // Always drive the dock — same pattern spots/weather use.
+    onRoadSelect({
+      cond: normaliseCond(condition),
+      label: getTrafficLabel(condition),
+      detail: refLabel,
+      updatedAt: f.properties.updated_at ?? null,
     })
-      .setLngLat(e.lngLat)
-      .setHTML(`
-        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
-          <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${getTrafficLabel(condition)}</h3>
-          <p style="color: #94a3b8; margin: 0;">${refLabel}</p>
-        </div>
-      `)
-      .addTo(map)
+
+    // Desktop: also show the inline popup at the click point so the
+    // segment label is visible without scanning the rail.
+    if (!isMobile.value) {
+      new mapboxgl.Popup({
+        offset: 10,
+        closeButton: false,
+        maxWidth: 'min(220px, 85vw)',
+        className: 'eclipse-popup',
+      })
+        .setLngLat(e.lngLat)
+        .setHTML(`
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; padding: 4px;">
+            <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 4px; color: ${color};">${getTrafficLabel(condition)}</h3>
+            <p style="color: #94a3b8; margin: 0;">${refLabel}</p>
+          </div>
+        `)
+        .addTo(map)
+    }
   }
   roadEnterHandler = () => { map.getCanvas().style.cursor = 'pointer' }
   roadLeaveHandler = () => { map.getCanvas().style.cursor = '' }
@@ -655,13 +656,13 @@ function buildCameraMarker(cam: CameraData, map: mapboxgl.Map): mapboxgl.Marker 
     .setLngLat([cam.lng, cam.lat])
     .addTo(map)
 
-  // Mobile drives the dock CAM mode; desktop keeps the existing popup.
-  // stopPropagation defends against the click also reaching Mapbox's
-  // bare-map handler.
+  // Click always drives the dock CAM mode (mobile + desktop rail) — same
+  // pattern spots/weather use. Desktop also keeps the inline popup with
+  // image carousel + click-to-enlarge. stopPropagation defends against
+  // the click also reaching Mapbox's bare-map handler.
   if (!isMobile.value) marker.setPopup(popup)
   el.addEventListener('click', (e) => {
     e.stopPropagation()
-    if (!isMobile.value) return
     onCamSelect(cam)
   })
   return marker
