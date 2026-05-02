@@ -4,25 +4,25 @@ export function formatDuration(seconds: number): string {
   return m > 0 ? `${m}m ${s}s` : `${s}s`
 }
 
-export const CLOUD_COVER_LEVELS = [
-  { max: 20, color: '#38bdf8', label: 'Clear' },
-  { max: 40, color: '#60a5fa', label: 'Mostly clear' },
-  { max: 60, color: '#818cf8', label: 'Partly cloudy' },
-  { max: 80, color: '#94a3b8', label: 'Mostly cloudy' },
-  { max: 100, color: '#64748b', label: 'Overcast' },
-] as const
+export type CloudLevelKey = 'clear' | 'mostly-clear' | 'partly-cloudy' | 'mostly-cloudy' | 'overcast'
 
-export const CLOUD_COVER_NO_DATA = { color: '#475569', label: 'No data' } as const
+export const CLOUD_COVER_LEVELS = [
+  { key: 'clear',         max: 20,  color: '#38bdf8', label: 'Clear' },
+  { key: 'mostly-clear',  max: 40,  color: '#60a5fa', label: 'Mostly clear' },
+  { key: 'partly-cloudy', max: 60,  color: '#818cf8', label: 'Partly cloudy' },
+  { key: 'mostly-cloudy', max: 80,  color: '#94a3b8', label: 'Mostly cloudy' },
+  { key: 'overcast',      max: 100, color: '#64748b', label: 'Overcast' },
+] as const satisfies ReadonlyArray<{ key: CloudLevelKey; max: number; color: string; label: string }>
+
+export const CLOUD_COVER_NO_DATA = { key: 'no-data' as const, color: '#475569', label: 'No data' } as const
+
+export type CloudLevel = (typeof CLOUD_COVER_LEVELS)[number] | typeof CLOUD_COVER_NO_DATA
 
 export function cloudColor(cover: number | null | undefined): string {
-  if (cover == null) return CLOUD_COVER_NO_DATA.color
-  for (const level of CLOUD_COVER_LEVELS) {
-    if (cover <= level.max) return level.color
-  }
-  return CLOUD_COVER_LEVELS[CLOUD_COVER_LEVELS.length - 1].color
+  return cloudLevel(cover).color
 }
 
-export function cloudLevel(cover: number | null | undefined): { color: string; label: string } {
+export function cloudLevel(cover: number | null | undefined): CloudLevel {
   if (cover == null) return CLOUD_COVER_NO_DATA
   for (const level of CLOUD_COVER_LEVELS) {
     if (cover <= level.max) return level
