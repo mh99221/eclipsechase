@@ -4,11 +4,11 @@ import { serverSupabaseServiceRole } from '#supabase/server'
 export default defineEventHandler(async (event) => {
   const { email } = await readBody<{ email: string }>(event)
 
-  if (!email || typeof email !== 'string' || !email.includes('@')) {
+  if (!email || typeof email !== 'string' || !isValidEmail(email)) {
     throw createError({ statusCode: 400, statusMessage: 'Valid email is required' })
   }
 
-  const normalizedEmail = email.toLowerCase().trim()
+  const normalizedEmail = normalizeEmail(email)
 
   // Rate limit: 3 requests per email per hour
   if (!checkRateLimit(`restore-request:${normalizedEmail}`, 3, 60 * 60 * 1000)) {

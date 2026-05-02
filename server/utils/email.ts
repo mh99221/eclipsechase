@@ -3,6 +3,14 @@ import { Resend } from 'resend'
 
 const FROM_EMAIL = 'EclipseChase.is <hello@eclipsechase.is>'
 
+export function normalizeEmail(s: string): string {
+  return s.toLowerCase().trim()
+}
+
+export function isValidEmail(s: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)
+}
+
 export function maskEmail(email: string): string {
   const [local, domain] = email.split('@')
   return local.length > 1
@@ -11,7 +19,7 @@ export function maskEmail(email: string): string {
 }
 
 export function hashEmail(email: string): string {
-  return createHash('sha256').update(email.toLowerCase().trim()).digest('hex')
+  return createHash('sha256').update(normalizeEmail(email)).digest('hex')
 }
 
 function getResend(): Resend | null {

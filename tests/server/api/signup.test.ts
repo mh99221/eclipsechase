@@ -7,6 +7,8 @@ vi.mock('../../../server/utils/email', () => ({
   hashEmail: vi.fn().mockReturnValue('hashed'),
   maskEmail: vi.fn().mockReturnValue('masked'),
   sendRestoreCode: vi.fn(),
+  normalizeEmail: (s: string) => s.toLowerCase().trim(),
+  isValidEmail: (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s),
 }))
 
 // signup.post.ts makes two calls to supabase:

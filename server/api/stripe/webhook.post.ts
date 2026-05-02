@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
       return { received: true }
     }
 
-    const normalizedEmail = email.toLowerCase().trim()
+    const normalizedEmail = normalizeEmail(email)
     const emailHash = hashEmail(normalizedEmail)
     const token = await generateProToken(normalizedEmail, session.id)
 

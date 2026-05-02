@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Email and code are required' })
   }
 
-  const normalizedEmail = email.toLowerCase().trim()
+  const normalizedEmail = normalizeEmail(email)
 
   // Rate limit: 5 attempts per email per hour
   if (!checkRateLimit(`restore-verify:${normalizedEmail}`, 5, 60 * 60 * 1000)) {

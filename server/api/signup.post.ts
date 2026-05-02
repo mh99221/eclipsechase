@@ -1,5 +1,5 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
-import { sendWelcomeEmail } from '../utils/email'
+import { isValidEmail, normalizeEmail, sendWelcomeEmail } from '../utils/email'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -11,9 +11,9 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const email = body.email.trim().toLowerCase()
+  const email = normalizeEmail(body.email)
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!isValidEmail(email)) {
     throw createError({
       statusCode: 400,
       statusMessage: 'Invalid email address',
