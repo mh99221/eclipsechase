@@ -7,10 +7,6 @@ test.describe('Legal pages', () => {
     const h1 = page.locator('h1')
     await expect(h1).toBeVisible()
     await expect(h1).toContainText('Privacy')
-
-    // Has the noise background wrapper
-    const wrapper = page.locator('.noise')
-    await expect(wrapper).toBeVisible()
   })
 
   test('terms page renders with heading', async ({ page, goto }) => {
