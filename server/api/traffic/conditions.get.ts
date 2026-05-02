@@ -1,33 +1,33 @@
 import { fetchRoadConditions, type RoadCondition } from '../../utils/vegagerdin'
+import { createTtlCache } from '../../utils/cacheHelper'
 
 const CACHE_TTL_MS = 15 * 60 * 1000 // 15 minutes
 
-let cachedConditions: RoadCondition[] = []
-let cachedAt = 0
+const cache = createTtlCache<RoadCondition[]>(CACHE_TTL_MS)
 
 export default defineEventHandler(async () => {
-  const now = Date.now()
-  const isFresh = cachedAt > 0 && (now - cachedAt) < CACHE_TTL_MS
+  const hit = cache.get()
 
-  if (isFresh) {
+  if (hit !== null) {
     return {
-      conditions: cachedConditions,
+      conditions: hit,
       cached: true,
-      fetchedAt: new Date(cachedAt).toISOString(),
+      fetchedAt: new Date(cache.cachedAt).toISOString(),
     }
   }
 
   const conditions = await fetchRoadConditions()
 
-  // Only update cache if we got results (keep stale data if fetch fails)
-  if (conditions.length > 0 || cachedAt === 0) {
-    cachedConditions = conditions
-    cachedAt = now
+  // Only update cache if we got results (keep stale data if fetch fails).
+  // First-ever fetch always primes the cache, even if empty.
+  if (conditions.length > 0 || cache.cachedAt === 0) {
+    cache.set(conditions)
   }
 
+  const current = cache.peek() ?? []
   return {
-    conditions: cachedConditions,
+    conditions: current,
     cached: false,
-    fetchedAt: new Date(cachedAt).toISOString(),
+    fetchedAt: new Date(cache.cachedAt).toISOString(),
   }
 })

@@ -72,6 +72,9 @@ function translateDescription(desc: string): string {
   return result.replace(/\s{2,}/g, ' ').trim()
 }
 
+import { createTtlCache } from '../utils/cacheHelper'
+
+
 interface CameraLocation {
   id: number
   name: string
@@ -81,20 +84,19 @@ interface CameraLocation {
   images: Array<{ url: string; description: string }>
 }
 
-let cachedCameras: CameraLocation[] = []
-let cachedAt = 0
+const cache = createTtlCache<CameraLocation[]>(CACHE_TTL_MS)
 
 export default defineEventHandler(async () => {
-  const now = Date.now()
-  if (cachedCameras.length > 0 && (now - cachedAt) < CACHE_TTL_MS) {
-    return { cameras: cachedCameras, cached: true }
+  const hit = cache.get()
+  if (hit !== null && hit.length > 0) {
+    return { cameras: hit, cached: true }
   }
 
   try {
     const response = await fetch(CAMERA_API, { signal: AbortSignal.timeout(10000) })
     if (!response.ok) {
       console.error(`[cameras] Vegagerdin API returned ${response.status}`)
-      return { cameras: cachedCameras, cached: true }
+      return { cameras: cache.peek() ?? [], cached: true }
     }
 
     const data: any[] = await response.json()
@@ -124,12 +126,12 @@ export default defineEventHandler(async () => {
       })
     }
 
-    cachedCameras = Array.from(locations.values())
-    cachedAt = now
+    const fresh = Array.from(locations.values())
+    cache.set(fresh)
 
-    return { cameras: cachedCameras, cached: false }
+    return { cameras: fresh, cached: false }
   } catch (err: any) {
     console.error('[cameras] Fetch failed:', err.message || err)
-    return { cameras: cachedCameras, cached: true }
+    return { cameras: cache.peek() ?? [], cached: true }
   }
 })

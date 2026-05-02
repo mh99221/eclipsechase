@@ -1,24 +1,33 @@
 import { fetchRoadSegments, type RoadSegment } from '../../utils/vegagerdin'
+import { createTtlCache } from '../../utils/cacheHelper'
 
 const CACHE_TTL_MS = 15 * 60 * 1000 // 15 minutes
-let cachedSegments: RoadSegment[] = []
-let cachedAt = 0
+
+const cache = createTtlCache<RoadSegment[]>(CACHE_TTL_MS)
 
 export default defineEventHandler(async () => {
-  const now = Date.now()
+  const hit = cache.get()
 
-  if (cachedSegments.length > 0 && now - cachedAt < CACHE_TTL_MS) {
-    return { segments: cachedSegments, cached: true, fetchedAt: new Date(cachedAt).toISOString() }
+  if (hit !== null) {
+    return {
+      segments: hit,
+      cached: true,
+      fetchedAt: new Date(cache.cachedAt).toISOString(),
+    }
   }
 
-  try {
-    const segments = await fetchRoadSegments()
-    if (segments.length > 0) {
-      cachedSegments = segments
-      cachedAt = now
-    }
-    return { segments: cachedSegments, cached: false, fetchedAt: new Date(now).toISOString() }
-  } catch {
-    return { segments: cachedSegments, cached: true, fetchedAt: new Date(cachedAt).toISOString() }
+  const segments = await fetchRoadSegments()
+
+  // Only update cache if we got results (keep stale data if fetch fails).
+  // First-ever fetch always primes the cache, even if empty.
+  if (segments.length > 0 || cache.cachedAt === 0) {
+    cache.set(segments)
+  }
+
+  const current = cache.peek() ?? []
+  return {
+    segments: current,
+    cached: false,
+    fetchedAt: new Date(cache.cachedAt).toISOString(),
   }
 })
