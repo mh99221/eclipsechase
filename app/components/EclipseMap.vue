@@ -2,8 +2,10 @@
 import mapboxgl from 'mapbox-gl'
 import { cloudColor, cloudLevel, formatDuration, weatherSvgHtml } from '~/utils/eclipse'
 import { addEclipsePathLayers } from '~/utils/mapLayers'
+import { MAP_CONFIG, MARKER_SIZES } from '~/utils/mapConfig'
 import { computeMinZooms, setMarkerVisibility } from '~/utils/mapMarkers'
 import { readCssVar } from '~/utils/theme'
+import type { MapSpot } from '~/types/spots'
 
 const props = defineProps<{
   stations?: Array<{
@@ -20,18 +22,7 @@ const props = defineProps<{
      *  the WEATHER dock for "Updated N min ago". Null when no obs yet. */
     observed_at?: string | null
   }>
-  spots?: Array<{
-    id: string
-    name: string
-    slug: string
-    lat: number
-    lng: number
-    region: string
-    totality_duration_seconds: number
-    has_services: boolean
-    cell_coverage: string
-    horizon_check?: { verdict: string; clearance_degrees?: number } | null
-  }>
+  spots?: MapSpot[]
   rankedSpots?: Array<{
     slug: string
     rank: number
@@ -240,7 +231,7 @@ function updateMarkers() {
   applyZoomVisibility()
 }
 
-type Spot = NonNullable<typeof props.spots>[number]
+type Spot = MapSpot
 type RankInfo = { rank: number; score: number; filtered: boolean }
 
 interface ThemeColors {
@@ -279,7 +270,7 @@ function renderSpotInto(el: HTMLElement, spot: Spot, rankInfo: RankInfo | undefi
   // a softer halo. Wins regardless of ranking/filter state.
   if (isSelected) {
     el.style.cssText = `
-      width: 26px; height: 26px; border-radius: 50%;
+      width: ${MARKER_SIZES.selected}px; height: ${MARKER_SIZES.selected}px; border-radius: 50%;
       background: ${colors.markerBg}; border: 2px solid #D85848;
       box-shadow: 0 0 14px rgba(216, 88, 72, 0.5); cursor: pointer; z-index: 11;
       display: flex; align-items: center; justify-content: center;
@@ -295,7 +286,7 @@ function renderSpotInto(el: HTMLElement, spot: Spot, rankInfo: RankInfo | undefi
   // Border stays at 2px (legend border width).
   if (isFiltered) {
     el.style.cssText = `
-      width: 18px; height: 18px; border-radius: 50%;
+      width: ${MARKER_SIZES.filtered}px; height: ${MARKER_SIZES.filtered}px; border-radius: 50%;
       background: ${colors.markerBg}; border: 2px solid ${colors.mutedInk};
       opacity: 0.4; cursor: pointer; z-index: 10;
       display: flex; align-items: center; justify-content: center;
@@ -304,7 +295,7 @@ function renderSpotInto(el: HTMLElement, spot: Spot, rankInfo: RankInfo | undefi
     inner.style.cssText = `width: 8px; height: 8px; border-radius: 50%; background: ${colors.mutedInk};`
     el.appendChild(inner)
   } else if (hasRanking) {
-    const size = isTop3 ? 24 : 21
+    const size = isTop3 ? MARKER_SIZES.top3 : MARKER_SIZES.ranked
     const borderColor = isTop3 ? colors.accent : colors.accentStrong
     const shadow = isTop3
       ? `0 0 14px rgb(var(--accent) / 0.4)`
@@ -320,7 +311,7 @@ function renderSpotInto(el: HTMLElement, spot: Spot, rankInfo: RankInfo | undefi
     el.textContent = String(rankInfo!.rank)
   } else {
     el.style.cssText = `
-      width: 21px; height: 21px; border-radius: 50%;
+      width: ${MARKER_SIZES.unranked}px; height: ${MARKER_SIZES.unranked}px; border-radius: 50%;
       background: ${colors.markerBg}; border: 2px solid ${colors.accent};
       box-shadow: 0 0 12px rgb(var(--accent) / 0.25); cursor: pointer; z-index: 10;
       display: flex; align-items: center; justify-content: center;
@@ -472,7 +463,7 @@ function focusOnSpot(slug: string) {
   if (!cached) return
 
   const lngLat = cached.marker.getLngLat()
-  map.flyTo({ center: lngLat, zoom: 10, duration: 1500 })
+  map.flyTo({ center: lngLat, zoom: MAP_CONFIG.focusZoom, duration: 1500 })
   setTimeout(() => cached.marker.togglePopup(), 1600)
 }
 
@@ -529,8 +520,8 @@ onMounted(() => {
     style: mapboxStyleFor(colorMode.value),
     center: props.initialCenter || [-23.5, 65.0],
     zoom: props.initialZoom ?? 6,
-    minZoom: 5,
-    maxZoom: 12,
+    minZoom: MAP_CONFIG.minZoom,
+    maxZoom: MAP_CONFIG.maxZoom,
     attributionControl: false,
   })
 
