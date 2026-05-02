@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const { isPro } = useProStatus()
+const { t } = useI18n()
+const { isPro, loading: proLoading, clearPro } = useProStatus()
 const route = useRoute()
 const { items: navItems, isActive: isNavActive } = useNavItems()
 
@@ -10,6 +11,19 @@ const isMap = computed(() => route.path === '/map')
 // the legacy app.vue behavior so the desktop layout has horizontal nav
 // between the brand and the user menu.
 const showMasthead = computed(() => isPro.value && !isLanding.value)
+
+const isLoggingOut = ref(false)
+
+async function handleLogout() {
+  isLoggingOut.value = true
+  try {
+    await clearPro()
+    navigateTo('/pro')
+  }
+  finally {
+    isLoggingOut.value = false
+  }
+}
 </script>
 
 <template>
@@ -45,7 +59,21 @@ const showMasthead = computed(() => isPro.value && !isLanding.value)
         <span v-if="isLanding" class="brand-bar-coords">
           <span class="hide-sm">64.1°N 21.9°W · </span>AUG 12 2026
         </span>
-        <ClientOnly v-else><UserMenu /></ClientOnly>
+        <ClientOnly v-else>
+          <div v-if="isPro && !proLoading" class="flex items-center gap-3">
+            <span class="hidden sm:inline font-mono text-[10px] text-accent/60 tracking-wider uppercase">
+              {{ t('pro.badge', 'Pro') }}
+            </span>
+            <ThemeToggle />
+            <button
+              :disabled="isLoggingOut"
+              class="font-mono text-[10px] text-ink-3 hover:text-ink-2 tracking-wider uppercase transition-colors disabled:opacity-50"
+              @click="handleLogout"
+            >
+              {{ t('auth.logout') }}
+            </button>
+          </div>
+        </ClientOnly>
       </div>
     </div>
   </header>
