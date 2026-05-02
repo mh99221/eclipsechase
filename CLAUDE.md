@@ -223,21 +223,16 @@ eclipse-chaser/
 │   │   └── 005-advisories-levels.sql # Seed bad/warn levels per curated spot (uses CTE + jsonb_array_elements WITH ORDINALITY)
 │   ├── compute-eclipse-grid.py      # Skyfield: generate eclipse geometry (incl. C1/C4 via bisect_contact, ~1s precision)
 │   ├── fetch-historical-weather.mjs # Pre-compute Aug-12 cloud-cover history per spot → historical-weather.json
-│   ├── generate-grid-fast.py        # Optimized grid generation
 │   ├── precompute-horizon-grid.ts   # DEM → horizon-grid.json (91-point sweep)
-│   ├── compute-horizon-checks.py    # Alternative horizon computation
-│   ├── compute-horizon-node.mjs     # Node.js horizon computation
 │   ├── prepare-dem-binary.py        # Prepare ÍslandsDEM binary
 │   ├── seed-weather-stations.sql    # 55 weather stations
 │   ├── seed-viewing-spots.sql       # Curated viewing spots
 │   ├── seed-viewing-spots-v2.sql    # Updated spots data
 │   ├── seed-spot-photos.sql         # Photo metadata for spots
-│   ├── seed-horizon-checks.sql      # Horizon check data
 │   ├── generate-roads-geojson.mjs   # Road network GeoJSON
 │   ├── fetch-stations.mjs           # Fetch station list from vedur.is
 │   ├── process-spot-photos.sh       # Image processing + thumbnails
-│   ├── generate-offline-tiles.sh    # Mapbox offline tile download
-│   └── migrate-*.sql               # Individual migration files
+│   └── generate-offline-tiles.sh    # Mapbox offline tile download
 ├── i18n/
 │   ├── en.json                      # English (~200+ keys)
 │   └── is.json                      # Icelandic
