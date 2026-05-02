@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { cloudLevel } from '~/utils/eclipse'
+import { cloudLevel, CLOUD_COVER_NO_DATA, type CloudLevelKey } from '~/utils/eclipse'
 
 const { t } = useI18n()
 
@@ -30,15 +30,20 @@ function isEclipseWindow(isoString: string): boolean {
   return mins >= ECLIPSE_START_UTC && mins <= ECLIPSE_END_UTC
 }
 
-// Traffic-light color palette for the timeline chart (green=clear, red=overcast)
-// Intentionally different from the blue-toned map marker palette in eclipse.ts
+// Traffic-light color palette for the timeline chart (green=clear, red=overcast).
+// Intentionally different from the blue-toned map marker palette in eclipse.ts —
+// only the threshold predicate is shared (via cloudLevel().key).
+const TIMELINE_PALETTE: Record<CloudLevelKey | 'no-data', string> = {
+  'clear':          '#22c55e',
+  'mostly-clear':   '#84cc16',
+  'partly-cloudy':  '#f59e0b',
+  'mostly-cloudy':  '#f97316',
+  'overcast':       '#ef4444',
+  'no-data':        CLOUD_COVER_NO_DATA.color,
+}
+
 function timelineColor(cover: number | null): string {
-  if (cover === null) return '#475569'
-  if (cover <= 20) return '#22c55e'
-  if (cover <= 40) return '#84cc16'
-  if (cover <= 60) return '#f59e0b'
-  if (cover <= 80) return '#f97316'
-  return '#ef4444'
+  return TIMELINE_PALETTE[cloudLevel(cover).key]
 }
 
 // Reuse labels from shared cloud cover levels

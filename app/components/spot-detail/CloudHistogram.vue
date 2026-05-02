@@ -1,14 +1,22 @@
 <script setup lang="ts">
+import { cloudToStatus, type V0Status } from '~/utils/v0'
+
 defineProps<{
   /** Each entry corresponds to one Aug-12 historical year's cloud-cover %. */
   years: Array<{ year: number; cloud_cover: number }>
   height?: number
 }>()
 
+// V0Status maps directly to the 'good' / 'marginal' / 'bad' band — keep the
+// existing `warn` band name for the CSS hook.
+const BAND: Record<V0Status, 'good' | 'warn' | 'bad'> = {
+  good: 'good',
+  marginal: 'warn',
+  bad: 'bad',
+}
+
 function band(c: number): 'good' | 'warn' | 'bad' {
-  if (c < 40) return 'good'
-  if (c < 70) return 'warn'
-  return 'bad'
+  return BAND[cloudToStatus(c)]
 }
 </script>
 

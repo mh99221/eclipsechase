@@ -8,6 +8,8 @@
  * taller = clearer) and colour = verdict band. Hovering a bar reveals
  * the exact percentage for that year.
  */
+import { cloudToStatus, type V0Status } from '~/utils/v0'
+
 export interface HistoricalYearPoint {
   year: number
   cloud_cover: number | null
@@ -25,11 +27,14 @@ const props = defineProps<{ history: HistoricalWeather }>()
 const { t } = useI18n()
 
 type Band = 'clear' | 'partly' | 'overcast' | 'unknown'
+const STATUS_TO_BAND: Record<V0Status, Band> = {
+  good: 'clear',
+  marginal: 'partly',
+  bad: 'overcast',
+}
 function bandFor(cc: number | null): Band {
   if (cc == null) return 'unknown'
-  if (cc < 40) return 'clear'
-  if (cc <= 70) return 'partly'
-  return 'overcast'
+  return STATUS_TO_BAND[cloudToStatus(cc)]
 }
 
 /** Percentage used for bar height — flip the scale so taller = clearer. */
