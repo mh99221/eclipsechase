@@ -109,7 +109,6 @@ eclipse-chaser/
 │   │   ├── OfflineBanner.vue        # Offline status + cache age display
 │   │   ├── OfflineManager.vue       # Precache API endpoints + offline tile downloads
 │   │   ├── CookieConsent.vue        # GDPR cookie consent banner (Umami analytics)
-│   │   ├── UserMenu.vue             # User dropdown menu
 │   │   ├── CameraLightbox.vue       # Full-screen road camera viewer (keyboard nav + carousel)
 │   │   ├── icons/                   # Nav-icon SFCs (one per BottomNav slot)
 │   │   │   └── Icon{Home,Spots,Map,Guide,Me}.vue
