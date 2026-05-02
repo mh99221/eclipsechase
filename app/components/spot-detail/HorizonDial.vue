@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { azimuthCompass } from '~/utils/v0'
+import { compassDirection } from '~/utils/eclipse'
 
 const props = defineProps<{
   altitude: number
@@ -85,7 +85,7 @@ function ringYOffset(altDeg: number): number {
       </div>
       <div>
         <div class="r-lbl">DIR</div>
-        <div class="r-val">{{ azimuthCompass(azimuth) }}</div>
+        <div class="r-val">{{ compassDirection(azimuth) }}</div>
       </div>
     </div>
   </div>

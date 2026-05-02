@@ -17,15 +17,3 @@ export function statusColor(status: V0Status): string {
   if (status === 'bad') return 'rgb(var(--bad))'
   return 'rgb(var(--warn))'
 }
-
-/** Round-and-name an azimuth angle into a 16-point compass label. */
-export function azimuthCompass(az: number): string {
-  const dirs = [
-    'N', 'NNE', 'NE', 'ENE',
-    'E', 'ESE', 'SE', 'SSE',
-    'S', 'SSW', 'SW', 'WSW',
-    'W', 'WNW', 'NW', 'NNW',
-  ] as const
-  const norm = ((az % 360) + 360) % 360
-  return dirs[Math.round(norm / 22.5) % 16] ?? 'N'
-}
