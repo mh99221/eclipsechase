@@ -78,7 +78,7 @@ At totality the sun sits about **24° above the horizon** in the **west-southwes
 
 Every spot page on this site carries a **horizon verdict** (*clear*, *marginal*, *risky*, or *blocked*) computed from a 91-point azimuth sweep of the ÍslandsDEM terrain model. Prefer **clear** verdicts, and use the live map to spot-check any alternative location you're considering.
 
-[Find your perfect spot →](/recommend)
+[Find your perfect spot →](/map)
 
 ## Weather & Cloud Cover
 
