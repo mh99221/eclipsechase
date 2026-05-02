@@ -1,3 +1,5 @@
+import { isInEclipseRegion } from './eclipseRegion'
+
 // Vegagerðin road conditions API
 // Docs: https://www.vegagerdin.is/gagnasafn/vefthjonustur/
 // Point warnings (closures, repairs, hazards) with lat/lng
@@ -77,7 +79,7 @@ export async function fetchRoadConditions(): Promise<RoadCondition[]> {
         const lng = p.Lengd || 0
         if (!lat || !lng) continue
         // Filter to eclipse region
-        if (lat < 63.0 || lat > 67.0 || lng < -25.0 || lng > -20.0) continue
+        if (!isInEclipseRegion(lat, lng)) continue
 
         results.push({
           roadName: p.FulltNafn || p.StuttNafn || '',

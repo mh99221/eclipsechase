@@ -1,3 +1,5 @@
+import { isInEclipseRegion } from '../utils/eclipseRegion'
+
 const CAMERA_API = 'https://gagnaveita.vegagerdin.is/api/vefmyndavelar2014_1'
 const CACHE_TTL_MS = 60 * 60 * 1000 // 1 hour (camera list rarely changes)
 
@@ -70,12 +72,6 @@ function translateDescription(desc: string): string {
   return result.replace(/\s{2,}/g, ' ').trim()
 }
 
-// Eclipse path bounding box
-const LAT_MIN = 63.0
-const LAT_MAX = 67.0
-const LNG_MIN = -25.0
-const LNG_MAX = -20.0
-
 interface CameraLocation {
   id: number
   name: string
@@ -109,7 +105,7 @@ export default defineEventHandler(async () => {
     for (const cam of data) {
       const lat = cam.Breidd || 0
       const lng = cam.Lengd || 0
-      if (lat < LAT_MIN || lat > LAT_MAX || lng < LNG_MIN || lng > LNG_MAX) continue
+      if (!isInEclipseRegion(lat, lng)) continue
 
       const id = cam.Maelist_nr
       if (!locations.has(id)) {
