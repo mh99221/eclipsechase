@@ -157,12 +157,6 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Pro status: cache-first (critical for offline access)
-  if (url.pathname === '/api/pro/status') {
-    event.respondWith(cacheFirstApi(event.request))
-    return
-  }
-
   // API cache: network-first with cache fallback + timestamp
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(networkFirstWithCacheFallback(event.request))
@@ -199,32 +193,6 @@ async function networkFirstWithCacheFallback(request) {
     if (cached) {
       return markAsCached(cached)
     }
-    return offlineResponse()
-  }
-}
-
-// Cache-first strategy for pro status (offline access)
-async function cacheFirstApi(request) {
-  const cached = await caches.match(request)
-  if (cached) {
-    // Return cached immediately, refresh in background
-    fetch(request).then(async (response) => {
-      if (response.ok) {
-        const cache = await caches.open(API_CACHE)
-        cache.put(request, stampResponse(response))
-      }
-    }).catch(() => {})
-    return markAsCached(cached)
-  }
-
-  try {
-    const response = await fetch(request)
-    if (response.ok) {
-      const cache = await caches.open(API_CACHE)
-      cache.put(request, stampResponse(response.clone()))
-    }
-    return response
-  } catch (err) {
     return offlineResponse()
   }
 }
