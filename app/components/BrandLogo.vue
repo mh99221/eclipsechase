@@ -26,7 +26,7 @@ defineProps<{
 
     <span
       v-if="!iconOnly"
-      class="font-sans font-semibold text-[13px] tracking-[2px] text-text"
+      class="font-display font-semibold text-[13px] tracking-[2px] text-ink-1"
     >
       ECLIPSECHASE
     </span>

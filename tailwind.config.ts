@@ -37,14 +37,6 @@ export default {
         bad:              'rgb(var(--bad) / <alpha-value>)',
         'chart-track':    'rgb(var(--chart-track) / <alpha-value>)',
 
-        // BrandLogo + v0 prototype literal aliases — `text-text` resolves
-        // to the cream ink-1 token so the v0-spec snippets work as-is.
-        text: 'rgb(var(--ink-1) / <alpha-value>)',
-        // `text-text-dim` matches the v0 token name for secondary copy.
-        // Same value as text-ink-1 with /62 alpha — exposed under both
-        // names so the v0 snippets work without renaming.
-        'text-dim': 'rgba(232,229,220,0.62)',
-
         // Light-theme additions (CLAUDE_CODE_LIGHT_THEME_SPEC.md §3):
         // - accent-ink: text/icons sitting ON `accent` fills (CTA labels)
         // - glass / glass-strong / glass-chip: scrims for photo/map overlays.
@@ -56,8 +48,6 @@ export default {
       },
       fontFamily: {
         display: ['"Inter Tight"', '-apple-system', 'system-ui', 'sans-serif'],
-        body:    ['"Inter Tight"', '-apple-system', 'system-ui', 'sans-serif'],
-        sans:    ['"Inter Tight"', '-apple-system', 'system-ui', 'sans-serif'],
         mono:    ['"JetBrains Mono"', '"SF Mono"', 'ui-monospace', 'Menlo', 'monospace'],
       },
       animation: {
