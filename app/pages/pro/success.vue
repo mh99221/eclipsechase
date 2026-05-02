@@ -41,9 +41,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="relative noise min-h-screen pt-[72px]">
-    <main class="flex items-center justify-center" style="min-height: calc(100vh - 152px)">
-      <div class="text-center px-6 max-w-md">
+  <PageShell screen="pro-success" width="reading">
+    <div class="flex items-center justify-center min-h-[60vh] px-6">
+      <div class="text-center max-w-md">
         <!-- Loading -->
         <div v-if="status === 'loading'" class="space-y-4">
           <svg class="animate-spin h-8 w-8 text-accent mx-auto" fill="none" viewBox="0 0 24 24" aria-hidden="true">
@@ -99,6 +99,6 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-    </main>
-  </div>
+    </div>
+  </PageShell>
 </template>
