@@ -75,7 +75,6 @@ eclipse-chaser/
 │   │   ├── guide.vue                # Nuxt Content renderer for guide.md (v0 typography pass + TOC chips)
 │   │   ├── map.vue                  # Live weather map (Pro-gated; mobile chip stack + selected lightbox)
 │   │   ├── me.vue                   # Pro user profile / settings (theme toggle, restore, sign-out)
-│   │   ├── recommend.vue            # Spot recommendation engine (Pro-gated)
 │   │   ├── pro.vue                  # Pro upgrade page (pricing, waiver, Stripe checkout)
 │   │   ├── pro/success.vue          # Post-checkout activation + token display
 │   │   ├── spots/index.vue          # Spots list (hero photos, sort/filter, region groups)
