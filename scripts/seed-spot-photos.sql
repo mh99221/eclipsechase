@@ -40,17 +40,11 @@ UPDATE viewing_spots SET photos = '[{"filename":"olafsvik-harbour-hero.webp","al
 
 UPDATE viewing_spots SET photos = '[{"filename":"rif-harbour-snaefellsnes-hero.webp","alt":"White lighthouse near the ocean at Rif, Snaefellsnes peninsula","credit":"Unsplash / Jack Anstey","license":"unsplash","is_hero":true,"horizon_view":true}]' WHERE slug = 'rif-harbour-snaefellsnes';
 
-UPDATE viewing_spots SET photos = '[{"filename":"glymur-waterfall-hero.webp","alt":"Glymur waterfall cascading between canyon walls in Borgarfjordur","credit":"Unsplash / Alexander Milo","license":"unsplash","is_hero":true,"horizon_view":false}]' WHERE slug = 'glymur-waterfall';
-
 UPDATE viewing_spots SET photos = '[{"filename":"isafjordur-harbour-hero.webp","alt":"Isafjordur harbor surrounded by mountains in the Westfjords","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":false}]' WHERE slug = 'isafjordur-harbour';
 
 UPDATE viewing_spots SET photos = '[{"filename":"flateyri-shore-hero.webp","alt":"Colorful houses on green grass in Flateyri, Westfjords","credit":"Unsplash / Einar H. Reynis","license":"unsplash","is_hero":true,"horizon_view":false}]' WHERE slug = 'flateyri-shore';
 
 UPDATE viewing_spots SET photos = '[{"filename":"sudureyri-harbour-hero.webp","alt":"Green fields near the fjord at Sudureyri in the Westfjords","credit":"Unsplash / Einar H. Reynis","license":"unsplash","is_hero":true,"horizon_view":false}]' WHERE slug = 'sudureyri-harbour';
-
-UPDATE viewing_spots SET photos = '[{"filename":"thingeyri-shore-hero.webp","alt":"White house near mountain and fjord at Thingeyri, Westfjords","credit":"Unsplash / Cassie Boca","license":"unsplash","is_hero":true,"horizon_view":false}]' WHERE slug = 'thingeyri-shore';
-
-UPDATE viewing_spots SET photos = '[{"filename":"bildudalur-harbour-hero.webp","alt":"Boat on the fjord at Bildudalur in the Westfjords","credit":"Unsplash / Michael Blum","license":"unsplash","is_hero":true,"horizon_view":false}]' WHERE slug = 'bildudalur-harbour';
 
 UPDATE viewing_spots SET photos = '[{"filename":"patreksfjordur-beach-hero.webp","alt":"Houses near the fjord at Patreksfjordur, Westfjords","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":false}]' WHERE slug = 'patreksfjordur-beach';
 
@@ -72,3 +66,6 @@ UPDATE viewing_spots SET photos = '[{"filename":"perlan-reykjavik-hero.webp","al
 UPDATE viewing_spots SET photos = '[{"filename":"svodufoss-waterfall-hero.webp","alt":"Svodufoss waterfall with Snaefellsjokull glacier in the distance","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":true}]' WHERE slug = 'svodufoss-waterfall';
 
 UPDATE viewing_spots SET photos = '[{"filename":"ytri-tunga-beach-hero.webp","alt":"Seal colony beach at Ytri Tunga on Snaefellsnes peninsula","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":true}]' WHERE slug = 'ytri-tunga-beach';
+
+-- Spot added 2026-05-03. Fill in `credit` + `license` before running.
+UPDATE viewing_spots SET photos = '[{"filename":"sky-lagoon-hero.webp","alt":"Sky Lagoon geothermal infinity pool overlooking Faxaflói bay west of Reykjavík","credit":"TODO_CREDIT","license":"TODO_LICENSE","is_hero":true,"horizon_view":true}]' WHERE slug = 'sky-lagoon';
