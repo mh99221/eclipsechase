@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-16T18:40:44.412Z",
+  "generated_at": "2026-05-03T18:38:18.371Z",
   "source": "open-meteo-era5",
   "eclipse_time_utc": "17:45",
   "years_covered": [
@@ -57,23 +57,23 @@
       "total_years": 10,
       "avg_cloud_cover": 94
     },
-    "djupalonssandur-beach": {
+    "breidavik-beach": {
       "years": [
         {
           "year": 2016,
-          "cloud_cover": 84
-        },
-        {
-          "year": 2017,
-          "cloud_cover": 3
-        },
-        {
-          "year": 2018,
           "cloud_cover": 100
         },
         {
+          "year": 2017,
+          "cloud_cover": 97
+        },
+        {
+          "year": 2018,
+          "cloud_cover": 95
+        },
+        {
           "year": 2019,
-          "cloud_cover": 79
+          "cloud_cover": 76
         },
         {
           "year": 2020,
@@ -81,15 +81,15 @@
         },
         {
           "year": 2021,
-          "cloud_cover": 55
+          "cloud_cover": 100
         },
         {
           "year": 2022,
-          "cloud_cover": 98
+          "cloud_cover": 100
         },
         {
           "year": 2023,
-          "cloud_cover": 11
+          "cloud_cover": 99
         },
         {
           "year": 2024,
@@ -97,14 +97,63 @@
         },
         {
           "year": 2025,
-          "cloud_cover": 80
+          "cloud_cover": 69
         }
       ],
-      "clear_years": 2,
+      "clear_years": 0,
       "partly_years": 1,
-      "overcast_years": 7,
+      "overcast_years": 9,
       "total_years": 10,
-      "avg_cloud_cover": 71
+      "avg_cloud_cover": 94
+    },
+    "patreksfjordur-beach": {
+      "years": [
+        {
+          "year": 2016,
+          "cloud_cover": 100
+        },
+        {
+          "year": 2017,
+          "cloud_cover": 72
+        },
+        {
+          "year": 2018,
+          "cloud_cover": 96
+        },
+        {
+          "year": 2019,
+          "cloud_cover": 83
+        },
+        {
+          "year": 2020,
+          "cloud_cover": 100
+        },
+        {
+          "year": 2021,
+          "cloud_cover": 67
+        },
+        {
+          "year": 2022,
+          "cloud_cover": 100
+        },
+        {
+          "year": 2023,
+          "cloud_cover": 98
+        },
+        {
+          "year": 2024,
+          "cloud_cover": 100
+        },
+        {
+          "year": 2025,
+          "cloud_cover": 92
+        }
+      ],
+      "clear_years": 0,
+      "partly_years": 1,
+      "overcast_years": 9,
+      "total_years": 10,
+      "avg_cloud_cover": 91
     },
     "snaefellsjokull-summit": {
       "years": [
@@ -204,23 +253,23 @@
       "total_years": 10,
       "avg_cloud_cover": 76
     },
-    "breidavik-beach": {
+    "djupalonssandur-beach": {
       "years": [
         {
           "year": 2016,
-          "cloud_cover": 100
+          "cloud_cover": 84
         },
         {
           "year": 2017,
-          "cloud_cover": 97
+          "cloud_cover": 3
         },
         {
           "year": 2018,
-          "cloud_cover": 95
+          "cloud_cover": 100
         },
         {
           "year": 2019,
-          "cloud_cover": 76
+          "cloud_cover": 79
         },
         {
           "year": 2020,
@@ -228,79 +277,30 @@
         },
         {
           "year": 2021,
-          "cloud_cover": 100
+          "cloud_cover": 55
         },
         {
           "year": 2022,
-          "cloud_cover": 100
-        },
-        {
-          "year": 2023,
-          "cloud_cover": 99
-        },
-        {
-          "year": 2024,
-          "cloud_cover": 100
-        },
-        {
-          "year": 2025,
-          "cloud_cover": 69
-        }
-      ],
-      "clear_years": 0,
-      "partly_years": 1,
-      "overcast_years": 9,
-      "total_years": 10,
-      "avg_cloud_cover": 94
-    },
-    "patreksfjordur-beach": {
-      "years": [
-        {
-          "year": 2016,
-          "cloud_cover": 100
-        },
-        {
-          "year": 2017,
-          "cloud_cover": 72
-        },
-        {
-          "year": 2018,
-          "cloud_cover": 96
-        },
-        {
-          "year": 2019,
-          "cloud_cover": 83
-        },
-        {
-          "year": 2020,
-          "cloud_cover": 100
-        },
-        {
-          "year": 2021,
-          "cloud_cover": 67
-        },
-        {
-          "year": 2022,
-          "cloud_cover": 100
-        },
-        {
-          "year": 2023,
           "cloud_cover": 98
         },
         {
+          "year": 2023,
+          "cloud_cover": 11
+        },
+        {
           "year": 2024,
           "cloud_cover": 100
         },
         {
           "year": 2025,
-          "cloud_cover": 92
+          "cloud_cover": 80
         }
       ],
-      "clear_years": 0,
+      "clear_years": 2,
       "partly_years": 1,
-      "overcast_years": 9,
+      "overcast_years": 7,
       "total_years": 10,
-      "avg_cloud_cover": 91
+      "avg_cloud_cover": 71
     },
     "saxholl-crater": {
       "years": [
@@ -547,7 +547,7 @@
       "total_years": 10,
       "avg_cloud_cover": 82
     },
-    "londrangar-malarrif": {
+    "arnarstapi-coastal-platform": {
       "years": [
         {
           "year": 2016,
@@ -555,15 +555,15 @@
         },
         {
           "year": 2017,
-          "cloud_cover": 3
+          "cloud_cover": 75
         },
         {
           "year": 2018,
-          "cloud_cover": 100
+          "cloud_cover": 99
         },
         {
           "year": 2019,
-          "cloud_cover": 79
+          "cloud_cover": 77
         },
         {
           "year": 2020,
@@ -571,7 +571,7 @@
         },
         {
           "year": 2021,
-          "cloud_cover": 55
+          "cloud_cover": 73
         },
         {
           "year": 2022,
@@ -579,7 +579,7 @@
         },
         {
           "year": 2023,
-          "cloud_cover": 11
+          "cloud_cover": 10
         },
         {
           "year": 2024,
@@ -587,14 +587,14 @@
         },
         {
           "year": 2025,
-          "cloud_cover": 80
+          "cloud_cover": 91
         }
       ],
-      "clear_years": 2,
-      "partly_years": 1,
-      "overcast_years": 7,
+      "clear_years": 1,
+      "partly_years": 0,
+      "overcast_years": 9,
       "total_years": 10,
-      "avg_cloud_cover": 72
+      "avg_cloud_cover": 82
     },
     "kirkjufell-viewpoint": {
       "years": [
@@ -645,7 +645,7 @@
       "total_years": 10,
       "avg_cloud_cover": 79
     },
-    "arnarstapi-coastal-platform": {
+    "londrangar-malarrif": {
       "years": [
         {
           "year": 2016,
@@ -653,15 +653,15 @@
         },
         {
           "year": 2017,
-          "cloud_cover": 75
+          "cloud_cover": 3
         },
         {
           "year": 2018,
-          "cloud_cover": 99
+          "cloud_cover": 100
         },
         {
           "year": 2019,
-          "cloud_cover": 77
+          "cloud_cover": 79
         },
         {
           "year": 2020,
@@ -669,7 +669,7 @@
         },
         {
           "year": 2021,
-          "cloud_cover": 73
+          "cloud_cover": 55
         },
         {
           "year": 2022,
@@ -677,7 +677,7 @@
         },
         {
           "year": 2023,
-          "cloud_cover": 10
+          "cloud_cover": 11
         },
         {
           "year": 2024,
@@ -685,14 +685,14 @@
         },
         {
           "year": 2025,
-          "cloud_cover": 91
+          "cloud_cover": 80
         }
       ],
-      "clear_years": 1,
-      "partly_years": 0,
-      "overcast_years": 9,
+      "clear_years": 2,
+      "partly_years": 1,
+      "overcast_years": 7,
       "total_years": 10,
-      "avg_cloud_cover": 82
+      "avg_cloud_cover": 72
     },
     "hellnar-viewpoint": {
       "years": [
@@ -890,7 +890,7 @@
       "total_years": 10,
       "avg_cloud_cover": 59
     },
-    "sandgerdi-shore": {
+    "hvalsneskirkja": {
       "years": [
         {
           "year": 2016,
@@ -898,15 +898,15 @@
         },
         {
           "year": 2017,
-          "cloud_cover": 8
+          "cloud_cover": 12
         },
         {
           "year": 2018,
-          "cloud_cover": 89
+          "cloud_cover": 86
         },
         {
           "year": 2019,
-          "cloud_cover": 73
+          "cloud_cover": 69
         },
         {
           "year": 2020,
@@ -914,15 +914,15 @@
         },
         {
           "year": 2021,
-          "cloud_cover": 14
+          "cloud_cover": 29
         },
         {
           "year": 2022,
-          "cloud_cover": 92
+          "cloud_cover": 93
         },
         {
           "year": 2023,
-          "cloud_cover": 19
+          "cloud_cover": 27
         },
         {
           "year": 2024,
@@ -930,14 +930,14 @@
         },
         {
           "year": 2025,
-          "cloud_cover": 2
+          "cloud_cover": 21
         }
       ],
       "clear_years": 4,
-      "partly_years": 0,
-      "overcast_years": 6,
+      "partly_years": 1,
+      "overcast_years": 5,
       "total_years": 10,
-      "avg_cloud_cover": 59
+      "avg_cloud_cover": 63
     },
     "keflavik-asbru-viewpoint": {
       "years": [
