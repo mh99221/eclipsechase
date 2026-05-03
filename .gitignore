@@ -43,3 +43,9 @@ raw-photos/
 
 .vercel
 .env*.local
+
+.claude/settings.local.json
+playwright-report/
+test-results/
+supabase/.temp/
+.nuxtrc
