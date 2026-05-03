@@ -8,9 +8,11 @@ test.describe('Responsive layouts', () => {
     const h1 = page.locator('h1')
     await expect(h1).toBeVisible()
 
-    // Nav should be visible
-    const nav = page.locator('nav')
-    await expect(nav).toBeVisible()
+    // BrandBar header is always present. The masthead <nav> and
+    // BottomNav are both Pro-gated, so on a free landing page the
+    // only chrome is the BrandBar header.
+    const brandBar = page.locator('header.brand-bar')
+    await expect(brandBar).toBeVisible()
   })
 
   test('tablet viewport (768px) — guide page renders', async ({ page, goto }) => {

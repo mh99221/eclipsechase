@@ -25,8 +25,10 @@ test.describe('Offline behavior', () => {
     // Restore online state
     await context.setOffline(false)
 
-    // Page should still be functional
-    const nav = page.locator('nav')
-    await expect(nav).toBeVisible()
+    // BrandBar header is the global chrome; if it's still mounted, the
+    // page didn't crash. Landing has no <nav> element — masthead is
+    // Pro-gated and BottomNav is hidden on the landing route.
+    const brandBar = page.locator('header.brand-bar')
+    await expect(brandBar).toBeVisible()
   })
 })
