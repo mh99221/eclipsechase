@@ -54,8 +54,8 @@ const formattedCoordinates = computed(() => {
         <slot name="meta-end" />
       </div>
       <h1 class="spot-hero-name">{{ name }}</h1>
-      <div class="spot-hero-region">{{ region }}</div>
       <div v-if="formattedCoordinates" class="spot-hero-coords">{{ formattedCoordinates }}</div>
+      <div class="spot-hero-region">{{ region }}</div>
     </div>
   </header>
 </template>
@@ -123,19 +123,19 @@ const formattedCoordinates = computed(() => {
   line-height: 1.1;
   margin: 0;
 }
-.spot-hero-region {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 13px;
-  color: rgb(var(--ink-1) / 0.62);
-  margin-top: 6px;
-}
 .spot-hero-coords {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 11px;
   color: rgb(var(--ink-3));
-  margin-top: 4px;
+  margin-top: 6px;
   letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
+}
+.spot-hero-region {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13px;
+  color: rgb(var(--ink-1) / 0.62);
+  margin-top: 4px;
 }
 
 /* Desktop scale-up — placed after the base rules so cascade wins. */
