@@ -26,7 +26,7 @@ UPDATE viewing_spots SET photos = '[{"filename":"akranes-lighthouse-hero.webp","
 
 UPDATE viewing_spots SET photos = '[{"filename":"gardur-lighthouse-hero.webp","alt":"Gardur lighthouse on the Reykjanes peninsula coast","credit":"Unsplash / Tomas Malik","license":"unsplash","is_hero":true,"horizon_view":true}]' WHERE slug = 'gardur-lighthouse';
 
-UPDATE viewing_spots SET photos = '[{"filename":"sandgerdi-shore-hero.webp","alt":"Rocky coastline at Sandgerdi on the Reykjanes peninsula","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":true}]' WHERE slug = 'sandgerdi-shore';
+UPDATE viewing_spots SET photos = '[{"filename":"hvalsneskirkja-hero.webp","alt":"Hvalsneskirkja stone church on the southern Reykjanes coast","credit":"TODO_CREDIT","license":"TODO_LICENSE","is_hero":true,"horizon_view":true}]' WHERE slug = 'hvalsneskirkja';
 
 UPDATE viewing_spots SET photos = '[{"filename":"keflavik-asbru-viewpoint-hero.webp","alt":"Rocky lava terrain near Keflavik on the Reykjanes peninsula","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":false}]' WHERE slug = 'keflavik-asbru-viewpoint';
 
