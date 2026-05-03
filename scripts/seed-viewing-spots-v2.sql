@@ -255,12 +255,12 @@ INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parkin
 ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLUDED.lat, lng=EXCLUDED.lng, region=EXCLUDED.region, description=EXCLUDED.description, parking_info=EXCLUDED.parking_info, terrain_notes=EXCLUDED.terrain_notes, has_services=EXCLUDED.has_services, cell_coverage=EXCLUDED.cell_coverage, totality_duration_seconds=EXCLUDED.totality_duration_seconds, totality_start=EXCLUDED.totality_start, sun_altitude=EXCLUDED.sun_altitude, sun_azimuth=EXCLUDED.sun_azimuth, spot_type=EXCLUDED.spot_type;
 
 INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parking_info, terrain_notes, has_services, cell_coverage, totality_duration_seconds, totality_start, sun_altitude, sun_azimuth, spot_type) VALUES
-('sandgerdi', 'Sandgerði Shore', 'sandgerdi-shore',
-  64.0388, -22.7068, 'reykjanes',
-  'A fishing village on the northern coast of the Reykjanes peninsula with a flat shoreline and unobstructed western ocean horizon. The Nature Centre features marine biology exhibits. Easy 30-minute drive from Keflavík Airport — ideal for visitors arriving on eclipse day.',
-  'Free parking near the shore and Nature Centre.',
-  'Flat shoreline with gravel and grass. Open views to the west and north.',
-  true, 'good', 97, '2026-08-12T17:47:35Z', 24, 249, 'drive-up')
+('hvalsneskirkja', 'Hvalsneskirkja', 'hvalsneskirkja',
+  63.9899, -22.7358, 'reykjanes',
+  'A historic 1887 stone church on the open south coast of the Reykjanes peninsula, set in dramatic dunes and lava flats with completely unobstructed views to the south and west. The poet Hallgrímur Pétursson served as pastor here in the 1640s — his daughter Steinunn''s tombstone stands inside. The exposed coastal setting offers a clean western ocean horizon — exactly the direction of the eclipse sun at totality. About 5 km south of Sandgerði Shore and 30 minutes from Keflavík Airport.',
+  'Small free parking area at the church. Paved access road via Route 44 from Sandgerði.',
+  'Grassy churchyard with gravel paths. Open coastal flatlands with sand dunes and lava plain to the south and west — completely unobstructed western horizon.',
+  false, 'good', 100, '2026-08-12T17:48:08Z', 25, 252, 'drive-up')
 ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLUDED.lat, lng=EXCLUDED.lng, region=EXCLUDED.region, description=EXCLUDED.description, parking_info=EXCLUDED.parking_info, terrain_notes=EXCLUDED.terrain_notes, has_services=EXCLUDED.has_services, cell_coverage=EXCLUDED.cell_coverage, totality_duration_seconds=EXCLUDED.totality_duration_seconds, totality_start=EXCLUDED.totality_start, sun_altitude=EXCLUDED.sun_altitude, sun_azimuth=EXCLUDED.sun_azimuth, spot_type=EXCLUDED.spot_type;
 
 INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parking_info, terrain_notes, has_services, cell_coverage, totality_duration_seconds, totality_start, sun_altitude, sun_azimuth, spot_type) VALUES
