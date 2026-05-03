@@ -96,8 +96,6 @@ eclipse-chaser/
 │   │   ├── WeatherIcon.vue          # SVG cloud cover icons
 │   │   ├── ForecastTimeline.vue     # Hourly weather forecast chart
 │   │   ├── SpotLocationMap.vue      # Focused map for spot detail page (totality path overlay)
-│   │   ├── SpotPhotoHero.vue        # Full-width hero photo (preserves intrinsic ratio on mobile)
-│   │   ├── SpotPhotoGallery.vue     # Photo grid with captions/credits
 │   │   ├── PhotoCredit.vue          # Attribution line (photographer, license)
 │   │   ├── HorizonProfile.vue       # Horizon sweep visualization (91 azimuth points)
 │   │   ├── HorizonBadge.vue         # Color-coded verdict badge (clear/marginal/risky/blocked)
