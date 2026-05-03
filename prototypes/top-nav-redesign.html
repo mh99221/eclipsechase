@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Top Nav Redesign — Prototypes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          void:        '#050810',
+          'void-deep': '#030508',
+          'void-surface': '#0a1020',
+          'void-border': '#1a2540',
+          corona:      '#f59e0b',
+          'corona-bright': '#fbbf24',
+          'corona-pale':   '#fef3c7',
+          'corona-dim':    '#b45309',
+          ice:     '#7dd3fc',
+          'ice-dim': '#38bdf8',
+        },
+        fontFamily: {
+          display: ['Manrope', 'ui-sans-serif', 'system-ui'],
+          mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+        },
+      },
+    },
+  }
+</script>
+<style>
+  html, body { background: #050810; color: #cbd5e1; font-family: 'Manrope', sans-serif; }
+
+  .noise::after {
+    content: ""; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none; opacity: 0.6; z-index: 1;
+  }
+  body > * { position: relative; z-index: 2; }
+
+  .section-container { max-width: 64rem; margin-inline: auto; padding-inline: 1.25rem; }
+  @media (min-width: 640px) { .section-container { padding-inline: 2rem; } }
+
+  .option-label {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(5,8,16,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(26,37,64,0.5);
+  }
+
+  .option-divider {
+    height: 80px;
+    background: linear-gradient(to bottom, rgba(5,8,16,1), rgba(5,8,16,0.6), rgba(5,8,16,1));
+    border-top: 1px dashed rgba(245,158,11,0.12);
+    border-bottom: 1px dashed rgba(245,158,11,0.12);
+  }
+
+  .prototype-jump {
+    position: fixed; top: 16px; right: 16px; z-index: 60;
+    display: flex; gap: 6px;
+    padding: 6px;
+    background: rgba(5,8,16,0.9);
+    border: 1px solid rgba(26,37,64,0.7);
+    border-radius: 999px;
+    backdrop-filter: blur(12px);
+  }
+  .prototype-jump a {
+    padding: 6px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #94a3b8;
+    border-radius: 999px;
+    text-transform: uppercase;
+    transition: all .2s ease;
+  }
+  .prototype-jump a:hover { color: #fbbf24; background: rgba(245,158,11,0.08); }
+
+  /* Viewport frames for prototype preview */
+  .viewport-frame {
+    margin: 0 auto;
+    border: 1px solid rgba(26,37,64,0.6);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px -20px rgba(0,0,0,0.8);
+    position: relative;
+  }
+  .viewport-desktop { max-width: 1200px; }
+  .viewport-mobile { max-width: 390px; }
+  .viewport-label {
+    position: absolute; top: 8px; left: 12px; z-index: 30;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: #64748b;
+    text-transform: uppercase;
+    background: rgba(5,8,16,0.7);
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+
+  /* =====================================================
+     PROTOTYPE A — MASTHEAD
+     ===================================================== */
+  .nav-a {
+    background: rgba(5, 8, 16, 0.97);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(26, 37, 64, 0.5);
+  }
+  .nav-a__inner {
+    max-width: 48rem; margin-inline: auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px;
+    gap: 20px;
+  }
+  .nav-a__links { display: flex; align-items: center; gap: 28px; }
+  .nav-a__link {
+    position: relative;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    padding: 4px 0;
+    transition: color .2s ease;
+  }
+  .nav-a__link:hover { color: #fbbf24; }
+  .nav-a__link.active { color: #f59e0b; }
+  .nav-a__link.active::after {
+    content: "";
+    position: absolute; bottom: -6px; left: 50%;
+    transform: translateX(-50%);
+    width: 3px; height: 3px;
+    background: #f59e0b;
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(245,158,11,0.6);
+  }
+
+  /* =====================================================
+     PROTOTYPE B — ORBITAL PILL
+     ===================================================== */
+  .nav-b {
+    background: rgba(5, 8, 16, 0.97);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(26, 37, 64, 0.5);
+  }
+  .nav-b__inner {
+    max-width: 48rem; margin-inline: auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px;
+    gap: 20px;
+  }
+  .nav-b__pill {
+    display: flex;
+    padding: 4px;
+    background: rgba(10, 16, 32, 0.6);
+    border: 1px solid rgba(26, 37, 64, 0.6);
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+  }
+  .nav-b__link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    padding: 7px 14px;
+    border-radius: 999px;
+    transition: all .2s ease;
+  }
+  .nav-b__link:hover { color: #cbd5e1; background: rgba(26, 37, 64, 0.4); }
+  .nav-b__link.active {
+    color: #fbbf24;
+    background: rgba(245, 158, 11, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.25);
+  }
+
+  /* =====================================================
+     PROTOTYPE C — CONSTELLATION
+     ===================================================== */
+  .nav-c {
+    background: rgba(5, 8, 16, 0.97);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(26, 37, 64, 0.5);
+  }
+  .nav-c__inner {
+    max-width: 48rem; margin-inline: auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px;
+    gap: 20px;
+  }
+  .nav-c__links { display: flex; align-items: center; gap: 18px; }
+  .nav-c__link {
+    display: flex; align-items: baseline; gap: 5px;
+    position: relative;
+    padding: 4px 2px;
+    transition: all .2s ease;
+  }
+  .nav-c__num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    color: rgba(245, 158, 11, 0.35);
+    font-weight: 500;
+  }
+  .nav-c__label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    transition: color .2s ease;
+  }
+  .nav-c__link:hover .nav-c__label { color: #cbd5e1; }
+  .nav-c__link:hover .nav-c__num { color: rgba(245, 158, 11, 0.7); }
+  .nav-c__link.active .nav-c__label { color: #fbbf24; }
+  .nav-c__link.active .nav-c__num { color: #f59e0b; }
+  .nav-c__link.active::before {
+    content: ""; position: absolute; inset: -4px -4px -6px -4px;
+    background: radial-gradient(ellipse at center, rgba(245,158,11,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .nav-c__dot {
+    width: 3px; height: 3px;
+    background: rgba(245,158,11,0.3);
+    border-radius: 50%;
+  }
+
+  /* =====================================================
+     BOTTOM NAV (mobile — reference)
+     ===================================================== */
+  .bottom-nav {
+    height: 64px;
+    background: rgba(5, 8, 16, 0.85);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(26, 37, 64, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+  .bottom-nav-item {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px; padding: 6px 0; flex: 1;
+    position: relative;
+  }
+  .bottom-nav-item svg { color: #475569; transition: color .2s ease; }
+  .bottom-nav-item.active svg { color: #f59e0b; }
+  .bottom-nav-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #334155;
+  }
+  .bottom-nav-item.active .bottom-nav-label { color: #b45309; }
+  .bottom-nav-item.active::after {
+    content: ''; position: absolute; bottom: 2px;
+    width: 3px; height: 3px; border-radius: 50%;
+    background: #f59e0b;
+  }
+
+  /* Fake page content for visual context */
+  .fake-page {
+    padding: 48px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(148,163,184,0.3);
+    text-transform: uppercase;
+    text-align: center;
+  }
+</style>
+</head>
+<body class="noise">
+
+<div class="prototype-jump">
+  <a href="#option-a">A</a>
+  <a href="#option-b">B</a>
+  <a href="#option-c">C</a>
+</div>
+
+<!-- =========================================================
+     OPTION A — MASTHEAD
+     ========================================================= -->
+<section id="option-a">
+  <div class="option-label">
+    <div class="section-container py-4 flex items-center gap-4">
+      <span class="font-mono text-[10px] tracking-[0.3em] text-corona uppercase">Option A</span>
+      <span class="font-display text-sm font-semibold text-slate-100">Masthead</span>
+      <span class="font-mono text-[10px] text-slate-500 hidden sm:inline">quiet, editorial · tracked mono labels · corona dot indicator · simplest, most cohesive</span>
+    </div>
+  </div>
+
+  <div class="py-10 px-4">
+    <!-- DESKTOP -->
+    <div class="viewport-frame viewport-desktop mb-8">
+      <span class="viewport-label">Desktop · 1200 px</span>
+      <div class="nav-a">
+        <div class="nav-a__inner">
+          <a class="flex items-center gap-3">
+            <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none">
+              <circle cx="64" cy="64" r="36" fill="#050810"/>
+              <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8"/>
+              <circle cx="96" cy="48" r="4" fill="#f59e0b"/>
+            </svg>
+            <span class="font-display font-semibold text-base tracking-wide text-slate-300">ECLIPSECHASE</span>
+          </a>
+          <nav class="nav-a__links">
+            <a class="nav-a__link">Map</a>
+            <a class="nav-a__link active">Home</a>
+            <a class="nav-a__link">Spots</a>
+            <a class="nav-a__link">Guide</a>
+          </nav>
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-[10px] text-corona/60 tracking-wider uppercase">Pro</span>
+            <button class="font-mono text-[10px] text-slate-500 hover:text-slate-300 tracking-wider uppercase">Log out</button>
+          </div>
+        </div>
+      </div>
+      <div class="fake-page">— page content —</div>
+    </div>
+
+    <!-- MOBILE -->
+    <div class="viewport-frame viewport-mobile">
+      <span class="viewport-label">Mobile · 390 px</span>
+      <div class="nav-a">
+        <div class="nav-a__inner" style="padding: 16px 20px;">
+          <a class="flex items-center gap-3">
+            <svg class="w-7 h-7" viewBox="0 0 128 128" fill="none">
+              <circle cx="64" cy="64" r="36" fill="#050810"/>
+              <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8"/>
+              <circle cx="96" cy="48" r="4" fill="#f59e0b"/>
+            </svg>
+            <span class="font-display font-semibold text-sm tracking-wide text-slate-300">ECLIPSECHASE</span>
+          </a>
+        </div>
+      </div>
+      <div class="fake-page" style="padding: 180px 20px;">— page content —</div>
+      <div class="bottom-nav">
+        <a class="bottom-nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+          <span class="bottom-nav-label">Map</span>
+        </a>
+        <a class="bottom-nav-item active">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4" fill="currentColor" opacity="0.15"/><circle cx="18" cy="8" r="1.5" fill="currentColor"/></svg>
+          <span class="bottom-nav-label">Home</span>
+        </a>
+        <a class="bottom-nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span class="bottom-nav-label">Spots</span>
+        </a>
+        <a class="bottom-nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          <span class="bottom-nav-label">Guide</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="option-divider"></div>
+
+<!-- =========================================================
+     OPTION B — ORBITAL PILL
+     ========================================================= -->
+<section id="option-b">
+  <div class="option-label">
+    <div class="section-container py-4 flex items-center gap-4">
+      <span class="font-mono text-[10px] tracking-[0.3em] text-corona uppercase">Option B</span>
+      <span class="font-display text-sm font-semibold text-slate-100">Orbital pill</span>
+      <span class="font-mono text-[10px] text-slate-500 hidden sm:inline">grouped · contained · active item has corona backdrop · most "app-like"</span>
+    </div>
+  </div>
+
+  <div class="py-10 px-4">
+    <div class="viewport-frame viewport-desktop mb-8">
+      <span class="viewport-label">Desktop · 1200 px</span>
+      <div class="nav-b">
+        <div class="nav-b__inner">
+          <a class="flex items-center gap-3">
+            <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none">
+              <circle cx="64" cy="64" r="36" fill="#050810"/>
+              <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8"/>
+              <circle cx="96" cy="48" r="4" fill="#f59e0b"/>
+            </svg>
+            <span class="font-display font-semibold text-base tracking-wide text-slate-300">ECLIPSECHASE</span>
+          </a>
+          <nav class="nav-b__pill">
+            <a class="nav-b__link">Map</a>
+            <a class="nav-b__link active">Home</a>
+            <a class="nav-b__link">Spots</a>
+            <a class="nav-b__link">Guide</a>
+          </nav>
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-[10px] text-corona/60 tracking-wider uppercase">Pro</span>
+            <button class="font-mono text-[10px] text-slate-500 hover:text-slate-300 tracking-wider uppercase">Log out</button>
+          </div>
+        </div>
+      </div>
+      <div class="fake-page">— page content —</div>
+    </div>
+
+    <div class="viewport-frame viewport-mobile">
+      <span class="viewport-label">Mobile · 390 px</span>
+      <div class="nav-b">
+        <div class="nav-b__inner" style="padding: 16px 20px;">
+          <a class="flex items-center gap-3">
+            <svg class="w-7 h-7" viewBox="0 0 128 128" fill="none">
+              <circle cx="64" cy="64" r="36" fill="#050810"/>
+              <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8"/>
+              <circle cx="96" cy="48" r="4" fill="#f59e0b"/>
+            </svg>
+            <span class="font-display font-semibold text-sm tracking-wide text-slate-300">ECLIPSECHASE</span>
+          </a>
+        </div>
+      </div>
+      <div class="fake-page" style="padding: 180px 20px;">— page content —</div>
+      <div class="bottom-nav">
+        <a class="bottom-nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+          <span class="bottom-nav-label">Map</span>
+        </a>
+        <a class="bottom-nav-item active">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4" fill="currentColor" opacity="0.15"/><circle cx="18" cy="8" r="1.5" fill="currentColor"/></svg>
+          <span class="bottom-nav-label">Home</span>
+        </a>
+        <a class="bottom-nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span class="bottom-nav-label">Spots</span>
+        </a>
+        <a class="bottom-nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          <span class="bottom-nav-label">Guide</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="option-divider"></div>
+
+<!-- =========================================================
+     OPTION C — CONSTELLATION
+     ========================================================= -->
+<section id="option-c">
+  <div class="option-label">
+    <div class="section-container py-4 flex items-center gap-4">
+      <span class="font-mono text-[10px] tracking-[0.3em] text-corona uppercase">Option C</span>
+      <span class="font-display text-sm font-semibold text-slate-100">Constellation</span>
+      <span class="font-mono text-[10px] text-slate-500 hidden sm:inline">numbered items · corona dots between · active item glows · most distinctive, astronomy-themed</span>
+    </div>
+  </div>
+
+  <div class="py-10 px-4">
+    <div class="viewport-frame viewport-desktop mb-8">
+      <span class="viewport-label">Desktop · 1200 px</span>
+      <div class="nav-c">
+        <div class="nav-c__inner">
+          <a class="flex items-center gap-3">
+            <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none">
+              <circle cx="64" cy="64" r="36" fill="#050810"/>
+              <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8"/>
+              <circle cx="96" cy="48" r="4" fill="#f59e0b"/>
+            </svg>
+            <span class="font-display font-semibold text-base tracking-wide text-slate-300">ECLIPSECHASE</span>
+          </a>
+          <nav class="nav-c__links">
+            <a class="nav-c__link">
+              <span class="nav-c__num">01</span>
+              <span class="nav-c__label">Map</span>
+            </a>
+            <span class="nav-c__dot"></span>
+            <a class="nav-c__link active">
+              <span class="nav-c__num">02</span>
+              <span class="nav-c__label">Home</span>
+            </a>
+            <span class="nav-c__dot"></span>
+            <a class="nav-c__link">
+              <span class="nav-c__num">03</span>
+              <span class="nav-c__label">Spots</span>
+            </a>
+            <span class="nav-c__dot"></span>
+            <a class="nav-c__link">
+              <span class="nav-c__num">04</span>
+              <span class="nav-c__label">Guide</span>
+            </a>
+          </nav>
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-[10px] text-corona/60 tracking-wider uppercase">Pro</span>
+            <button class="font-mono text-[10px] text-slate-500 hover:text-slate-300 tracking-wider uppercase">Log out</button>
+          </div>
+        </div>
+      </div>
+      <div class="fake-page">— page content —</div>
+    </div>
+
+    <div class="viewport-frame viewport-mobile">
+      <span class="viewport-label">Mobile · 390 px</span>
+      <div class="nav-c">
+        <div class="nav-c__inner" style="padding: 16px 20px;">
+          <a class="flex items-center gap-3">
+            <svg class="w-7 h-7" viewBox="0 0 128 128" fill="none">
+              <circle cx="64" cy="64" r="36" fill="#050810"/>
+              <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8"/>
+              <circle cx="96" cy="48" r="4" fill="#f59e0b"/>
+            </svg>
+            <span class="font-display font-semibold text-sm tracking-wide text-slate-300">ECLIPSECHASE</span>
+          </a>
+        </div>
+      </div>
+      <div class="fake-page" style="padding: 180px 20px;">— page content —</div>
+      <div class="bottom-nav">
+        <a class="bottom-nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+          <span class="bottom-nav-label">Map</span>
+        </a>
+        <a class="bottom-nav-item active">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4" fill="currentColor" opacity="0.15"/><circle cx="18" cy="8" r="1.5" fill="currentColor"/></svg>
+          <span class="bottom-nav-label">Home</span>
+        </a>
+        <a class="bottom-nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span class="bottom-nav-label">Spots</span>
+        </a>
+        <a class="bottom-nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          <span class="bottom-nav-label">Guide</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final spacer -->
+<div class="h-32"></div>
+
+<footer class="border-t border-void-border/30 py-8">
+  <div class="section-container font-mono text-[10px] tracking-[0.2em] text-slate-500 uppercase text-center">
+    prototypes · eclipsechase top nav redesign
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bottom Nav — 5 Alternatives</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #050810;
+    --void-deep: #030508;
+    --void-surface: #0a1020;
+    --void-border: #1a2540;
+    --corona: #f59e0b;
+    --corona-bright: #fbbf24;
+    --corona-pale: #fef3c7;
+    --corona-dim: #b45309;
+    --ice: #7dd3fc;
+    --ice-dim: #38bdf8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--void);
+    color: #cbd5e1;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Noise texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-header {
+    position: relative;
+    z-index: 1;
+    padding: 40px 32px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(26,37,64,0.4);
+  }
+
+  .page-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: white;
+    margin-bottom: 8px;
+  }
+
+  .page-header p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245,158,11,0.5);
+  }
+
+  .variants-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .variant-section {
+    padding: 32px 24px 140px;
+    border-bottom: 1px solid rgba(26,37,64,0.3);
+    position: relative;
+    min-height: 280px;
+  }
+
+  .variant-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--corona);
+    opacity: 0.6;
+    margin-bottom: 6px;
+  }
+
+  .variant-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    margin-bottom: 4px;
+  }
+
+  .variant-desc {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  .variant-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: rgba(26,37,64,0.5);
+    color: #94a3b8;
+    border: 1px solid rgba(26,37,64,0.6);
+  }
+
+  /* ========================================
+     VARIANT 1 — GLASS DOCK
+     ======================================== */
+  .nav-v1 {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 4px;
+    padding: 8px 12px;
+    background: rgba(10, 16, 32, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    box-shadow:
+      0 8px 32px rgba(0,0,0,0.5),
+      0 0 0 1px rgba(255,255,255,0.03) inset,
+      0 1px 0 rgba(255,255,255,0.06) inset;
+  }
+
+  .nav-v1 .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+
+  .nav-v1 .nav-item:hover {
+    background: rgba(245, 158, 11, 0.08);
+  }
+
+  .nav-v1 .nav-item.active {
+    background: rgba(245, 158, 11, 0.12);
+  }
+
+  .nav-v1 .nav-item.active svg {
+    color: var(--corona);
+    filter: drop-shadow(0 0 6px rgba(245,158,11,0.4));
+  }
+
+  .nav-v1 .nav-item.active .nav-label {
+    color: var(--corona);
+  }
+
+  .nav-v1 svg {
+    width: 22px;
+    height: 22px;
+    color: #64748b;
+    transition: all 0.25s ease;
+  }
+
+  .nav-v1 .nav-item:hover svg {
+    color: #94a3b8;
+  }
+
+  .nav-v1 .nav-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #475569;
+    transition: color 0.25s ease;
+  }
+
+  /* ========================================
+     VARIANT 2 — ECLIPSE RING
+     ======================================== */
+  .nav-v2-wrap {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 340px;
+    height: 100px;
+    overflow: hidden;
+  }
+
+  .nav-v2 {
+    position: absolute;
+    bottom: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(245, 158, 11, 0.15);
+    background: radial-gradient(ellipse at center, rgba(10,16,32,0.6) 0%, transparent 70%);
+  }
+
+  .nav-v2::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: conic-gradient(from 200deg, transparent 30%, rgba(245,158,11,0.12) 45%, rgba(245,158,11,0.2) 50%, rgba(245,158,11,0.12) 55%, transparent 70%);
+    z-index: -1;
+  }
+
+  .nav-v2 .nav-item {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  /* Position items along the top arc of the circle */
+  .nav-v2 .nav-item:nth-child(1) { left: 20px; top: 25px; }
+  .nav-v2 .nav-item:nth-child(2) { left: 75px; top: 2px; }
+  .nav-v2 .nav-item:nth-child(3) { right: 75px; top: 2px; }
+  .nav-v2 .nav-item:nth-child(4) { right: 20px; top: 25px; }
+
+  .nav-v2 .nav-item svg {
+    width: 20px;
+    height: 20px;
+    color: #64748b;
+    transition: all 0.3s ease;
+  }
+
+  .nav-v2 .nav-item.active svg {
+    color: var(--corona);
+    filter: drop-shadow(0 0 8px rgba(245,158,11,0.5));
+  }
+
+  .nav-v2 .nav-item:hover svg {
+    color: #94a3b8;
+    transform: translateY(-2px);
+  }
+
+  .nav-v2 .nav-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #475569;
+  }
+
+  .nav-v2 .nav-item.active .nav-label {
+    color: var(--corona-dim);
+  }
+
+  /* ========================================
+     VARIANT 3 — MINIMAL SLAB
+     ======================================== */
+  .nav-v3 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    padding: 0;
+    background: var(--void-deep);
+    border-top: 1px solid rgba(26,37,64,0.5);
+  }
+
+  .nav-v3 .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 0 14px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+
+  .nav-v3 .nav-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: var(--corona);
+    transition: width 0.3s ease;
+    border-radius: 0 0 1px 1px;
+  }
+
+  .nav-v3 .nav-item.active::before {
+    width: 24px;
+  }
+
+  .nav-v3 svg {
+    width: 20px;
+    height: 20px;
+    color: #334155;
+    transition: color 0.2s ease;
+  }
+
+  .nav-v3 .nav-item.active svg {
+    color: white;
+  }
+
+  .nav-v3 .nav-item:hover svg {
+    color: #64748b;
+  }
+
+  .nav-v3 .nav-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #1e293b;
+    transition: color 0.2s ease;
+  }
+
+  .nav-v3 .nav-item.active .nav-label {
+    color: #94a3b8;
+  }
+
+  /* ========================================
+     VARIANT 4 — CORONA PILL
+     ======================================== */
+  .nav-v4 {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 2px;
+    padding: 6px;
+    background: var(--void-surface);
+    border-radius: 16px;
+    position: absolute;
+    overflow: hidden;
+  }
+
+  .nav-v4::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    padding: 1.5px;
+    background: linear-gradient(
+      135deg,
+      rgba(245,158,11,0.3) 0%,
+      rgba(245,158,11,0.05) 30%,
+      rgba(125,211,252,0.1) 60%,
+      rgba(245,158,11,0.25) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .nav-v4::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    pointer-events: none;
+  }
+
+  .nav-v4 .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 10px 16px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .nav-v4 .nav-item.active {
+    background: linear-gradient(180deg, rgba(245,158,11,0.15) 0%, rgba(245,158,11,0.05) 100%);
+  }
+
+  .nav-v4 .nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--corona);
+    box-shadow: 0 0 8px rgba(245,158,11,0.6);
+  }
+
+  .nav-v4 svg {
+    width: 21px;
+    height: 21px;
+    color: #475569;
+    transition: all 0.25s ease;
+  }
+
+  .nav-v4 .nav-item.active svg {
+    color: var(--corona-bright);
+  }
+
+  .nav-v4 .nav-item:hover svg {
+    color: #94a3b8;
+  }
+
+  .nav-v4 .nav-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #334155;
+    transition: color 0.25s ease;
+  }
+
+  .nav-v4 .nav-item.active .nav-label {
+    color: var(--corona-dim);
+  }
+
+  /* ========================================
+     VARIANT 5 — FLOATING ISLANDS
+     ======================================== */
+  .nav-v5 {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .nav-v5 .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .nav-v5 .nav-item:hover {
+    transform: translateY(-3px);
+  }
+
+  .nav-v5 .nav-icon-wrap {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: var(--void-surface);
+    border: 1px solid rgba(26,37,64,0.5);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .nav-v5 .nav-item.active .nav-icon-wrap {
+    background: rgba(245,158,11,0.1);
+    border-color: rgba(245,158,11,0.25);
+    box-shadow: 0 0 20px rgba(245,158,11,0.1), 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  .nav-v5 .nav-item:hover .nav-icon-wrap {
+    border-color: rgba(100,116,139,0.4);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  .nav-v5 svg {
+    width: 20px;
+    height: 20px;
+    color: #475569;
+    transition: all 0.3s ease;
+  }
+
+  .nav-v5 .nav-item.active svg {
+    color: var(--corona);
+  }
+
+  .nav-v5 .nav-item:hover svg {
+    color: #94a3b8;
+  }
+
+  .nav-v5 .nav-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #334155;
+    transition: color 0.3s ease;
+  }
+
+  .nav-v5 .nav-item.active .nav-label {
+    color: var(--corona-dim);
+  }
+
+  /* Interactive states */
+  .variant-section:hover .variant-name {
+    color: var(--corona-pale);
+  }
+
+  /* Click to toggle active */
+  .nav-item { user-select: none; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--void); }
+  ::-webkit-scrollbar-thumb { background: var(--void-border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <p>Bottom Navigation</p>
+  <h1>5 Alternatives</h1>
+</div>
+
+<div class="variants-grid">
+
+  <!-- VARIANT 1 — GLASS DOCK -->
+  <div class="variant-section">
+    <div class="variant-label">Variant 01</div>
+    <div class="variant-name">Glass Dock</div>
+    <div class="variant-desc">Frosted glass pill floating above content. macOS-dock feel with blur and inner glow. Icons light up with corona glow on active.</div>
+    <div class="variant-tags">
+      <span class="tag">Floating</span>
+      <span class="tag">Glassmorphism</span>
+      <span class="tag">Pill shape</span>
+    </div>
+
+    <nav class="nav-v1" data-nav="v1">
+      <div class="nav-item active" data-page="map">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+          <line x1="8" y1="2" x2="8" y2="18"/>
+          <line x1="16" y1="6" x2="16" y2="22"/>
+        </svg>
+        <span class="nav-label">Map</span>
+      </div>
+      <div class="nav-item" data-page="recommend">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 2a14.5 14.5 0 0 1 0 20 14.5 14.5 0 0 1 0-20"/>
+          <path d="M2 12h20"/>
+          <path d="M9 6l3 6 3-6"/>
+          <path d="M7 16l2-2 2 2 2-2 2 2"/>
+        </svg>
+        <span class="nav-label">For You</span>
+      </div>
+      <div class="nav-item" data-page="spots">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span class="nav-label">Spots</span>
+      </div>
+      <div class="nav-item" data-page="guide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        <span class="nav-label">Guide</span>
+      </div>
+    </nav>
+  </div>
+
+  <!-- VARIANT 2 — ECLIPSE RING -->
+  <div class="variant-section">
+    <div class="variant-label">Variant 02</div>
+    <div class="variant-name">Eclipse Ring</div>
+    <div class="variant-desc">Icons orbit along a semicircular arc that echoes the eclipse path. A conic gradient traces the corona. Thematic and unique.</div>
+    <div class="variant-tags">
+      <span class="tag">Arc layout</span>
+      <span class="tag">Thematic</span>
+      <span class="tag">Unique</span>
+    </div>
+
+    <div class="nav-v2-wrap">
+      <nav class="nav-v2" data-nav="v2">
+        <div class="nav-item active" data-page="map">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+            <line x1="8" y1="2" x2="8" y2="18"/>
+            <line x1="16" y1="6" x2="16" y2="22"/>
+          </svg>
+          <span class="nav-label">Map</span>
+        </div>
+        <div class="nav-item" data-page="recommend">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <span class="nav-label">For You</span>
+        </div>
+        <div class="nav-item" data-page="spots">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span class="nav-label">Spots</span>
+        </div>
+        <div class="nav-item" data-page="guide">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+          <span class="nav-label">Guide</span>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- VARIANT 3 — MINIMAL SLAB -->
+  <div class="variant-section">
+    <div class="variant-label">Variant 03</div>
+    <div class="variant-name">Minimal Slab</div>
+    <div class="variant-desc">Full-width bar anchored to the bottom. Ultra-clean and restrained. Active state is just a thin corona line at top — no glow, no fuss.</div>
+    <div class="variant-tags">
+      <span class="tag">Full-width</span>
+      <span class="tag">Minimal</span>
+      <span class="tag">iOS-like</span>
+    </div>
+
+    <nav class="nav-v3" data-nav="v3">
+      <div class="nav-item active" data-page="map">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+          <line x1="8" y1="2" x2="8" y2="18"/>
+          <line x1="16" y1="6" x2="16" y2="22"/>
+        </svg>
+        <span class="nav-label">Map</span>
+      </div>
+      <div class="nav-item" data-page="recommend">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2"/>
+          <path d="M12 20v2"/>
+          <path d="M4.93 4.93l1.41 1.41"/>
+          <path d="M17.66 17.66l1.41 1.41"/>
+          <path d="M2 12h2"/>
+          <path d="M20 12h2"/>
+          <path d="M6.34 17.66l-1.41 1.41"/>
+          <path d="M19.07 4.93l-1.41 1.41"/>
+        </svg>
+        <span class="nav-label">For You</span>
+      </div>
+      <div class="nav-item" data-page="spots">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span class="nav-label">Spots</span>
+      </div>
+      <div class="nav-item" data-page="guide">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        <span class="nav-label">Guide</span>
+      </div>
+    </nav>
+  </div>
+
+  <!-- VARIANT 4 — CORONA PILL -->
+  <div class="variant-section">
+    <div class="variant-label">Variant 04</div>
+    <div class="variant-name">Corona Pill</div>
+    <div class="variant-desc">Rounded pill with a shimmering gradient border that mixes corona amber and ice blue. Active item gets a glowing dot indicator. Elegant and on-brand.</div>
+    <div class="variant-tags">
+      <span class="tag">Gradient border</span>
+      <span class="tag">Dot indicator</span>
+      <span class="tag">Refined</span>
+    </div>
+
+    <nav class="nav-v4" data-nav="v4">
+      <div class="nav-item active" data-page="map">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+          <line x1="8" y1="2" x2="8" y2="18"/>
+          <line x1="16" y1="6" x2="16" y2="22"/>
+        </svg>
+        <span class="nav-label">Map</span>
+      </div>
+      <div class="nav-item" data-page="recommend">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.663 17h4.674M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+        </svg>
+        <span class="nav-label">For You</span>
+      </div>
+      <div class="nav-item" data-page="spots">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span class="nav-label">Spots</span>
+      </div>
+      <div class="nav-item" data-page="guide">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        <span class="nav-label">Guide</span>
+      </div>
+    </nav>
+  </div>
+
+  <!-- VARIANT 5 — FLOATING ISLANDS -->
+  <div class="variant-section">
+    <div class="variant-label">Variant 05</div>
+    <div class="variant-name">Floating Islands</div>
+    <div class="variant-desc">Each icon lives in its own separate rounded-square "island". They float independently with a bouncy hover effect. Active island gets a corona border glow.</div>
+    <div class="variant-tags">
+      <span class="tag">Separate cards</span>
+      <span class="tag">Bouncy hover</span>
+      <span class="tag">Playful</span>
+    </div>
+
+    <nav class="nav-v5" data-nav="v5">
+      <div class="nav-item active" data-page="map">
+        <div class="nav-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+            <line x1="8" y1="2" x2="8" y2="18"/>
+            <line x1="16" y1="6" x2="16" y2="22"/>
+          </svg>
+        </div>
+        <span class="nav-label">Map</span>
+      </div>
+      <div class="nav-item" data-page="recommend">
+        <div class="nav-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </div>
+        <span class="nav-label">For You</span>
+      </div>
+      <div class="nav-item" data-page="spots">
+        <div class="nav-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <span class="nav-label">Spots</span>
+      </div>
+      <div class="nav-item" data-page="guide">
+        <div class="nav-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        </div>
+        <span class="nav-label">Guide</span>
+      </div>
+    </nav>
+  </div>
+
+</div>
+
+<div style="height: 60px;"></div>
+
+<script>
+  // Make nav items clickable to toggle active state
+  document.querySelectorAll('[data-nav]').forEach(nav => {
+    nav.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        nav.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+  });
+</script>
+</body>
+</html>

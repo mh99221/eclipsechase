@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Spot Detail Redesign — Prototypes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          void:        '#050810',
+          'void-deep': '#030508',
+          'void-surface': '#0a1020',
+          'void-border': '#1a2540',
+          corona:      '#f59e0b',
+          'corona-bright': '#fbbf24',
+          'corona-pale':   '#fef3c7',
+          'corona-dim':    '#b45309',
+          ice:     '#7dd3fc',
+          'ice-dim': '#38bdf8',
+        },
+        fontFamily: {
+          display: ['Manrope', 'ui-sans-serif', 'system-ui'],
+          mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+        },
+      },
+    },
+  }
+</script>
+<style>
+  html, body { background: #050810; color: #cbd5e1; font-family: 'Manrope', sans-serif; }
+
+  .noise { position: relative; }
+  .noise::after {
+    content: ""; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none; opacity: 0.6; z-index: 1;
+  }
+  body > * { position: relative; z-index: 2; }
+
+  .section-container { max-width: 64rem; margin-inline: auto; padding-inline: 1.25rem; }
+  @media (min-width: 640px) { .section-container { padding-inline: 2rem; } }
+
+  .col-3xl { max-width: 48rem; margin-inline: auto; }
+
+  /* Corona divider (tiny amber gradient line) */
+  .corona-rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0, rgba(245,158,11,0.35) 12%, rgba(245,158,11,0.55) 50%, rgba(245,158,11,0.35) 88%, transparent 100%);
+  }
+
+  /* "Photographic plate" accent */
+  .plate-frame {
+    box-shadow:
+      0 0 0 1px rgba(26,37,64,0.8),
+      0 24px 48px -20px rgba(0,0,0,0.6),
+      inset 0 0 0 1px rgba(255,255,255,0.02);
+  }
+
+  /* Cinematic bottom gradient fade (Option A) */
+  .fade-to-void {
+    background: linear-gradient(to top, rgba(5,8,16,1) 0%, rgba(5,8,16,0) 55%);
+  }
+
+  /* Option labels (sticky chapter headers) */
+  .option-label {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(5,8,16,0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(26,37,64,0.5);
+  }
+
+  /* Tiny radial glow used on Option C */
+  .corona-glow {
+    background: radial-gradient(ellipse at center, rgba(245,158,11,0.14) 0%, rgba(245,158,11,0) 55%);
+  }
+
+  /* Subtle starfield for backgrounds */
+  .star-dust {
+    background-image:
+      radial-gradient(1px 1px at 10% 18%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 80% 40%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 35% 78%, rgba(255,255,255,0.35), transparent),
+      radial-gradient(1px 1px at 65% 12%, rgba(255,255,255,0.2), transparent),
+      radial-gradient(1px 1px at 90% 88%, rgba(255,255,255,0.35), transparent);
+  }
+
+  .hero-img-a { aspect-ratio: 16 / 10; }
+  .hero-img-b { aspect-ratio: 4 / 5; }
+  .hero-img-c { aspect-ratio: 21 / 9; }
+
+  @media (max-width: 639px) {
+    .hero-img-a { aspect-ratio: 4 / 5; }
+    .hero-img-b { aspect-ratio: 4 / 5; }
+    .hero-img-c { aspect-ratio: 16 / 10; }
+  }
+
+  .option-divider {
+    height: 96px;
+    background: linear-gradient(to bottom, rgba(5,8,16,1), rgba(5,8,16,0.6), rgba(5,8,16,1));
+    border-top: 1px dashed rgba(245,158,11,0.12);
+    border-bottom: 1px dashed rgba(245,158,11,0.12);
+  }
+
+  /* Pre-compiled stat cards */
+  .stat-card {
+    background: #0a1020;
+    border: 1px solid rgba(26,37,64,0.6);
+    border-radius: 4px;
+    padding: 1rem;
+  }
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: #fff;
+  }
+
+  .prototype-jump {
+    position: fixed; top: 16px; right: 16px; z-index: 60;
+    display: flex; gap: 6px;
+    padding: 6px;
+    background: rgba(5,8,16,0.9);
+    border: 1px solid rgba(26,37,64,0.7);
+    border-radius: 999px;
+    backdrop-filter: blur(12px);
+  }
+  .prototype-jump a {
+    padding: 6px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #94a3b8;
+    border-radius: 999px;
+    text-transform: uppercase;
+    transition: all .2s ease;
+  }
+  .prototype-jump a:hover { color: #fbbf24; background: rgba(245,158,11,0.08); }
+</style>
+</head>
+<body class="noise">
+
+<div class="prototype-jump">
+  <a href="#current">Now</a>
+  <a href="#option-a">A</a>
+  <a href="#option-b">B</a>
+  <a href="#option-c">C</a>
+</div>
+
+<!-- =========================================================
+     CURRENT — For reference
+     ========================================================= -->
+<section id="current">
+  <div class="option-label">
+    <div class="section-container py-4 flex items-center gap-4">
+      <span class="font-mono text-[10px] tracking-[0.3em] text-slate-500 uppercase">Reference</span>
+      <span class="font-display text-sm font-semibold text-slate-300">Current layout</span>
+      <span class="font-mono text-[10px] text-slate-500">hero = full viewport width · nav logo at page edge · content column 768px</span>
+    </div>
+  </div>
+
+  <!-- Nav: full-width padding (current) -->
+  <nav class="flex items-center justify-between px-6 sm:px-10 py-5 bg-void/90 backdrop-blur-md border-b border-void-border/40">
+    <a class="flex items-center gap-3">
+      <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none">
+        <circle cx="64" cy="64" r="36" fill="#050810"/>
+        <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8"/>
+        <circle cx="96" cy="48" r="4" fill="#f59e0b"/>
+      </svg>
+      <span class="font-display font-semibold text-base tracking-wide text-slate-300">ECLIPSECHASE</span>
+    </a>
+  </nav>
+
+  <!-- Hero: full width -->
+  <div class="relative overflow-hidden" style="aspect-ratio: 21/9;">
+    <img src="hero.webp" class="absolute inset-0 w-full h-full object-cover"/>
+    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(5,8,16,0.85) 0%, rgba(5,8,16,0) 25%, rgba(5,8,16,0) 40%, rgba(5,8,16,0.65) 60%, rgba(5,8,16,0.92) 80%, rgba(5,8,16,1) 100%);"></div>
+    <div class="relative z-10 h-full flex flex-col justify-end px-6 sm:px-10 pb-8">
+      <span class="inline-block px-2 py-0.5 text-[10px] font-mono tracking-[0.15em] uppercase rounded border text-amber-400 border-amber-400/30 bg-amber-400/10 self-start mb-3">Short walk</span>
+      <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 max-w-xl">Saxhóll Crater</h1>
+      <p class="text-sm sm:text-base text-slate-300/90 leading-relaxed max-w-lg">A scoria crater with a well-maintained metal staircase (~400 steps) leading to the rim.</p>
+    </div>
+  </div>
+
+  <div class="section-container max-w-3xl py-12">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="stat-card"><div class="stat-label">Totality</div><div class="stat-value">1m 55s</div></div>
+      <div class="stat-card"><div class="stat-label">Sun altitude</div><div class="stat-value">24°</div></div>
+      <div class="stat-card"><div class="stat-label">Services</div><div class="stat-value text-slate-500" style="font-size:18px">None nearby</div></div>
+      <div class="stat-card"><div class="stat-label">Cell coverage</div><div class="stat-value text-amber-400" style="font-size:18px">Limited</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="option-divider"></div>
+
+<!-- =========================================================
+     OPTION A — Aligned Column
+     Everything sits in the 768px reading column. Minimal change.
+     ========================================================= -->
+<section id="option-a">
+  <div class="option-label">
+    <div class="section-container py-4 flex items-center gap-4">
+      <span class="font-mono text-[10px] tracking-[0.3em] text-corona uppercase">Option A</span>
+      <span class="font-display text-sm font-semibold text-slate-100">Aligned column</span>
+      <span class="font-mono text-[10px] text-slate-500 hidden sm:inline">strictest grid alignment · hero, nav, content all snap to 768px · conservative, cohesive</span>
+    </div>
+  </div>
+
+  <!-- Nav: inner constrained to section container -->
+  <nav class="bg-void/90 backdrop-blur-md border-b border-void-border/40">
+    <div class="section-container max-w-3xl flex items-center justify-between py-5">
+      <a class="flex items-center gap-3">
+        <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none">
+          <circle cx="64" cy="64" r="36" fill="#050810"/>
+          <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8"/>
+          <circle cx="96" cy="48" r="4" fill="#f59e0b"/>
+        </svg>
+        <span class="font-display font-semibold text-base tracking-wide text-slate-300">ECLIPSECHASE</span>
+      </a>
+      <span class="font-mono text-[10px] tracking-[0.25em] text-slate-500 uppercase">64.85° N · 23.93° W</span>
+    </div>
+  </nav>
+
+  <!-- Hero: contained to same 768px column -->
+  <div class="section-container max-w-3xl pt-8 pb-4">
+
+    <!-- Breadcrumb/label row -->
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-2 font-mono text-[10px] tracking-[0.25em] text-slate-500 uppercase">
+        <span>Snæfellsnes</span>
+        <span class="text-slate-700">/</span>
+        <span class="text-corona/80">Viewing spot</span>
+      </div>
+      <span class="font-mono text-[10px] tracking-[0.2em] text-slate-500 uppercase">Plate 01</span>
+    </div>
+
+    <!-- Title above image -->
+    <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight mb-3">
+      Saxhóll Crater
+    </h1>
+
+    <!-- Subhead / metadata -->
+    <div class="flex flex-wrap items-center gap-3 mb-6">
+      <span class="inline-block px-2 py-0.5 text-[10px] font-mono tracking-[0.15em] uppercase rounded border text-amber-400 border-amber-400/30 bg-amber-400/10">Short walk</span>
+      <span class="font-mono text-xs text-slate-400">0.2 km · 10 min · Easy</span>
+    </div>
+
+    <!-- Hero image: constrained, rounded, bordered -->
+    <div class="hero-img-a relative overflow-hidden rounded border border-void-border/60 plate-frame mb-4">
+      <img src="hero.webp" class="absolute inset-0 w-full h-full object-cover"/>
+      <!-- subtle bottom fade for legibility of caption -->
+      <div class="absolute inset-x-0 bottom-0 h-24 fade-to-void"></div>
+      <!-- Photo credit in-image -->
+      <div class="absolute bottom-3 right-3 font-mono text-[9px] tracking-wider uppercase text-slate-300/80 bg-black/40 backdrop-blur-sm px-2 py-1 rounded">
+        © Photographer · CC BY 4.0
+      </div>
+    </div>
+
+    <!-- Description below image -->
+    <p class="text-base text-slate-300 leading-relaxed">
+      A scoria crater with a well-maintained metal staircase (~400 steps) leading to the rim. The 360° panoramic view from the top includes Snæfellsjökull glacier, the Atlantic Ocean, and surrounding lava fields. Watching totality from inside a volcanic crater is a once-in-a-lifetime experience.
+    </p>
+  </div>
+
+  <!-- Content continues at same 768px -->
+  <div class="section-container max-w-3xl py-8">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="stat-card"><div class="stat-label">Totality</div><div class="stat-value">1m 55s</div></div>
+      <div class="stat-card"><div class="stat-label">Sun altitude</div><div class="stat-value">24°</div></div>
+      <div class="stat-card"><div class="stat-label">Services</div><div class="stat-value text-slate-500" style="font-size:18px">None nearby</div></div>
+      <div class="stat-card"><div class="stat-label">Cell coverage</div><div class="stat-value text-amber-400" style="font-size:18px">Limited</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="option-divider"></div>
+
+<!-- =========================================================
+     OPTION B — Editorial Plate
+     Photographic "plate" with ornate framing, title below.
+     More designed, print/editorial feel.
+     ========================================================= -->
+<section id="option-b">
+  <div class="option-label">
+    <div class="section-container py-4 flex items-center gap-4">
+      <span class="font-mono text-[10px] tracking-[0.3em] text-corona uppercase">Option B</span>
+      <span class="font-display text-sm font-semibold text-slate-100">Editorial plate</span>
+      <span class="font-mono text-[10px] text-slate-500 hidden sm:inline">photographic plate · corona hairlines · title below image · most "designed"</span>
+    </div>
+  </div>
+
+  <nav class="bg-void/90 backdrop-blur-md border-b border-void-border/40">
+    <div class="section-container max-w-3xl flex items-center justify-between py-5">
+      <a class="flex items-center gap-3">
+        <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none">
+          <circle cx="64" cy="64" r="36" fill="#050810"/>
+          <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8"/>
+          <circle cx="96" cy="48" r="4" fill="#f59e0b"/>
+        </svg>
+        <span class="font-display font-semibold text-base tracking-wide text-slate-300">ECLIPSECHASE</span>
+      </a>
+      <span class="font-mono text-[10px] tracking-[0.25em] text-slate-500 uppercase">Aug 12 · 17:45 UTC</span>
+    </div>
+  </nav>
+
+  <div class="section-container max-w-3xl pt-10 pb-4">
+
+    <!-- Top rule + plate number -->
+    <div class="flex items-baseline gap-3 mb-4">
+      <span class="font-mono text-[10px] tracking-[0.3em] text-corona/70 uppercase">№ 01 — Snæfellsnes</span>
+      <div class="flex-1 corona-rule opacity-60"></div>
+      <span class="font-mono text-[10px] tracking-[0.2em] text-slate-500">64.85° N 23.93° W</span>
+    </div>
+
+    <!-- Image with framed plate treatment -->
+    <figure class="relative mb-6">
+      <!-- Corner register marks -->
+      <div class="absolute -top-2 -left-2 w-4 h-4 border-t border-l border-corona/40 pointer-events-none"></div>
+      <div class="absolute -top-2 -right-2 w-4 h-4 border-t border-r border-corona/40 pointer-events-none"></div>
+      <div class="absolute -bottom-2 -left-2 w-4 h-4 border-b border-l border-corona/40 pointer-events-none"></div>
+      <div class="absolute -bottom-2 -right-2 w-4 h-4 border-b border-r border-corona/40 pointer-events-none"></div>
+
+      <div class="hero-img-b relative overflow-hidden plate-frame">
+        <img src="hero.webp" class="absolute inset-0 w-full h-full object-cover"/>
+      </div>
+
+      <figcaption class="mt-3 flex items-center justify-between text-[10px] font-mono tracking-wider uppercase text-slate-500">
+        <span>Plate 01 · Saxhóll rim · facing W</span>
+        <span class="text-slate-600">© Photographer · CC BY 4.0</span>
+      </figcaption>
+    </figure>
+
+    <!-- Corona rule -->
+    <div class="corona-rule mb-6 opacity-70"></div>
+
+    <!-- Title (below image for editorial feel) -->
+    <div class="mb-5">
+      <span class="inline-block px-2 py-0.5 text-[10px] font-mono tracking-[0.15em] uppercase rounded border text-amber-400 border-amber-400/30 bg-amber-400/10 mb-4">Short walk</span>
+      <h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-[0.95] tracking-tight mb-2">
+        Saxhóll<br/><span class="text-corona">Crater</span>
+      </h1>
+      <p class="font-mono text-xs tracking-[0.2em] text-slate-500 uppercase">0.2 km · 10 min climb · easy</p>
+    </div>
+
+    <!-- Drop-cap description (editorial) -->
+    <p class="text-base sm:text-lg text-slate-300 leading-relaxed first-letter:float-left first-letter:font-display first-letter:text-6xl first-letter:font-bold first-letter:leading-none first-letter:text-corona first-letter:mr-2 first-letter:mt-1">
+      A scoria crater with a well-maintained metal staircase (~400 steps) leading to the rim. The 360° panoramic view from the top includes Snæfellsjökull glacier, the Atlantic Ocean, and surrounding lava fields. Watching totality from inside a volcanic crater is a once-in-a-lifetime experience.
+    </p>
+  </div>
+
+  <div class="section-container max-w-3xl py-8">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="stat-card"><div class="stat-label">Totality</div><div class="stat-value">1m 55s</div></div>
+      <div class="stat-card"><div class="stat-label">Sun altitude</div><div class="stat-value">24°</div></div>
+      <div class="stat-card"><div class="stat-label">Services</div><div class="stat-value text-slate-500" style="font-size:18px">None nearby</div></div>
+      <div class="stat-card"><div class="stat-label">Cell coverage</div><div class="stat-value text-amber-400" style="font-size:18px">Limited</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="option-divider"></div>
+
+<!-- =========================================================
+     OPTION C — Cinematic Frame
+     Hero stays contained but is cinematic (shorter aspect),
+     dramatic title overlay, corona glow ambient
+     ========================================================= -->
+<section id="option-c">
+  <div class="option-label">
+    <div class="section-container py-4 flex items-center gap-4">
+      <span class="font-mono text-[10px] tracking-[0.3em] text-corona uppercase">Option C</span>
+      <span class="font-display text-sm font-semibold text-slate-100">Cinematic frame</span>
+      <span class="font-mono text-[10px] text-slate-500 hidden sm:inline">contained cinematic hero · overlay title · corona glow · most dramatic</span>
+    </div>
+  </div>
+
+  <nav class="bg-void/90 backdrop-blur-md border-b border-void-border/40">
+    <div class="section-container max-w-3xl flex items-center justify-between py-5">
+      <a class="flex items-center gap-3">
+        <svg class="w-8 h-8" viewBox="0 0 128 128" fill="none">
+          <circle cx="64" cy="64" r="36" fill="#050810"/>
+          <circle cx="64" cy="64" r="36" stroke="#f59e0b" stroke-width="3" opacity="0.8"/>
+          <circle cx="96" cy="48" r="4" fill="#f59e0b"/>
+        </svg>
+        <span class="font-display font-semibold text-base tracking-wide text-slate-300">ECLIPSECHASE</span>
+      </a>
+      <span class="font-mono text-[10px] tracking-[0.25em] text-slate-500 uppercase">◉ Totality 1m 55s</span>
+    </div>
+  </nav>
+
+  <!-- Ambient corona glow behind hero -->
+  <div class="relative">
+    <div class="absolute inset-x-0 top-0 h-[420px] corona-glow pointer-events-none"></div>
+    <div class="absolute inset-0 star-dust opacity-40 pointer-events-none"></div>
+
+    <div class="section-container max-w-3xl relative pt-10 pb-6">
+
+      <!-- Region pill + date -->
+      <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center gap-2">
+          <span class="w-1 h-1 rounded-full bg-corona"></span>
+          <span class="font-mono text-[10px] tracking-[0.3em] text-corona/80 uppercase">Snæfellsnes · Iceland</span>
+        </div>
+        <span class="font-mono text-[10px] tracking-[0.2em] text-slate-500 uppercase">Viewing spot 01</span>
+      </div>
+
+      <!-- Oversized title with slight bleed under image -->
+      <h1 class="font-display text-5xl sm:text-6xl md:text-7xl font-extrabold text-white leading-[0.9] tracking-tighter mb-6 relative z-10">
+        Saxhóll<br/>Crater.
+      </h1>
+
+      <!-- Hero: cinematic 21:9, contained, with corona hairline border -->
+      <div class="hero-img-c relative overflow-hidden rounded mb-4"
+           style="box-shadow: 0 0 0 1px rgba(245,158,11,0.25), 0 40px 80px -30px rgba(245,158,11,0.15), 0 20px 40px -15px rgba(0,0,0,0.8);">
+        <img src="hero.webp" class="absolute inset-0 w-full h-full object-cover"/>
+        <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(5,8,16,0) 40%, rgba(5,8,16,0.5) 100%);"></div>
+        <!-- Bottom overlay: metadata strip -->
+        <div class="absolute inset-x-0 bottom-0 flex items-center justify-between gap-4 px-4 py-3 text-[10px] font-mono tracking-wider uppercase text-slate-300">
+          <div class="flex items-center gap-3">
+            <span class="px-1.5 py-0.5 rounded border border-amber-400/40 text-amber-400/90 bg-amber-400/10">Short walk</span>
+            <span class="text-slate-300/80">0.2 km · 10 min</span>
+          </div>
+          <span class="text-slate-400/80">© Photographer</span>
+        </div>
+      </div>
+
+      <!-- Description: two-column on desktop -->
+      <div class="grid sm:grid-cols-[auto_1fr] gap-x-8 gap-y-3 pt-2">
+        <div class="font-mono text-[10px] tracking-[0.25em] text-corona/70 uppercase sm:pt-1">
+          Abstract —
+        </div>
+        <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+          A scoria crater with a well-maintained metal staircase (~400 steps) leading to the rim. The 360° panoramic view from the top includes Snæfellsjökull glacier, the Atlantic Ocean, and surrounding lava fields. Watching totality from inside a volcanic crater is a once-in-a-lifetime experience.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-container max-w-3xl py-8">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="stat-card"><div class="stat-label">Totality</div><div class="stat-value">1m 55s</div></div>
+      <div class="stat-card"><div class="stat-label">Sun altitude</div><div class="stat-value">24°</div></div>
+      <div class="stat-card"><div class="stat-label">Services</div><div class="stat-value text-slate-500" style="font-size:18px">None nearby</div></div>
+      <div class="stat-card"><div class="stat-label">Cell coverage</div><div class="stat-value text-amber-400" style="font-size:18px">Limited</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Final spacer -->
+<div class="h-32"></div>
+
+<footer class="border-t border-void-border/30 py-8">
+  <div class="section-container max-w-3xl font-mono text-[10px] tracking-[0.2em] text-slate-500 uppercase text-center">
+    prototypes · eclipsechase spot detail redesign
+  </div>
+</footer>
+
+</body>
+</html>

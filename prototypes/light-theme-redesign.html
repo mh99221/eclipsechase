@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Light Theme — Prototypes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Manrope', system-ui, sans-serif;
+    background: #050810;
+    color: #cbd5e1;
+  }
+
+  /* ─── Prototype chrome ──────────────────────────── */
+  .prototype-jump {
+    position: fixed; top: 16px; right: 16px; z-index: 100;
+    display: flex; gap: 6px;
+    padding: 6px;
+    background: rgba(5,8,16,0.92);
+    border: 1px solid rgba(26,37,64,0.7);
+    border-radius: 999px;
+    backdrop-filter: blur(12px);
+  }
+  .prototype-jump a {
+    padding: 6px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #94a3b8;
+    border-radius: 999px;
+    text-transform: uppercase;
+    transition: all .2s ease;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .prototype-jump a:hover { color: #fbbf24; background: rgba(245,158,11,0.08); }
+
+  .option-label {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(5,8,16,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(26,37,64,0.6);
+    padding: 14px 20px;
+  }
+  .option-label-inner {
+    display: flex; align-items: baseline; gap: 14px; max-width: 1100px; margin: 0 auto;
+  }
+  .option-kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: #f59e0b;
+    text-transform: uppercase;
+  }
+  .option-name {
+    font-weight: 600; color: #e2e8f0; font-size: 14px;
+  }
+  .option-desc {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; color: #64748b;
+  }
+
+  /* ─── Shared "page" layout (used by every theme card) ──── */
+  .page-card {
+    padding: 0 0 80px 0;
+  }
+  .page-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px;
+  }
+  .page-logo {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .page-logo svg { width: 32px; height: 32px; }
+  .page-logo span {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600; font-size: 16px; letter-spacing: 0.03em;
+  }
+  .page-links {
+    display: flex; gap: 32px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase;
+  }
+  .page-content {
+    max-width: 768px; margin: 0 auto; padding: 32px 24px;
+  }
+  .breadcrumb {
+    display: flex; justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .h1 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700; font-size: 48px; line-height: 1.05;
+    margin: 0 0 12px; letter-spacing: -0.02em;
+  }
+  .meta-row {
+    display: flex; gap: 12px; align-items: center;
+    margin-bottom: 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+  }
+  .chip {
+    padding: 3px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    border-radius: 3px; border: 1px solid;
+  }
+  .hero-frame {
+    width: 100%; aspect-ratio: 16/10;
+    background: url('saxholl-hero.webp') center/cover no-repeat;
+    background-color: #1e293b;
+    border-radius: 4px;
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .body-text {
+    font-size: 18px; line-height: 1.7;
+    margin: 0 0 32px;
+  }
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    padding: 16px;
+    border: 1px solid;
+    border-radius: 4px;
+  }
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    margin: 0 0 6px;
+  }
+  .stat-value {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700; font-size: 24px;
+    margin: 0;
+  }
+  .section-h {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600; font-size: 20px;
+    margin: 32px 0 12px;
+  }
+  .horizon-viz {
+    height: 120px; border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid;
+    margin-bottom: 32px;
+  }
+  .sun-dot {
+    position: absolute; left: 50%; top: 30%;
+    width: 24px; height: 24px; border-radius: 50%;
+    transform: translateX(-50%);
+    background: #f59e0b;
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.6);
+  }
+  .horizon-line {
+    position: absolute; bottom: 28%; left: 0; right: 0;
+    height: 1px;
+  }
+  .mini-footer {
+    max-width: 768px; margin: 0 auto; padding: 32px 24px;
+    display: flex; justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    border-top: 1px solid;
+  }
+
+  /* ════════════════════════════════════════════════════
+     OPTION A — DAWN HORIZON
+     Warm parchment, deep indigo, corona stays warm
+     ════════════════════════════════════════════════════ */
+  .theme-dawn {
+    background:
+      radial-gradient(ellipse at 80% 0%, rgba(251, 146, 60, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 0% 100%, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
+      #faf5eb;
+    color: #1a1628;
+  }
+  .theme-dawn .page-logo svg circle:nth-child(1) { fill: #faf5eb; }
+  .theme-dawn .page-logo svg circle:nth-child(2) { stroke: #c2410c; }
+  .theme-dawn .page-logo svg circle:nth-child(3) { fill: #c2410c; }
+  .theme-dawn .page-logo span { color: #1a1628; }
+  .theme-dawn .page-links a { color: #6e5d5d; text-decoration: none; }
+  .theme-dawn .page-links a.active { color: #c2410c; font-weight: 600; }
+  .theme-dawn .breadcrumb { color: #8b7d7d; }
+  .theme-dawn .breadcrumb .bc-cat { color: #c2410c; }
+  .theme-dawn .h1 { color: #1a1628; }
+  .theme-dawn .chip.chip-type { color: #c2410c; border-color: rgba(194,65,12,0.3); background: rgba(251, 146, 60, 0.1); }
+  .theme-dawn .meta-row .meta-trail { color: #6e5d5d; }
+  .theme-dawn .hero-frame {
+    box-shadow: 0 16px 40px -20px rgba(26, 22, 40, 0.3), inset 0 0 0 1px rgba(26, 22, 40, 0.08);
+  }
+  .theme-dawn .body-text { color: #3d3449; }
+  .theme-dawn .stat-card {
+    border-color: #e7dec8;
+    background: rgba(255, 251, 240, 0.7);
+    box-shadow: 0 2px 8px -4px rgba(26, 22, 40, 0.06);
+  }
+  .theme-dawn .stat-label { color: #8b7d7d; }
+  .theme-dawn .stat-value { color: #1a1628; }
+  .theme-dawn .section-h { color: #1a1628; }
+  .theme-dawn .horizon-viz {
+    background: linear-gradient(to bottom, #fde68a 0%, #fef3c7 50%, #e7dec8 100%);
+    border-color: #e7dec8;
+  }
+  .theme-dawn .horizon-line {
+    background: rgba(26, 22, 40, 0.4);
+  }
+  .theme-dawn .mini-footer { color: #8b7d7d; border-color: #e7dec8; }
+
+  /* ════════════════════════════════════════════════════
+     OPTION B — GLACIER WHITE
+     Cool crisp Scandinavian, high-contrast, modern
+     ════════════════════════════════════════════════════ */
+  .theme-glacier {
+    background: #f8fafc;
+    background-image:
+      linear-gradient(rgba(51, 65, 85, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(51, 65, 85, 0.04) 1px, transparent 1px);
+    background-size: 64px 64px;
+    color: #0b1220;
+  }
+  .theme-glacier .page-logo svg circle:nth-child(1) { fill: #f8fafc; }
+  .theme-glacier .page-logo svg circle:nth-child(2) { stroke: #ea580c; }
+  .theme-glacier .page-logo svg circle:nth-child(3) { fill: #ea580c; }
+  .theme-glacier .page-logo span { color: #0b1220; }
+  .theme-glacier .page-links a { color: #64748b; text-decoration: none; }
+  .theme-glacier .page-links a.active { color: #ea580c; font-weight: 600; }
+  .theme-glacier .breadcrumb { color: #94a3b8; }
+  .theme-glacier .breadcrumb .bc-cat { color: #ea580c; }
+  .theme-glacier .h1 { color: #0b1220; }
+  .theme-glacier .chip.chip-type {
+    color: #ea580c; border-color: rgba(234,88,12,0.35); background: rgba(234,88,12,0.08);
+  }
+  .theme-glacier .meta-row .meta-trail { color: #64748b; }
+  .theme-glacier .hero-frame {
+    box-shadow: 0 8px 24px -8px rgba(15, 23, 42, 0.15), inset 0 0 0 1px rgba(15, 23, 42, 0.08);
+  }
+  .theme-glacier .body-text { color: #334155; }
+  .theme-glacier .stat-card {
+    border-color: #cbd5e1;
+    background: #ffffff;
+  }
+  .theme-glacier .stat-label { color: #64748b; }
+  .theme-glacier .stat-value { color: #0b1220; }
+  .theme-glacier .section-h { color: #0b1220; }
+  .theme-glacier .horizon-viz {
+    background: linear-gradient(to bottom, #cffafe 0%, #e0f2fe 50%, #f8fafc 100%);
+    border-color: #cbd5e1;
+  }
+  .theme-glacier .horizon-line {
+    background: rgba(15, 23, 42, 0.3);
+  }
+  .theme-glacier .mini-footer { color: #64748b; border-color: #cbd5e1; }
+
+  /* ════════════════════════════════════════════════════
+     OPTION C — ALMANAC CREAM
+     Nostalgic, printed, amateur-astronomer handbook
+     ════════════════════════════════════════════════════ */
+  .theme-almanac {
+    background:
+      radial-gradient(circle at 20% 30%, rgba(212, 196, 163, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(212, 196, 163, 0.15) 0%, transparent 50%),
+      #f5ecd9;
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0 0.05  0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+      radial-gradient(circle at 20% 30%, rgba(212, 196, 163, 0.2) 0%, transparent 50%);
+    background-color: #f5ecd9;
+    color: #2a1f14;
+  }
+  .theme-almanac .page-logo svg circle:nth-child(1) { fill: #f5ecd9; }
+  .theme-almanac .page-logo svg circle:nth-child(2) { stroke: #b8640f; stroke-width: 3.5; }
+  .theme-almanac .page-logo svg circle:nth-child(3) { fill: #b8640f; }
+  .theme-almanac .page-logo span { color: #2a1f14; letter-spacing: 0.08em; }
+  .theme-almanac .page-links a { color: #6b5a3f; letter-spacing: 0.22em; text-decoration: none; }
+  .theme-almanac .page-links a.active {
+    color: #b8640f; font-weight: 600;
+    position: relative;
+  }
+  .theme-almanac .page-links a.active::before {
+    content: "★"; font-size: 8px;
+    position: absolute; left: -12px; top: 50%; transform: translateY(-50%);
+  }
+  .theme-almanac .breadcrumb { color: #8b7a58; letter-spacing: 0.28em; }
+  .theme-almanac .breadcrumb .bc-cat { color: #b8640f; }
+  .theme-almanac .h1 {
+    color: #2a1f14;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    font-family: 'Manrope', serif;
+  }
+  .theme-almanac .chip.chip-type {
+    color: #b8640f; border-color: rgba(184,100,15,0.4);
+    background: rgba(212,196,163,0.25);
+  }
+  .theme-almanac .meta-row .meta-trail { color: #6b5a3f; }
+  .theme-almanac .hero-frame {
+    box-shadow: 0 8px 20px -10px rgba(42, 31, 20, 0.35),
+      inset 0 0 0 1px rgba(42, 31, 20, 0.15),
+      inset 0 0 0 6px #f5ecd9,
+      inset 0 0 0 7px #d4c4a3;
+    border-radius: 2px;
+  }
+  .theme-almanac .body-text {
+    color: #3d2f1e;
+    font-family: 'Manrope', serif;
+  }
+  .theme-almanac .body-text::first-letter {
+    float: left; font-size: 64px; font-weight: 800;
+    line-height: 0.9; padding: 6px 8px 0 0;
+    color: #b8640f; font-family: 'Manrope', sans-serif;
+  }
+  .theme-almanac .stat-card {
+    border-color: #d4c4a3;
+    background: rgba(255, 252, 245, 0.7);
+    border-radius: 2px;
+  }
+  .theme-almanac .stat-label { color: #8b7a58; letter-spacing: 0.22em; }
+  .theme-almanac .stat-value { color: #2a1f14; }
+  .theme-almanac .section-h { color: #2a1f14; font-weight: 700; }
+  .theme-almanac .horizon-viz {
+    background: linear-gradient(to bottom, #fde7b7 0%, #f5ecd9 60%, #d4c4a3 100%);
+    border-color: #d4c4a3;
+    border-radius: 2px;
+  }
+  .theme-almanac .horizon-line { background: rgba(42, 31, 20, 0.45); }
+  .theme-almanac .mini-footer { color: #8b7a58; border-color: #d4c4a3; letter-spacing: 0.22em; }
+
+  /* Current dark (for reference) */
+  .theme-dark { background: #050810; color: #cbd5e1; }
+  .theme-dark .page-logo svg circle:nth-child(1) { fill: #050810; }
+  .theme-dark .page-logo svg circle:nth-child(2) { stroke: #f59e0b; }
+  .theme-dark .page-logo svg circle:nth-child(3) { fill: #f59e0b; }
+  .theme-dark .page-logo span { color: #cbd5e1; }
+  .theme-dark .page-links a { color: #94a3b8; text-decoration: none; }
+  .theme-dark .page-links a.active { color: #f59e0b; font-weight: 600; }
+  .theme-dark .breadcrumb { color: #64748b; }
+  .theme-dark .breadcrumb .bc-cat { color: rgba(245,158,11,0.8); }
+  .theme-dark .h1 { color: #fff; letter-spacing: -0.02em; }
+  .theme-dark .chip.chip-type { color: #fbbf24; border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.08); }
+  .theme-dark .meta-row .meta-trail { color: #94a3b8; }
+  .theme-dark .body-text { color: #cbd5e1; }
+  .theme-dark .stat-card { border-color: rgba(26,37,64,0.4); background: #0a1020; }
+  .theme-dark .stat-label { color: #94a3b8; }
+  .theme-dark .stat-value { color: #fff; }
+  .theme-dark .section-h { color: #fff; }
+  .theme-dark .horizon-viz {
+    background: linear-gradient(to bottom, #1e293b 0%, #0f172a 70%, #050810 100%);
+    border-color: rgba(26,37,64,0.6);
+  }
+  .theme-dark .horizon-line { background: rgba(148, 163, 184, 0.4); }
+  .theme-dark .mini-footer { color: #64748b; border-color: rgba(26,37,64,0.3); }
+</style>
+</head>
+<body>
+
+<div class="prototype-jump">
+  <a href="#dark">Dark</a>
+  <a href="#dawn">A</a>
+  <a href="#glacier">B</a>
+  <a href="#almanac">C</a>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     DARK — for reference
+     ══════════════════════════════════════════════════════ -->
+<section id="dark">
+  <div class="option-label">
+    <div class="option-label-inner">
+      <span class="option-kicker" style="color: #64748b;">Current</span>
+      <span class="option-name">Dark</span>
+      <span class="option-desc">brand canonical · astronomy convention</span>
+    </div>
+  </div>
+  <div class="theme-dark page-card">
+    <nav class="page-nav">
+      <div class="page-logo">
+        <svg viewBox="0 0 128 128" fill="none" stroke-width="3" aria-hidden="true">
+          <circle cx="64" cy="64" r="36" />
+          <circle cx="64" cy="64" r="36" opacity="0.8" fill="none" />
+          <circle cx="96" cy="48" r="4" />
+        </svg>
+        <span>ECLIPSECHASE</span>
+      </div>
+      <div class="page-links">
+        <a>Home</a>
+        <a>Guide</a>
+        <a class="active">Spots</a>
+        <a>Map</a>
+      </div>
+    </nav>
+    <div class="page-content">
+      <div class="breadcrumb">
+        <span>Snæfellsnes <span class="bc-cat">/ Viewing spot</span></span>
+        <span>64.8516°N · 23.9276°W</span>
+      </div>
+      <h1 class="h1">Saxhóll Crater</h1>
+      <div class="meta-row">
+        <span class="chip chip-type">Short walk</span>
+        <span class="meta-trail">0.2 km · 10 min · Easy</span>
+      </div>
+      <div class="hero-frame"></div>
+      <p class="body-text">A scoria crater with a well-maintained metal staircase (~400 steps) leading to the rim. Watching totality from inside a volcanic crater is a once-in-a-lifetime experience.</p>
+      <div class="stat-grid">
+        <div class="stat-card"><p class="stat-label">Totality</p><p class="stat-value">1m 55s</p></div>
+        <div class="stat-card"><p class="stat-label">Sun alt</p><p class="stat-value">24°</p></div>
+        <div class="stat-card"><p class="stat-label">Services</p><p class="stat-value" style="font-size: 16px;">None nearby</p></div>
+        <div class="stat-card"><p class="stat-label">Signal</p><p class="stat-value" style="font-size: 16px;">Limited</p></div>
+      </div>
+      <h2 class="section-h">Horizon</h2>
+      <div class="horizon-viz">
+        <div class="sun-dot"></div>
+        <div class="horizon-line"></div>
+      </div>
+    </div>
+    <div class="mini-footer">
+      <span>← Back</span>
+      <span>Privacy · Terms · Credits</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     OPTION A — DAWN HORIZON
+     ══════════════════════════════════════════════════════ -->
+<section id="dawn">
+  <div class="option-label">
+    <div class="option-label-inner">
+      <span class="option-kicker">Option A</span>
+      <span class="option-name">Dawn Horizon</span>
+      <span class="option-desc">warm parchment · deep indigo ink · corona stays warm · astronomical journal at golden hour</span>
+    </div>
+  </div>
+  <div class="theme-dawn page-card">
+    <nav class="page-nav">
+      <div class="page-logo">
+        <svg viewBox="0 0 128 128" fill="none" stroke-width="3" aria-hidden="true">
+          <circle cx="64" cy="64" r="36" />
+          <circle cx="64" cy="64" r="36" opacity="0.8" fill="none" />
+          <circle cx="96" cy="48" r="4" />
+        </svg>
+        <span>ECLIPSECHASE</span>
+      </div>
+      <div class="page-links">
+        <a>Home</a>
+        <a>Guide</a>
+        <a class="active">Spots</a>
+        <a>Map</a>
+      </div>
+    </nav>
+    <div class="page-content">
+      <div class="breadcrumb">
+        <span>Snæfellsnes <span class="bc-cat">/ Viewing spot</span></span>
+        <span>64.8516°N · 23.9276°W</span>
+      </div>
+      <h1 class="h1">Saxhóll Crater</h1>
+      <div class="meta-row">
+        <span class="chip chip-type">Short walk</span>
+        <span class="meta-trail">0.2 km · 10 min · Easy</span>
+      </div>
+      <div class="hero-frame"></div>
+      <p class="body-text">A scoria crater with a well-maintained metal staircase (~400 steps) leading to the rim. Watching totality from inside a volcanic crater is a once-in-a-lifetime experience.</p>
+      <div class="stat-grid">
+        <div class="stat-card"><p class="stat-label">Totality</p><p class="stat-value">1m 55s</p></div>
+        <div class="stat-card"><p class="stat-label">Sun alt</p><p class="stat-value">24°</p></div>
+        <div class="stat-card"><p class="stat-label">Services</p><p class="stat-value" style="font-size: 16px;">None nearby</p></div>
+        <div class="stat-card"><p class="stat-label">Signal</p><p class="stat-value" style="font-size: 16px;">Limited</p></div>
+      </div>
+      <h2 class="section-h">Horizon</h2>
+      <div class="horizon-viz">
+        <div class="sun-dot"></div>
+        <div class="horizon-line"></div>
+      </div>
+    </div>
+    <div class="mini-footer">
+      <span>← Back</span>
+      <span>Privacy · Terms · Credits</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     OPTION B — GLACIER WHITE
+     ══════════════════════════════════════════════════════ -->
+<section id="glacier">
+  <div class="option-label">
+    <div class="option-label-inner">
+      <span class="option-kicker">Option B</span>
+      <span class="option-name">Glacier White</span>
+      <span class="option-desc">cool crisp Scandinavian · high contrast · subtle grid · modern weather-operator feel</span>
+    </div>
+  </div>
+  <div class="theme-glacier page-card">
+    <nav class="page-nav">
+      <div class="page-logo">
+        <svg viewBox="0 0 128 128" fill="none" stroke-width="3" aria-hidden="true">
+          <circle cx="64" cy="64" r="36" />
+          <circle cx="64" cy="64" r="36" opacity="0.8" fill="none" />
+          <circle cx="96" cy="48" r="4" />
+        </svg>
+        <span>ECLIPSECHASE</span>
+      </div>
+      <div class="page-links">
+        <a>Home</a>
+        <a>Guide</a>
+        <a class="active">Spots</a>
+        <a>Map</a>
+      </div>
+    </nav>
+    <div class="page-content">
+      <div class="breadcrumb">
+        <span>Snæfellsnes <span class="bc-cat">/ Viewing spot</span></span>
+        <span>64.8516°N · 23.9276°W</span>
+      </div>
+      <h1 class="h1">Saxhóll Crater</h1>
+      <div class="meta-row">
+        <span class="chip chip-type">Short walk</span>
+        <span class="meta-trail">0.2 km · 10 min · Easy</span>
+      </div>
+      <div class="hero-frame"></div>
+      <p class="body-text">A scoria crater with a well-maintained metal staircase (~400 steps) leading to the rim. Watching totality from inside a volcanic crater is a once-in-a-lifetime experience.</p>
+      <div class="stat-grid">
+        <div class="stat-card"><p class="stat-label">Totality</p><p class="stat-value">1m 55s</p></div>
+        <div class="stat-card"><p class="stat-label">Sun alt</p><p class="stat-value">24°</p></div>
+        <div class="stat-card"><p class="stat-label">Services</p><p class="stat-value" style="font-size: 16px;">None nearby</p></div>
+        <div class="stat-card"><p class="stat-label">Signal</p><p class="stat-value" style="font-size: 16px;">Limited</p></div>
+      </div>
+      <h2 class="section-h">Horizon</h2>
+      <div class="horizon-viz">
+        <div class="sun-dot"></div>
+        <div class="horizon-line"></div>
+      </div>
+    </div>
+    <div class="mini-footer">
+      <span>← Back</span>
+      <span>Privacy · Terms · Credits</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     OPTION C — ALMANAC CREAM
+     ══════════════════════════════════════════════════════ -->
+<section id="almanac">
+  <div class="option-label">
+    <div class="option-label-inner">
+      <span class="option-kicker">Option C</span>
+      <span class="option-name">Almanac Cream</span>
+      <span class="option-desc">19c astronomical almanac · cream paper · sepia ink · drop caps · star glyph on active link</span>
+    </div>
+  </div>
+  <div class="theme-almanac page-card">
+    <nav class="page-nav">
+      <div class="page-logo">
+        <svg viewBox="0 0 128 128" fill="none" stroke-width="3" aria-hidden="true">
+          <circle cx="64" cy="64" r="36" />
+          <circle cx="64" cy="64" r="36" opacity="0.8" fill="none" />
+          <circle cx="96" cy="48" r="4" />
+        </svg>
+        <span>ECLIPSECHASE</span>
+      </div>
+      <div class="page-links">
+        <a>Home</a>
+        <a>Guide</a>
+        <a class="active">Spots</a>
+        <a>Map</a>
+      </div>
+    </nav>
+    <div class="page-content">
+      <div class="breadcrumb">
+        <span>Snæfellsnes <span class="bc-cat">/ Viewing spot</span></span>
+        <span>64.8516°N · 23.9276°W</span>
+      </div>
+      <h1 class="h1">Saxhóll Crater</h1>
+      <div class="meta-row">
+        <span class="chip chip-type">Short walk</span>
+        <span class="meta-trail">0.2 km · 10 min · Easy</span>
+      </div>
+      <div class="hero-frame"></div>
+      <p class="body-text">A scoria crater with a well-maintained metal staircase (~400 steps) leading to the rim. Watching totality from inside a volcanic crater is a once-in-a-lifetime experience — the kind of moment you plan your year around.</p>
+      <div class="stat-grid">
+        <div class="stat-card"><p class="stat-label">Totality</p><p class="stat-value">1m 55s</p></div>
+        <div class="stat-card"><p class="stat-label">Sun alt</p><p class="stat-value">24°</p></div>
+        <div class="stat-card"><p class="stat-label">Services</p><p class="stat-value" style="font-size: 16px;">None nearby</p></div>
+        <div class="stat-card"><p class="stat-label">Signal</p><p class="stat-value" style="font-size: 16px;">Limited</p></div>
+      </div>
+      <h2 class="section-h">Horizon</h2>
+      <div class="horizon-viz">
+        <div class="sun-dot"></div>
+        <div class="horizon-line"></div>
+      </div>
+    </div>
+    <div class="mini-footer">
+      <span>← Back</span>
+      <span>Privacy · Terms · Credits</span>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

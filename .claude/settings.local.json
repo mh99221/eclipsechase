@@ -32,7 +32,19 @@
       "Bash(SKIP_SIMPLE_GIT_HOOKS=1 git add .npmrc)",
       "Bash(C:/Users/marti/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.5/skills/brainstorming/scripts/start-server.sh --project-dir \"D:/Projects/eclipsechase/eclipse-chaser\")",
       "mcp__Claude_Preview__preview_start",
-      "WebFetch(domain:stitch.withgoogle.com)"
+      "WebFetch(domain:stitch.withgoogle.com)",
+      "Bash(git push *)",
+      "Bash(git -C \"D:/Projects/eclipsechase/eclipse-chaser\" log --oneline -20)",
+      "Bash(git -C \"D:/Projects/eclipsechase/eclipse-chaser\" grep -n \"var\\(--glass\\\\|var\\(--ink\\\\|color:\" -- \"app/components/spot-detail/SpotHeroBlock.vue\")",
+      "Bash(git -C \"D:/Projects/eclipsechase/eclipse-chaser\" grep -n \"232 229 220\\\\|#E8E5DC\\\\|cream.*pinned\\\\|pinned.*cream\" -- \"app/\")",
+      "Bash(git -C \"D:/Projects/eclipsechase/eclipse-chaser\" add app/components/CameraLightbox.vue)",
+      "Bash(git -C D:/Projects/eclipsechase/eclipse-chaser commit -m ' *)",
+      "Bash(git fetch *)",
+      "Bash(gh pr create --base master --head worktree-agent-aaa4c488d06c5f77d --title 'chore\\(server\\): delete deprecated /api/weather/current and /forecast endpoints' --body ' *)",
+      "Bash(git ls-remote *)",
+      "Bash(git checkout *)",
+      "Bash(rm -f D:/Projects/eclipsechase/eclipse-chaser/.claude/worktrees/agent-a219a165ede5a813a/.claude/settings.local.json)",
+      "Bash(git -C D:/Projects/eclipsechase/eclipse-chaser/.claude/worktrees/agent-a219a165ede5a813a rebase origin/master)"
     ]
   }
 }
