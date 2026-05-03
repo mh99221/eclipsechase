@@ -121,6 +121,8 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
       :region="regionLabel(spot.region)"
       :hero="heroPhoto"
       :kicker="t('v0.spot_detail.kicker')"
+      :lat="spot.lat"
+      :lng="spot.lng"
     >
       <template #meta-end>
         <AdvisoriesBadge
