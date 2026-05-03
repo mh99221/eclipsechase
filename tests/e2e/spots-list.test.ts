@@ -1,23 +1,33 @@
 import { expect, test } from './fixtures'
 
 test.describe('Spots listing page', () => {
-  // Note: Page renders the static title and profile selector regardless of
-  // API state. Spot cards only appear when /api/spots returns data, which
-  // requires SUPABASE_SECRET_KEY (not set in CI). Skip data-dependent
-  // assertions here.
+  // The page chrome (eyebrow header, profile pills, sort tabs, region chips)
+  // renders regardless of API state. Spot cards only appear when /api/spots
+  // returns data — which requires SUPABASE_SECRET_KEY, not set in CI — so
+  // we don't assert on card content here.
 
-  test('spots page loads with title', async ({ page, goto }) => {
+  test('page loads with header chrome', async ({ page, goto }) => {
     await goto('/spots', { waitUntil: 'hydration' })
 
-    const h1 = page.locator('h1')
-    await expect(h1).toHaveText('Viewing Spots')
+    // useHead sets the document title.
+    await expect(page).toHaveTitle(/Viewing Spots/)
+
+    // The "● SPOTS · N" eyebrow always renders (N may be 0 in CI).
+    const eyebrow = page.locator('.eyebrow', { hasText: /SPOTS/ }).first()
+    await expect(eyebrow).toBeVisible()
   })
 
-  test('profile selector renders for all users', async ({ page, goto }) => {
+  test('profile selector renders the All + 5 profile pills', async ({ page, goto }) => {
     await goto('/spots', { waitUntil: 'hydration' })
 
-    // 5 profile buttons should always render (locked for free users)
-    const photographerBtn = page.locator('button', { hasText: 'Photographer' })
-    await expect(photographerBtn).toBeVisible()
+    // Profile picker is always visible for all users (clicking a profile
+    // triggers an upgrade prompt for non-Pro, but the pills themselves
+    // are public — they're a teaser).
+    const labels = ['All', 'Photographer', 'Family', 'Hiker', 'Sky Chaser', 'First-Timer']
+    for (const label of labels) {
+      await expect(
+        page.getByRole('button', { name: label, exact: true }),
+      ).toBeVisible()
+    }
   })
 })
