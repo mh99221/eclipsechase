@@ -252,24 +252,7 @@
       "hiker": "Prefers trails and elevation. The harder the hike, the better the spot.",
       "skychaser": "Will drive anywhere for the clearest weather. All about the sky.",
       "firsttimer": "Balanced pick — safe, accessible, good conditions. A great first eclipse."
-    },
-    "find_your_spot": "FIND YOUR SPOT",
-    "title": "Where should I watch?",
-    "subtitle": "Pick your style. We'll rank the best spots for you based on live weather.",
-    "top_picks": "TOP PICKS FOR {profile}",
-    "no_profile": "Pick your style to see personalized rankings.",
-    "all_spots": "All spots sorted by totality duration",
-    "view_all": "View all",
-    "more_spots": "+ {count} more spots ranked below",
-    "view_on_map": "View on Map",
-    "from_location": "from your location",
-    "from_reykjavik": "from Reykjavík",
-    "thin_results": "Only {count} spots match — consider switching to {suggested} for more options.",
-    "score": "SCORE",
-    "score_explanation": "Score combines weather, totality duration, distance, accessibility, services, and horizon visibility — weighted for your profile.",
-    "filtered": "Doesn't match profile",
-    "totality": "Totality",
-    "distance": "away"
+    }
   },
   "footer": {
     "tagline": "Built for the once-in-170-years eclipse.",

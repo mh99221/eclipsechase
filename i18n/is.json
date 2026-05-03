@@ -107,24 +107,7 @@
       "hiker": "Vill gönguleiðir og hæð. Því erfiðari gangan, því betri staðurinn.",
       "skychaser": "Keyrir hvert sem er fyrir heiðan himininn. Allt snýst um veðrið.",
       "firsttimer": "Jafnvægisvalkostur — öruggur, aðgengilegur, góð skilyrði. Frábært fyrsta sólmyrkva."
-    },
-    "find_your_spot": "FINNDU STAÐINN ÞINN",
-    "title": "Hvar ætti ég að horfa?",
-    "subtitle": "Veldu stílinn þinn. Við röðum bestu stöðunum fyrir þig miðað við lifandi veður.",
-    "top_picks": "BESTU STAÐIR FYRIR {profile}",
-    "no_profile": "Veldu stíl til að sjá persónulega röðun.",
-    "all_spots": "Allir staðir raðaðir eftir lengd myrkvans",
-    "view_all": "Sjá alla",
-    "more_spots": "+ {count} fleiri staðir raðaðir fyrir neðan",
-    "view_on_map": "Skoða á korti",
-    "from_location": "frá þinni staðsetningu",
-    "from_reykjavik": "frá Reykjavík",
-    "thin_results": "Aðeins {count} staðir passa — íhugaðu að skipta yfir í {suggested} fyrir fleiri valkosti.",
-    "score": "STIG",
-    "score_explanation": "Stig sameinar veður, lengd myrkvans, fjarlægð, aðgengi, þjónustu og sjóndeildarhringsútsýn — vegið eftir prófílnum þínum.",
-    "filtered": "Passar ekki við prófíl",
-    "totality": "Myrkvinn",
-    "distance": "í burtu"
+    }
   },
   "footer": {
     "tagline": "Gert fyrir sólmyrkvann sem kemur einu sinni á 170 árum.",
