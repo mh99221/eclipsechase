@@ -13,22 +13,15 @@ test.describe('Guide page', () => {
     await expect(headings.first()).toBeVisible()
   })
 
-  test('navigation has ECLIPSECHASE wordmark linking home', async ({ page, goto }) => {
+  test('BrandBar shows ECLIPSECHASE wordmark linking home', async ({ page, goto }) => {
     await goto('/guide', { waitUntil: 'hydration' })
 
-    const logoLink = page.locator('nav a[href="/"]')
+    // Post-v0, the chrome wraps in <header class="brand-bar">, not <nav>.
+    // BrandBar's internal <nav class="masthead"> is Pro-gated and not
+    // rendered here; the only <nav> on /guide is the TOC inside the
+    // article, which has no home link.
+    const logoLink = page.locator('header.brand-bar a[href="/"]')
     await expect(logoLink).toBeVisible()
     await expect(logoLink.locator('text=ECLIPSECHASE')).toBeVisible()
-  })
-
-  test('footer has back button', async ({ page, goto }) => {
-    await goto('/guide', { waitUntil: 'hydration' })
-
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-    await page.waitForTimeout(300)
-
-    const footer = page.locator('footer')
-    const backButton = footer.locator('button', { hasText: 'Back' })
-    await expect(backButton).toBeVisible()
   })
 })

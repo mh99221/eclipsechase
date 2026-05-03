@@ -1,46 +1,47 @@
 import { expect, test } from './fixtures'
 
 test.describe('Navigation', () => {
-  test('logo links to home from guide page', async ({ page, goto }) => {
+  // BrandBar is rendered globally in app.vue and contains a single
+  // <NuxtLink to="/"> with aria-label="EclipseChase — Home". That link
+  // is the one cross-page nav affordance for free users — masthead +
+  // BottomNav are Pro-gated and hidden on free routes / landing.
+
+  test('BrandBar logo navigates home from /guide', async ({ page, goto }) => {
     await goto('/guide', { waitUntil: 'hydration' })
 
-    const logoLink = page.locator('nav a[href="/"]').first()
+    const logoLink = page.locator('header.brand-bar a[href="/"]').first()
     await expect(logoLink).toBeVisible()
 
     await logoLink.click()
     await page.waitForURL('/', { timeout: 15000 })
 
-    // Should be on home page with h1
     const h1 = page.locator('h1')
     await expect(h1).toBeVisible()
   })
 
-  test('logo links to home from privacy page', async ({ page, goto }) => {
+  test('BrandBar logo navigates home from /privacy', async ({ page, goto }) => {
     await goto('/privacy', { waitUntil: 'hydration' })
 
-    const logoLink = page.locator('nav a[href="/"]').first()
+    const logoLink = page.locator('header.brand-bar a[href="/"]').first()
     await expect(logoLink).toBeVisible()
 
     await logoLink.click()
     await page.waitForURL('/', { timeout: 15000 })
   })
 
-  test('privacy and terms links exist in guide footer', async ({ page, goto }) => {
-    await goto('/guide', { waitUntil: 'hydration' })
+  test('Landing footer links to privacy and terms', async ({ page, goto }) => {
+    // Landing is the only page with its own <footer>. Guide / privacy /
+    // terms / credits / pro all rely on the BrandBar header for chrome
+    // and don't render a page-level footer.
+    await goto('/', { waitUntil: 'hydration' })
 
-    // Scroll to bottom
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
     await page.waitForTimeout(500)
 
     const footer = page.locator('footer')
     await expect(footer).toBeVisible()
 
-    // Privacy link exists in footer
-    const privacyLink = footer.locator('a[href="/privacy"]')
-    await expect(privacyLink).toBeVisible()
-
-    // Terms link exists in footer
-    const termsLink = footer.locator('a[href="/terms"]')
-    await expect(termsLink).toBeVisible()
+    await expect(footer.locator('a[href="/privacy"]')).toBeVisible()
+    await expect(footer.locator('a[href="/terms"]')).toBeVisible()
   })
 })

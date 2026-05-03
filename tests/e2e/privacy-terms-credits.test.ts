@@ -25,12 +25,13 @@ test.describe('Legal pages', () => {
     await expect(h1).toContainText('Credit')
   })
 
-  test('all legal pages have nav with ECLIPSECHASE', async ({ page, goto }) => {
+  test('all legal pages show the BrandBar wordmark', async ({ page, goto }) => {
+    // Post-v0, ECLIPSECHASE lives in <header class="brand-bar">, not <nav>.
     for (const path of ['/privacy', '/terms', '/credits']) {
       await goto(path, { waitUntil: 'hydration' })
 
-      const eclipseText = page.locator('nav').getByText('ECLIPSECHASE')
-      await expect(eclipseText).toBeVisible()
+      const wordmark = page.locator('header.brand-bar').getByText('ECLIPSECHASE')
+      await expect(wordmark).toBeVisible()
     }
   })
 })
