@@ -6,6 +6,9 @@ const props = defineProps<{
   region: string
   hero: SpotPhoto | null
   kicker?: string
+  /** Optional GPS coordinates rendered below the region line. */
+  lat?: number
+  lng?: number
 }>()
 
 // Mobile (<640) is full-bleed → ~100vw. Tablet/desktop is the
@@ -14,6 +17,15 @@ const heroSrcset = computed(() => {
   if (!props.hero) return undefined
   const thumb = props.hero.filename.replace(/\.webp$/, '-thumb.webp')
   return `/images/spots/${thumb} 600w, /images/spots/${props.hero.filename} 1200w`
+})
+
+// Format like "63.8121° N · 22.7068° W". Iceland is always N+/W-.
+// 4 decimals ≈ 11 m precision — plenty for a copy-paste-into-Maps readout.
+const formattedCoordinates = computed(() => {
+  if (props.lat == null || props.lng == null) return null
+  const ns = props.lat >= 0 ? 'N' : 'S'
+  const ew = props.lng >= 0 ? 'E' : 'W'
+  return `${Math.abs(props.lat).toFixed(4)}° ${ns} · ${Math.abs(props.lng).toFixed(4)}° ${ew}`
 })
 </script>
 
@@ -43,6 +55,7 @@ const heroSrcset = computed(() => {
       </div>
       <h1 class="spot-hero-name">{{ name }}</h1>
       <div class="spot-hero-region">{{ region }}</div>
+      <div v-if="formattedCoordinates" class="spot-hero-coords">{{ formattedCoordinates }}</div>
     </div>
   </header>
 </template>
@@ -115,6 +128,14 @@ const heroSrcset = computed(() => {
   font-size: 13px;
   color: rgb(var(--ink-1) / 0.62);
   margin-top: 6px;
+}
+.spot-hero-coords {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  color: rgb(var(--ink-3));
+  margin-top: 4px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Desktop scale-up — placed after the base rules so cascade wins. */
