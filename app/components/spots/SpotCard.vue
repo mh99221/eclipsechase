@@ -28,7 +28,7 @@ const heroSrcset = computed(() => {
       v-if="heroSrc"
       :src="heroSrc"
       :srcset="heroSrcset"
-      sizes="(max-width: 767px) 100vw, 768px"
+      sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 360px"
       :alt="heroAlt || name"
       class="spot-card-img"
       loading="lazy"

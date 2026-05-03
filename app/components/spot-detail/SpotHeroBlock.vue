@@ -1,12 +1,20 @@
 <script setup lang="ts">
 import type { SpotPhoto } from '~/types/spots'
 
-defineProps<{
+const props = defineProps<{
   name: string
   region: string
   hero: SpotPhoto | null
   kicker?: string
 }>()
+
+// Mobile (<640) is full-bleed → ~100vw. Tablet/desktop is the
+// PageShell-reading inner (≤768) minus 24px side margins → ~720px.
+const heroSrcset = computed(() => {
+  if (!props.hero) return undefined
+  const thumb = props.hero.filename.replace(/\.webp$/, '-thumb.webp')
+  return `/images/spots/${thumb} 600w, /images/spots/${props.hero.filename} 1200w`
+})
 </script>
 
 <template>
@@ -15,8 +23,12 @@ defineProps<{
       <img
         v-if="hero"
         :src="`/images/spots/${hero.filename}`"
+        :srcset="heroSrcset"
+        sizes="(max-width: 639px) 100vw, 720px"
         :alt="hero.alt"
         loading="eager"
+        width="1200"
+        height="800"
       />
       <div v-else class="spot-hero-fallback" aria-hidden="true" />
       <div class="spot-hero-veil" aria-hidden="true" />
