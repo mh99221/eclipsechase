@@ -31,7 +31,7 @@ function getResend(): Resend | null {
 export async function sendWelcomeEmail(to: string) {
   const resend = getResend()
   if (!resend) {
-    console.log('[email] Resend not configured, skipping welcome email to', to)
+    console.log('[email] Resend not configured, skipping welcome email to', maskEmail(to))
     return
   }
 
@@ -42,17 +42,17 @@ export async function sendWelcomeEmail(to: string) {
       subject: 'You\'re on the list — EclipseChase.is',
       html: welcomeHtml(),
     })
-    console.log('[email] Welcome email sent to', to)
+    console.log('[email] Welcome email sent to', maskEmail(to))
   } catch (err: any) {
     // Don't throw — email failure shouldn't block signup
-    console.error('[email] Failed to send welcome email:', err.message || err)
+    console.error('[email] Failed to send welcome email to', maskEmail(to), ':', err.message || err)
   }
 }
 
 export async function sendRestoreCode(to: string, code: string): Promise<void> {
   const resend = getResend()
   if (!resend) {
-    console.log('[email] Resend not configured, skipping restore code to', to)
+    console.log('[email] Resend not configured, skipping restore code to', maskEmail(to))
     return
   }
 
@@ -77,10 +77,10 @@ export async function sendRestoreCode(to: string, code: string): Promise<void> {
         </div>
       `,
     })
-    console.log('[email] Restore code sent to', to)
+    console.log('[email] Restore code sent to', maskEmail(to))
   }
   catch (err: any) {
-    console.error('[email] Failed to send restore code:', err.message || err)
+    console.error('[email] Failed to send restore code to', maskEmail(to), ':', err.message || err)
   }
 }
 
