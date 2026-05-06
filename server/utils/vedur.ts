@@ -78,7 +78,8 @@ async function fetchWithTimeout(url: string, errorLabel: string): Promise<string
   }
 }
 
-export function forecastsToRows(forecasts: VedurForecast[], fetchedAt: string = new Date().toISOString()) {
+export function forecastsToRows(forecasts: VedurForecast[]) {
+  const fetchedAt = new Date().toISOString()
   return forecasts
     .filter(fc => fc.validTime)
     .map(fc => ({

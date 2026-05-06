@@ -26,7 +26,7 @@ export function createMockSupabase() {
   const thenableChain: Record<string, any> = {}
   const chainMethods = [
     'select', 'insert', 'upsert', 'update', 'delete',
-    'eq', 'gte', 'lte', 'order', 'limit', 'neq', 'in',
+    'eq', 'gte', 'gt', 'lte', 'lt', 'order', 'limit', 'neq', 'in',
   ]
   for (const m of chainMethods) {
     thenableChain[m] = vi.fn().mockImplementation(() => thenableChain)

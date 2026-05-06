@@ -39,10 +39,6 @@ const offlineManagerRef = ref<any>(null)
 defineExpose({
   /** Forward to underlying OfflineManager so the page can call cancel() during download overlay. */
   cancel: () => offlineManagerRef.value?.cancel?.(),
-  isDownloading: computed(() => offlineManagerRef.value?.isDownloading ?? false),
-  loadedTiles: computed(() => offlineManagerRef.value?.loadedTiles ?? 0),
-  totalTiles: computed(() => offlineManagerRef.value?.totalTiles ?? 0),
-  progress: computed(() => offlineManagerRef.value?.progress ?? 0),
 })
 </script>
 

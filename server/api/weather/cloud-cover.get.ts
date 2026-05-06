@@ -20,13 +20,12 @@ export default defineEventHandler(async (event) => {
 
   const { data: forecastRows } = await supabase
     .from('weather_forecasts')
-    .select('station_id, cloud_cover, valid_time, forecast_time, fetched_at')
+    .select('station_id, cloud_cover, valid_time, fetched_at')
     .gte('valid_time', now.toISOString())
     .gte('forecast_time', sixHoursAgo)
     .order('valid_time', { ascending: true })
     .limit(STATION_IDS.length * 10)
 
-  // First row per station = nearest future slot.
   const cloudByStation = new Map<string, { cloud_cover: number | null; valid_time: string | null }>()
   for (const row of forecastRows || []) {
     if (!cloudByStation.has(row.station_id)) {

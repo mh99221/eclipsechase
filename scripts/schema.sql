@@ -12,11 +12,8 @@ CREATE TABLE weather_stations (
 );
 
 -- Weather forecasts per station (ingested from vedur.is).
---   forecast_time = vedur's `atime` (when *they* issued the batch).
---   fetched_at    = when *our* cron last upserted this row. The
---                   cloud-cover and forecast-timeline endpoints base
---                   pipeline staleness on this — see migration 007 for
---                   why forecast_time alone was the wrong signal.
+--   forecast_time = vedur's `atime` (when they issued the batch).
+--   fetched_at    = when our cron last upserted (used for staleness).
 CREATE TABLE weather_forecasts (
   id BIGSERIAL PRIMARY KEY,
   station_id TEXT REFERENCES weather_stations(id),

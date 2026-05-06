@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { cloudLevel, CLOUD_COVER_NO_DATA, type CloudLevelKey } from '~/utils/eclipse'
+import { ECLIPSE_DATE_UTC } from '~/utils/solar'
 
 const { t } = useI18n()
 
@@ -11,11 +12,8 @@ const props = defineProps<{
   }>
 }>()
 
-// Eclipse event window (UTC) — broader than totality (17:43-17:48) to
-// highlight the surrounding period on eclipse day specifically.
-// Date-gated: a forecast slot at 17:30 UTC on a *different* day is just
-// a regular evening forecast, not the eclipse, so we don't mark it.
-const ECLIPSE_DATE_UTC = '2026-08-12'
+// Window around totality (17:43-17:48 UTC), date-gated to Aug 12 so a
+// 17:30 slot on any other day isn't mis-marked as eclipse-related.
 const ECLIPSE_START_UTC = 17 * 60 + 30 // 17:30
 const ECLIPSE_END_UTC = 18 * 60 // 18:00
 

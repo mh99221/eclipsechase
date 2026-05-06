@@ -8,8 +8,9 @@
 const DEG = Math.PI / 180
 const RAD = 180 / Math.PI
 
-/** Eclipse date: August 12, 2026 */
-const ECLIPSE_DATE = new Date('2026-08-12T00:00:00Z')
+/** Eclipse date: August 12, 2026 (UTC date string, no time-of-day). */
+export const ECLIPSE_DATE_UTC = '2026-08-12'
+const ECLIPSE_DATE = new Date(`${ECLIPSE_DATE_UTC}T00:00:00Z`)
 
 function dayOfYear(date: Date): number {
   const start = new Date(date.getUTCFullYear(), 0, 0)

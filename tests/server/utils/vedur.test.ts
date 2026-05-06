@@ -53,7 +53,7 @@ describe('forecastsToRows', () => {
   ]
 
   it('converts VedurForecast[] to database row shape', () => {
-    const rows = forecastsToRows(sampleForecasts, '2026-08-12T12:34:56.000Z')
+    const rows = forecastsToRows(sampleForecasts)
     expect(rows).toHaveLength(2)
     const row = rows[0]
     expect(row).toHaveProperty('station_id', '1')
@@ -62,7 +62,8 @@ describe('forecastsToRows', () => {
     expect(row).toHaveProperty('cloud_cover', 30)
     expect(row).toHaveProperty('precipitation_prob', 0)
     expect(row).toHaveProperty('source_model', 'vedur')
-    expect(row).toHaveProperty('fetched_at', '2026-08-12T12:34:56.000Z')
+    expect(typeof row.fetched_at).toBe('string')
+    expect(() => new Date(row.fetched_at).toISOString()).not.toThrow()
   })
 
   it('sets source_model to "vedur" for all rows', () => {

@@ -258,16 +258,10 @@ CREATE TABLE weather_stations (
 );
 
 -- Weather forecasts per station (ingested from vedur.is).
--- weather_observations was dropped in migration 006 — vedur's automatic
--- stations don't observe cloud cover, so forecasts are the only signal
--- we have. Per-station "updated N min ago" is gone.
---
--- forecast_time = vedur's `atime` (when *they* issued the batch).
--- fetched_at    = when *our* cron last upserted (added in migration 007).
---                 Pipeline-staleness checks use fetched_at, not
---                 forecast_time — vedur publishes every few hours, so
---                 forecast_time alone would flap between batches even
---                 when our ingest was healthy.
+-- forecast_time = vedur's `atime` (when they issued the batch).
+-- fetched_at    = when our cron last upserted (used for staleness, since
+--                 forecast_time only changes when vedur publishes new
+--                 batches every few hours).
 CREATE TABLE weather_forecasts (
   id BIGSERIAL PRIMARY KEY,
   station_id TEXT REFERENCES weather_stations(id),
@@ -567,14 +561,10 @@ Variants: `ec-banner-warn`, `ec-banner-error`, `ec-banner-info`.
 ```
 # apis.is is DEAD (502, expired SSL) — use vedur.is XML API directly
 
-# Forecasts (XML) — includes cloud cover (N), temp (T), precipitation (R)
+# Forecasts (XML) — includes cloud cover (N), temp (T), precipitation (R).
+# Only the `forec` endpoint is used; vedur's automatic stations don't
+# report cloud cover for observations, and we don't surface temp/wind.
 GET https://xmlweather.vedur.is/?op_w=xml&type=forec&lang=en&view=xml&ids=1;990;178&params=N;T;R
-
-# We do NOT call op_w=obs anymore — vedur's automatic stations don't
-# report cloud cover in observations (only manned synoptic stations do,
-# none of which are on the eclipse path), and we never surfaced the
-# temp/wind columns in the UI. The weather_observations table was
-# dropped in migration 006.
 
 # Station coordinates: https://en.vedur.is/wstations/wslinfo.js (JS object with all 269 stations)
 

@@ -126,7 +126,9 @@ async function downloadTiles() {
   emit('downloading', false)
 }
 
-defineExpose({ isDownloading, loadedTiles, totalTiles, progress, cancel })
+// Progress is published via the `progress` event; the parent owns the
+// canonical loaded/total state. Only `cancel` needs to be callable.
+defineExpose({ cancel })
 
 async function cacheData() {
   isCachingData.value = true

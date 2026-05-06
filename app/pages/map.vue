@@ -765,10 +765,8 @@ function onDownloadingChange(active: boolean) {
   if (!active) tileProgress.value = { loaded: 0, total: 0 }
 }
 function cancelTileDownload() {
-  // Call the cancel method directly on each template ref. Going through
-  // the `offlineManagerRef` computed + MapOfflineCard's wrapped expose
-  // proved unreliable — calling cancel here avoids the indirection.
-  // Only one variant is mounted per viewport, the other is a no-op.
+  // Only one variant is mounted per viewport (mobile vs. desktop slot);
+  // the other ref is null and the optional chain is a no-op.
   offlineManagerMobile.value?.cancel?.()
   offlineManagerDesktop.value?.cancel?.()
 }
