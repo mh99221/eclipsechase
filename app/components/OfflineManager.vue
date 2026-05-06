@@ -59,6 +59,9 @@ const progress = computed(() => totalTiles.value > 0 ? Math.round((loadedTiles.v
 const estimatedTileCount = countTiles()
 // Estimated ~1338 tiles for western Iceland z5-z11; treat >10% as "has cached tiles"
 const hasCachedTiles = computed(() => tileCount.value > estimatedTileCount * 0.1)
+const cachedTilesPct = computed(() =>
+  estimatedTileCount > 0 ? Math.round((tileCount.value / estimatedTileCount) * 100) : 0,
+)
 
 const hasCachedWeather = computed(() => !!cacheAges.value['/api/weather/cloud-cover'])
 const hasCachedSpots = computed(() => !!cacheAges.value['/api/spots'])
@@ -195,7 +198,7 @@ function cancel() {
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
           </svg>
-          {{ t('offline.tiles_cached', { count: tileCount }) }}
+          {{ t('offline.tiles_progress', { loaded: tileCount, total: estimatedTileCount, progress: cachedTilesPct }) }}
         </div>
         <button
           v-else
@@ -228,7 +231,7 @@ function cancel() {
         </p>
         <div class="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[11px] font-mono text-ink-3">
           <span>Map tiles</span>
-          <span>{{ tileCount > 0 ? t('offline.tiles_cached', { count: tileCount }) : t('offline.not_cached') }}</span>
+          <span>{{ tileCount > 0 ? t('offline.tiles_progress', { loaded: tileCount, total: estimatedTileCount, progress: cachedTilesPct }) : t('offline.not_cached') }}</span>
           <span>Weather</span>
           <span>{{ hasCachedWeather ? lastWeatherUpdate : t('offline.not_cached') }}</span>
           <span>Forecast</span>
