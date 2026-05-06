@@ -749,9 +749,21 @@ onScopeDispose(() => { horizonMarker?.remove(); horizonMarker = null })
 
 // ─── Offline tile download overlay ───
 const tileDownloading = ref(false)
+const tileProgress = ref({ loaded: 0, total: 0 })
+const tileProgressPct = computed(() => {
+  const { loaded, total } = tileProgress.value
+  return total > 0 ? Math.round((loaded / total) * 100) : 0
+})
 const offlineManagerMobile = ref<any>(null)
 const offlineManagerDesktop = ref<any>(null)
 const offlineManagerRef = computed(() => offlineManagerMobile.value || offlineManagerDesktop.value)
+function onTileProgress(p: { loaded: number; total: number }) {
+  tileProgress.value = p
+}
+function onDownloadingChange(active: boolean) {
+  tileDownloading.value = active
+  if (!active) tileProgress.value = { loaded: 0, total: 0 }
+}
 // Status-stack input (desktop only).
 const { isWeatherStale } = useOfflineStatus()
 const weatherFetchedAt = computed(() => cloudData.value?.fetched_at ?? null)
@@ -926,7 +938,7 @@ const profileIcons: Record<ProfileId, string> = {
         :show-cameras="showCameras"
       />
       <div class="offline-manager-slot">
-        <MapOfflineCard :map="eclipseMapRef?.map" @downloading="tileDownloading = $event" ref="offlineManagerDesktop" />
+        <MapOfflineCard :map="eclipseMapRef?.map" @downloading="onDownloadingChange" @progress="onTileProgress" ref="offlineManagerDesktop" />
       </div>
     </div>
 
@@ -1101,7 +1113,7 @@ const profileIcons: Record<ProfileId, string> = {
 
           <!-- Offline download (mobile) -->
           <div class="mt-3 pt-3 border-t border-border-subtle/30">
-            <OfflineManager :map="eclipseMapRef?.map" @downloading="tileDownloading = $event" ref="offlineManagerMobile" />
+            <OfflineManager :map="eclipseMapRef?.map" @downloading="onDownloadingChange" @progress="onTileProgress" ref="offlineManagerMobile" />
           </div>
         </div>
       </div>
@@ -1117,12 +1129,12 @@ const profileIcons: Record<ProfileId, string> = {
       </svg>
       <p class="font-display text-xl font-semibold text-ink-1 mb-2">{{ t('offline.downloading') }}</p>
       <p class="font-mono text-xs text-ink-3 mb-6">
-        {{ t('offline.tiles_progress', { loaded: offlineManagerRef?.loadedTiles ?? 0, total: offlineManagerRef?.totalTiles ?? 0, progress: offlineManagerRef?.progress ?? 0 }) }}
+        {{ t('offline.tiles_progress', { loaded: tileProgress.loaded, total: tileProgress.total, progress: tileProgressPct }) }}
       </p>
       <div class="w-full max-w-xs h-2 bg-bg rounded-full overflow-hidden mb-6">
         <div
           class="h-full bg-accent transition-all duration-200"
-          :style="{ width: `${offlineManagerRef?.progress ?? 0}%` }"
+          :style="{ width: `${tileProgressPct}%` }"
         />
       </div>
       <button

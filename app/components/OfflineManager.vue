@@ -7,6 +7,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   downloading: [active: boolean]
+  progress: [payload: { loaded: number; total: number }]
 }>()
 
 const { tileCount, lastWeatherUpdate, lastForecastUpdate, cacheAges, precacheApiData, refreshCacheStatus } = useOfflineStatus()
@@ -73,6 +74,7 @@ async function downloadTiles() {
   loadedTiles.value = 0
   totalTiles.value = countTiles()
   emit('downloading', true)
+  emit('progress', { loaded: 0, total: totalTiles.value })
 
   // Save current view to restore later
   const savedCenter = props.map.getCenter()
@@ -104,6 +106,7 @@ async function downloadTiles() {
         await new Promise(r => setTimeout(r, 80))
 
         loadedTiles.value++
+        emit('progress', { loaded: loadedTiles.value, total: totalTiles.value })
       }
     }
   }

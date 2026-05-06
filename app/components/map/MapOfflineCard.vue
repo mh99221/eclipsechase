@@ -9,7 +9,10 @@ const props = defineProps<{
   map: any
 }>()
 
-const emit = defineEmits<{ downloading: [active: boolean] }>()
+const emit = defineEmits<{
+  downloading: [active: boolean]
+  progress: [payload: { loaded: number; total: number }]
+}>()
 
 const STORAGE_KEY = 'ec-map-offline-open'
 // Collapsed by default — the OfflineManager UI is large and only relevant
@@ -72,6 +75,7 @@ defineExpose({
         ref="offlineManagerRef"
         :map="map"
         @downloading="emit('downloading', $event)"
+        @progress="emit('progress', $event)"
       />
     </div>
   </div>

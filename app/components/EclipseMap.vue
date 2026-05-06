@@ -507,11 +507,18 @@ onMounted(() => {
 
   mapboxgl.accessToken = config.public.mapboxToken as string
 
+  // Default zoom: 6 on mobile, 7.585 on desktop (~3x linear scale —
+  // each Mapbox zoom level = 2x scale, so log2(3) ≈ 1.585 levels).
+  // Desktop has the screen real estate to show the eclipse path
+  // tightly; mobile needs the wider view to stay legible.
+  const isDesktop = window.matchMedia('(min-width: 768px)').matches
+  const defaultZoom = isDesktop ? 7.585 : 6
+
   map = new mapboxgl.Map({
     container: mapContainer.value,
     style: mapboxStyleFor(colorMode.value),
     center: props.initialCenter || [-23.5, 65.0],
-    zoom: props.initialZoom ?? 6,
+    zoom: props.initialZoom ?? defaultZoom,
     minZoom: MAP_CONFIG.minZoom,
     maxZoom: MAP_CONFIG.maxZoom,
     attributionControl: false,
