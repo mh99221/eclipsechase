@@ -11,7 +11,11 @@ const props = defineProps<{
   }>
 }>()
 
-// Eclipse event window (UTC) — broader than totality (17:43-17:48) to highlight the surrounding period
+// Eclipse event window (UTC) — broader than totality (17:43-17:48) to
+// highlight the surrounding period on eclipse day specifically.
+// Date-gated: a forecast slot at 17:30 UTC on a *different* day is just
+// a regular evening forecast, not the eclipse, so we don't mark it.
+const ECLIPSE_DATE_UTC = '2026-08-12'
 const ECLIPSE_START_UTC = 17 * 60 + 30 // 17:30
 const ECLIPSE_END_UTC = 18 * 60 // 18:00
 
@@ -20,13 +24,11 @@ function formatHour(isoString: string): string {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
 }
 
-function getMinutesUTC(isoString: string): number {
-  const d = new Date(isoString)
-  return d.getUTCHours() * 60 + d.getUTCMinutes()
-}
-
 function isEclipseWindow(isoString: string): boolean {
-  const mins = getMinutesUTC(isoString)
+  const d = new Date(isoString)
+  const dateUtc = d.toISOString().slice(0, 10) // YYYY-MM-DD
+  if (dateUtc !== ECLIPSE_DATE_UTC) return false
+  const mins = d.getUTCHours() * 60 + d.getUTCMinutes()
   return mins >= ECLIPSE_START_UTC && mins <= ECLIPSE_END_UTC
 }
 
