@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   const [forecastResult, stations] = await Promise.all([
     supabase
       .from('weather_forecasts')
-      .select('station_id, cloud_cover, precipitation_prob, valid_time, forecast_time')
+      .select('station_id, cloud_cover, precipitation_prob, valid_time, forecast_time, fetched_at')
       .gte('valid_time', now.toISOString())
       .lte('valid_time', windowEnd)
       .gte('forecast_time', sixHoursAgo)

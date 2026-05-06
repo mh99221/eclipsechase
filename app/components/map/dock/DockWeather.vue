@@ -12,26 +12,26 @@ const tone = computed<'good' | 'warn' | 'bad' | 'ink'>(() =>
 )
 
 const title = computed(() =>
-  props.ctx.cloud == null ? 'No reading' : `${props.ctx.cloud}% cloud`,
+  props.ctx.cloud == null ? 'No forecast' : `${props.ctx.cloud}% cloud`,
 )
 
-const updatedLabel = computed(() => {
-  const m = props.ctx.updatedMinutes
-  if (m == null) return null
-  if (m < 1) return 'Updated just now'
-  if (m < 60) return `Updated ${m} min ago`
-  const hr = Math.round(m / 60)
-  return `Updated ${hr} h ago`
+const forecastForLabel = computed(() => {
+  if (!props.ctx.forecastValidAt) return null
+  const d = new Date(props.ctx.forecastValidAt)
+  if (Number.isNaN(d.getTime())) return null
+  const hh = String(d.getHours()).padStart(2, '0')
+  const mm = String(d.getMinutes()).padStart(2, '0')
+  return `Forecast for ${hh}:${mm}`
 })
 </script>
 
 <template>
   <div>
-    <DockHeader eyebrow="Weather" :dot-var="status" />
+    <DockHeader eyebrow="Forecast" :dot-var="status" />
 
     <div class="title title--with-sub" :data-tone="tone">{{ title }}</div>
     <div class="detail">{{ ctx.name }}</div>
-    <div v-if="updatedLabel" class="updated">{{ updatedLabel }}</div>
+    <div v-if="forecastForLabel" class="updated">{{ forecastForLabel }}</div>
   </div>
 </template>
 

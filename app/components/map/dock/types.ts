@@ -18,10 +18,13 @@ export interface DockSpotData {
 export interface DockWeatherCtx {
   /** Weather-station name. */
   name: string
-  /** Cloud cover percentage 0–100, or null if no recent observation. */
+  /** Forecasted cloud cover percentage 0–100 for the next slot, or null
+   *  when we have no nearby forecast row. vedur's automatic stations do
+   *  not report cloud cover in observations — this is always a forecast. */
   cloud: number | null
-  /** Most-recent observation age in minutes (for "UPDATED N MIN"). */
-  updatedMinutes: number | null
+  /** ISO8601 valid-time of the forecast row that produced `cloud`, used
+   *  to render "Forecast for HH:mm". Null when `cloud` is null. */
+  forecastValidAt: string | null
 }
 
 import type { TrafficCondition } from '~/utils/traffic'

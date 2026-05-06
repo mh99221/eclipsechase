@@ -18,16 +18,6 @@ export const STATION_IDS = [
   '293', '2175', '2266', '2304', '2315', '2319', '2428', '2481', '2530', '2631', '2644', '2655', '2738', '2862', '2941', '32250', '32336', '32355', '32390',
 ]
 
-interface VedurObservation {
-  stationId: string
-  name: string
-  timestamp: string
-  temp: number | null
-  windSpeed: number | null
-  windDir: string | null
-  precipitation: number | null
-}
-
 export interface VedurForecast {
   stationId: string
   forecastTime: string
@@ -41,18 +31,24 @@ export interface VedurForecast {
 export const FORECAST_STALE_THRESHOLD_MS = 90 * 60 * 1000
 
 /**
- * Given a set of forecast rows, return the newest `forecast_time` and
- * whether that makes the set stale. Shared by the cloud-cover and
- * forecast-timeline endpoints.
+ * Given a set of forecast rows, return the newest `fetched_at` (when
+ * our cron last upserted) and whether that makes the set stale. Shared
+ * by the cloud-cover and forecast-timeline endpoints.
+ *
+ * Note: we deliberately use `fetched_at` (our ingest time), not
+ * `forecast_time` (vedur's batch-issue time / `atime`). Vedur publishes
+ * new forecast batches every few hours, so basing staleness on
+ * `forecast_time` would flap between batches even when the ingest cron
+ * is healthy. `fetched_at` is the genuine pipeline-health signal.
  */
 export function computeForecastStaleness(
-  rows: Array<{ forecast_time?: string | null }> | null | undefined,
+  rows: Array<{ fetched_at?: string | null }> | null | undefined,
   thresholdMs: number = FORECAST_STALE_THRESHOLD_MS,
 ): { fetchedAt: string | null; stale: boolean } {
   let fetchedAt: string | null = null
   for (const row of rows || []) {
-    if (row.forecast_time && (!fetchedAt || row.forecast_time > fetchedAt)) {
-      fetchedAt = row.forecast_time
+    if (row.fetched_at && (!fetchedAt || row.fetched_at > fetchedAt)) {
+      fetchedAt = row.fetched_at
     }
   }
   const stale = fetchedAt
@@ -82,7 +78,7 @@ async function fetchWithTimeout(url: string, errorLabel: string): Promise<string
   }
 }
 
-export function forecastsToRows(forecasts: VedurForecast[]) {
+export function forecastsToRows(forecasts: VedurForecast[], fetchedAt: string = new Date().toISOString()) {
   return forecasts
     .filter(fc => fc.validTime)
     .map(fc => ({
@@ -92,43 +88,8 @@ export function forecastsToRows(forecasts: VedurForecast[]) {
       cloud_cover: fc.cloudCover,
       precipitation_prob: fc.precipitation,
       source_model: 'vedur',
+      fetched_at: fetchedAt,
     }))
-}
-
-export async function fetchObservations(stationIds: string[] = STATION_IDS): Promise<VedurObservation[]> {
-  const ids = stationIds.join(';')
-  // Params: F=wind speed, D=wind dir, T=temp, R=precip. Cloud cover and
-  // visibility (N, V) come back empty for our 55 automatic stations —
-  // those fields are only populated by manned synoptic stations, none
-  // of which are on the eclipse path. Cloud comes from the forecast
-  // endpoint instead; visibility we don't surface.
-  const url = `${VEDUR_BASE}/?op_w=xml&type=obs&lang=en&view=xml&ids=${ids}&params=F;D;T;R`
-
-  const xml = await fetchWithTimeout(url, 'vedur.is observations request failed')
-  const parsed = await parseStringPromise(xml, { explicitArray: false })
-
-  const stations = parsed?.observations?.station
-  if (!stations) return []
-
-  const stationArr = Array.isArray(stations) ? stations : [stations]
-  const results: VedurObservation[] = []
-
-  // Each station object IS the observation (flat structure, not nested)
-  for (const station of stationArr) {
-    if (!station.time) continue
-
-    results.push({
-      stationId: station.$.id,
-      name: station.name || '',
-      timestamp: station.time,
-      temp: parseNum(station.T),
-      windSpeed: parseNum(station.F),
-      windDir: station.D || null,
-      precipitation: parseNum(station.R),
-    })
-  }
-
-  return results
 }
 
 export async function fetchForecasts(stationIds: string[] = STATION_IDS): Promise<VedurForecast[]> {
@@ -166,41 +127,3 @@ export async function fetchForecasts(stationIds: string[] = STATION_IDS): Promis
   return results
 }
 
-const STALE_THRESHOLD_MS = 15 * 60 * 1000
-
-/**
- * Ensure forecast data is fresh. If stale (>15min), fetches from vedur.is and upserts.
- */
-export async function ensureFreshForecasts(supabase: any, logPrefix = 'weather'): Promise<{ isStale: boolean; refreshFailed: boolean }> {
-  const { data: latestRow } = await supabase
-    .from('weather_forecasts')
-    .select('forecast_time')
-    .order('forecast_time', { ascending: false })
-    .limit(1)
-    .maybeSingle()
-
-  const latestTime = latestRow?.forecast_time ? new Date(latestRow.forecast_time).getTime() : 0
-  const isStale = (Date.now() - latestTime) >= STALE_THRESHOLD_MS
-
-  let refreshFailed = false
-  if (isStale) {
-    try {
-      const forecasts = await fetchForecasts(STATION_IDS)
-      if (forecasts.length > 0) {
-        const { error: upsertError } = await supabase
-          .from('weather_forecasts')
-          .upsert(forecastsToRows(forecasts), { onConflict: 'station_id,forecast_time,valid_time' })
-        if (upsertError) {
-          console.error(`[${logPrefix}] Upsert failed:`, upsertError.message)
-          refreshFailed = true
-        }
-      }
-    }
-    catch (err) {
-      console.error(`[${logPrefix}] Failed to refresh from vedur.is:`, err)
-      refreshFailed = true
-    }
-  }
-
-  return { isStale, refreshFailed }
-}

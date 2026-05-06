@@ -165,8 +165,6 @@ eclipse-chaser/
 │   ├── api/
 │   │   ├── weather/
 │   │   │   ├── cloud-cover.get.ts   # Cloud cover per station (stale-while-revalidate)
-│   │   │   ├── current.get.ts       # Current observations from vedur.is
-│   │   │   ├── forecast.get.ts      # Full forecast data
 │   │   │   ├── forecast-timeline.get.ts  # Hourly forecast timeline (next 24h)
 │   │   │   └── stations.get.ts      # List all 55 weather stations
 │   │   ├── spots/
@@ -190,7 +188,7 @@ eclipse-chaser/
 │   │   │   └── ingest-weather.ts    # Bearer-auth ingest (CRON_SECRET); GH Actions hits every 15 min, Vercel daily fallback
 │   │   └── __sitemap__/urls.ts      # Dynamic sitemap generation
 │   ├── utils/
-│   │   ├── vedur.ts                 # vedur.is XML API (55 stations, observations, forecasts)
+│   │   ├── vedur.ts                 # vedur.is XML API (55 stations, forecast endpoint only)
 │   │   ├── vegagerdin.ts            # Road conditions API (DATEX II)
 │   │   ├── horizon.ts               # Horizon computation (pre-computed grid lookup)
 │   │   ├── dem.ts                   # Digital elevation model utilities
@@ -259,21 +257,17 @@ CREATE TABLE weather_stations (
   source TEXT DEFAULT 'vedur.is'
 );
 
--- Real-time weather observations (ingested every 15 min from vedur.is)
-CREATE TABLE weather_observations (
-  id BIGSERIAL PRIMARY KEY,
-  station_id TEXT REFERENCES weather_stations(id),
-  timestamp TIMESTAMPTZ NOT NULL,
-  cloud_cover INTEGER, -- percentage 0-100
-  temp DOUBLE PRECISION, -- celsius
-  wind_speed DOUBLE PRECISION, -- m/s
-  wind_dir TEXT,
-  visibility DOUBLE PRECISION, -- km
-  precipitation DOUBLE PRECISION, -- mm
-  UNIQUE(station_id, timestamp)
-);
-
--- Weather forecasts per station (ingested from vedur.is)
+-- Weather forecasts per station (ingested from vedur.is).
+-- weather_observations was dropped in migration 006 — vedur's automatic
+-- stations don't observe cloud cover, so forecasts are the only signal
+-- we have. Per-station "updated N min ago" is gone.
+--
+-- forecast_time = vedur's `atime` (when *they* issued the batch).
+-- fetched_at    = when *our* cron last upserted (added in migration 007).
+--                 Pipeline-staleness checks use fetched_at, not
+--                 forecast_time — vedur publishes every few hours, so
+--                 forecast_time alone would flap between batches even
+--                 when our ingest was healthy.
 CREATE TABLE weather_forecasts (
   id BIGSERIAL PRIMARY KEY,
   station_id TEXT REFERENCES weather_stations(id),
@@ -282,6 +276,7 @@ CREATE TABLE weather_forecasts (
   cloud_cover INTEGER,
   precipitation_prob DOUBLE PRECISION,
   source_model TEXT DEFAULT 'vedur',
+  fetched_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE(station_id, forecast_time, valid_time)
 );
 
@@ -572,11 +567,14 @@ Variants: `ec-banner-warn`, `ec-banner-error`, `ec-banner-info`.
 ```
 # apis.is is DEAD (502, expired SSL) — use vedur.is XML API directly
 
-# Current observations (XML)
-GET https://xmlweather.vedur.is/?op_w=xml&type=obs&lang=en&view=xml&ids=1;990;178&params=F;D;T;R
-
 # Forecasts (XML) — includes cloud cover (N), temp (T), precipitation (R)
 GET https://xmlweather.vedur.is/?op_w=xml&type=forec&lang=en&view=xml&ids=1;990;178&params=N;T;R
+
+# We do NOT call op_w=obs anymore — vedur's automatic stations don't
+# report cloud cover in observations (only manned synoptic stations do,
+# none of which are on the eclipse path), and we never surfaced the
+# temp/wind columns in the UI. The weather_observations table was
+# dropped in migration 006.
 
 # Station coordinates: https://en.vedur.is/wstations/wslinfo.js (JS object with all 269 stations)
 
@@ -588,13 +586,11 @@ GET https://xmlweather.vedur.is/?op_w=xml&type=forec&lang=en&view=xml&ids=1;990;
 
 | Source | Frequency | Calls/day |
 |---|---|---|
-| `/api/tasks/ingest-weather` cron (GitHub Actions, every 15 min) — fetches obs + forecasts in one batch each | 96 runs × 2 calls | **192** |
+| `/api/tasks/ingest-weather` cron (GitHub Actions, every 15 min) — one forecast batch | 96 runs × 1 call | **96** |
 | `/api/weather/cloud-cover` | Pure Supabase read | **0** upstream |
 | `/api/weather/forecast-timeline` | Pure Supabase read | **0** upstream |
-| `/api/weather/current` | Synchronously hits vedur — **deprecated**, no app consumer; manual/dev only | ~0 |
-| `/api/weather/forecast` | Synchronously hits vedur — **deprecated**, no app consumer; manual/dev only | ~0 |
 
-**Total ~192 batched requests/day** (one every ~7.5 min) at full traffic, well within any reasonable shared-API courtesy ceiling. Each request is a single XML payload with all 55 station IDs comma-joined — vedur.is serves these as one response, not 55. If we ever wire `current.get` or `forecast.get` into a hot path, recompute the budget; both are flagged with `@deprecated` in their JSDoc to discourage that.
+**Total ~96 batched requests/day** (one every 15 min) at full traffic, well within any reasonable shared-API courtesy ceiling. Each request is a single XML payload with all 55 station IDs comma-joined — vedur.is serves these as one response, not 55.
 
 ### Vegagerðin Road Conditions
 ```
@@ -674,7 +670,7 @@ nuxt-og-image 6.0.1           # Dynamic OG images
 - JWT-based Pro auth (RS256, IndexedDB, offline-capable)
 - Purchase restoration (email → 6-digit OTP → fresh JWT)
 - Service Worker with offline support (API caching, tile caching, precaching)
-- Weather data ingestion from vedur.is (observations + forecasts) — driven by GitHub Actions every 15 min, Vercel Cron daily fallback
+- Weather data ingestion from vedur.is (forecasts) — driven by GitHub Actions every 15 min, Vercel Cron daily fallback
 - Road conditions + camera feeds from Vegagerðin
 - Privacy policy, terms of service, credits pages
 - Cookie consent (Umami analytics)

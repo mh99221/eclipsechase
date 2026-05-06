@@ -1,5 +1,4 @@
 import { http, HttpResponse } from 'msw'
-import weatherObs from './fixtures/weather-observations.json'
 import weatherForecasts from './fixtures/weather-forecasts.json'
 import viewingSpots from './fixtures/viewing-spots.json'
 import roadConditions from './fixtures/road-conditions.json'
@@ -7,16 +6,6 @@ import roadConditions from './fixtures/road-conditions.json'
 // ---------------------------------------------------------------------------
 // XML Builders — must match vedur.ts parsing (xml2js with explicitArray: false)
 // ---------------------------------------------------------------------------
-
-interface ObsFixture {
-  stationId: string
-  name: string
-  timestamp: string
-  temp: number | null
-  windSpeed: number | null
-  windDir: string | null
-  precipitation: number | null
-}
 
 interface ForecastFixture {
   stationId: string
@@ -34,27 +23,6 @@ function escapeXml(s: string): string {
 function optionalTag(tag: string, value: number | string | null | undefined): string {
   if (value === null || value === undefined) return ''
   return `<${tag}>${escapeXml(String(value))}</${tag}>`
-}
-
-/**
- * Build observations XML that matches vedur.ts parsing:
- *   parsed.observations.station[].{ $.id, name, time, T, F, D, R }
- */
-export function buildObservationsXml(observations: ObsFixture[]): string {
-  const stationXmls = observations.map((obs) => {
-    return [
-      `<station id="${obs.stationId}" valid="1">`,
-      `<name>${escapeXml(obs.name)}</name>`,
-      `<time>${obs.timestamp}</time>`,
-      optionalTag('T', obs.temp),
-      optionalTag('F', obs.windSpeed),
-      optionalTag('D', obs.windDir),
-      optionalTag('R', obs.precipitation),
-      `</station>`,
-    ].join('')
-  })
-
-  return `<?xml version="1.0" encoding="utf-8"?><observations>${stationXmls.join('')}</observations>`
 }
 
 /**
@@ -105,9 +73,6 @@ export const vedurHandlers = [
     const url = new URL(request.url)
     const type = url.searchParams.get('type')
 
-    if (type === 'obs') {
-      return HttpResponse.xml(buildObservationsXml(weatherObs as ObsFixture[]))
-    }
     if (type === 'forec') {
       return HttpResponse.xml(buildForecastsXml(weatherForecasts as ForecastFixture[]))
     }

@@ -11,21 +11,12 @@ CREATE TABLE weather_stations (
   source TEXT DEFAULT 'vedur.is'
 );
 
--- Real-time weather observations (ingested every 15 min from vedur.is)
-CREATE TABLE weather_observations (
-  id BIGSERIAL PRIMARY KEY,
-  station_id TEXT REFERENCES weather_stations(id),
-  timestamp TIMESTAMPTZ NOT NULL,
-  cloud_cover INTEGER,
-  temp DOUBLE PRECISION,
-  wind_speed DOUBLE PRECISION,
-  wind_dir TEXT,
-  visibility DOUBLE PRECISION,
-  precipitation DOUBLE PRECISION,
-  UNIQUE(station_id, timestamp)
-);
-
--- Weather forecasts per station (ingested from vedur.is)
+-- Weather forecasts per station (ingested from vedur.is).
+--   forecast_time = vedur's `atime` (when *they* issued the batch).
+--   fetched_at    = when *our* cron last upserted this row. The
+--                   cloud-cover and forecast-timeline endpoints base
+--                   pipeline staleness on this — see migration 007 for
+--                   why forecast_time alone was the wrong signal.
 CREATE TABLE weather_forecasts (
   id BIGSERIAL PRIMARY KEY,
   station_id TEXT REFERENCES weather_stations(id),
@@ -34,8 +25,10 @@ CREATE TABLE weather_forecasts (
   cloud_cover INTEGER,
   precipitation_prob DOUBLE PRECISION,
   source_model TEXT DEFAULT 'vedur',
+  fetched_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE(station_id, forecast_time, valid_time)
 );
+CREATE INDEX weather_forecasts_fetched_at_idx ON weather_forecasts (fetched_at DESC);
 
 -- Pre-computed eclipse geometry for ~500 points across western Iceland
 CREATE TABLE eclipse_grid (

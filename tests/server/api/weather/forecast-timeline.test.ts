@@ -52,6 +52,7 @@ describe('GET /api/weather/forecast-timeline', () => {
     mockForecastRows.push({
       station_id: '1', cloud_cover: 30, precipitation_prob: 0,
       valid_time: '2026-08-12T18:00:00Z', forecast_time: '2026-08-12T12:00:00Z',
+      fetched_at: new Date().toISOString(),
     })
 
     const event = createTestEvent({ supabase: mockSupabase })

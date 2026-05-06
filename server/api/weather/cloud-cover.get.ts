@@ -2,17 +2,15 @@ import { serverSupabaseServiceRole } from '#supabase/server'
 import { computeForecastStaleness, STATION_IDS } from '../../utils/vedur'
 
 /**
- * Latest cloud-cover forecast per station, plus the timestamp of the
- * most recent live observation for that station.
+ * Latest cloud-cover forecast per station.
  *
  * Cloud cover comes from `weather_forecasts` (vedur `op_w=forec`, written
- * by /api/tasks/ingest-weather every 15 min) — observations don't include
- * cloud for any of our 55 automatic stations.
+ * by /api/tasks/ingest-weather every 15 min). vedur's automatic stations
+ * don't observe cloud cover, so the forecast is the only signal we have.
  *
- * `observed_at` comes from `weather_observations` and lets the WEATHER
- * dock show "Updated N min ago" per station.
- *
- * `stale` lets the client warn if the cron has fallen behind.
+ * Per row we expose `forecast_valid_at` (the ISO valid-time of the slot
+ * we picked), and globally `fetched_at` + `stale` so the client can warn
+ * when the cron has fallen behind.
  */
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseServiceRole(event)
@@ -20,45 +18,30 @@ export default defineEventHandler(async (event) => {
   const now = new Date()
   const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString()
 
-  // Latest cloud-cover forecast per station — same logic as before, just
-  // moved out of the response shape so we can merge in observed_at below.
-  const [{ data: forecastRows }, { data: obsRows }] = await Promise.all([
-    supabase
-      .from('weather_forecasts')
-      .select('station_id, cloud_cover, valid_time, forecast_time')
-      .gte('valid_time', now.toISOString())
-      .gte('forecast_time', sixHoursAgo)
-      .order('valid_time', { ascending: true })
-      .limit(STATION_IDS.length * 10),
-    supabase
-      .from('weather_observations')
-      .select('station_id, timestamp')
-      .gte('timestamp', sixHoursAgo)
-      .order('timestamp', { ascending: false })
-      .limit(STATION_IDS.length * 24),
-  ])
+  const { data: forecastRows } = await supabase
+    .from('weather_forecasts')
+    .select('station_id, cloud_cover, valid_time, forecast_time, fetched_at')
+    .gte('valid_time', now.toISOString())
+    .gte('forecast_time', sixHoursAgo)
+    .order('valid_time', { ascending: true })
+    .limit(STATION_IDS.length * 10)
 
-  // Forecast: first row per station = nearest future slot.
-  const cloudByStation = new Map<string, number | null>()
+  // First row per station = nearest future slot.
+  const cloudByStation = new Map<string, { cloud_cover: number | null; valid_time: string | null }>()
   for (const row of forecastRows || []) {
     if (!cloudByStation.has(row.station_id)) {
-      cloudByStation.set(row.station_id, row.cloud_cover)
+      cloudByStation.set(row.station_id, { cloud_cover: row.cloud_cover, valid_time: row.valid_time })
     }
   }
 
-  // Observation: first row per station = most recent (we ordered DESC).
-  const observedByStation = new Map<string, string>()
-  for (const row of obsRows || []) {
-    if (!observedByStation.has(row.station_id)) {
-      observedByStation.set(row.station_id, row.timestamp)
+  const merged = Array.from(cloudByStation.keys()).map((stationId) => {
+    const fc = cloudByStation.get(stationId)
+    return {
+      station_id: stationId,
+      cloud_cover: fc?.cloud_cover ?? null,
+      forecast_valid_at: fc?.valid_time ?? null,
     }
-  }
-
-  const merged = Array.from(cloudByStation.keys()).map(stationId => ({
-    station_id: stationId,
-    cloud_cover: cloudByStation.get(stationId) ?? null,
-    observed_at: observedByStation.get(stationId) ?? null,
-  }))
+  })
 
   const { fetchedAt, stale } = computeForecastStaleness(forecastRows)
 

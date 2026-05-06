@@ -48,7 +48,7 @@ const { data: cloudData, refresh: refreshCloud } = useFetch<{
   cloud_cover: Array<{
     station_id: string
     cloud_cover: number | null
-    observed_at: string | null
+    forecast_valid_at: string | null
   }>
   stale: boolean
   fetched_at: string | null
@@ -61,18 +61,18 @@ const { data: historicalWeatherData } = useFetch<{ spots: Record<string, { clear
 const showSpotError = ref(false)
 watch(spotsError, (err) => { if (err) showSpotError.value = true })
 
-// Merge station metadata with cloud cover (forecast — vedur doesn't
-// observe cloud for our automatic stations) and the latest observation
-// timestamp (real per-station, used by the WEATHER dock for "Updated").
+// Merge station metadata with cloud-cover forecast. vedur's automatic
+// stations don't observe cloud cover — `cloud_cover` is always the next
+// future forecast slot, and `forecast_valid_at` is its valid time.
 const stations = computed(() => {
   const stationList = stationsData.value?.stations || []
   const cloudCover = cloudData.value?.cloud_cover || []
 
-  const byStation = new Map<string, { cloud_cover: number | null; observed_at: string | null }>()
+  const byStation = new Map<string, { cloud_cover: number | null; forecast_valid_at: string | null }>()
   for (const cc of cloudCover) {
     byStation.set(cc.station_id, {
       cloud_cover: cc.cloud_cover,
-      observed_at: cc.observed_at,
+      forecast_valid_at: cc.forecast_valid_at,
     })
   }
 
@@ -85,7 +85,7 @@ const stations = computed(() => {
       lng: s.lng,
       region: s.region,
       cloud_cover: merged?.cloud_cover ?? null,
-      observed_at: merged?.observed_at ?? null,
+      forecast_valid_at: merged?.forecast_valid_at ?? null,
     }
   })
 })
@@ -195,18 +195,13 @@ function onSpotSelect(slug: string) {
 }
 
 function onWeatherSelect(station: any) {
-  // cloud_cover comes from the nearest forecast slot; observed_at is the
-  // station's most recent live observation (temp/wind), used to compute
-  // "Updated N min ago". Either can be null.
-  let updatedMinutes: number | null = null
-  if (station.observed_at) {
-    const ageMs = Date.now() - new Date(station.observed_at).getTime()
-    if (ageMs >= 0) updatedMinutes = Math.round(ageMs / 60000)
-  }
+  // cloud_cover + forecast_valid_at come from the nearest future forecast
+  // slot. vedur's automatic stations don't observe cloud cover, so this
+  // is always a forecast — never a live reading. Both can be null.
   dockWeatherCtx.value = {
     name: station.name,
     cloud: station.cloud_cover ?? null,
-    updatedMinutes,
+    forecastValidAt: station.forecast_valid_at ?? null,
   }
   selectedStationId.value = station.station_id ?? null
   dockMode.value = 'weather'

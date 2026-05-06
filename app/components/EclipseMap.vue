@@ -15,12 +15,6 @@ const props = defineProps<{
     lng: number
     region: string
     cloud_cover?: number | null
-    temp?: number | null
-    wind_speed?: number | null
-    wind_dir?: string | null
-    /** ISO8601 timestamp of this station's latest observation, used by
-     *  the WEATHER dock for "Updated N min ago". Null when no obs yet. */
-    observed_at?: string | null
   }>
   spots?: MapSpot[]
   rankedSpots?: Array<{
@@ -127,8 +121,6 @@ function stationPopupHtml(station: Station): string {
       <h3 style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; margin: 0 0 6px;">${station.name}</h3>
       <dl style="margin: 0; display: flex; flex-direction: column; gap: 2px;">
         ${station.cloud_cover != null ? `<div><dt style="display:inline;color:${inkDim};">Cloud cover:</dt> <dd style="display:inline;color:${color};margin:0;">${station.cloud_cover}%</dd></div>` : ''}
-        ${station.temp != null ? `<div><dt style="display:inline;color:${inkDim};">Temp:</dt> <dd style="display:inline;margin:0;">${station.temp}°C</dd></div>` : ''}
-        ${station.wind_speed != null ? `<div><dt style="display:inline;color:${inkDim};">Wind:</dt> <dd style="display:inline;margin:0;">${station.wind_speed} m/s ${station.wind_dir || ''}</dd></div>` : ''}
       </dl>
     </div>
   `

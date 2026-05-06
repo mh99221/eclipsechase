@@ -3,8 +3,7 @@
  * This file can be removed once real tests exist.
  */
 import { describe, it, expect } from 'vitest'
-import { handlers, buildObservationsXml, buildForecastsXml } from './handlers'
-import weatherObs from './fixtures/weather-observations.json'
+import { handlers, buildForecastsXml } from './handlers'
 import weatherForecasts from './fixtures/weather-forecasts.json'
 import viewingSpots from './fixtures/viewing-spots.json'
 import eclipseGrid from './fixtures/eclipse-grid.json'
@@ -22,11 +21,6 @@ describe('MSW handlers', () => {
 })
 
 describe('Fixtures', () => {
-  it('weather-observations has 6 entries with one null temp', () => {
-    expect(weatherObs).toHaveLength(6)
-    expect(weatherObs.some((o) => o.temp === null)).toBe(true)
-  })
-
   it('weather-forecasts has 6 entries with one null cloudCover', () => {
     expect(weatherForecasts).toHaveLength(6)
     expect(weatherForecasts.some((f) => f.cloudCover === null)).toBe(true)
@@ -68,18 +62,6 @@ describe('Fixtures', () => {
 })
 
 describe('XML builders', () => {
-  it('buildObservationsXml produces valid XML with station tags', () => {
-    const xml = buildObservationsXml(weatherObs)
-    expect(xml).toContain('<observations>')
-    expect(xml).toContain('<station id="1"')
-    expect(xml).toContain('<name>Reykjavík</name>')
-    expect(xml).toContain('<T>12.5</T>')
-    // Station with null temp should not have <T> tag
-    expect(xml).toContain('<station id="1777"')
-    const borgarnesSection = xml.split('id="1777"')[1].split('</station>')[0]
-    expect(borgarnesSection).not.toContain('<T>')
-  })
-
   it('buildForecastsXml produces valid XML with nested forecasts', () => {
     const xml = buildForecastsXml(weatherForecasts)
     expect(xml).toContain('<forecasts>')

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { STATION_IDS, forecastsToRows, fetchObservations, fetchForecasts, type VedurForecast } from '../../../server/utils/vedur'
+import { STATION_IDS, forecastsToRows, fetchForecasts, type VedurForecast } from '../../../server/utils/vedur'
 
 describe('STATION_IDS', () => {
   it('has exactly 55 entries', () => {
@@ -53,7 +53,7 @@ describe('forecastsToRows', () => {
   ]
 
   it('converts VedurForecast[] to database row shape', () => {
-    const rows = forecastsToRows(sampleForecasts)
+    const rows = forecastsToRows(sampleForecasts, '2026-08-12T12:34:56.000Z')
     expect(rows).toHaveLength(2)
     const row = rows[0]
     expect(row).toHaveProperty('station_id', '1')
@@ -62,6 +62,7 @@ describe('forecastsToRows', () => {
     expect(row).toHaveProperty('cloud_cover', 30)
     expect(row).toHaveProperty('precipitation_prob', 0)
     expect(row).toHaveProperty('source_model', 'vedur')
+    expect(row).toHaveProperty('fetched_at', '2026-08-12T12:34:56.000Z')
   })
 
   it('sets source_model to "vedur" for all rows', () => {
@@ -104,35 +105,6 @@ describe('forecastsToRows', () => {
 
   it('returns empty array for empty input', () => {
     expect(forecastsToRows([])).toEqual([])
-  })
-})
-
-describe('fetchObservations', () => {
-  it('returns an array of observations from MSW-intercepted vedur.is', async () => {
-    const obs = await fetchObservations(['1', '990', '178'])
-    expect(Array.isArray(obs)).toBe(true)
-    expect(obs.length).toBeGreaterThan(0)
-  })
-
-  it('each observation has expected fields', async () => {
-    const obs = await fetchObservations(['1'])
-    expect(obs.length).toBeGreaterThan(0)
-    const o = obs[0]
-    expect(o).toHaveProperty('stationId')
-    expect(o).toHaveProperty('name')
-    expect(o).toHaveProperty('timestamp')
-    expect(o).toHaveProperty('temp')
-    expect(o).toHaveProperty('windSpeed')
-    expect(o).toHaveProperty('windDir')
-    expect(o).toHaveProperty('precipitation')
-  })
-
-  it('stationId values are non-empty strings', async () => {
-    const obs = await fetchObservations(['1', '990', '178'])
-    for (const o of obs) {
-      expect(typeof o.stationId).toBe('string')
-      expect(o.stationId.length).toBeGreaterThan(0)
-    }
   })
 })
 
