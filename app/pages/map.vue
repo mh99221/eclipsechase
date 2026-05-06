@@ -764,6 +764,14 @@ function onDownloadingChange(active: boolean) {
   tileDownloading.value = active
   if (!active) tileProgress.value = { loaded: 0, total: 0 }
 }
+function cancelTileDownload() {
+  // Call the cancel method directly on each template ref. Going through
+  // the `offlineManagerRef` computed + MapOfflineCard's wrapped expose
+  // proved unreliable — calling cancel here avoids the indirection.
+  // Only one variant is mounted per viewport, the other is a no-op.
+  offlineManagerMobile.value?.cancel?.()
+  offlineManagerDesktop.value?.cancel?.()
+}
 // Status-stack input (desktop only).
 const { isWeatherStale } = useOfflineStatus()
 const weatherFetchedAt = computed(() => cloudData.value?.fetched_at ?? null)
@@ -1139,7 +1147,7 @@ const profileIcons: Record<ProfileId, string> = {
       </div>
       <button
         class="font-mono text-xs text-ink-3 hover:text-ink-2 transition-colors"
-        @click="offlineManagerRef?.cancel()"
+        @click="cancelTileDownload"
       >
         {{ t('offline.cancel') }}
       </button>
