@@ -29,4 +29,11 @@ describe('EmailSignup', () => {
     expect(wrapper.text()).not.toContain('success')
     expect(wrapper.find('form').exists()).toBe(true)
   })
+
+  it('hides the privacy note paragraph when compact prop is true', async () => {
+    const wrapper = await mountSuspended(EmailSignup, { props: { compact: true } })
+    const links = wrapper.findAll('a')
+    const privacyLink = links.filter(l => l.attributes('href') === '/privacy')
+    expect(privacyLink.length).toBe(0)
+  })
 })
