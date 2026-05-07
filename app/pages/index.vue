@@ -49,10 +49,12 @@ useHead(() => ({
 <template>
   <PageShell screen="home" width="wide">
     <div class="home-root">
-      <!-- Compact hero — Starfield + glyph + countdown + tagline. ~60vh on
-           mobile so the tile grid peeks above the fold. -->
+      <!-- Compact hero — Starfield (dark only) + glyph + countdown + tagline.
+           ~60vh on mobile so the tile grid peeks above the fold. -->
       <section class="home-hero" aria-label="Eclipse countdown">
-        <Starfield />
+        <div class="hidden dark:block">
+          <Starfield />
+        </div>
         <div class="home-hero-inner">
           <EclipseHero />
           <CountdownBar />
@@ -101,7 +103,6 @@ useHead(() => ({
   align-items: center;
   justify-content: center;
   padding: 32px 0;
-  overflow: hidden;
 }
 .home-hero-inner {
   position: relative;
