@@ -6,12 +6,9 @@ import IconGuide from './icons/IconGuide.vue'
 import IconMe from './icons/IconMe.vue'
 import type { NavIcon, NavItem } from '~/composables/useNavItems'
 
-const route = useRoute()
 const { items, isActive } = useNavItems()
 const { openUpsell } = useUpsell()
 
-// Bottom nav is unconditionally rendered now — desktop hides it via CSS.
-// On `/` we keep showing it so free users have the same chrome everywhere.
 const iconMap: Record<NavIcon, ReturnType<typeof defineComponent>> = {
   home:  IconHome,
   spots: IconSpots,
@@ -36,6 +33,7 @@ function onTap(item: NavItem, e: MouseEvent) {
 </script>
 
 <template>
+  <!-- Bottom nav renders for all users; CSS hides it at md+ where the masthead takes over. -->
   <nav class="bottom-nav" aria-label="Primary">
     <NuxtLink
       v-for="item in items"
