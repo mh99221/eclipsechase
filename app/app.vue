@@ -1,21 +1,18 @@
 <script setup lang="ts">
-// Initialize analytics consent — auto-loads Umami if user previously consented
 useAnalyticsConsent()
 
 const route = useRoute()
-const { isPro } = useProStatus()
 
 const normalizedPath = computed(() => {
   const p = route.path
   return p.length > 1 && p.endsWith('/') ? p.slice(0, -1) : p
 })
-const isLanding = computed(() => normalizedPath.value === '/')
 const isMap = computed(() => normalizedPath.value === '/map')
 
-// Bottom padding only on mobile — desktop swaps bottom nav for nothing yet.
-// PageShell already adds 90px bottom padding on Pro pages, so this is for
-// any legacy page that doesn't use PageShell yet.
-const mobileNavPadding = computed(() => isPro.value && !isLanding.value && !isMap.value)
+// BottomNav is now mounted for all users (it self-hides at md+ via CSS).
+// /map is the one exception — it's full-bleed, so it manages its own
+// bottom spacing via SelectedLightbox + map controls.
+const mobileNavPadding = computed(() => !isMap.value)
 </script>
 
 <template>
