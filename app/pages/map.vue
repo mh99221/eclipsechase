@@ -19,6 +19,8 @@ import MapStatusStack from '~/components/map/MapStatusStack.vue'
 import MapLegend from '~/components/map/MapLegend.vue'
 import MapOfflineCard from '~/components/map/MapOfflineCard.vue'
 import MapChipStack from '~/components/map/MapChipStack.vue'
+import MapMobileStatusPill from '~/components/map/MapMobileStatusPill.vue'
+import MapStatusSheet from '~/components/map/MapStatusSheet.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -756,7 +758,11 @@ const tileProgressPct = computed(() => {
 })
 const offlineManagerMobile = ref<any>(null)
 const offlineManagerDesktop = ref<any>(null)
+const statusSheetRef = ref<any>(null)
 const offlineManagerRef = computed(() => offlineManagerMobile.value || offlineManagerDesktop.value)
+
+// Mobile status sheet open/close — driven by the top-right pill.
+const statusSheetOpen = ref(false)
 function onTileProgress(p: { loaded: number; total: number }) {
   tileProgress.value = p
 }
@@ -766,9 +772,11 @@ function onDownloadingChange(active: boolean) {
 }
 function cancelTileDownload() {
   // Only one variant is mounted per viewport (mobile vs. desktop slot);
-  // the other ref is null and the optional chain is a no-op.
+  // the other ref is null and the optional chain is a no-op. The status
+  // sheet hosts the mobile OfflineManager when open, so cancel that too.
   offlineManagerMobile.value?.cancel?.()
   offlineManagerDesktop.value?.cancel?.()
+  statusSheetRef.value?.cancel?.()
 }
 // Status-stack input (desktop only).
 const { isWeatherStale } = useOfflineStatus()
@@ -869,6 +877,15 @@ const profileIcons: Record<ProfileId, string> = {
         @update:show-cameras="showCameras = $event"
       />
     </div>
+
+    <!-- Mobile-only status pill — combined weather freshness + tile cache,
+         tappable to open the status sheet. Desktop has MapStatusStack +
+         MapOfflineCard at the corners instead. -->
+    <MapMobileStatusPill
+      :weather-fetched-at="weatherFetchedAt"
+      :weather-stale="cloudData?.stale === true || isWeatherStale"
+      @open="statusSheetOpen = true"
+    />
 
     <!-- Map dock — mobile-only bottom card that swaps content between
          five modes (SPOT / WEATHER / ROADS / CAM / HORIZON). -->
@@ -1150,6 +1167,20 @@ const profileIcons: Record<ProfileId, string> = {
         {{ t('offline.cancel') }}
       </button>
     </div>
+
+    <!-- Mobile status sheet — opened by MapMobileStatusPill. Hosts the
+         full OfflineManager UI (cache button, status table, clear cache)
+         alongside the weather freshness section. -->
+    <MapStatusSheet
+      ref="statusSheetRef"
+      :open="statusSheetOpen"
+      :map="eclipseMapRef?.map"
+      :weather-fetched-at="weatherFetchedAt"
+      :weather-stale="cloudData?.stale === true || isWeatherStale"
+      @close="statusSheetOpen = false"
+      @downloading="onDownloadingChange"
+      @progress="onTileProgress"
+    />
 
     <!-- Camera lightbox (full-screen overlay, z-99999). Desktop-only —
          mobile uses the dock CAM mode. -->

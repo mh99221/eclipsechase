@@ -172,6 +172,11 @@
     "weather_just_now": "Veður uppfært núna",
     "weather_loading": "Hleður veðri…",
     "weather_stale": "Veðurgögn úreld",
+    "weather_source": "Heimild: vedur.is",
+    "weather_source_at": "vedur.is · {time}",
+    "system_status": "Kerfisstaða",
+    "offline_note": "Þú ert án nettengingar — sýnir vistuð gögn.",
+    "pill_just_now": "núna",
     "offline_ready": "Tilbúið án nettengingar",
     "offline_download": "Sækja kortaflísar",
     "offline_downloading": "Sækir flísar…"

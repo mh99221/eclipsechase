@@ -317,6 +317,11 @@
     "weather_just_now": "Weather updated just now",
     "weather_loading": "Loading weather…",
     "weather_stale": "Weather data stale",
+    "weather_source": "Source: vedur.is",
+    "weather_source_at": "vedur.is · {time}",
+    "system_status": "System Status",
+    "offline_note": "You're offline — showing cached data.",
+    "pill_just_now": "now",
     "offline_ready": "Offline ready",
     "offline_download": "Download offline tiles",
     "offline_downloading": "Downloading tiles…"
