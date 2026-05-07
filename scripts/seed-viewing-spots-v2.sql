@@ -223,14 +223,15 @@ ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLU
 -- REYKJAVÍK (1 spot)
 -- ============================================================================
 
-INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parking_info, terrain_notes, has_services, cell_coverage, totality_duration_seconds, totality_start, sun_altitude, sun_azimuth, spot_type) VALUES
+INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parking_info, terrain_notes, has_services, cell_coverage, totality_duration_seconds, totality_start, sun_altitude, sun_azimuth, spot_type, trailhead_lat, trailhead_lng) VALUES
 ('grotta', 'Grótta Lighthouse', 'grotta-lighthouse-reykjavik',
-  64.1614, -22.0264, 'reykjavik',
+  64.16256484125579, -22.015211327803257, 'reykjavik',
   'A tidal islet at the westernmost point of Reykjavík''s Seltjarnarnes peninsula. Open ocean view to the west with no urban light pollution or buildings on the horizon. The best eclipse-watching location within the capital. Check tide tables — the islet may be inaccessible at high tide.',
   'Free car park at Grótta Nature Reserve entrance. ~30 spaces, 5-minute walk to lighthouse.',
   'Flat volcanic rock and gravel beach. Tidal crossing may be submerged — check tide tables for Aug 12.',
-  false, 'good', 60, '2026-08-12T17:47:30Z', 24, 249, 'drive-up')
-ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLUDED.lat, lng=EXCLUDED.lng, region=EXCLUDED.region, description=EXCLUDED.description, parking_info=EXCLUDED.parking_info, terrain_notes=EXCLUDED.terrain_notes, has_services=EXCLUDED.has_services, cell_coverage=EXCLUDED.cell_coverage, totality_duration_seconds=EXCLUDED.totality_duration_seconds, totality_start=EXCLUDED.totality_start, sun_altitude=EXCLUDED.sun_altitude, sun_azimuth=EXCLUDED.sun_azimuth, spot_type=EXCLUDED.spot_type;
+  false, 'good', 60, '2026-08-12T17:47:30Z', 24, 249, 'drive-up',
+  64.16268841098024, -22.013576812738602)
+ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLUDED.lat, lng=EXCLUDED.lng, region=EXCLUDED.region, description=EXCLUDED.description, parking_info=EXCLUDED.parking_info, terrain_notes=EXCLUDED.terrain_notes, has_services=EXCLUDED.has_services, cell_coverage=EXCLUDED.cell_coverage, totality_duration_seconds=EXCLUDED.totality_duration_seconds, totality_start=EXCLUDED.totality_start, sun_altitude=EXCLUDED.sun_altitude, sun_azimuth=EXCLUDED.sun_azimuth, spot_type=EXCLUDED.spot_type, trailhead_lat=EXCLUDED.trailhead_lat, trailhead_lng=EXCLUDED.trailhead_lng;
 
 -- ============================================================================
 -- REYKJANES (4 spots)

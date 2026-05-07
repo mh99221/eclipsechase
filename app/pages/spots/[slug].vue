@@ -209,6 +209,8 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
             :lng="spot.lng"
             :sun-azimuth="spot.sun_azimuth ?? null"
             :spot-name="spot.name"
+            :parking-lat="spot.trailhead_lat ?? null"
+            :parking-lng="spot.trailhead_lng ?? null"
             class="plan-map"
           />
         </Card>

@@ -7,6 +7,8 @@ const props = defineProps<{
   lng: number
   sunAzimuth: number | null
   spotName: string
+  parkingLat?: number | null
+  parkingLng?: number | null
 }>()
 
 const config = useRuntimeConfig()
@@ -64,6 +66,58 @@ function togglePOIs() {
   }
 }
 
+// Approximate metres-between-points using equirectangular projection.
+// Good enough for the ~50 m proximity check below; we don't need haversine
+// precision in central Iceland.
+function approxDistanceM(aLat: number, aLng: number, bLat: number, bLng: number): number {
+  const R = 6371000
+  const x = ((bLng - aLng) * Math.PI / 180) * Math.cos(((aLat + bLat) / 2) * Math.PI / 180)
+  const y = (bLat - aLat) * Math.PI / 180
+  return Math.hypot(x, y) * R
+}
+
+function addCuratedParkingMarker(lat: number, lng: number) {
+  if (!map || !mapboxgl) return
+  const cat = POI_CATEGORIES.parking!
+  const el = document.createElement('div')
+  el.className = 'poi-marker poi-marker-curated'
+  el.title = 'Parking'
+  el.style.cssText = `
+    width: 26px; height: 26px; border-radius: 50%;
+    background: ${cat.color}; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; line-height: 1;
+    border: 2px solid rgb(var(--map-marker-bg));
+    box-shadow: 0 0 0 3px ${cat.color}33, 0 1px 6px rgba(0,0,0,0.6);
+    cursor: pointer; z-index: 6;
+    font-family: system-ui, sans-serif;
+  `
+  el.textContent = cat.icon
+
+  const ink = `rgb(var(--ink-1))`
+  const inkDim = `rgb(var(--ink-1) / 0.62)`
+  const popup = new mapboxgl.Popup({
+    offset: 14,
+    closeButton: false,
+    maxWidth: '200px',
+    className: 'eclipse-popup',
+  }).setHTML(`
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: ${ink}; padding: 4px;">
+      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+        <span style="width: 16px; height: 16px; border-radius: 50%; background: ${cat.color}; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #fff; flex-shrink: 0;">${cat.icon}</span>
+        <span style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 13px;">Parking</span>
+      </div>
+      <p style="color: ${inkDim}; margin: 0; font-size: 11px;">Recommended parking for ${props.spotName}</p>
+    </div>
+  `)
+
+  const marker = new mapboxgl.Marker({ element: el })
+    .setLngLat([lng, lat])
+    .setPopup(popup)
+    .addTo(map)
+  poiMarkers.push(marker)
+}
+
 function queryAndAddPOIs() {
   if (!map || !mapboxgl) return
 
@@ -101,6 +155,17 @@ function queryAndAddPOIs() {
 
     const cat = POI_CATEGORIES[category]!
     const coords = feature.geometry.coordinates
+
+    // If a curated parking lot is set, suppress Mapbox-tagged parking
+    // within ~60 m so we don't render two pins for the same lot.
+    if (
+      category === 'parking'
+      && props.parkingLat != null
+      && props.parkingLng != null
+      && approxDistanceM(props.parkingLat, props.parkingLng, coords[1], coords[0]) < 60
+    ) {
+      continue
+    }
 
     const el = document.createElement('div')
     el.className = 'poi-marker'
@@ -269,6 +334,13 @@ watch(mapContainer, async (el) => {
       new mapboxgl.Marker({ element: markerEl, anchor: 'center' })
         .setLngLat([props.lng, props.lat])
         .addTo(map!)
+
+      // Curated parking marker (overrides Mapbox POI tagging when set on
+      // viewing_spots.trailhead_lat/lng). Pushed into poiMarkers so the
+      // POI toggle hides/shows it alongside the Mapbox-derived markers.
+      if (props.parkingLat != null && props.parkingLng != null) {
+        addCuratedParkingMarker(props.parkingLat, props.parkingLng)
+      }
 
       // Query POIs after tiles render
       map.once('idle', () => {
