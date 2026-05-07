@@ -28,5 +28,6 @@ const mobileNavPadding = computed(() => isPro.value && !isLanding.value && !isMa
     <NuxtPage />
     <BottomNav />
     <CookieConsent />
+    <UpsellSheet />
   </div>
 </template>
