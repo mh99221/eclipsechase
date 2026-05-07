@@ -89,24 +89,54 @@ self.addEventListener('message', (event) => {
   if (event.data?.type === 'PRECACHE_API') {
     event.waitUntil(
       caches.open(API_CACHE).then(async (cache) => {
-        const entries = await Promise.allSettled(
+        // 1. Cache fixed list endpoints. Hold onto the /api/spots response
+        //    so we can extract slugs and fan out to per-spot detail URLs.
+        let spotsBody = null
+        const baseEntries = await Promise.allSettled(
           API_PRECACHE_URLS.map(async (url) => {
             const response = await fetch(url)
-            if (response.ok) {
-              await cache.put(new Request(url), stampResponse(response))
-              return { url, status: 'cached' }
+            if (!response.ok) return { url, status: 'failed' }
+            await cache.put(new Request(url), stampResponse(response.clone()))
+            if (url === '/api/spots') {
+              try { spotsBody = await response.json() } catch { /* skip fan-out */ }
             }
-            return { url, status: 'failed' }
+            return { url, status: 'cached' }
           })
         )
+
         const results = {}
-        for (const entry of entries) {
+        for (const entry of baseEntries) {
           if (entry.status === 'fulfilled') {
             results[entry.value.url] = entry.value.status
-          } else {
-            results['unknown'] = 'failed'
           }
         }
+
+        // 2. Fan out to /api/spots/{slug} for every spot. Photos are NOT
+        //    eagerly cached here — the runtime fetch handler picks them up
+        //    lazily as users browse, keeping this precache step lightweight
+        //    (~30 spots × ~50KB JSON is well under 2 MB).
+        const slugs = Array.isArray(spotsBody?.spots)
+          ? spotsBody.spots.map((s) => s && s.slug).filter(Boolean)
+          : []
+        let cached = 0
+        let failed = 0
+        if (slugs.length > 0) {
+          await Promise.allSettled(
+            slugs.map(async (slug) => {
+              const url = `/api/spots/${slug}`
+              try {
+                const r = await fetch(url)
+                if (!r.ok) { failed++; return }
+                await cache.put(new Request(url), stampResponse(r))
+                cached++
+              } catch {
+                failed++
+              }
+            })
+          )
+        }
+        results['/api/spots/*'] = `${cached}/${slugs.length} cached`
+
         if (event.source) {
           event.source.postMessage({ type: 'PRECACHE_API_DONE', results })
         }
@@ -127,6 +157,19 @@ self.addEventListener('message', (event) => {
             status[url] = null
           }
         }
+        // Count per-slug spot detail entries. The fixed URL list above
+        // doesn't include /api/spots/{slug} — those are dynamic, so we
+        // probe the cache directly and report a single rollup count.
+        const apiKeys = await cache.keys()
+        let spotDetailCount = 0
+        for (const req of apiKeys) {
+          const path = new URL(req.url).pathname
+          if (path.startsWith('/api/spots/') && path !== '/api/spots/') {
+            spotDetailCount++
+          }
+        }
+        status._spotDetailCount = spotDetailCount
+
         // Also check tile cache count
         const tileCache = await caches.open(TILE_CACHE)
         const tileKeys = await tileCache.keys()

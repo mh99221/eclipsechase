@@ -397,6 +397,7 @@
     "cache_status": "Cache status",
     "cached": "Cached",
     "not_cached": "Not cached",
+    "spot_details_count": "{count} cached",
     "clear_cache": "Clear cached data",
     "data_ready": "All data cached for offline use",
     "tiles_cached": "{count} tiles cached",

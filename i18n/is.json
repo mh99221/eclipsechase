@@ -269,6 +269,7 @@
     "cache_status": "Staða vistunar",
     "cached": "Vistað",
     "not_cached": "Ekki vistað",
+    "spot_details_count": "{count} vistuð",
     "clear_cache": "Hreinsa vistuð gögn",
     "data_ready": "Öll gögn vistuð fyrir notkun án nets",
     "tiles_cached": "{count} flísar vistaðar",

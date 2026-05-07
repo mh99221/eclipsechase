@@ -5,6 +5,7 @@ export function useOfflineStatus() {
   const isOffline = useState<boolean>('offline-status', () => false)
   const cacheAges = useState<Record<string, number | null>>('offline-cache-ages', () => ({}))
   const tileCount = useState<number>('offline-tile-count', () => 0)
+  const spotDetailCount = useState<number>('offline-spot-detail-count', () => 0)
 
   const lastWeatherUpdate = computed(() => {
     const weatherAge = cacheAges.value['/api/weather/cloud-cover']
@@ -66,7 +67,9 @@ export function useOfflineStatus() {
       if (event.data?.type === 'CACHE_STATUS') {
         const status = { ...event.data.status }
         tileCount.value = status._tileCount || 0
+        spotDetailCount.value = status._spotDetailCount || 0
         delete status._tileCount
+        delete status._spotDetailCount
         cacheAges.value = status
       }
     })
@@ -79,6 +82,7 @@ export function useOfflineStatus() {
     isOffline,
     cacheAges,
     tileCount,
+    spotDetailCount,
     lastWeatherUpdate,
     lastForecastUpdate,
     isWeatherStale,

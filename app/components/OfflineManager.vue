@@ -10,7 +10,7 @@ const emit = defineEmits<{
   progress: [payload: { loaded: number; total: number }]
 }>()
 
-const { tileCount, lastWeatherUpdate, lastForecastUpdate, cacheAges, precacheApiData, refreshCacheStatus } = useOfflineStatus()
+const { tileCount, spotDetailCount, lastWeatherUpdate, lastForecastUpdate, cacheAges, precacheApiData, refreshCacheStatus } = useOfflineStatus()
 
 // Western Iceland bounding box (eclipse path region) — must be before countTiles()
 const BOUNDS = { west: -24.5, east: -20.5, south: 63.5, north: 66.5 }
@@ -239,7 +239,12 @@ function cancel() {
           <span>Forecast</span>
           <span>{{ lastForecastUpdate || t('offline.not_cached') }}</span>
           <span>Spots</span>
-          <span>{{ hasCachedSpots ? t('offline.cached') : t('offline.not_cached') }}</span>
+          <span>
+            <template v-if="hasCachedSpots">
+              {{ spotDetailCount > 0 ? t('offline.spot_details_count', { count: spotDetailCount }) : t('offline.cached') }}
+            </template>
+            <template v-else>{{ t('offline.not_cached') }}</template>
+          </span>
           <span>Traffic</span>
           <span>{{ hasCachedTraffic ? t('offline.cached') : t('offline.not_cached') }}</span>
           <span>Cameras</span>
