@@ -137,6 +137,32 @@ self.addEventListener('message', (event) => {
         }
         results['/api/spots/*'] = `${cached}/${slugs.length} cached`
 
+        // 3. Precache HTML for the spot pages so cold loads work offline
+        //    (e.g. opening /spots/{slug} from a homescreen tile or a
+        //    shared link with no network). SPA navigation between
+        //    already-loaded pages is fine without this — Nuxt's router
+        //    just needs the per-slug JSON cached above. This step closes
+        //    the cold-load gap. Nuxt SSR HTML is ~100–300 KB per page,
+        //    so the additional storage cost is roughly 5 MB for ~30
+        //    spots — acceptable for the offline experience.
+        const pageCache = await caches.open(CACHE_NAME)
+        const htmlUrls = ['/spots', ...slugs.map((slug) => `/spots/${slug}`)]
+        let htmlCached = 0
+        let htmlFailed = 0
+        await Promise.allSettled(
+          htmlUrls.map(async (url) => {
+            try {
+              const r = await fetch(url, { headers: { Accept: 'text/html' } })
+              if (!r.ok) { htmlFailed++; return }
+              await pageCache.put(new Request(url), stampResponse(r))
+              htmlCached++
+            } catch {
+              htmlFailed++
+            }
+          })
+        )
+        results['/spots/* (html)'] = `${htmlCached}/${htmlUrls.length} cached`
+
         if (event.source) {
           event.source.postMessage({ type: 'PRECACHE_API_DONE', results })
         }
@@ -169,6 +195,18 @@ self.addEventListener('message', (event) => {
           }
         }
         status._spotDetailCount = spotDetailCount
+
+        // Count cached spot page HTML (under CACHE_NAME, not API_CACHE).
+        const pageCache = await caches.open(CACHE_NAME)
+        const pageKeys = await pageCache.keys()
+        let spotPageCount = 0
+        for (const req of pageKeys) {
+          const path = new URL(req.url).pathname
+          if (path.startsWith('/spots/') && path !== '/spots/') {
+            spotPageCount++
+          }
+        }
+        status._spotPageCount = spotPageCount
 
         // Also check tile cache count
         const tileCache = await caches.open(TILE_CACHE)
