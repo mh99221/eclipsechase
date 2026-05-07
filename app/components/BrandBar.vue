@@ -234,8 +234,4 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
   transition: background 0.2s ease;
 }
 .get-pro-pill:hover { background: rgb(var(--accent-strong)); }
-
-@media (max-width: 480px) {
-  .hide-sm { display: none; }
-}
 </style>
