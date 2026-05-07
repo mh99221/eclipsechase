@@ -4,6 +4,29 @@
     "description": "Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland."
   },
   "v0": {
+    "upsell": {
+      "title": "Live weather map is part of Pro Access",
+      "bullet_weather": "Live cloud cover from 55 weather stations, refreshed every 15 min",
+      "bullet_spots": "Personalised \"best spot for you right now\" with horizon checks",
+      "bullet_roads": "Road conditions + roadside camera feeds across the path",
+      "cta_primary": "Get Pro · €9.99",
+      "cta_secondary": "Already paid? Restore",
+      "dismiss": "Close",
+      "price_note": "One-time payment. No subscription."
+    },
+    "home": {
+      "tagline": "Iceland · 12 Aug 2026 · find the clearest sky",
+      "tile_spots_title": "Browse spots",
+      "tile_spots_body": "30+ vetted viewing points across the path",
+      "tile_guide_title": "Read the guide",
+      "tile_guide_body": "Plan with the long-form eclipse guide",
+      "tile_map_title": "Live weather map",
+      "tile_map_body": "Live cloud cover + ranked spots (Pro)",
+      "tile_pro_title": "Get Pro · €9.99",
+      "tile_pro_body": "Live data, ranked spots, offline-ready map",
+      "email_title": "Launch reminders",
+      "nav_get_pro": "Get Pro"
+    },
     "pro_compare": {
       "header": "WHAT'S IN PRO",
       "free_col": "FREE",
