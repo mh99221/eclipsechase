@@ -1,9 +1,10 @@
-const CACHE_NAME = 'eclipsechase-v4'
+const CACHE_NAME = 'eclipsechase-v5'
 const API_CACHE = 'eclipsechase-api-v2'
 const TILE_CACHE = 'eclipsechase-tiles-v1'
 const MAX_TILE_CACHE = 5000
 
 const PRECACHE_URLS = [
+  '/',
   '/guide',
   '/pro',
   '/manifest.json',
