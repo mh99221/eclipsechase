@@ -3,17 +3,47 @@ const { t } = useI18n()
 const { isPro, loading: proLoading, clearPro } = useProStatus()
 const route = useRoute()
 const { items: navItems, isActive: isNavActive } = useNavItems()
+const { openUpsell } = useUpsell()
 
 const isLanding = computed(() => route.path === '/')
 const isMap = computed(() => route.path === '/map')
+const isProRoute = computed(() => route.path === '/pro' || route.path.startsWith('/pro/'))
 
-// Desktop masthead nav: shown for Pro users on non-landing pages, mirrors
-// the legacy app.vue behavior so the desktop layout has horizontal nav
-// between the brand and the user menu.
-const showMasthead = computed(() => isPro.value && !isLanding.value)
+// Free users see a small Get-Pro pill in the right slot on every page
+// except / (where the in-page tile already serves that purpose) and
+// /pro / /pro/success (where they're already on the upsell path).
+const showFreeGetProPill = computed(
+  () => !proLoading.value && !isPro.value && !isLanding.value && !isProRoute.value,
+)
+
+// Scroll-aware transparency on `/` — start transparent over the cinematic
+// hero, transition to the standard backdrop blur after 300px of scroll.
+const scrolled = ref(false)
+function onScroll() {
+  scrolled.value = window.scrollY > 300
+}
+onMounted(() => {
+  if (!import.meta.client) return
+  if (isLanding.value) {
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+  }
+})
+onUnmounted(() => {
+  if (import.meta.client) window.removeEventListener('scroll', onScroll)
+})
+watch(isLanding, (landing) => {
+  if (!import.meta.client) return
+  if (landing) {
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+  } else {
+    window.removeEventListener('scroll', onScroll)
+    scrolled.value = false
+  }
+})
 
 const isLoggingOut = ref(false)
-
 async function handleLogout() {
   isLoggingOut.value = true
   try {
@@ -24,43 +54,59 @@ async function handleLogout() {
     isLoggingOut.value = false
   }
 }
+
+function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) {
+  if (item.locked) {
+    e.preventDefault()
+    openUpsell({ source: 'nav' })
+  }
+}
 </script>
 
 <template>
-  <header class="brand-bar">
-    <!-- /map is full-bleed so the inner row spans the viewport width.
-         Other pages use the standard reading column. -->
+  <header
+    class="brand-bar"
+    :class="{ 'is-landing': isLanding, 'is-scrolled': scrolled }"
+  >
     <div :class="['brand-bar-inner', isMap ? 'is-map' : 'is-content']">
       <NuxtLink to="/" aria-label="EclipseChase — Home" class="brand-mark">
         <BrandLogo />
       </NuxtLink>
 
-      <!-- Desktop masthead — only on Pro non-landing pages -->
       <ClientOnly>
-        <nav
-          v-if="showMasthead"
-          class="masthead"
-          aria-label="Primary"
-        >
+        <nav class="masthead" aria-label="Primary">
           <NuxtLink
             v-for="item in navItems"
-            :key="item.to"
-            :to="item.to"
+            :key="item.to + item.icon"
+            :to="item.locked ? '#' : item.to"
             class="masthead-link"
-            :class="{ active: isNavActive(item.to) }"
+            :class="{ active: isNavActive(item.to), locked: item.locked }"
             :aria-current="isNavActive(item.to) ? 'page' : undefined"
+            :aria-disabled="item.locked || undefined"
+            @click="(e: MouseEvent) => onMastheadClick(item, e)"
           >
             {{ item.label }}
+            <span
+              v-if="item.locked"
+              :data-testid="`masthead-lock-${item.icon}`"
+              class="masthead-lock"
+              aria-hidden="true"
+            >🔒</span>
           </NuxtLink>
         </nav>
       </ClientOnly>
 
       <div class="brand-bar-right">
-        <span v-if="isLanding" class="brand-bar-coords">
-          <span class="hide-sm">64.1°N 21.9°W · </span>AUG 12 2026
-        </span>
-        <ClientOnly v-else>
-          <div v-if="isPro && !proLoading" class="flex items-center gap-3">
+        <ClientOnly>
+          <NuxtLink
+            v-if="showFreeGetProPill"
+            data-testid="brandbar-get-pro"
+            to="/pro"
+            class="get-pro-pill"
+          >
+            {{ t('v0.home.nav_get_pro') }}
+          </NuxtLink>
+          <div v-else-if="isPro && !proLoading" class="flex items-center gap-3">
             <span class="hidden sm:inline font-mono text-[10px] text-accent/60 tracking-wider uppercase">
               {{ t('pro.badge', 'Pro') }}
             </span>
@@ -90,7 +136,16 @@ async function handleLogout() {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
+  transition: background 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease;
 }
+/* Cinematic / on landing — fully transparent until scrolled past hero. */
+.brand-bar.is-landing:not(.is-scrolled) {
+  background: transparent;
+  border-bottom-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .brand-bar-inner {
   display: flex;
   align-items: center;
@@ -100,20 +155,12 @@ async function handleLogout() {
   gap: 14px;
 }
 .brand-bar-inner.is-content {
-  /* Match the page content column on desktop (768px reading width).
-     Outer .brand-bar still spans full viewport so the blur backdrop +
-     bottom border read across the whole top of the page. */
   max-width: 768px;
   margin: 0 auto;
 }
-.brand-bar-inner.is-map {
-  width: 100%;
-}
+.brand-bar-inner.is-map { width: 100%; }
 @media (min-width: 1024px) {
-  .brand-bar-inner {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
+  .brand-bar-inner { padding-left: 24px; padding-right: 24px; }
 }
 
 .brand-mark {
@@ -122,12 +169,6 @@ async function handleLogout() {
   text-decoration: none;
   min-height: 44px;
 }
-.brand-bar-coords {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  color: rgb(var(--ink-1) / 0.62);
-}
 .brand-bar-right {
   display: flex;
   align-items: center;
@@ -135,8 +176,6 @@ async function handleLogout() {
   min-height: 44px;
 }
 
-/* Masthead — hidden on mobile; surfaces inline links on tablet+ where the
-   bottom nav is hidden. Reuses the v0 mono caps + amber active dot pattern. */
 .masthead {
   display: none;
   align-items: center;
@@ -159,6 +198,7 @@ async function handleLogout() {
 }
 .masthead-link:hover { color: rgb(var(--ink-1)); }
 .masthead-link.active { color: rgb(var(--accent)); }
+.masthead-link.locked { color: rgb(var(--ink-1) / 0.42); }
 .masthead-link.active::after {
   content: '';
   position: absolute;
@@ -171,6 +211,29 @@ async function handleLogout() {
   background: rgb(var(--accent));
   box-shadow: 0 0 8px rgb(var(--accent) / 0.7);
 }
+.masthead-lock {
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 10px;
+  filter: grayscale(0.4);
+}
+
+.get-pro-pill {
+  display: inline-flex;
+  align-items: center;
+  background: rgb(var(--accent));
+  color: rgb(var(--accent-ink));
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 7px 12px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+.get-pro-pill:hover { background: rgb(var(--accent-strong)); }
 
 @media (max-width: 480px) {
   .hide-sm { display: none; }
