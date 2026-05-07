@@ -41,4 +41,14 @@ describe('useUpsell', () => {
     openUpsell({ source: 'tile' })
     expect(isOpen.value).toBe(true)
   })
+
+  it('tile-source dismissal does NOT suppress subsequent nav-source open', () => {
+    const { openUpsell, closeUpsell, isOpen } = useUpsell()
+    openUpsell({ source: 'tile' })
+    expect(isOpen.value).toBe(true)
+    closeUpsell()
+    expect(isOpen.value).toBe(false)
+    openUpsell({ source: 'nav' })
+    expect(isOpen.value).toBe(true)
+  })
 })
