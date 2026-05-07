@@ -761,7 +761,6 @@ const offlineManagerDesktop = ref<any>(null)
 const statusSheetRef = ref<any>(null)
 const offlineManagerRef = computed(() => offlineManagerMobile.value || offlineManagerDesktop.value)
 
-// Mobile status sheet open/close — driven by the top-right pill.
 const statusSheetOpen = ref(false)
 function onTileProgress(p: { loaded: number; total: number }) {
   tileProgress.value = p
@@ -781,6 +780,7 @@ function cancelTileDownload() {
 // Status-stack input (desktop only).
 const { isWeatherStale } = useOfflineStatus()
 const weatherFetchedAt = computed(() => cloudData.value?.fetched_at ?? null)
+const weatherStale = computed(() => cloudData.value?.stale === true || isWeatherStale.value)
 
 function handleMapClick(coords: { lat: number; lng: number }) {
   // Place / move crosshair marker so the user sees what they tapped.
@@ -883,7 +883,7 @@ const profileIcons: Record<ProfileId, string> = {
          MapOfflineCard at the corners instead. -->
     <MapMobileStatusPill
       :weather-fetched-at="weatherFetchedAt"
-      :weather-stale="cloudData?.stale === true || isWeatherStale"
+      :weather-stale="weatherStale"
       @open="statusSheetOpen = true"
     />
 
@@ -950,7 +950,7 @@ const profileIcons: Record<ProfileId, string> = {
     <!-- ═══ Desktop top-right status stack — weather freshness only ═══ -->
     <MapStatusStack
       :weather-fetched-at="weatherFetchedAt"
-      :weather-stale="cloudData?.stale === true || isWeatherStale"
+      :weather-stale="weatherStale"
     />
 
     <!-- ═══ Desktop bottom-left: legend + offline manager ═══ -->
@@ -1176,7 +1176,7 @@ const profileIcons: Record<ProfileId, string> = {
       :open="statusSheetOpen"
       :map="eclipseMapRef?.map"
       :weather-fetched-at="weatherFetchedAt"
-      :weather-stale="cloudData?.stale === true || isWeatherStale"
+      :weather-stale="weatherStale"
       @close="statusSheetOpen = false"
       @downloading="onDownloadingChange"
       @progress="onTileProgress"

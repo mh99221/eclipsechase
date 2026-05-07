@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
 import OfflineManager from '~/components/OfflineManager.vue'
+import { useWeatherFreshness } from '~/composables/useWeatherFreshness'
 
 const { t } = useI18n()
 const { isOffline } = useOfflineStatus()
@@ -27,35 +28,10 @@ defineExpose({
   cancel: () => offlineManagerRef.value?.cancel?.(),
 })
 
-// Re-tick once a minute so the timestamp stays current while the sheet is open.
-const now = ref(Date.now())
-let timer: ReturnType<typeof setInterval> | null = null
-onMounted(() => { timer = setInterval(() => { now.value = Date.now() }, 60_000) })
-onUnmounted(() => { if (timer) clearInterval(timer) })
-
-const weatherAgeMin = computed<number | null>(() => {
-  if (!props.weatherFetchedAt) return null
-  const ts = new Date(props.weatherFetchedAt).getTime()
-  if (Number.isNaN(ts)) return null
-  return Math.max(0, Math.floor((now.value - ts) / 60_000))
-})
-
-const weatherDot = computed<'good' | 'warn' | 'bad'>(() => {
-  if (props.weatherStale) return 'bad'
-  const m = weatherAgeMin.value
-  if (m == null) return 'warn'
-  if (m <= 30) return 'good'
-  if (m <= 90) return 'warn'
-  return 'bad'
-})
-
-const weatherStatus = computed(() => {
-  if (props.weatherStale) return t('map.weather_stale')
-  const m = weatherAgeMin.value
-  if (m == null) return t('map.weather_loading')
-  if (m < 1) return t('map.weather_just_now')
-  return t('map.weather_updated_ago', { minutes: m })
-})
+const { dot: weatherDot, statusLabel: weatherStatus } = useWeatherFreshness(
+  () => props.weatherFetchedAt,
+  () => props.weatherStale,
+)
 
 const weatherTimestamp = computed(() => {
   if (!props.weatherFetchedAt) return null
@@ -181,6 +157,7 @@ const sheetTransform = computed(() => dragging.value ? `translateY(${dragY.value
               <OfflineManager
                 ref="offlineManagerRef"
                 :map="map"
+                embedded
                 @downloading="emit('downloading', $event)"
                 @progress="emit('progress', $event)"
               />
@@ -354,16 +331,6 @@ const sheetTransform = computed(() => dragging.value ? `translateY(${dragY.value
   text-transform: uppercase;
   color: rgb(var(--ink-3));
   margin: 0 2px;
-}
-/* The OfflineManager renders its own internal "OFFLINE MAPS" eyebrow —
-   suppress it so we don't show two. */
-.offline-block :deep(p.font-mono.text-\[10px\].uppercase.tracking-\[0\.2em\]):first-child {
-  display: none;
-}
-/* OfflineManager has an X close button for its own dismissal — superseded
-   by the sheet's close button. */
-.offline-block :deep(button[aria-label='Close']) {
-  display: none;
 }
 
 /* ── Sheet enter/leave ── */

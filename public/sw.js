@@ -53,6 +53,27 @@ function markAsCached(response) {
   })
 }
 
+/** Fetch a list of URLs in parallel and put successful responses into the
+ *  given cache. Returns rollup counts. Used by PRECACHE_API to fan out to
+ *  per-slug API + page-HTML URLs without caring about per-URL details. */
+async function fanOut(urls, cache, headers) {
+  let cached = 0
+  let failed = 0
+  await Promise.allSettled(
+    urls.map(async (url) => {
+      try {
+        const r = await fetch(url, headers ? { headers } : undefined)
+        if (!r.ok) { failed++; return }
+        await cache.put(new Request(url), stampResponse(r))
+        cached++
+      } catch {
+        failed++
+      }
+    })
+  )
+  return { cached, failed }
+}
+
 // Install: pre-cache static assets (skip failures gracefully)
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -111,57 +132,23 @@ self.addEventListener('message', (event) => {
           }
         }
 
-        // 2. Fan out to /api/spots/{slug} for every spot. Photos are NOT
-        //    eagerly cached here — the runtime fetch handler picks them up
-        //    lazily as users browse, keeping this precache step lightweight
-        //    (~30 spots × ~50KB JSON is well under 2 MB).
+        // 2 & 3. Fan out to /api/spots/{slug} JSON and /spots/{slug} HTML
+        //    in parallel — independent of each other (HTML route doesn't
+        //    need the JSON cache to be populated first). JSON unlocks SPA
+        //    navigation offline; HTML closes the cold-load gap (homescreen
+        //    tile, shared link). Photos stay lazy (would add 10–50 MB).
         const slugs = Array.isArray(spotsBody?.spots)
           ? spotsBody.spots.map((s) => s && s.slug).filter(Boolean)
           : []
-        let cached = 0
-        let failed = 0
-        if (slugs.length > 0) {
-          await Promise.allSettled(
-            slugs.map(async (slug) => {
-              const url = `/api/spots/${slug}`
-              try {
-                const r = await fetch(url)
-                if (!r.ok) { failed++; return }
-                await cache.put(new Request(url), stampResponse(r))
-                cached++
-              } catch {
-                failed++
-              }
-            })
-          )
-        }
-        results['/api/spots/*'] = `${cached}/${slugs.length} cached`
-
-        // 3. Precache HTML for the spot pages so cold loads work offline
-        //    (e.g. opening /spots/{slug} from a homescreen tile or a
-        //    shared link with no network). SPA navigation between
-        //    already-loaded pages is fine without this — Nuxt's router
-        //    just needs the per-slug JSON cached above. This step closes
-        //    the cold-load gap. Nuxt SSR HTML is ~100–300 KB per page,
-        //    so the additional storage cost is roughly 5 MB for ~30
-        //    spots — acceptable for the offline experience.
         const pageCache = await caches.open(CACHE_NAME)
         const htmlUrls = ['/spots', ...slugs.map((slug) => `/spots/${slug}`)]
-        let htmlCached = 0
-        let htmlFailed = 0
-        await Promise.allSettled(
-          htmlUrls.map(async (url) => {
-            try {
-              const r = await fetch(url, { headers: { Accept: 'text/html' } })
-              if (!r.ok) { htmlFailed++; return }
-              await pageCache.put(new Request(url), stampResponse(r))
-              htmlCached++
-            } catch {
-              htmlFailed++
-            }
-          })
-        )
-        results['/spots/* (html)'] = `${htmlCached}/${htmlUrls.length} cached`
+
+        const [jsonStats, htmlStats] = await Promise.all([
+          fanOut(slugs.map((s) => `/api/spots/${s}`), cache),
+          fanOut(htmlUrls, pageCache, { Accept: 'text/html' }),
+        ])
+        results['/api/spots/*'] = `${jsonStats.cached}/${slugs.length} cached`
+        results['/spots/* (html)'] = `${htmlStats.cached}/${htmlUrls.length} cached`
 
         if (event.source) {
           event.source.postMessage({ type: 'PRECACHE_API_DONE', results })
@@ -195,18 +182,6 @@ self.addEventListener('message', (event) => {
           }
         }
         status._spotDetailCount = spotDetailCount
-
-        // Count cached spot page HTML (under CACHE_NAME, not API_CACHE).
-        const pageCache = await caches.open(CACHE_NAME)
-        const pageKeys = await pageCache.keys()
-        let spotPageCount = 0
-        for (const req of pageKeys) {
-          const path = new URL(req.url).pathname
-          if (path.startsWith('/spots/') && path !== '/spots/') {
-            spotPageCount++
-          }
-        }
-        status._spotPageCount = spotPageCount
 
         // Also check tile cache count
         const tileCache = await caches.open(TILE_CACHE)

@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
-
-const { t } = useI18n()
+import { useWeatherFreshness } from '~/composables/useWeatherFreshness'
 
 const props = defineProps<{
   /** ISO timestamp of the most recent cloud-cover refresh (`cloudData.fetched_at`). */
@@ -10,35 +8,10 @@ const props = defineProps<{
   weatherStale: boolean
 }>()
 
-// Re-tick once a minute so "N min ago" updates without polling.
-const now = ref(Date.now())
-let timer: ReturnType<typeof setInterval> | null = null
-onMounted(() => { timer = setInterval(() => { now.value = Date.now() }, 60_000) })
-onUnmounted(() => { if (timer) clearInterval(timer) })
-
-const weatherAgeMin = computed<number | null>(() => {
-  if (!props.weatherFetchedAt) return null
-  const ts = new Date(props.weatherFetchedAt).getTime()
-  if (Number.isNaN(ts)) return null
-  return Math.max(0, Math.floor((now.value - ts) / 60_000))
-})
-
-const weatherDot = computed<'good' | 'warn' | 'bad'>(() => {
-  if (props.weatherStale) return 'bad'
-  const m = weatherAgeMin.value
-  if (m == null) return 'warn'
-  if (m <= 30) return 'good'
-  if (m <= 90) return 'warn'
-  return 'bad'
-})
-
-const weatherLabel = computed(() => {
-  if (props.weatherStale) return t('map.weather_stale')
-  const m = weatherAgeMin.value
-  if (m == null) return t('map.weather_loading')
-  if (m < 1) return t('map.weather_just_now')
-  return t('map.weather_updated_ago', { minutes: m })
-})
+const { dot: weatherDot, statusLabel: weatherLabel } = useWeatherFreshness(
+  () => props.weatherFetchedAt,
+  () => props.weatherStale,
+)
 </script>
 
 <template>

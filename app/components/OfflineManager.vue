@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import { BOUNDS, ESTIMATED_TILE_COUNT, ZOOM_MAX, ZOOM_MIN, lat2tile, lng2tile, tile2lat, tile2lng } from '~/utils/offlineTiles'
+
 const { t } = useI18n()
 
 const props = defineProps<{
   map: any
+  /** When true, the component renders without its own card chrome
+   *  (border, padding, eyebrow, dismiss button) so a parent surface
+   *  like MapStatusSheet can host it without `:deep()` overrides. */
+  embedded?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -11,41 +17,6 @@ const emit = defineEmits<{
 }>()
 
 const { tileCount, spotDetailCount, lastWeatherUpdate, lastForecastUpdate, cacheAges, precacheApiData, refreshCacheStatus } = useOfflineStatus()
-
-// Western Iceland bounding box (eclipse path region) — must be before countTiles()
-const BOUNDS = { west: -24.5, east: -20.5, south: 63.5, north: 66.5 }
-const ZOOM_MIN = 5
-const ZOOM_MAX = 11
-
-function lng2tile(lng: number, zoom: number) {
-  return Math.floor(((lng + 180) / 360) * Math.pow(2, zoom))
-}
-
-function lat2tile(lat: number, zoom: number) {
-  const rad = (lat * Math.PI) / 180
-  return Math.floor(((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2) * Math.pow(2, zoom))
-}
-
-function tile2lng(x: number, zoom: number) {
-  return (x / Math.pow(2, zoom)) * 360 - 180
-}
-
-function tile2lat(y: number, zoom: number) {
-  const n = Math.PI - (2 * Math.PI * y) / Math.pow(2, zoom)
-  return (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))
-}
-
-function countTiles(): number {
-  let count = 0
-  for (let z = ZOOM_MIN; z <= ZOOM_MAX; z++) {
-    const xMin = lng2tile(BOUNDS.west, z)
-    const xMax = lng2tile(BOUNDS.east, z)
-    const yMin = lat2tile(BOUNDS.north, z) // note: lat→tile is inverted
-    const yMax = lat2tile(BOUNDS.south, z)
-    count += (xMax - xMin + 1) * (yMax - yMin + 1)
-  }
-  return count
-}
 
 const isDownloading = ref(false)
 const totalTiles = ref(0)
@@ -56,8 +27,8 @@ const isDismissed = ref(false)
 const isCachingData = ref(false)
 const dataCached = ref(false)
 const progress = computed(() => totalTiles.value > 0 ? Math.round((loadedTiles.value / totalTiles.value) * 100) : 0)
-const estimatedTileCount = countTiles()
-// Estimated ~1338 tiles for western Iceland z5-z11; treat >10% as "has cached tiles"
+const estimatedTileCount = ESTIMATED_TILE_COUNT
+// Treat >10% as "has cached tiles" (handles partial/cancelled downloads).
 const hasCachedTiles = computed(() => tileCount.value > estimatedTileCount * 0.1)
 const cachedTilesPct = computed(() =>
   estimatedTileCount > 0 ? Math.round((tileCount.value / estimatedTileCount) * 100) : 0,
@@ -75,7 +46,7 @@ async function downloadTiles() {
   isDone.value = false
   isCancelled.value = false
   loadedTiles.value = 0
-  totalTiles.value = countTiles()
+  totalTiles.value = ESTIMATED_TILE_COUNT
   emit('downloading', true)
   emit('progress', { loaded: 0, total: totalTiles.value })
 
@@ -174,10 +145,13 @@ function cancel() {
 </script>
 
 <template>
-  <div v-if="!isDismissed" class="bg-surface-raised border border-border-subtle/40 rounded px-4 py-3 relative">
-    <!-- Close button -->
+  <div
+    v-if="!isDismissed"
+    :class="embedded ? '' : 'bg-surface-raised border border-border-subtle/40 rounded px-4 py-3 relative'"
+  >
+    <!-- Close button — own-chrome variant only; embedded parents host their own dismiss UI. -->
     <button
-      v-if="!isDownloading"
+      v-if="!isDownloading && !embedded"
       class="absolute top-2 right-2 text-ink-3/70 hover:text-ink-3 transition-colors"
       aria-label="Close"
       @click="isDismissed = true"
@@ -189,7 +163,7 @@ function cancel() {
 
     <!-- Idle state -->
     <div v-if="!isDownloading && !isDone">
-      <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-2">
+      <p v-if="!embedded" class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-2">
         {{ t('offline.title') }}
       </p>
       <p class="text-sm text-ink-3 mb-3">

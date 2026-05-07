@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed } from 'vue'
+import { ESTIMATED_TILE_COUNT } from '~/utils/offlineTiles'
+import { useWeatherFreshness } from '~/composables/useWeatherFreshness'
 
 const { t } = useI18n()
 const { tileCount } = useOfflineStatus()
@@ -13,42 +15,13 @@ const props = defineProps<{
 
 const emit = defineEmits<{ open: [] }>()
 
-// Re-tick once a minute so "N min ago" updates without polling.
-const now = ref(Date.now())
-let timer: ReturnType<typeof setInterval> | null = null
-onMounted(() => { timer = setInterval(() => { now.value = Date.now() }, 60_000) })
-onUnmounted(() => { if (timer) clearInterval(timer) })
+const { ageMin, dot: weatherDot, shortLabel: weatherLabel } = useWeatherFreshness(
+  () => props.weatherFetchedAt,
+  () => props.weatherStale,
+)
 
-const weatherAgeMin = computed<number | null>(() => {
-  if (!props.weatherFetchedAt) return null
-  const ts = new Date(props.weatherFetchedAt).getTime()
-  if (Number.isNaN(ts)) return null
-  return Math.max(0, Math.floor((now.value - ts) / 60_000))
-})
-
-const weatherDot = computed<'good' | 'warn' | 'bad'>(() => {
-  if (props.weatherStale) return 'bad'
-  const m = weatherAgeMin.value
-  if (m == null) return 'warn'
-  if (m <= 30) return 'good'
-  if (m <= 90) return 'warn'
-  return 'bad'
-})
-
-const weatherLabel = computed(() => {
-  const m = weatherAgeMin.value
-  if (m == null) return '—'
-  if (m < 1) return t('map.pill_just_now')
-  if (m < 60) return `${m}m`
-  const h = Math.floor(m / 60)
-  if (h < 24) return `${h}h`
-  return `${Math.floor(h / 24)}d`
-})
-
-// Tile target matches OfflineManager's z5–z11 western Iceland estimate.
-const TILE_TARGET = 1338
 const tilePct = computed(() =>
-  TILE_TARGET > 0 ? Math.min(100, Math.round((tileCount.value / TILE_TARGET) * 100)) : 0,
+  ESTIMATED_TILE_COUNT > 0 ? Math.min(100, Math.round((tileCount.value / ESTIMATED_TILE_COUNT) * 100)) : 0,
 )
 const tileDot = computed<'good' | 'warn' | 'bad' | 'idle'>(() => {
   const p = tilePct.value
@@ -60,9 +33,9 @@ const tileDot = computed<'good' | 'warn' | 'bad' | 'idle'>(() => {
 const tileLabel = computed(() => tilePct.value > 0 ? `${tilePct.value}%` : '—')
 
 const ariaLabel = computed(() => {
-  const wPart = weatherAgeMin.value == null
+  const wPart = ageMin.value == null
     ? t('map.weather_loading')
-    : t('map.weather_updated_ago', { minutes: weatherAgeMin.value })
+    : t('map.weather_updated_ago', { minutes: ageMin.value })
   const tPart = tilePct.value > 0
     ? `${tilePct.value}% offline tiles cached`
     : 'No offline tiles cached'
