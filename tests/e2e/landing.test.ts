@@ -1,36 +1,33 @@
 import { expect, test } from './fixtures'
 
 test.describe('Landing page', () => {
-  test('renders hero section with headline and countdown', async ({ page, goto }) => {
+  test('renders hero section with countdown and brand mark', async ({ page, goto }) => {
     await goto('/', { waitUntil: 'hydration' })
 
-    // Main headline visible
-    const h1 = page.locator('h1')
-    await expect(h1).toBeVisible()
+    // Hero section is present
+    const hero = page.locator('section[aria-label="Eclipse countdown"]')
+    await expect(hero).toBeVisible()
 
-    // Eclipse hero SVG renders (the corona circle)
-    const eclipseHeroSvg = page.locator('header svg').first()
+    // Eclipse hero SVG renders inside the hero
+    const eclipseHeroSvg = hero.locator('svg').first()
     await expect(eclipseHeroSvg).toBeVisible()
 
-    // Countdown section exists
-    const countdownSection = page.getByText('ECLIPSECHASE')
-    await expect(countdownSection.first()).toBeVisible()
+    // Brand wordmark visible (BrandBar)
+    const brand = page.getByText('ECLIPSECHASE')
+    await expect(brand.first()).toBeVisible()
   })
 
-  test('displays eclipse data strip with statistics', async ({ page, goto }) => {
+  test('displays utility tile grid', async ({ page, goto }) => {
     await goto('/', { waitUntil: 'hydration' })
 
-    // Data strip section is present
-    const dataStrip = page.locator('section[aria-label="Eclipse statistics"]')
-    await expect(dataStrip).toBeVisible()
-  })
+    // Tile grid section is present
+    const tilesSection = page.locator('section[aria-label="Quick links"]')
+    await expect(tilesSection).toBeVisible()
 
-  test('renders feature sections', async ({ page, goto }) => {
-    await goto('/', { waitUntil: 'hydration' })
-
-    // At least one feature item visible (numbered 01-04)
-    const featureNumbers = page.locator('text=01')
-    await expect(featureNumbers.first()).toBeVisible()
+    // At least three tiles render
+    const tiles = page.locator('[data-testid="home-tile"]')
+    await expect(tiles.first()).toBeVisible()
+    expect(await tiles.count()).toBeGreaterThanOrEqual(3)
   })
 
   test('email signup section is present', async ({ page, goto }) => {
