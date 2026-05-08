@@ -109,14 +109,14 @@ useHead({
                   <td class="py-2.5 pr-4 align-top text-ink-2">No (strictly necessary)</td>
                 </tr>
                 <tr class="border-b border-border-subtle/40">
-                  <td class="py-2.5 pr-4 align-top text-ink-1 font-medium"><code class="text-xs bg-surface px-1 py-0.5 rounded">eclipsechase-pro</code></td>
+                  <td class="py-2.5 pr-4 align-top text-ink-1 font-medium"><code class="text-xs bg-surface/[0.06] border border-border-subtle/40 px-1.5 py-0.5 rounded">eclipsechase-pro</code></td>
                   <td class="py-2.5 pr-4 align-top text-ink-2">Cookie</td>
                   <td class="py-2.5 pr-4 align-top text-ink-2">30 days</td>
                   <td class="py-2.5 pr-4 align-top text-ink-2">Caches Pro purchase status for offline access</td>
                   <td class="py-2.5 pr-4 align-top text-ink-2">No (strictly necessary)</td>
                 </tr>
                 <tr class="border-b border-border-subtle/40">
-                  <td class="py-2.5 pr-4 align-top text-ink-1 font-medium"><code class="text-xs bg-surface px-1 py-0.5 rounded">eclipsechase-consent</code></td>
+                  <td class="py-2.5 pr-4 align-top text-ink-1 font-medium"><code class="text-xs bg-surface/[0.06] border border-border-subtle/40 px-1.5 py-0.5 rounded">eclipsechase-consent</code></td>
                   <td class="py-2.5 pr-4 align-top text-ink-2">localStorage</td>
                   <td class="py-2.5 pr-4 align-top text-ink-2">Persistent</td>
                   <td class="py-2.5 pr-4 align-top text-ink-2">Stores user's cookie/analytics consent choice</td>
