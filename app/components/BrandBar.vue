@@ -213,7 +213,7 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
 }
 .masthead-lock {
   display: inline-block;
-  margin-left: 4px;
+  margin-left: -5px;
   font-size: 10px;
   filter: grayscale(0.4);
 }
