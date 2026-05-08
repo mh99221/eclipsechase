@@ -47,7 +47,7 @@ useHead(() => ({
 </script>
 
 <template>
-  <PageShell screen="home" width="wide">
+  <PageShell screen="home" width="reading">
     <div class="home-root">
       <!-- Compact hero — Starfield (dark only) + glyph + countdown + tagline.
            ~60vh on mobile so the tile grid peeks above the fold. -->

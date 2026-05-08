@@ -41,10 +41,7 @@ function onMapTileClick(e: MouseEvent) {
       :class="{ locked: !isPro }"
       @click="onMapTileClick"
     >
-      <span class="tile-eyebrow">
-        MAP
-        <span v-if="!isPro" class="tile-lock" aria-hidden="true">🔒</span>
-      </span>
+      <span class="tile-eyebrow">MAP<span v-if="!isPro" class="tile-lock" aria-hidden="true">🔒</span></span>
       <span class="tile-title">{{ t('v0.home.tile_map_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_map_body') }}</span>
     </NuxtLink>
@@ -81,7 +78,10 @@ function onMapTileClick(e: MouseEvent) {
   flex-direction: column;
   gap: 6px;
   padding: 18px 16px;
-  background: rgb(var(--surface));
+  /* --surface is a 255 255 255 RGB triplet meant to be used with alpha,
+     matching the convention in Card.vue, AdvisoryCard.vue, etc. Using it
+     without alpha rendered the tiles solid white in dark mode. */
+  background: rgb(var(--surface) / 0.04);
   border: 1px solid rgb(var(--border-subtle) / 0.4);
   border-radius: 4px;
   text-decoration: none;
@@ -91,7 +91,7 @@ function onMapTileClick(e: MouseEvent) {
 }
 .tile:hover {
   border-color: rgb(var(--border-subtle) / 0.8);
-  background: rgb(var(--surface-raised));
+  background: rgb(var(--surface) / 0.08);
 }
 .tile.locked { color: rgb(var(--ink-2)); }
 .tile-accent {
@@ -112,8 +112,9 @@ function onMapTileClick(e: MouseEvent) {
 }
 .tile-lock {
   display: inline-block;
-  margin-left: 6px;
+  margin-left: 3px;
   font-size: 10px;
+  vertical-align: middle;
 }
 .tile-title {
   font-family: 'Inter Tight', system-ui, sans-serif;

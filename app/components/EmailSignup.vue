@@ -26,7 +26,7 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="w-full max-w-lg mx-auto">
+  <div class="email-signup w-full" :class="props.compact ? 'is-compact' : 'max-w-lg mx-auto'">
     <!-- Success state -->
     <div
       v-if="status === 'success'"
@@ -112,3 +112,32 @@ async function handleSubmit() {
     </form>
   </div>
 </template>
+
+<style scoped>
+/* Compact variant: tighten input + button for the slim Home email row.
+   Default (non-compact) styling is unchanged. */
+.email-signup.is-compact :deep(input[type="email"]) {
+  padding: 10px 14px;
+  font-size: 14px;
+}
+.email-signup.is-compact :deep(button[type="submit"]) {
+  padding: 10px 18px;
+  font-size: 12px;
+}
+.email-signup.is-compact :deep(button[type="submit"] svg) {
+  width: 14px;
+  height: 14px;
+}
+.email-signup.is-compact :deep(.text-status-green) {
+  font-size: 14px;
+}
+.email-signup.is-compact :deep(.inline-flex.w-16.h-16) {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 8px;
+}
+.email-signup.is-compact :deep(.inline-flex.w-16.h-16 svg) {
+  width: 20px;
+  height: 20px;
+}
+</style>
