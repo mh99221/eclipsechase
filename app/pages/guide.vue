@@ -156,6 +156,10 @@ function scrollTo(id: string) {
 }
 
 .guide-content :deep(h2) {
+  /* TOC chips use scrollIntoView() — without this offset the H2 lands
+     under the fixed BrandBar (60px + safe-area + 14px). Match the
+     PageShell top-padding calc + a 24px breathing buffer. */
+  scroll-margin-top: calc(60px + max(env(safe-area-inset-top), 14px) + 24px);
   font-family: 'Inter Tight', system-ui, sans-serif;
   font-size: 19px;
   font-weight: 700;
