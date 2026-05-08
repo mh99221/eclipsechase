@@ -57,6 +57,18 @@ function onMapTileClick(e: MouseEvent) {
       <span class="tile-title">{{ t('v0.home.tile_pro_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_pro_body') }}</span>
     </NuxtLink>
+
+    <NuxtLink
+      v-else
+      data-testid="home-tile"
+      data-testid-extra="home-tile-dashboard"
+      to="/dashboard"
+      class="tile tile-accent"
+    >
+      <span class="tile-eyebrow">DASHBOARD</span>
+      <span class="tile-title">{{ t('v0.home.tile_dashboard_title') }}</span>
+      <span class="tile-body">{{ t('v0.home.tile_dashboard_body') }}</span>
+    </NuxtLink>
   </div>
 </template>
 

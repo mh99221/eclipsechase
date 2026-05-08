@@ -28,13 +28,15 @@ describe('HomeTileGrid', () => {
     expect(wrapper.find('[data-testid-extra="home-tile-map"]').classes()).toContain('locked')
   })
 
-  it('renders 3 tiles for Pro users (no Get Pro), Map unlocked', async () => {
+  it('renders 4 tiles for Pro users with Dashboard replacing Get Pro, Map unlocked', async () => {
     vi.mocked(useProStatus).mockReturnValue({
       isPro: ref(true), loading: ref(false), checkStatus: vi.fn(), clearPro: vi.fn(),
     } as any)
     const wrapper = await mountSuspended(HomeTileGrid)
-    expect(wrapper.findAll('[data-testid="home-tile"]')).toHaveLength(3)
+    expect(wrapper.findAll('[data-testid="home-tile"]')).toHaveLength(4)
     expect(wrapper.find('[data-testid-extra="home-tile-pro"]').exists()).toBe(false)
+    expect(wrapper.find('[data-testid-extra="home-tile-dashboard"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid-extra="home-tile-dashboard"]').attributes('href')).toBe('/dashboard')
     expect(wrapper.find('[data-testid-extra="home-tile-map"]').classes()).not.toContain('locked')
   })
 })
