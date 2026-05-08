@@ -36,9 +36,6 @@ export function useNavItems() {
   function isActive(to: string): boolean {
     if (to === '/spots') return route.path.startsWith('/spots')
     if (to === '/me') return route.path.startsWith('/me')
-    if (to === '/' || to === '/dashboard') {
-      return route.path === '/' || route.path === '/dashboard'
-    }
     return route.path === to
   }
 
