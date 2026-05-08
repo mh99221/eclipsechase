@@ -27,7 +27,9 @@
       "tile_dashboard_title": "Your dashboard",
       "tile_dashboard_body": "Countdown · top spots · prep checklist",
       "email_title": "Launch reminders",
-      "nav_get_pro": "Get Pro"
+      "nav_get_pro": "Get Pro",
+      "nav_restore": "Endurheimta",
+      "nav_restore_aria": "Endurheimta áður keypt Pro-aðgang"
     }
   },
   "historical": {

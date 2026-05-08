@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { cloudToStatus, type V0Status } from '~/utils/v0'
 
-defineProps<{
+const props = defineProps<{
   /** Each entry corresponds to one Aug-12 historical year's cloud-cover %. */
   years: Array<{ year: number; cloud_cover: number }>
   height?: number
@@ -18,6 +18,15 @@ const BAND: Record<V0Status, 'good' | 'warn' | 'bad'> = {
 function band(c: number): 'good' | 'warn' | 'bad' {
   return BAND[cloudToStatus(c)]
 }
+
+// Render legend chips only for bands that actually appear in the data.
+// Showing all three when the dataset only has two (e.g. spot has zero
+// "bad" years) misleads the reader — they think a colour is missing.
+const usedBands = computed(() => {
+  const set = new Set<'good' | 'warn' | 'bad'>()
+  for (const y of props.years) set.add(band(y.cloud_cover))
+  return set
+})
 </script>
 
 <template>
@@ -38,9 +47,9 @@ function band(c: number): 'good' | 'warn' | 'bad' {
       </div>
     </div>
     <div class="legend">
-      <span class="lg-good">● &lt;40% clear</span>
-      <span class="lg-warn">● 40–70%</span>
-      <span class="lg-bad">● &gt;70%</span>
+      <span v-if="usedBands.has('good')" class="lg-good">● &lt;40% clear</span>
+      <span v-if="usedBands.has('warn')" class="lg-warn">● 40–70%</span>
+      <span v-if="usedBands.has('bad')" class="lg-bad">● &gt;70%</span>
     </div>
   </div>
 </template>

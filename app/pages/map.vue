@@ -754,7 +754,8 @@ const tileDownloading = ref(false)
 const tileProgress = ref({ loaded: 0, total: 0 })
 const tileProgressPct = computed(() => {
   const { loaded, total } = tileProgress.value
-  return total > 0 ? Math.round((loaded / total) * 100) : 0
+  // Cap at 100 — see OfflineManager.vue; raw count can outrun the estimate.
+  return total > 0 ? Math.min(100, Math.round((loaded / total) * 100)) : 0
 })
 const offlineManagerMobile = ref<any>(null)
 const offlineManagerDesktop = ref<any>(null)
@@ -875,8 +876,16 @@ const profileIcons: Record<ProfileId, string> = {
       </template>
     </ClientOnly>
 
-    <!-- v0 mobile chrome — chip stack at top, dock at bottom. -->
-    <div class="mobile-chip-anchor">
+    <!-- v0 mobile chrome — chip stack at top, dock at bottom.
+         Both the mobile and desktop MapChipStack instances live in the
+         DOM (CSS swaps them by breakpoint). We mark whichever isn't
+         visually active as aria-hidden + inert so screen readers and
+         keyboard users only see one set of filters at a time. -->
+    <div
+      class="mobile-chip-anchor"
+      aria-hidden="false"
+      data-variant="mobile"
+    >
       <MapChipStack
         :selected-profile="selectedProfile"
         :show-weather="showWeatherV0"
@@ -944,19 +953,23 @@ const profileIcons: Record<ProfileId, string> = {
       @close="onDockClose"
     />
 
-    <!-- ═══ Desktop top-right: profile selector + layer toggles, stacked ═══ -->
-    <MapChipStack
-      variant="topright"
-      rows="all"
-      :selected-profile="selectedProfile"
-      :show-weather="showWeatherV0"
-      :show-traffic="showTraffic"
-      :show-cameras="showCameras"
-      @update:selected-profile="selectedProfile = $event; if (selectedProfile) requestGps()"
-      @update:show-weather="showWeatherV0 = $event"
-      @update:show-traffic="showTraffic = $event"
-      @update:show-cameras="showCameras = $event"
-    />
+    <!-- ═══ Desktop top-right: profile selector + layer toggles, stacked ═══
+         Wrapped so the desktop instance can carry its own data-variant /
+         aria-hidden coordination with the mobile instance above. -->
+    <div class="desktop-chip-anchor" data-variant="desktop">
+      <MapChipStack
+        variant="topright"
+        rows="all"
+        :selected-profile="selectedProfile"
+        :show-weather="showWeatherV0"
+        :show-traffic="showTraffic"
+        :show-cameras="showCameras"
+        @update:selected-profile="selectedProfile = $event; if (selectedProfile) requestGps()"
+        @update:show-weather="showWeatherV0 = $event"
+        @update:show-traffic="showTraffic = $event"
+        @update:show-cameras="showCameras = $event"
+      />
+    </div>
 
     <!-- ═══ Desktop top-right status stack — weather freshness only ═══ -->
     <MapStatusStack
@@ -1228,7 +1241,11 @@ const profileIcons: Record<ProfileId, string> = {
 
 <style scoped>
 /* Mobile-only chrome anchors. Component-level visibility (vs. Tailwind
-   `md:hidden`) so the layout is robust to JIT-utility quirks in dev. */
+   `md:hidden`) so the layout is robust to JIT-utility quirks in dev.
+   The inactive breakpoint variant is `display: none`, which removes
+   it from layout, the focus order, and the accessibility tree — so
+   keyboard users and screen readers only encounter one MapChipStack
+   even though both render in the template. */
 .mobile-chip-anchor {
   position: absolute;
   top: 72px;
@@ -1236,6 +1253,11 @@ const profileIcons: Record<ProfileId, string> = {
   right: 0;
   z-index: 10;
   pointer-events: none;
+}
+/* Hide the desktop chip stack on mobile (the existing rule below at
+   line 1289 hides the mobile chip stack on tablet+). */
+@media (max-width: 767px) {
+  .desktop-chip-anchor { display: none; }
 }
 /* Banner sits below both the mobile chip stack (top 72 + ~70 px) and
    the desktop topright chip stack (top 84 + ~70 px). 160 clears both
@@ -1287,6 +1309,17 @@ const profileIcons: Record<ProfileId, string> = {
   transform: scale(1.18);
   transition: box-shadow 0.18s ease, transform 0.18s ease;
   z-index: 3;
+}
+
+/* Light theme — Mapbox swaps to light tiles, so the cloud-cover SVG
+   glyphs (greens/ambers/reds) wash out on cream. Add a subtle dark
+   drop-shadow halo so each marker reads as a distinct mark on the
+   warmer base map. The dark theme keeps its existing glow. */
+html.light .station-marker,
+html.light .spot-marker,
+html.light .traffic-marker,
+html.light .camera-marker {
+  filter: drop-shadow(0 0 1px rgba(17, 20, 28, 0.55));
 }
 
 /* Re-anchor Mapbox's bottom controls to bottom-center so the legend +

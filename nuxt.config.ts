@@ -92,6 +92,14 @@ export default defineNuxtConfig({
     '/pro': { ssr: true },
     '/privacy': { prerender: true },
     '/terms': { prerender: true },
+    // Pro-gated routes render client-only — Pro status lives in the
+    // browser's IndexedDB (RS256 JWT), so the server can't know who is
+    // entitled. SPA-rendering them lets pro-gate middleware redirect
+    // free users to /pro before any gated markup is painted, killing
+    // the "flash of dashboard content" bug.
+    '/dashboard': { ssr: false },
+    '/map': { ssr: false },
+    '/me': { ssr: false },
     '/spots': {
       ssr: true,
       headers: {

@@ -177,7 +177,7 @@ const headerSub = computed(() => {
 
     <div class="spots-list">
       <SpotCard
-        v-for="item in displayItems"
+        v-for="(item, i) in displayItems"
         :key="item.spot.id"
         :slug="item.spot.slug"
         :name="item.spot.name"
@@ -186,6 +186,7 @@ const headerSub = computed(() => {
         :cloud="cloudFor(item.spot)"
         :hero-filename="heroFilenameFor(item.spot)"
         :hero-alt="heroAltFor(item.spot)"
+        :eager="i < 4"
         :class="{ 'is-filtered': item.filtered }"
       />
     </div>

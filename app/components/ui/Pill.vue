@@ -31,6 +31,19 @@ defineProps<{
   border: 1px solid rgb(var(--border-subtle) / 0.08);
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
+/* Light theme: small mono caps at 0.62 alpha on cream falls below
+   WCAG AA (~3.6:1). Bump alpha + border so unselected pills stay
+   legible against the cream paper background. */
+html.light .pill {
+  color: rgb(var(--ink-1) / 0.85);
+  border-color: rgb(var(--border-subtle) / 0.28);
+  background: rgb(var(--ink-1) / 0.04);
+}
+html.light .pill[data-active='true'] {
+  color: rgb(var(--accent-ink));
+  background: rgb(var(--accent));
+  border-color: rgb(var(--accent));
+}
 .pill[data-size='sm'] { padding: 6px 10px; font-size: 10px; letter-spacing: 0.1em; }
 .pill[data-size='md'] { padding: 6px 12px; font-size: 11px; letter-spacing: 0.045em; }
 

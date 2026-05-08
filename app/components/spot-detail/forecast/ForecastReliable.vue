@@ -207,6 +207,15 @@ const showClimatologyDisclaimer = computed(() => phase.value === 'climatology')
   color: rgb(var(--ink-1) / 0.62);
   margin-bottom: 8px;
 }
+/* Sentence-case hint sits in the same row but reads as a description,
+   not part of the eyebrow label. Counter the parent's uppercase. */
+.next-disclaimer {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: rgb(var(--ink-1) / 0.45);
+}
 .next-disclaimer {
   text-transform: none;
   letter-spacing: 0;

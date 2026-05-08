@@ -98,6 +98,21 @@ function retry() {
   code.value = ['', '', '', '', '', '']
   state.value = 'email_input'
 }
+
+// Deep-link from BrandBar: when the URL hash is #restore, auto-advance
+// past the idle link so users who arrived via "Restore" land directly
+// on the email field. Skip if the user is already mid-flow.
+const route = useRoute()
+const emailInputRef = ref<HTMLInputElement | null>(null)
+function maybeAutoExpand() {
+  if (!import.meta.client) return
+  if (route.hash !== '#restore') return
+  if (state.value !== 'idle') return
+  state.value = 'email_input'
+  nextTick(() => emailInputRef.value?.focus())
+}
+onMounted(maybeAutoExpand)
+watch(() => route.hash, maybeAutoExpand)
 </script>
 
 <template>
@@ -125,6 +140,7 @@ function retry() {
         </p>
         <div class="flex gap-2">
           <input
+            ref="emailInputRef"
             v-model="email"
             type="email"
             placeholder="you@example.com"

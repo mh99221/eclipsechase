@@ -57,6 +57,8 @@ const tabs = computed<Array<{ k: SortKey; l: string }>>(() => ([
   transition: background 0.15s, color 0.15s, border-color 0.15s;
   min-height: 44px;
 }
+/* Light theme contrast bump — see Pill.vue for the same reasoning. */
+html.light .tab { color: rgb(var(--ink-1) / 0.78); }
 .tab[data-active='true'] {
   background: rgb(var(--surface) / 0.04);
   color: rgb(var(--accent));

@@ -166,8 +166,12 @@ function scrollTo(id: string) {
   color: rgb(var(--ink-1));
   margin-top: 36px;
   margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
+  /* Replace bottom border (read as a link underline) with a left
+     accent rail — clearly a section heading, not a hyperlink. */
+  padding-bottom: 0;
+  padding-left: 12px;
+  border-left: 3px solid rgb(var(--accent));
+  border-bottom: 0;
   letter-spacing: -0.005em;
 }
 .guide-content :deep(h2:first-of-type) { margin-top: 0; }

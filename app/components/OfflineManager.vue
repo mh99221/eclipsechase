@@ -26,12 +26,21 @@ const isCancelled = ref(false)
 const isDismissed = ref(false)
 const isCachingData = ref(false)
 const dataCached = ref(false)
-const progress = computed(() => totalTiles.value > 0 ? Math.round((loadedTiles.value / totalTiles.value) * 100) : 0)
+// Cap at 100% — Mapbox can auto-fetch tiles outside our explicit bounds
+// (e.g. neighbours of the visible viewport), so the SW-side `tileCount`
+// occasionally outruns `ESTIMATED_TILE_COUNT`. Showing 103% looks broken
+// even though the cache is fine.
+const progress = computed(() => totalTiles.value > 0
+  ? Math.min(100, Math.round((loadedTiles.value / totalTiles.value) * 100))
+  : 0,
+)
 const estimatedTileCount = ESTIMATED_TILE_COUNT
 // Treat >10% as "has cached tiles" (handles partial/cancelled downloads).
 const hasCachedTiles = computed(() => tileCount.value > estimatedTileCount * 0.1)
 const cachedTilesPct = computed(() =>
-  estimatedTileCount > 0 ? Math.round((tileCount.value / estimatedTileCount) * 100) : 0,
+  estimatedTileCount > 0
+    ? Math.min(100, Math.round((tileCount.value / estimatedTileCount) * 100))
+    : 0,
 )
 
 const hasCachedWeather = computed(() => !!cacheAges.value['/api/weather/cloud-cover'])

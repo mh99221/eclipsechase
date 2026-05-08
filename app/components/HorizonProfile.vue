@@ -138,10 +138,16 @@ const trajectoryPath = computed(() => {
   return segments.join(' ')
 })
 
-// Time labels along the trajectory (show full hours only)
+// Time labels along the trajectory (show full hours only). Skip any
+// label that would render under the sun marker (its outermost halo is
+// r=18, so we leave a 22 px clearance on x). Labels too close to the
+// sun get squashed beneath it because the sun is drawn last.
 const trajectoryTimeLabels = computed(() => {
   const pts = sunTrajectory.value
   if (!pts.length) return []
+
+  const sunCenterX = sunX.value
+  const SUN_HALO_GUARD_PX = 22
 
   const labels: Array<{ x: number; y: number; label: string }> = []
   for (const p of pts) {
@@ -152,6 +158,8 @@ const trajectoryTimeLabels = computed(() => {
     const y = altitudeToY(Math.max(p.altitude, 0))
     // Skip if too close to edges
     if (x < PADDING.left + 20 || x > props.width - PADDING.right - 20) continue
+    // Skip if the label would collide with the sun marker.
+    if (Math.abs(x - sunCenterX) < SUN_HALO_GUARD_PX) continue
     labels.push({ x, y, label: formatUtcTime(p.utcHours) })
   }
   return labels
@@ -396,4 +404,15 @@ const ariaLabel = computed(() => {
 html.light .grid-line     { stroke: rgba(42, 31, 20, 0.08); }
 html.light .altitude-label,
 html.light .compass-label { fill: #8b7d7d; }
+
+/* Halo for in-chart text — keeps labels legible even if a future
+   element overlaps them (e.g. trajectory time tick getting close to a
+   compass label). `paint-order: stroke` paints the stroke first so the
+   fill sits crisply on top of a soft scrim. */
+svg text {
+  paint-order: stroke fill;
+  stroke: rgb(var(--horizon-sky-bottom) / 0.55);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
 </style>

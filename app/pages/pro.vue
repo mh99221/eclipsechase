@@ -197,8 +197,11 @@ const compareSections: Array<{ titleKey: string; rows: CompareRow[] }> = [
         <p class="price-stripe-note">{{ t('pro.stripe_note') }}</p>
       </div>
 
-      <!-- Restore Purchase -->
-      <RestorePurchase />
+      <!-- Restore Purchase — `#restore` anchor target so the BrandBar
+           "Restore" link can deep-link straight here from any page. -->
+      <section id="restore" class="restore-anchor">
+        <RestorePurchase />
+      </section>
     </div>
 
     <AppFooter />

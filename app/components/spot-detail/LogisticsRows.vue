@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { SPOT_TYPE_LABELS } from '~/utils/eclipse'
+
 const props = defineProps<{
   /** Raw spot row — only the relevant fields are read. */
   spot: {
@@ -29,7 +31,7 @@ const rows = computed(() => {
   }
   if (props.spot.cell_coverage) r.push(['Signal',    coverageLabels[props.spot.cell_coverage] ?? props.spot.cell_coverage])
   if (props.spot.terrain_notes) r.push(['Terrain',   props.spot.terrain_notes])
-  if (props.spot.spot_type)     r.push(['Access',    props.spot.spot_type])
+  if (props.spot.spot_type)     r.push(['Access',    SPOT_TYPE_LABELS[props.spot.spot_type] ?? props.spot.spot_type])
   return r
 })
 </script>

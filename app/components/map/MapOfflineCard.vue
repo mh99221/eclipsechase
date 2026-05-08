@@ -93,6 +93,11 @@ defineExpose({
     border-radius: 6px;
     overflow: hidden;
     width: 256px;
+    /* Smooth out the layout shift when the dock-popup appears next to
+       this card (the bottom-left anchor in /map repositions). Animating
+       transform is GPU-accelerated, unlike `bottom`. */
+    transition: transform 200ms ease-out, opacity 200ms ease-out;
+    will-change: transform;
   }
 }
 .offline-toggle {

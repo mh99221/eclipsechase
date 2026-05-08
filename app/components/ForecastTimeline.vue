@@ -50,6 +50,33 @@ function timelineColor(cover: number | null): string {
 function cloudLabel(cover: number | null): string {
   return cloudLevel(cover).label
 }
+
+// Hour-tick labels every 6h (00 / 06 / 12 / 18 UTC) plus the day
+// boundary so the timeline reads as a clock, not just two endpoints.
+// Skipped if the dataset is too short for ticks to be useful.
+interface TickPoint {
+  index: number      // index into props.forecasts
+  label: string      // "06" / "12" / etc.
+  isMidnight: boolean
+}
+const xAxisTicks = computed<TickPoint[]>(() => {
+  if (props.forecasts.length < 8) return []
+  const ticks: TickPoint[] = []
+  for (let i = 0; i < props.forecasts.length; i++) {
+    const fc = props.forecasts[i]!
+    const d = new Date(fc.valid_time)
+    const h = d.getUTCHours()
+    const m = d.getUTCMinutes()
+    if (m !== 0) continue
+    if (h % 6 !== 0) continue
+    ticks.push({
+      index: i,
+      label: String(h).padStart(2, '0'),
+      isMidnight: h === 0,
+    })
+  }
+  return ticks
+})
 </script>
 
 <template>
@@ -58,14 +85,15 @@ function cloudLabel(cover: number | null): string {
       {{ t('forecast.timeline_title') }}
     </p>
 
-    <div class="flex gap-0.5 items-end h-12">
+    <div class="timeline-bars flex gap-0.5 items-end h-12 relative">
+      <!-- Bars + their day-boundary gridline overlay -->
       <div
-        v-for="fc in forecasts"
+        v-for="(fc, i) in forecasts"
         :key="fc.valid_time"
         class="flex-1 min-w-0 relative group"
+        :class="{ 'is-midnight-tick': xAxisTicks.find(t => t.index === i)?.isMidnight }"
         :title="`${formatHour(fc.valid_time)}: ${fc.cloud_cover ?? '?'}% — ${cloudLabel(fc.cloud_cover)}`"
       >
-        <!-- Bar -->
         <div
           class="w-full rounded-t transition-all"
           :class="isEclipseWindow(fc.valid_time) ? 'ring-1 ring-accent/50' : ''"
@@ -78,8 +106,23 @@ function cloudLabel(cover: number | null): string {
       </div>
     </div>
 
-    <!-- Time labels (first, eclipse, last) -->
-    <div class="flex justify-between text-[9px] font-mono text-ink-3/70">
+    <!-- X-axis: hour ticks every 6h. Falls back to first/last when the
+         dataset is shorter than ~8 slots (xAxisTicks empty). -->
+    <div v-if="xAxisTicks.length" class="x-axis flex relative">
+      <div
+        v-for="(_, i) in forecasts"
+        :key="forecasts[i]!.valid_time + '-tick'"
+        class="flex-1 min-w-0 text-[9px] font-mono text-center"
+      >
+        <span
+          v-if="xAxisTicks.find(t => t.index === i)"
+          :class="xAxisTicks.find(t => t.index === i)!.isMidnight
+            ? 'text-ink-3 font-semibold'
+            : 'text-ink-3/60 font-normal'"
+        >{{ xAxisTicks.find(t => t.index === i)!.label }}</span>
+      </div>
+    </div>
+    <div v-else class="flex justify-between text-[9px] font-mono text-ink-3/70">
       <span>{{ formatHour(forecasts[0].valid_time) }}</span>
       <span
         v-if="forecasts.some(f => isEclipseWindow(f.valid_time))"
@@ -112,3 +155,23 @@ function cloudLabel(cover: number | null): string {
     {{ t('forecast.no_data') }}
   </div>
 </template>
+
+<style scoped>
+/* Vertical day-boundary marker on the bar that sits at midnight UTC.
+   Drawn as a left edge so the day handoff reads as a clear gutter,
+   not a stripe across the bar's body. */
+.timeline-bars .is-midnight-tick::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: -2px;
+  bottom: -2px;
+  width: 1px;
+  background: rgb(var(--ink-1) / 0.18);
+  pointer-events: none;
+}
+
+/* X-axis labels share the bar grid so each tick lines up with its
+   bar's center column; just a thin top spacer. */
+.x-axis { margin-top: 4px; }
+</style>

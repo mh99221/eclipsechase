@@ -10,6 +10,9 @@ const props = defineProps<{
   cloud: number | null
   heroFilename: string | null
   heroAlt?: string
+  /** Above-the-fold cards: paint immediately, hint the loader. The first
+   *  ~4 cards on /spots set this; everything below stays lazy. */
+  eager?: boolean
 }>()
 
 const status = computed(() => cloudToStatus(props.cloud))
@@ -24,6 +27,11 @@ const heroSrcset = computed(() => {
 
 <template>
   <NuxtLink :to="`/spots/${slug}`" class="spot-card" :aria-label="`${name} — ${formatDuration(durationSeconds)} totality, ${cloudLabel}`">
+    <!-- Always paint a fallback gradient first so the card never shows
+         page bg through the border while the hero image is loading. The
+         <img> above stacks on top once decoded; if heroSrc is missing,
+         the gradient is the entire surface. -->
+    <div class="spot-card-fallback" aria-hidden="true" />
     <img
       v-if="heroSrc"
       :src="heroSrc"
@@ -31,11 +39,12 @@ const heroSrcset = computed(() => {
       sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 360px"
       :alt="heroAlt || name"
       class="spot-card-img"
-      loading="lazy"
+      :loading="eager ? 'eager' : 'lazy'"
+      :fetchpriority="eager ? 'high' : 'auto'"
+      decoding="async"
       width="600"
       height="160"
     />
-    <div v-else class="spot-card-fallback" aria-hidden="true" />
     <div class="spot-card-veil" aria-hidden="true" />
 
     <div class="spot-card-region-badge">{{ regionLabel(region).toUpperCase() }}</div>

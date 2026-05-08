@@ -31,7 +31,14 @@ const scoreLabel = computed(() => score.value == null ? '—' : String(score.val
     <div class="strip">
       <DockStat label="Totality" :value="totalityLabel" tone="totality" mono />
       <DockStat label="Cloud" :value="cloudLabel" />
-      <DockStat label="Score" :value="scoreLabel" :tone="status" />
+      <!-- `title` makes the score self-documenting on hover (desktop)
+           and long-press (mobile). 0–100, derived from cloud cover —
+           higher = clearer. -->
+      <div
+        :title="`Score 0–100. Higher = clearer. Derived from forecast cloud cover (100 − cloud %). Today: ${scoreLabel}.`"
+      >
+        <DockStat label="Score ⓘ" :value="scoreLabel" :tone="status" />
+      </div>
     </div>
 
     <div class="actions">

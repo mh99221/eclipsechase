@@ -1,0 +1,47 @@
+{
+  "defaults": {
+    "standard": "WCAG2AA",
+    "timeout": 30000,
+    "wait": 800,
+    "chromeLaunchConfig": {
+      "args": [
+        "--no-sandbox",
+        "--disable-setuid-sandbox"
+      ]
+    },
+    "ignore": [
+      "WCAG2AA.Principle1.Guideline1_3.1_3_1.H49.AlignAttr",
+      "css-parsing-error"
+    ],
+    "hideElements": ".mapboxgl-canvas, .mapboxgl-control-container, .starfield, [aria-hidden=\"true\"]",
+    "viewport": {
+      "width": 375,
+      "height": 812
+    }
+  },
+  "urls": [
+    "http://localhost:3000/",
+    "http://localhost:3000/spots",
+    "http://localhost:3000/spots/akranes-lighthouse",
+    "http://localhost:3000/guide",
+    "http://localhost:3000/pro",
+    "http://localhost:3000/privacy",
+    "http://localhost:3000/terms",
+    "http://localhost:3000/credits",
+    {
+      "url": "http://localhost:3000/this-doesnt-exist"
+    },
+    {
+      "url": "http://localhost:3000/spots",
+      "viewport": { "width": 1280, "height": 800 }
+    },
+    {
+      "url": "http://localhost:3000/guide",
+      "viewport": { "width": 1280, "height": 800 }
+    },
+    {
+      "url": "http://localhost:3000/pro",
+      "viewport": { "width": 1280, "height": 800 }
+    }
+  ]
+}

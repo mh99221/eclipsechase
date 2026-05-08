@@ -73,39 +73,51 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
         <BrandLogo />
       </NuxtLink>
 
-      <ClientOnly>
-        <nav class="masthead" aria-label="Primary">
-          <NuxtLink
-            v-for="item in navItems"
-            :key="item.to + item.icon"
-            :to="item.locked ? '#' : item.to"
-            class="masthead-link"
-            :class="{ active: isNavActive(item.to), locked: item.locked }"
-            :aria-current="isNavActive(item.to) ? 'page' : undefined"
-            :aria-disabled="item.locked || undefined"
-            @click="(e: MouseEvent) => onMastheadClick(item, e)"
-          >
-            {{ item.label }}
-            <span
-              v-if="item.locked"
-              :data-testid="`masthead-lock-${item.icon}`"
-              class="masthead-lock"
-              aria-hidden="true"
-            >🔒</span>
-          </NuxtLink>
-        </nav>
-      </ClientOnly>
+      <!-- Masthead renders in SSR so the bare-logo flash on hard reload
+           is gone. `useNavItems` reads `isPro` (default false on the
+           server), so the SSR pass paints the free-user view; if the
+           visitor is actually Pro, hydration just swaps Home's href
+           and removes the Map lock — no layout shift. -->
+      <nav class="masthead" aria-label="Primary">
+        <NuxtLink
+          v-for="item in navItems"
+          :key="item.to + item.icon"
+          :to="item.locked ? '#' : item.to"
+          class="masthead-link"
+          :class="{ active: isNavActive(item.to), locked: item.locked }"
+          :aria-current="isNavActive(item.to) ? 'page' : undefined"
+          :aria-disabled="item.locked || undefined"
+          @click="(e: MouseEvent) => onMastheadClick(item, e)"
+        >
+          {{ item.label }}
+          <span
+            v-if="item.locked"
+            :data-testid="`masthead-lock-${item.icon}`"
+            class="masthead-lock"
+            aria-hidden="true"
+          >🔒</span>
+        </NuxtLink>
+      </nav>
 
       <div class="brand-bar-right">
         <ClientOnly>
-          <NuxtLink
-            v-if="showFreeGetProPill"
-            data-testid="brandbar-get-pro"
-            to="/pro"
-            class="get-pro-pill"
-          >
-            {{ t('v0.home.nav_get_pro') }}
-          </NuxtLink>
+          <template v-if="showFreeGetProPill">
+            <NuxtLink
+              data-testid="brandbar-restore"
+              to="/pro#restore"
+              class="restore-link"
+              :aria-label="t('v0.home.nav_restore_aria')"
+            >
+              {{ t('v0.home.nav_restore') }}
+            </NuxtLink>
+            <NuxtLink
+              data-testid="brandbar-get-pro"
+              to="/pro"
+              class="get-pro-pill"
+            >
+              {{ t('v0.home.nav_get_pro') }}
+            </NuxtLink>
+          </template>
           <div v-else-if="isPro && !proLoading" class="flex items-center gap-3">
             <span class="hidden sm:inline font-mono text-[10px] text-accent/60 tracking-wider uppercase">
               {{ t('pro.badge', 'Pro') }}
@@ -234,4 +246,29 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
   transition: background 0.2s ease;
 }
 .get-pro-pill:hover { background: rgb(var(--accent-strong)); }
+
+/* Subordinate text link for returning Pro users — sits next to the
+   GET PRO pill, deep-links to /pro#restore. Same mono cap stack as the
+   masthead links so it reads as ambient nav, not a CTA. */
+.restore-link {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-1) / 0.62);
+  text-decoration: none;
+  min-height: 44px;
+  padding: 0 4px;
+  transition: color 0.2s ease;
+}
+.restore-link:hover { color: rgb(var(--ink-1)); }
+/* On <360 px the BrandBar gap gets tight. Drop the link letter-spacing
+   first; if the wordmark still pinches we can hide it on the smallest
+   phones via display:none here. */
+@media (max-width: 359px) {
+  .restore-link { letter-spacing: 0.06em; padding: 0 2px; }
+}
 </style>

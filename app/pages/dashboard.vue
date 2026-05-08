@@ -6,6 +6,12 @@ definePageMeta({ middleware: ['pro-gate'] })
 
 useHead({ title: 'Dashboard' })
 
+// Defense in depth: even with SSR off + middleware redirect, hold the
+// real markup behind `isPro` so a free user navigating SPA-style can
+// never glimpse the dashboard while the redirect is in flight.
+const { isPro, loading: proLoading } = useProStatus()
+const showContent = computed(() => isPro.value && !proLoading.value)
+
 useCountdown()
 
 // Weather data (lazy: render page immediately, show skeleton while loading)
@@ -27,40 +33,48 @@ const { t } = useI18n()
 
 <template>
   <PageShell screen="home">
-    <Eyebrow align="center" tone="accent" class="home-eyebrow">{{ t('v0.home.eyebrow') }}</Eyebrow>
+    <!-- Hold the real markup behind isPro so a free user can never glimpse
+         dashboard content while pro-gate's redirect to /pro is in flight.
+         Combined with `ssr: false` for /dashboard in nuxt.config, this
+         kills the "flash of dashboard content" on hard reloads. -->
+    <div v-if="showContent">
+      <Eyebrow align="center" tone="accent" class="home-eyebrow">{{ t('v0.home.eyebrow') }}</Eyebrow>
 
-    <CountdownGrid />
+      <CountdownGrid />
 
-    <section class="conditions">
-      <Eyebrow>{{ t('v0.home.best_conditions_now') }}</Eyebrow>
+      <section class="conditions">
+        <Eyebrow>{{ t('v0.home.best_conditions_now') }}</Eyebrow>
 
-      <div v-if="weatherLoading" class="conditions-card is-loading" aria-busy="true">
-        <div class="cell-l">
-          <div class="skeleton-line w-2/5" />
-          <div class="skeleton-line w-3/5" />
-        </div>
-      </div>
-
-      <div v-else-if="weatherBest" class="conditions-card">
-        <div class="cell-l">
-          <div class="conditions-name">{{ regionLabel(weatherBest.region) }}</div>
-          <div class="conditions-sub">
-            {{ weatherBest.avgCloudCover }}% cloud cover · {{ cloudLevel(weatherBest.avgCloudCover).label }}
+        <div v-if="weatherLoading" class="conditions-card is-loading" aria-busy="true">
+          <div class="cell-l">
+            <div class="skeleton-line w-2/5" />
+            <div class="skeleton-line w-3/5" />
           </div>
         </div>
-        <NuxtLink to="/map" class="conditions-cta">{{ t('v0.home.view_map_cta') }}</NuxtLink>
-      </div>
 
-      <div v-else class="conditions-card is-empty">
-        <div class="cell-l">
-          <div class="conditions-sub">Conditions unavailable.</div>
+        <div v-else-if="weatherBest" class="conditions-card">
+          <div class="cell-l">
+            <div class="conditions-name">{{ regionLabel(weatherBest.region) }}</div>
+            <div class="conditions-sub">
+              {{ weatherBest.avgCloudCover }}% cloud cover · {{ cloudLevel(weatherBest.avgCloudCover).label }}
+            </div>
+          </div>
+          <NuxtLink to="/map" class="conditions-cta">{{ t('v0.home.view_map_cta') }}</NuxtLink>
         </div>
-      </div>
-    </section>
 
-    <Checklist />
+        <div v-else class="conditions-card is-empty">
+          <div class="cell-l">
+            <div class="conditions-sub">Conditions unavailable.</div>
+          </div>
+        </div>
+      </section>
 
-    <ClientOnly><OfflineBanner /></ClientOnly>
+      <Checklist />
+
+      <ClientOnly><OfflineBanner /></ClientOnly>
+
+      <AppFooter />
+    </div>
   </PageShell>
 </template>
 

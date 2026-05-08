@@ -21,7 +21,7 @@ useHead({
         <section>
           <h2 class="font-display text-xl font-semibold text-ink-1 mb-3">1.1 Who we are</h2>
           <p>
-            EclipseChase.is is operated by Elite Consulting, s.r.o., registered in Slovakia ([IČO], [Address]). Contact: <a href="mailto:privacy@eclipsechase.is" class="text-accent hover:text-accent-strong transition-colors">privacy@eclipsechase.is</a>. We built this app to help visitors find clear skies for the August 12, 2026 total solar eclipse in Iceland.
+            EclipseChase.is is operated by Elite Consulting, s.r.o., registered in Slovakia (IČO: 45850763, Javorová 11, 921 01 Piešťany). Contact: <a href="mailto:privacy@eclipsechase.is" class="text-accent hover:text-accent-strong transition-colors">privacy@eclipsechase.is</a>. We built this app to help visitors find clear skies for the August 12, 2026 total solar eclipse in Iceland.
           </p>
         </section>
 
@@ -47,8 +47,8 @@ useHead({
                 </tr>
                 <tr class="border-b border-border-subtle/40">
                   <td class="py-2.5 pr-4 align-top text-ink-1 font-medium">Email address</td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">Pro purchase, Magic Link auth</td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">Purchase confirmation, authentication</td>
+                  <td class="py-2.5 pr-4 align-top text-ink-2">Pro purchase, account restoration</td>
+                  <td class="py-2.5 pr-4 align-top text-ink-2">Purchase confirmation, restoring Pro access on a new device via 6-digit code</td>
                   <td class="py-2.5 pr-4 align-top text-ink-2">Contract performance (Art. 6(1)(b))</td>
                 </tr>
                 <tr class="border-b border-border-subtle/40">
@@ -102,17 +102,10 @@ useHead({
               </thead>
               <tbody>
                 <tr class="border-b border-border-subtle/40">
-                  <td class="py-2.5 pr-4 align-top text-ink-1 font-medium">Supabase auth session</td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">Cookie</td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">Session</td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">Authentication for Pro users via Magic Link</td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">No (strictly necessary)</td>
-                </tr>
-                <tr class="border-b border-border-subtle/40">
-                  <td class="py-2.5 pr-4 align-top text-ink-1 font-medium"><code class="text-xs bg-surface/[0.06] border border-border-subtle/40 px-1.5 py-0.5 rounded">eclipsechase-pro</code></td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">Cookie</td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">30 days</td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">Caches Pro purchase status for offline access</td>
+                  <td class="py-2.5 pr-4 align-top text-ink-1 font-medium"><code class="text-xs bg-surface/[0.06] border border-border-subtle/40 px-1.5 py-0.5 rounded">activation_token</code></td>
+                  <td class="py-2.5 pr-4 align-top text-ink-2">IndexedDB (with localStorage fallback)</td>
+                  <td class="py-2.5 pr-4 align-top text-ink-2">Persistent until cleared</td>
+                  <td class="py-2.5 pr-4 align-top text-ink-2">RS256 JWT issued at purchase. Stored locally so the app proves Pro status offline; never sent to a server. Cleared on sign-out or restoration.</td>
                   <td class="py-2.5 pr-4 align-top text-ink-2">No (strictly necessary)</td>
                 </tr>
                 <tr class="border-b border-border-subtle/40">
@@ -153,8 +146,8 @@ useHead({
               <tbody>
                 <tr class="border-b border-border-subtle/40">
                   <td class="py-2.5 pr-4 align-top text-ink-1 font-medium">Supabase (EU)</td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">Email, auth tokens, purchase records</td>
-                  <td class="py-2.5 pr-4 align-top text-ink-2">Database hosting, authentication</td>
+                  <td class="py-2.5 pr-4 align-top text-ink-2">Email, hashed email, purchase records</td>
+                  <td class="py-2.5 pr-4 align-top text-ink-2">Database hosting (purchase records, signup list)</td>
                   <td class="py-2.5 pr-4 align-top text-ink-2"><a href="https://supabase.com/privacy" target="_blank" rel="noopener" class="text-accent hover:text-accent-strong transition-colors">supabase.com/privacy</a></td>
                 </tr>
                 <tr class="border-b border-border-subtle/40">
@@ -196,7 +189,7 @@ useHead({
         <section>
           <h2 class="font-display text-xl font-semibold text-ink-1 mb-3">1.5 How we use your data</h2>
           <ul class="list-disc list-outside ml-5 space-y-2">
-            <li>Email addresses: send launch notifications, eclipse updates, purchase confirmations, and Magic Link authentication emails</li>
+            <li>Email addresses: send launch notifications, eclipse updates, purchase confirmations, and 6-digit codes when restoring Pro access on a new device</li>
             <li>Payment records: fulfill Pro tier access and comply with Slovak tax/accounting requirements</li>
             <li>Analytics: understand which pages are useful, improve the app. No personal data, no profiling</li>
             <li>We never sell, rent, or share personal data with third parties for marketing</li>
@@ -209,7 +202,7 @@ useHead({
           <ul class="list-disc list-outside ml-5 space-y-2">
             <li>Email signups: retained until user unsubscribes or requests deletion</li>
             <li>Pro purchase records: retained for 10 years (Slovak accounting law requirement)</li>
-            <li>Authentication sessions: expire automatically, cleared on logout</li>
+            <li>Pro activation token (RS256 JWT): held only in your browser's IndexedDB / localStorage; cleared on sign-out. Server-side restore codes (6-digit OTP) expire after 15 minutes</li>
             <li>Weather/road data: transient server-side cache, refreshed every 15 minutes, no personal data</li>
             <li>Analytics: aggregated anonymous data, no personal data retained</li>
             <li>Server logs: retained by Vercel per their data processing agreement (typically 30 days). We do not independently store server logs.</li>
