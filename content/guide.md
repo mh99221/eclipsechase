@@ -7,18 +7,6 @@ description: 'Everything you need to plan your trip to see the August 12, 2026 t
 
 Your practical planning reference for August 12, 2026 — the only total solar eclipse to cross Iceland for the next 170 years.
 
-- [What's Happening](#whats-happening)
-- [The Path of Totality](#the-path-of-totality)
-- [Best Viewing Spots](#best-viewing-spots)
-- [Weather & Cloud Cover](#weather--cloud-cover)
-- [Getting There](#getting-there)
-- [What to Bring](#what-to-bring)
-- [Eclipse Day Timeline](#eclipse-day-timeline)
-- [FAQ](#faq)
-- [Sign Up](#sign-up)
-
----
-
 ## What's Happening
 
 On **August 12, 2026**, a total solar eclipse will cross Iceland — the only easily accessible land in the path of totality. For roughly two minutes, the moon will completely block the sun, turning day into twilight and revealing the sun's corona with the naked eye.

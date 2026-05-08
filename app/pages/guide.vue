@@ -41,7 +41,7 @@ const toc = [
   { id: 'whats-happening',     label: "What's happening" },
   { id: 'the-path-of-totality', label: 'Path of totality' },
   { id: 'best-viewing-spots',  label: 'Best spots' },
-  { id: 'weather--cloud-cover', label: 'Weather' },
+  { id: 'weather-cloud-cover', label: 'Weather' },
   { id: 'getting-there',       label: 'Getting there' },
   { id: 'what-to-bring',       label: 'What to bring' },
   { id: 'eclipse-day-timeline', label: 'Day timeline' },
@@ -311,35 +311,6 @@ function scrollTo(id: string) {
   background: linear-gradient(to right, transparent, rgb(var(--border-subtle) / 0.16), transparent);
   margin: 36px 0;
 }
-
-/* In-content TOC (first ul, from the markdown) — keep it but restyle. */
-.guide-content :deep(> ul:first-of-type) {
-  list-style: none;
-  padding: 14px 16px;
-  margin: 0 0 24px;
-  background: rgb(var(--surface) / 0.04);
-  border: 1px solid rgb(var(--border-subtle) / 0.08);
-  border-radius: 8px;
-}
-.guide-content :deep(> ul:first-of-type li) {
-  margin-bottom: 6px;
-  padding-left: 0;
-}
-.guide-content :deep(> ul:first-of-type li::before) {
-  content: '→';
-  color: rgb(var(--accent) / 0.5);
-  margin-right: 10px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 11px;
-}
-.guide-content :deep(> ul:first-of-type li::marker) { content: ''; }
-.guide-content :deep(> ul:first-of-type a) {
-  text-decoration: none;
-  border-bottom: none;
-  color: rgb(var(--ink-1) / 0.85);
-  font-size: 14px;
-}
-.guide-content :deep(> ul:first-of-type a:hover) { color: rgb(var(--accent)); }
 
 /* Desktop overrides for the markdown content — placed after the base
    :deep rules so cascade favors them at viewports ≥ 768px. */
