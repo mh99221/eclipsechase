@@ -16,8 +16,7 @@
     "test:e2e": "playwright test",
     "test:all": "vitest run && playwright test",
     "lint:a11y": "pa11y-ci --config .pa11yci.json",
-    "lint:a11y:server": "nuxt build && nuxt preview",
-    "lint:a11y:ci": "start-server-and-test lint:a11y:server http-get://localhost:3000 lint:a11y",
+    "lint:a11y:ci": "node scripts/run-a11y-audit.mjs",
     "lint:placeholders": "node scripts/lint-placeholders.mjs"
   },
   "simple-git-hooks": {
@@ -56,7 +55,6 @@
     "pa11y-ci": "^4.0.1",
     "sharp": "^0.34.5",
     "simple-git-hooks": "^2.13.1",
-    "start-server-and-test": "^2.1.2",
     "vitest": "^4.1.0"
   }
 }

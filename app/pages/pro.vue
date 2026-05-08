@@ -117,26 +117,48 @@ const compareSections: Array<{ titleKey: string; rows: CompareRow[] }> = [
       <Card class="compare-card">
         <CardTitle>{{ t('v0.pro_compare.header') }}</CardTitle>
         <table class="compare-table">
+          <!--
+            WCAG H43 — when a table mixes column + rowgroup + row `th`s,
+            `scope` alone isn't sufficient: each <td> must point at the
+            specific <th>s it relates to via `headers`. We give every
+            <th> a stable id and reference all three (col / group / row)
+            on every <td>. Verified passing under pa11y-ci's WCAG2AA.
+          -->
           <thead>
             <tr>
-              <th />
-              <th scope="col">{{ t('v0.pro_compare.free_col') }}</th>
-              <th scope="col">{{ t('v0.pro_compare.pro_col') }}</th>
+              <!-- Corner cell isn't a header — keep it a <td> so pa11y's
+                   "every <th> must have an id" rule doesn't trip on a
+                   cell no <td> ever needs to reference. -->
+              <td aria-hidden="true" />
+              <th id="cmp-col-free" scope="col">{{ t('v0.pro_compare.free_col') }}</th>
+              <th id="cmp-col-pro" scope="col">{{ t('v0.pro_compare.pro_col') }}</th>
             </tr>
           </thead>
           <tbody>
             <template v-for="section in compareSections" :key="section.titleKey">
               <tr class="section-row">
-                <th scope="rowgroup" colspan="3">{{ t(`v0.pro_compare.${section.titleKey}`) }}</th>
+                <th
+                  :id="`cmp-grp-${section.titleKey}`"
+                  scope="rowgroup"
+                  colspan="3"
+                >{{ t(`v0.pro_compare.${section.titleKey}`) }}</th>
               </tr>
               <tr v-for="row in section.rows" :key="row.key">
-                <th scope="row" class="row-l">{{ t(`v0.pro_compare.${row.key}`) }}</th>
-                <td class="row-v" :data-state="row.free ? 'yes' : 'no'">
+                <th :id="`cmp-row-${row.key}`" scope="row" class="row-l">{{ t(`v0.pro_compare.${row.key}`) }}</th>
+                <td
+                  class="row-v"
+                  :headers="`cmp-col-free cmp-grp-${section.titleKey} cmp-row-${row.key}`"
+                  :data-state="row.free ? 'yes' : 'no'"
+                >
                   <span :aria-label="row.free ? t('v0.pro_compare.included') : t('v0.pro_compare.not_included')">
                     {{ row.free ? '✓' : '—' }}
                   </span>
                 </td>
-                <td class="row-v" :data-state="row.pro ? 'yes' : 'no'">
+                <td
+                  class="row-v"
+                  :headers="`cmp-col-pro cmp-grp-${section.titleKey} cmp-row-${row.key}`"
+                  :data-state="row.pro ? 'yes' : 'no'"
+                >
                   <span :aria-label="row.pro ? t('v0.pro_compare.included') : t('v0.pro_compare.not_included')">
                     {{ row.pro ? '✓' : '—' }}
                   </span>
