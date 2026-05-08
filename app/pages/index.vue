@@ -80,6 +80,11 @@ useHead(() => ({
         <NuxtLink to="/terms">{{ t('footer.terms') }}</NuxtLink>
         <span aria-hidden="true">·</span>
         <NuxtLink to="/credits">{{ t('footer.credits') }}</NuxtLink>
+        <span aria-hidden="true">·</span>
+        <a
+          href="mailto:support@eclipsechase.is?subject=EclipseChase%20issue&body=Page%3A%20%0A%0AWhat%20happened%3A%20%0A%0AExpected%3A%20"
+          rel="noopener"
+        >{{ t('footer.report_issue') }}</a>
       </footer>
     </div>
   </PageShell>

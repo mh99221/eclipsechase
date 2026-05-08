@@ -283,7 +283,8 @@
     "privacy": "Privacy",
     "about": "About",
     "terms": "Terms",
-    "credits": "Credits"
+    "credits": "Credits",
+    "report_issue": "Report an issue"
   },
   "cookie": {
     "banner_text": "We use essential cookies for authentication. We also use Umami for anonymous analytics, which requires your consent.",

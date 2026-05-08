@@ -142,7 +142,8 @@
     "privacy": "Persónuvernd",
     "about": "Um okkur",
     "terms": "Skilmálar",
-    "credits": "Þakkir"
+    "credits": "Þakkir",
+    "report_issue": "Tilkynna villu"
   },
   "cookie": {
     "banner_text": "Við notum nauðsynleg vefkökur fyrir auðkenningu. Við notum einnig Umami fyrir nafnlausar greiningar, sem krefst samþykkis þíns.",
