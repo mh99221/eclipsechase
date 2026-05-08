@@ -53,7 +53,7 @@ function onMapTileClick(e: MouseEvent) {
       to="/pro"
       class="tile tile-accent"
     >
-      <span class="tile-eyebrow">PRO · €9.99</span>
+      <span class="tile-eyebrow">PRO</span>
       <span class="tile-title">{{ t('v0.home.tile_pro_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_pro_body') }}</span>
     </NuxtLink>
