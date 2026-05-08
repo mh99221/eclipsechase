@@ -782,6 +782,17 @@ const { isWeatherStale } = useOfflineStatus()
 const weatherFetchedAt = computed(() => cloudData.value?.fetched_at ?? null)
 const weatherStale = computed(() => cloudData.value?.stale === true || isWeatherStale.value)
 
+// Manual refresh — wired to the status-stack/status-sheet refresh buttons.
+// `refreshCloud` returns a promise from the underlying useFetch; we flip
+// `weatherRefreshing` while it's in flight so the spinner can render.
+const weatherRefreshing = ref(false)
+async function refreshWeather() {
+  if (weatherRefreshing.value) return
+  weatherRefreshing.value = true
+  try { await refreshCloud() }
+  finally { weatherRefreshing.value = false }
+}
+
 function handleMapClick(coords: { lat: number; lng: number }) {
   // Place / move crosshair marker so the user sees what they tapped.
   const mapInstance = eclipseMapRef.value?.map
@@ -951,6 +962,8 @@ const profileIcons: Record<ProfileId, string> = {
     <MapStatusStack
       :weather-fetched-at="weatherFetchedAt"
       :weather-stale="weatherStale"
+      :refreshing="weatherRefreshing"
+      @refresh="refreshWeather"
     />
 
     <!-- ═══ Desktop bottom-left: legend + offline manager ═══ -->
@@ -1177,7 +1190,9 @@ const profileIcons: Record<ProfileId, string> = {
       :map="eclipseMapRef?.map"
       :weather-fetched-at="weatherFetchedAt"
       :weather-stale="weatherStale"
+      :refreshing="weatherRefreshing"
       @close="statusSheetOpen = false"
+      @refresh="refreshWeather"
       @downloading="onDownloadingChange"
       @progress="onTileProgress"
     />

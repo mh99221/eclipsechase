@@ -14,10 +14,13 @@ const props = defineProps<{
   weatherFetchedAt: string | null
   /** True when the cloud-cover endpoint is serving stale data. */
   weatherStale: boolean
+  /** True while a manual refresh is in flight. */
+  refreshing?: boolean
 }>()
 
 const emit = defineEmits<{
   close: []
+  refresh: []
   downloading: [active: boolean]
   progress: [payload: { loaded: number; total: number }]
 }>()
@@ -145,6 +148,29 @@ const sheetTransform = computed(() => dragging.value ? `translateY(${dragY.value
                   </p>
                   <p v-else class="status-meta">{{ t('map.weather_source') }}</p>
                 </div>
+                <button
+                  type="button"
+                  class="refresh-btn"
+                  :aria-label="t('map.weather_refresh', 'Refresh weather')"
+                  :disabled="refreshing || isOffline"
+                  @click="emit('refresh')"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                    :class="{ spinning: refreshing }"
+                  >
+                    <path d="M21 12a9 9 0 1 1-3.5-7.1" />
+                    <polyline points="21 4 21 10 15 10" />
+                  </svg>
+                </button>
               </div>
               <p v-if="isOffline" class="offline-note">
                 {{ t('map.offline_note') }}
@@ -297,7 +323,36 @@ const sheetTransform = computed(() => dragging.value ? `translateY(${dragY.value
   background: rgb(var(--bad));
   box-shadow: 0 0 0 4px rgb(var(--bad) / 0.18);
 }
-.status-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.status-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+
+.refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  margin-top: -2px;
+  padding: 0;
+  border: 1px solid rgb(var(--border-subtle) / 0.4);
+  background: rgb(var(--surface) / 0.04);
+  color: rgb(var(--ink-1) / 0.7);
+  border-radius: 99px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+.refresh-btn:hover { color: rgb(var(--accent)); border-color: rgb(var(--accent) / 0.5); }
+.refresh-btn:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 1px; }
+.refresh-btn:disabled { cursor: default; opacity: 0.4; }
+
+.spinning {
+  animation: spin 0.8s linear infinite;
+  transform-origin: center;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
 .status-title {
   font-family: 'Inter Tight', system-ui, sans-serif;
   font-size: 15px;

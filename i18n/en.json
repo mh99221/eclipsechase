@@ -343,6 +343,7 @@
     "weather_stale": "Weather data stale",
     "weather_source": "Source: vedur.is",
     "weather_source_at": "vedur.is · {time}",
+    "weather_refresh": "Refresh weather",
     "system_status": "System Status",
     "offline_note": "You're offline — showing cached data.",
     "pill_just_now": "now",

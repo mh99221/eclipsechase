@@ -202,6 +202,7 @@
     "weather_stale": "Veðurgögn úreld",
     "weather_source": "Heimild: vedur.is",
     "weather_source_at": "vedur.is · {time}",
+    "weather_refresh": "Endurnýja veðurgögn",
     "system_status": "Kerfisstaða",
     "offline_note": "Þú ert án nettengingar — sýnir vistuð gögn.",
     "pill_just_now": "núna",
