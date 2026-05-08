@@ -16,7 +16,8 @@
     "test:e2e": "playwright test",
     "test:all": "vitest run && playwright test",
     "lint:a11y": "pa11y-ci --config .pa11yci.json",
-    "lint:a11y:ci": "start-server-and-test 'nuxt build && nuxt preview' http-get://localhost:3000 'pa11y-ci --config .pa11yci.json'",
+    "lint:a11y:server": "nuxt build && nuxt preview",
+    "lint:a11y:ci": "start-server-and-test lint:a11y:server http-get://localhost:3000 lint:a11y",
     "lint:placeholders": "node scripts/lint-placeholders.mjs"
   },
   "simple-git-hooks": {
