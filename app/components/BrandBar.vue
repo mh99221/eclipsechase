@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 const { t } = useI18n()
 const { isPro, loading: proLoading, clearPro } = useProStatus()
 const route = useRoute()
@@ -69,9 +69,9 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
     :class="{ 'is-landing': isLanding, 'is-scrolled': scrolled }"
   >
     <div :class="['brand-bar-inner', isMap ? 'is-map' : 'is-content']">
-      <NuxtLink to="/" aria-label="EclipseChase — Home" class="brand-mark">
+      <NuxtLinkLocale to="/" aria-label="EclipseChase — Home" class="brand-mark">
         <BrandLogo />
-      </NuxtLink>
+      </NuxtLinkLocale>
 
       <!-- Masthead renders in SSR so the bare-logo flash on hard reload
            is gone. `useNavItems` reads `isPro` (default false on the
@@ -79,7 +79,7 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
            visitor is actually Pro, hydration just swaps Home's href
            and removes the Map lock — no layout shift. -->
       <nav class="masthead" aria-label="Primary">
-        <NuxtLink
+        <NuxtLinkLocale
           v-for="item in navItems"
           :key="item.to + item.icon"
           :to="item.locked ? '#' : item.to"
@@ -96,7 +96,7 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
             class="masthead-lock"
             aria-hidden="true"
           >🔒</span>
-        </NuxtLink>
+        </NuxtLinkLocale>
       </nav>
 
       <div class="brand-bar-right">
@@ -106,21 +106,21 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
         <LocaleSwitcher class="hidden sm:inline-flex" />
         <ClientOnly>
           <template v-if="showFreeGetProPill">
-            <NuxtLink
+            <NuxtLinkLocale
               data-testid="brandbar-restore"
               to="/pro#restore"
               class="restore-link"
               :aria-label="t('v0.home.nav_restore_aria')"
             >
               {{ t('v0.home.nav_restore') }}
-            </NuxtLink>
-            <NuxtLink
+            </NuxtLinkLocale>
+            <NuxtLinkLocale
               data-testid="brandbar-get-pro"
               to="/pro"
               class="get-pro-pill"
             >
               {{ t('v0.home.nav_get_pro') }}
-            </NuxtLink>
+            </NuxtLinkLocale>
           </template>
           <div v-else-if="isPro && !proLoading" class="flex items-center gap-3">
             <span class="hidden sm:inline font-mono text-[10px] text-accent/60 tracking-wider uppercase">

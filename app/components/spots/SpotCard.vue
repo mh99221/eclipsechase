@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { cloudToStatus } from '~/utils/v0'
 import { formatDuration, regionLabel } from '~/utils/eclipse'
 
@@ -26,7 +26,7 @@ const heroSrcset = computed(() => {
 </script>
 
 <template>
-  <NuxtLink :to="`/spots/${slug}`" class="spot-card" :aria-label="`${name} — ${formatDuration(durationSeconds)} totality, ${cloudLabel}`">
+  <NuxtLinkLocale :to="`/spots/${slug}`" class="spot-card" :aria-label="`${name} — ${formatDuration(durationSeconds)} totality, ${cloudLabel}`">
     <!-- Always paint a fallback gradient first so the card never shows
          page bg through the border while the hero image is loading. The
          <img> above stacks on top once decoded; if heroSrc is missing,
@@ -62,7 +62,7 @@ const heroSrcset = computed(() => {
         </div>
       </div>
     </div>
-  </NuxtLink>
+  </NuxtLinkLocale>
 </template>
 
 <style scoped>

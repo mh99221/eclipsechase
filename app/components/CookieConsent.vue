@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 const { t } = useI18n()
 const { consentGiven, setConsent } = useAnalyticsConsent()
 
@@ -18,9 +18,9 @@ const visible = computed(() => mounted.value && !consentGiven.value)
     <div class="section-container py-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
       <p class="text-sm text-ink-2 flex-1">
         {{ t('cookie.banner_text') }}
-        <NuxtLink to="/privacy" class="text-accent hover:text-accent-strong transition-colors ml-1">
+        <NuxtLinkLocale to="/privacy" class="text-accent hover:text-accent-strong transition-colors ml-1">
           {{ t('cookie.learn_more') }}
-        </NuxtLink>
+        </NuxtLinkLocale>
       </p>
       <div class="flex gap-2 shrink-0">
         <button

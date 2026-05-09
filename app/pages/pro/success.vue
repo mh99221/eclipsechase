@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 const { t } = useI18n()
 const route = useRoute()
 const { activate } = useProStatus()
@@ -70,12 +70,12 @@ onMounted(async () => {
               Eclipse Pro is active. You're ready for August 12.
             </p>
           </div>
-          <NuxtLink
+          <NuxtLinkLocale
             to="/map"
             class="inline-block btn-corona px-8 py-3 text-base"
           >
             Go to Eclipse Map &rarr;
-          </NuxtLink>
+          </NuxtLinkLocale>
         </div>
 
         <!-- Delayed -->
@@ -94,7 +94,7 @@ onMounted(async () => {
             </p>
             <p class="text-xs text-ink-3">
               If features aren't active within 5 minutes, use Restore Purchase on the
-              <NuxtLink to="/pro" class="text-accent hover:text-accent-strong transition-colors">Pro page</NuxtLink>.
+              <NuxtLinkLocale to="/pro" class="text-accent hover:text-accent-strong transition-colors">Pro page</NuxtLinkLocale>.
             </p>
           </div>
         </div>

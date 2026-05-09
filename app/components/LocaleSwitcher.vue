@@ -1,87 +1,72 @@
 <script setup lang="ts">
 /**
- * EN ↔ IS toggle. With only two locales there's no dropdown — both
- * options sit side-by-side as small mono-cap pills, matching the
- * theme toggle's visual weight. The choice persists via the
- * `i18n_redirected` cookie that @nuxtjs/i18n sets automatically
- * (see nuxt.config.ts → i18n.detectBrowserLanguage), so a returning
- * visitor lands in their last picked locale.
+ * Single-button locale toggle. Always shows the OTHER locale's short
+ * code (when on `en`, the button reads "IS"; when on `is`, it reads
+ * "EN"). Clicking switches and persists via the `i18n_redirected`
+ * cookie that @nuxtjs/i18n's detectBrowserLanguage option sets.
  *
- * Renders nothing on SSR for the active-state styling — the locale
- * switch happens via NuxtLink so SSR markup matches client.
+ * Renders inside an SSR-safe NuxtLink so the click target is a real
+ * <a href> with the localized destination — search engines and
+ * keyboard users see the correct route directly.
  */
 const { locale, locales } = useI18n()
 const switchLocalePath = useSwitchLocalePath()
 
-interface DisplayLocale {
-  code: string
-  short: string
-  label: string
-}
-
-// Hardcoded display labels — `locales` from useI18n() doesn't carry
+// Hardcoded display labels. `locales` from useI18n() doesn't carry
 // short codes, and we want "EN" / "IS" rather than "English" /
 // "Íslenska" in the chrome.
-const DISPLAY: Record<string, DisplayLocale> = {
-  en: { code: 'en', short: 'EN', label: 'English' },
-  is: { code: 'is', short: 'IS', label: 'Íslenska' },
+const SHORT: Record<string, string> = {
+  en: 'EN',
+  is: 'IS',
 }
 
-const items = computed<DisplayLocale[]>(() =>
-  (locales.value as Array<{ code: string }>).map(l => DISPLAY[l.code]).filter(Boolean) as DisplayLocale[],
-)
+// The OTHER locale (anything that isn't currently active). With two
+// locales this is unambiguous; if a third is added later the first
+// non-active one wins.
+const otherLocale = computed(() => {
+  const active = String(locale.value)
+  const codes = (locales.value as Array<{ code: string }>).map(l => l.code)
+  return codes.find(c => c !== active) ?? active
+})
+
+const otherShort = computed(() => SHORT[otherLocale.value] ?? otherLocale.value.toUpperCase())
+const otherHref = computed(() => switchLocalePath(otherLocale.value) || '/')
 </script>
 
 <template>
-  <div
-    class="locale-switcher"
-    role="group"
-    aria-label="Language"
+  <NuxtLink
+    :to="otherHref"
+    class="locale-toggle"
+    :aria-label="`Switch language to ${otherShort}`"
   >
-    <NuxtLink
-      v-for="item in items"
-      :key="item.code"
-      :to="switchLocalePath(item.code) || '/'"
-      class="locale-btn"
-      :class="{ active: locale === item.code }"
-      :aria-current="locale === item.code ? 'true' : undefined"
-      :aria-label="item.label"
-    >
-      {{ item.short }}
-    </NuxtLink>
-  </div>
+    {{ otherShort }}
+  </NuxtLink>
 </template>
 
 <style scoped>
-.locale-switcher {
+.locale-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  background: rgb(var(--ink-1) / 0.04);
-  border: 1px solid rgb(var(--border-subtle) / 0.16);
-  border-radius: 999px;
-  padding: 2px;
-}
-.locale-btn {
+  justify-content: center;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   color: rgb(var(--ink-1) / 0.62);
   text-decoration: none;
-  padding: 5px 9px;
+  padding: 6px 10px;
+  min-height: 32px;
+  min-width: 32px;
+  border: 1px solid rgb(var(--border-subtle) / 0.16);
   border-radius: 999px;
-  min-height: 24px;
-  display: inline-flex;
-  align-items: center;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
-.locale-btn:hover { color: rgb(var(--ink-1)); }
-.locale-btn.active {
-  background: rgb(var(--accent));
-  color: rgb(var(--accent-ink));
+.locale-toggle:hover {
+  color: rgb(var(--ink-1));
+  border-color: rgb(var(--border-subtle) / 0.32);
+  background: rgb(var(--ink-1) / 0.04);
 }
-.locale-btn:focus-visible {
+.locale-toggle:focus-visible {
   outline: 2px solid rgb(var(--accent));
   outline-offset: 2px;
 }

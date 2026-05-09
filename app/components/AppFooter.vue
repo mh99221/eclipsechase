@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 /**
  * Shared footer for every subpage (landing page uses its own richer
  * branded footer). Constrained to the same 768px reading column as
@@ -25,28 +25,27 @@ const isCredits = computed(() => route.path === '/credits')
       </button>
 
       <div class="flex items-center gap-5">
-        <NuxtLink
+        <NuxtLinkLocale
           v-if="!isPrivacy"
           to="/privacy"
           class="font-mono text-xs text-ink-3 hover:text-ink-2 transition-colors"
         >
           {{ t('footer.privacy') }}
-        </NuxtLink>
-        <NuxtLink
+        </NuxtLinkLocale>
+        <NuxtLinkLocale
           v-if="!isTerms"
           to="/terms"
           class="font-mono text-xs text-ink-3 hover:text-ink-2 transition-colors"
         >
           {{ t('footer.terms') }}
-        </NuxtLink>
-        <NuxtLink
+        </NuxtLinkLocale>
+        <NuxtLinkLocale
           v-if="!isCredits"
           to="/credits"
           class="font-mono text-xs text-ink-3 hover:text-ink-2 transition-colors"
         >
           {{ t('footer.credits') }}
-        </NuxtLink>
-        <LocaleSwitcher />
+        </NuxtLinkLocale>
       </div>
     </div>
   </footer>

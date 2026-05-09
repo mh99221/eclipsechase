@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 const props = defineProps<{ compact?: boolean }>()
 const { t } = useI18n()
 const email = ref('')
@@ -105,9 +105,9 @@ async function handleSubmit() {
 
       <p v-if="!props.compact" class="mt-3 text-xs text-ink-3 text-center">
         {{ t('signup.privacy_note_pre') }}
-        <NuxtLink to="/privacy" class="text-ink-2 hover:text-ink-1 underline underline-offset-2 transition-colors">
+        <NuxtLinkLocale to="/privacy" class="text-ink-2 hover:text-ink-1 underline underline-offset-2 transition-colors">
           {{ t('signup.privacy_note_link') }}
-        </NuxtLink>
+        </NuxtLinkLocale>
       </p>
     </form>
   </div>

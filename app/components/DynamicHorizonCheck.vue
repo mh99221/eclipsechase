@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { HorizonCheckResponse, HorizonProfileData } from '~/types/horizon'
 
 const props = defineProps<{
@@ -77,9 +77,9 @@ onMounted(async () => {
     <!-- Pro upgrade prompt -->
     <div v-else-if="error === 'pro_required'" class="text-center py-4">
       <p class="text-sm text-ink-3 mb-3">{{ t('horizon.upgrade_prompt') }}</p>
-      <NuxtLink to="/pro" class="inline-block px-4 py-2 bg-accent/20 border border-accent/40 rounded text-sm text-accent hover:bg-accent/30 transition-colors">
+      <NuxtLinkLocale to="/pro" class="inline-block px-4 py-2 bg-accent/20 border border-accent/40 rounded text-sm text-accent hover:bg-accent/30 transition-colors">
         {{ t('horizon.upgrade_button', 'Upgrade to Pro') }}
-      </NuxtLink>
+      </NuxtLinkLocale>
     </div>
 
     <!-- Outside DEM coverage -->

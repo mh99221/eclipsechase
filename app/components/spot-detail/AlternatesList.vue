@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import Card from '~/components/ui/Card.vue'
 import CardTitle from '~/components/ui/CardTitle.vue'
 import { formatDuration } from '~/utils/eclipse'
@@ -95,7 +95,7 @@ function formatDelta(deltaSec: number): string {
       No nearby alternates within {{ maxDistanceKm ?? 30 }}&nbsp;km. Check the Map tab for the wider list.
     </div>
     <div v-else class="alt-list">
-      <NuxtLink
+      <NuxtLinkLocale
         v-for="a in alternates"
         :key="a.slug"
         :to="`/spots/${a.slug}`"
@@ -110,7 +110,7 @@ function formatDelta(deltaSec: number): string {
           class="alt-delta"
           :data-tone="a.delta > 0 ? 'good' : a.delta < 0 ? 'bad' : 'flat'"
         >{{ formatDelta(a.delta) }}</div>
-      </NuxtLink>
+      </NuxtLinkLocale>
     </div>
   </Card>
 </template>

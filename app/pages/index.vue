@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 const { t } = useI18n()
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
@@ -76,11 +76,11 @@ useHead(() => ({
       <!-- Footer -->
       <footer class="home-footer">
         <div class="home-footer-links">
-          <NuxtLink to="/privacy">{{ t('footer.privacy') }}</NuxtLink>
+          <NuxtLinkLocale to="/privacy">{{ t('footer.privacy') }}</NuxtLinkLocale>
           <span aria-hidden="true">·</span>
-          <NuxtLink to="/terms">{{ t('footer.terms') }}</NuxtLink>
+          <NuxtLinkLocale to="/terms">{{ t('footer.terms') }}</NuxtLinkLocale>
           <span aria-hidden="true">·</span>
-          <NuxtLink to="/credits">{{ t('footer.credits') }}</NuxtLink>
+          <NuxtLinkLocale to="/credits">{{ t('footer.credits') }}</NuxtLinkLocale>
           <span aria-hidden="true">·</span>
           <a
             href="mailto:support@eclipsechase.is?subject=EclipseChase%20issue&body=Page%3A%20%0A%0AWhat%20happened%3A%20%0A%0AExpected%3A%20"

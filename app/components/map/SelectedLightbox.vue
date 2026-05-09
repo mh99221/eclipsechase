@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import StatusDot from '~/components/ui/StatusDot.vue'
 import { formatDuration } from '~/utils/eclipse'
 import { cloudToStatus } from '~/utils/v0'
@@ -45,7 +45,7 @@ const score = computed(() => {
           <div class="lb-stat-score" :data-status="status">{{ score ?? '—' }}</div>
         </div>
       </div>
-      <NuxtLink :to="`/spots/${slug}`" class="lb-cta">{{ $t('v0.map.open_field_card') }}</NuxtLink>
+      <NuxtLinkLocale :to="`/spots/${slug}`" class="lb-cta">{{ $t('v0.map.open_field_card') }}</NuxtLinkLocale>
     </div>
   </div>
 </template>

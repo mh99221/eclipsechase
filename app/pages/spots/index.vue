@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { parseJsonb } from '~/utils/eclipse'
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId, RankedSpot } from '~/composables/useRecommendation'
@@ -166,7 +166,7 @@ const headerSub = computed(() => {
     <div v-if="showProPrompt" class="pro-prompt">
       <p class="pro-prompt-text">
         Profile-based scoring is a Pro feature.
-        <NuxtLink to="/pro" class="pro-prompt-link">Get Pro Access</NuxtLink>
+        <NuxtLinkLocale to="/pro" class="pro-prompt-link">Get Pro Access</NuxtLinkLocale>
       </p>
       <button type="button" class="pro-prompt-dismiss" @click="dismissProPrompt">Dismiss</button>
     </div>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 const { t } = useI18n()
 
 useHead({
@@ -188,9 +188,9 @@ const compareSections: Array<{ titleKey: string; rows: CompareRow[] }> = [
             >
             <span>
               {{ t('pro.withdrawal_waiver_pre') }}
-              <NuxtLink to="/terms">{{ t('pro.terms_link_text') }}</NuxtLink>
+              <NuxtLinkLocale to="/terms">{{ t('pro.terms_link_text') }}</NuxtLinkLocale>
               {{ t('pro.withdrawal_waiver_and') }}
-              <NuxtLink to="/privacy">{{ t('pro.privacy_link_text') }}</NuxtLink>.
+              <NuxtLinkLocale to="/privacy">{{ t('pro.privacy_link_text') }}</NuxtLinkLocale>.
             </span>
           </label>
         </div>

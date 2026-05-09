@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 // Nuxt 4 error.vue — replaces the full app.vue tree on fatal errors.
 // We re-mount the BrandBar manually so users aren't stranded chrome-less.
 
@@ -49,8 +49,8 @@ function goHome() {
           <button type="button" class="error-cta" @click="goHome">
             Go back home
           </button>
-          <NuxtLink to="/spots" class="error-link">Browse spots</NuxtLink>
-          <NuxtLink to="/guide" class="error-link">Read the guide</NuxtLink>
+          <NuxtLinkLocale to="/spots" class="error-link">Browse spots</NuxtLinkLocale>
+          <NuxtLinkLocale to="/guide" class="error-link">Read the guide</NuxtLinkLocale>
         </div>
       </div>
     </main>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 const { t } = useI18n()
 const { isPro } = useProStatus()
 const { openUpsell } = useUpsell()
@@ -13,7 +13,7 @@ function onMapTileClick(e: MouseEvent) {
 
 <template>
   <div class="home-tile-grid">
-    <NuxtLink
+    <NuxtLinkLocale
       data-testid="home-tile"
       class="tile"
       to="/spots"
@@ -21,9 +21,9 @@ function onMapTileClick(e: MouseEvent) {
       <span class="tile-eyebrow">SPOTS</span>
       <span class="tile-title">{{ t('v0.home.tile_spots_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_spots_body') }}</span>
-    </NuxtLink>
+    </NuxtLinkLocale>
 
-    <NuxtLink
+    <NuxtLinkLocale
       data-testid="home-tile"
       class="tile"
       to="/guide"
@@ -31,9 +31,9 @@ function onMapTileClick(e: MouseEvent) {
       <span class="tile-eyebrow">GUIDE</span>
       <span class="tile-title">{{ t('v0.home.tile_guide_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_guide_body') }}</span>
-    </NuxtLink>
+    </NuxtLinkLocale>
 
-    <NuxtLink
+    <NuxtLinkLocale
       data-testid="home-tile"
       data-testid-extra="home-tile-map"
       :to="isPro ? '/map' : '#'"
@@ -44,9 +44,9 @@ function onMapTileClick(e: MouseEvent) {
       <span class="tile-eyebrow">MAP<span v-if="!isPro" class="tile-lock" aria-hidden="true">🔒</span></span>
       <span class="tile-title">{{ t('v0.home.tile_map_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_map_body') }}</span>
-    </NuxtLink>
+    </NuxtLinkLocale>
 
-    <NuxtLink
+    <NuxtLinkLocale
       v-if="!isPro"
       data-testid="home-tile"
       data-testid-extra="home-tile-pro"
@@ -56,9 +56,9 @@ function onMapTileClick(e: MouseEvent) {
       <span class="tile-eyebrow">PRO</span>
       <span class="tile-title">{{ t('v0.home.tile_pro_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_pro_body') }}</span>
-    </NuxtLink>
+    </NuxtLinkLocale>
 
-    <NuxtLink
+    <NuxtLinkLocale
       v-else
       data-testid="home-tile"
       data-testid-extra="home-tile-dashboard"
@@ -68,7 +68,7 @@ function onMapTileClick(e: MouseEvent) {
       <span class="tile-eyebrow">HOME</span>
       <span class="tile-title">{{ t('v0.home.tile_dashboard_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_dashboard_body') }}</span>
-    </NuxtLink>
+    </NuxtLinkLocale>
   </div>
 </template>
 

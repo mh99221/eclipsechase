@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { bestRegion } from '~/utils/weather'
 import { cloudLevel, regionLabel } from '~/utils/eclipse'
 
@@ -59,7 +59,7 @@ const { t } = useI18n()
               {{ weatherBest.avgCloudCover }}% cloud cover · {{ cloudLevel(weatherBest.avgCloudCover).label }}
             </div>
           </div>
-          <NuxtLink to="/map" class="conditions-cta">{{ t('v0.home.view_map_cta') }}</NuxtLink>
+          <NuxtLinkLocale to="/map" class="conditions-cta">{{ t('v0.home.view_map_cta') }}</NuxtLinkLocale>
         </div>
 
         <div v-else class="conditions-card is-empty">

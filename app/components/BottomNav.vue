@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import IconHome from './icons/IconHome.vue'
 import IconSpots from './icons/IconSpots.vue'
 import IconMap from './icons/IconMap.vue'
@@ -45,7 +45,7 @@ function onTap(item: NavItem, e: MouseEvent) {
     class="bottom-nav"
     aria-label="Primary"
   >
-    <NuxtLink
+    <NuxtLinkLocale
       v-for="item in items"
       :key="item.to"
       :to="item.locked ? '#' : item.to"
@@ -66,7 +66,7 @@ function onTap(item: NavItem, e: MouseEvent) {
       </span>
       <span class="bottom-nav-label">{{ item.label.toUpperCase() }}</span>
       <span class="bottom-nav-dot" aria-hidden="true" />
-    </NuxtLink>
+    </NuxtLinkLocale>
   </nav>
 </template>
 

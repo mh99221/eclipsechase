@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 const { t } = useI18n()
 const { isOpen, closeUpsell } = useUpsell()
 
@@ -52,22 +52,22 @@ if (import.meta.client) {
           <p class="upsell-price-note">{{ t('v0.upsell.price_note') }}</p>
 
           <div class="upsell-actions">
-            <NuxtLink
+            <NuxtLinkLocale
               data-testid="upsell-cta-primary"
               to="/pro"
               class="upsell-cta-primary"
               @click="closeUpsell"
             >
               {{ t('v0.upsell.cta_primary') }}
-            </NuxtLink>
-            <NuxtLink
+            </NuxtLinkLocale>
+            <NuxtLinkLocale
               data-testid="upsell-cta-secondary"
               to="/pro#restore"
               class="upsell-cta-secondary"
               @click="closeUpsell"
             >
               {{ t('v0.upsell.cta_secondary') }}
-            </NuxtLink>
+            </NuxtLinkLocale>
           </div>
         </div>
       </div>
