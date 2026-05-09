@@ -28,12 +28,17 @@ const isCachingData = ref(false)
 const dataCached = ref(false)
 // Cap at 100% — Mapbox can auto-fetch tiles outside our explicit bounds
 // (e.g. neighbours of the visible viewport), so the SW-side `tileCount`
-// occasionally outruns `ESTIMATED_TILE_COUNT`. Showing 103% looks broken
-// even though the cache is fine.
+// occasionally outruns `ESTIMATED_TILE_COUNT`. Showing 103% (or worse,
+// "1403 / 1338 tiles") looks broken even though the cache is fine.
+// We clamp BOTH the percentage and the displayed numerator so the UI
+// reads as "1338 / 1338 tiles (100%)" once the deliberate sweep is
+// complete; the raw `tileCount.value` is still available for
+// debugging via the console / extensions.
 const progress = computed(() => totalTiles.value > 0
   ? Math.min(100, Math.round((loadedTiles.value / totalTiles.value) * 100))
   : 0,
 )
+const loadedTilesDisplay = computed(() => Math.min(loadedTiles.value, totalTiles.value))
 const estimatedTileCount = ESTIMATED_TILE_COUNT
 // Treat >10% as "has cached tiles" (handles partial/cancelled downloads).
 const hasCachedTiles = computed(() => tileCount.value > estimatedTileCount * 0.1)
@@ -42,6 +47,7 @@ const cachedTilesPct = computed(() =>
     ? Math.min(100, Math.round((tileCount.value / estimatedTileCount) * 100))
     : 0,
 )
+const cachedTilesDisplay = computed(() => Math.min(tileCount.value, estimatedTileCount))
 
 const hasCachedWeather = computed(() => !!cacheAges.value['/api/weather/cloud-cover'])
 const hasCachedSpots = computed(() => !!cacheAges.value['/api/spots'])
@@ -183,7 +189,7 @@ function cancel() {
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
           </svg>
-          {{ t('offline.tiles_progress', { loaded: tileCount, total: estimatedTileCount, progress: cachedTilesPct }) }}
+          {{ t('offline.tiles_progress', { loaded: cachedTilesDisplay, total: estimatedTileCount, progress: cachedTilesPct }) }}
         </div>
         <button
           v-else
@@ -216,7 +222,7 @@ function cancel() {
         </p>
         <div class="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[11px] font-mono text-ink-3">
           <span>Map tiles</span>
-          <span>{{ tileCount > 0 ? t('offline.tiles_progress', { loaded: tileCount, total: estimatedTileCount, progress: cachedTilesPct }) : t('offline.not_cached') }}</span>
+          <span>{{ tileCount > 0 ? t('offline.tiles_progress', { loaded: cachedTilesDisplay, total: estimatedTileCount, progress: cachedTilesPct }) : t('offline.not_cached') }}</span>
           <span>Weather</span>
           <span>{{ hasCachedWeather ? lastWeatherUpdate : t('offline.not_cached') }}</span>
           <span>Forecast</span>
@@ -264,7 +270,7 @@ function cancel() {
         />
       </div>
       <p class="font-mono text-xs text-ink-3">
-        {{ t('offline.tiles_progress', { loaded: loadedTiles, total: totalTiles, progress }) }}
+        {{ t('offline.tiles_progress', { loaded: loadedTilesDisplay, total: totalTiles, progress }) }}
       </p>
     </div>
 

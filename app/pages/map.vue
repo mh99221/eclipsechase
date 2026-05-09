@@ -757,6 +757,13 @@ const tileProgressPct = computed(() => {
   // Cap at 100 — see OfflineManager.vue; raw count can outrun the estimate.
   return total > 0 ? Math.min(100, Math.round((loaded / total) * 100)) : 0
 })
+// Cap the displayed numerator too so the running progress reads
+// "1338 / 1338" once Mapbox starts pre-fetching neighbour tiles past
+// our deliberate sweep, not "1403 / 1338".
+const tileProgressLoadedDisplay = computed(() => {
+  const { loaded, total } = tileProgress.value
+  return Math.min(loaded, total)
+})
 const offlineManagerMobile = ref<any>(null)
 const offlineManagerDesktop = ref<any>(null)
 const statusSheetRef = ref<any>(null)
@@ -1178,7 +1185,7 @@ const profileIcons: Record<ProfileId, string> = {
       </svg>
       <p class="font-display text-xl font-semibold text-ink-1 mb-2">{{ t('offline.downloading') }}</p>
       <p class="font-mono text-xs text-ink-3 mb-6">
-        {{ t('offline.tiles_progress', { loaded: tileProgress.loaded, total: tileProgress.total, progress: tileProgressPct }) }}
+        {{ t('offline.tiles_progress', { loaded: tileProgressLoadedDisplay, total: tileProgress.total, progress: tileProgressPct }) }}
       </p>
       <div class="w-full max-w-xs h-2 bg-bg rounded-full overflow-hidden mb-6">
         <div
