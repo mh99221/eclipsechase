@@ -5,6 +5,8 @@ import type { DockRoadsCtx, TrafficCondition } from './types'
 
 const props = defineProps<{ ctx: DockRoadsCtx }>()
 
+const { t } = useI18n()
+
 const dotByCond: Record<TrafficCondition, 'good' | 'warn' | 'bad'> = {
   good: 'good',
   difficult: 'warn',
@@ -27,22 +29,22 @@ const updatedLabel = computed(() => {
   const ageMs = Date.now() - new Date(ts).getTime()
   if (!Number.isFinite(ageMs) || ageMs < 0) return null
   const min = Math.round(ageMs / 60000)
-  if (min < 1) return 'Updated just now'
-  if (min < 60) return `Updated ${min} min ago`
+  if (min < 1) return t('dock.roads_updated_just_now')
+  if (min < 60) return t('dock.roads_updated_min_ago', { min })
   const hr = Math.round(min / 60)
-  return `Updated ${hr} h ago`
+  return t('dock.roads_updated_hr_ago', { hr })
 })
 </script>
 
 <template>
   <div>
-    <DockHeader eyebrow="Roads" :dot-var="dot" />
+    <DockHeader :eyebrow="t('dock.roads_eyebrow')" :dot-var="dot" />
 
     <div class="title title--with-sub" :data-tone="tone">{{ ctx.label }}</div>
     <div class="detail">{{ ctx.detail }}</div>
     <div v-if="updatedLabel" class="updated">{{ updatedLabel }}</div>
 
-    <button class="btn-ghost btn-ghost--full" type="button">OPEN IN NAVIGATION ↗</button>
+    <button class="btn-ghost btn-ghost--full" type="button">{{ t('dock.roads_btn_navigate') }}</button>
   </div>
 </template>
 

@@ -8,6 +8,8 @@ import type { DockHorizonCtx } from './types'
 
 const props = defineProps<{ ctx: DockHorizonCtx }>()
 
+const { t } = useI18n()
+
 const loading = ref(true)
 const error = ref<'pro_required' | 'outside_coverage' | 'outside_path' | 'failed' | null>(null)
 const result = ref<HorizonCheckResponse | null>(null)
@@ -160,22 +162,22 @@ const verdictTone = computed<'good' | 'warn' | 'bad'>(() => {
   return 'bad' // blocked or no data
 })
 const titleText = computed(() => {
-  if (loading.value) return 'Checking horizon…'
-  if (error.value === 'pro_required') return 'Pro required'
-  if (error.value === 'outside_coverage') return 'Outside DEM coverage'
-  if (error.value === 'outside_path') return 'Outside path of totality'
-  if (error.value === 'failed') return 'Could not check horizon'
+  if (loading.value) return t('dock.horizon_checking')
+  if (error.value === 'pro_required') return t('dock.horizon_pro_required')
+  if (error.value === 'outside_coverage') return t('dock.horizon_outside_dem')
+  if (error.value === 'outside_path') return t('dock.horizon_outside_path')
+  if (error.value === 'failed') return t('dock.horizon_failed')
   const r = result.value
   if (!r) return ''
-  if (r.verdict === 'clear') return 'Sun well above terrain'
-  if (r.verdict === 'marginal') return 'Marginal clearance'
-  if (r.verdict === 'risky') return 'Risky horizon'
-  return 'Sun blocked at totality'
+  if (r.verdict === 'clear') return t('dock.horizon_verdict_clear')
+  if (r.verdict === 'marginal') return t('dock.horizon_verdict_marginal')
+  if (r.verdict === 'risky') return t('dock.horizon_verdict_risky')
+  return t('dock.horizon_verdict_blocked')
 })
 const subtitleText = computed(() => {
   const r = result.value
   if (!r) return null
-  const clearance = `${r.clearance_degrees.toFixed(1)}° clearance`
+  const clearance = t('dock.horizon_clearance', { deg: r.clearance_degrees.toFixed(1) })
   return props.ctx.spotName ? `${clearance} · ${props.ctx.spotName}` : clearance
 })
 
@@ -189,7 +191,7 @@ const gradientId = `dock-horizon-sky-${uid}`
 
 <template>
   <div>
-    <DockHeader eyebrow="Horizon view" :dot-var="verdictTone" />
+    <DockHeader :eyebrow="t('dock.horizon_eyebrow')" :dot-var="verdictTone" />
 
     <div class="title title--small" :data-tone="verdictTone">{{ titleText }}</div>
     <div v-if="subtitleText" class="subtitle">{{ subtitleText }}</div>
@@ -271,7 +273,7 @@ const gradientId = `dock-horizon-sky-${uid}`
             fill="#f59e0b"
             font-family="JetBrains Mono"
             text-anchor="middle"
-          >{{ sunMarker.alt.toFixed(0) }}° SUN</text>
+          >{{ t('dock.horizon_sun_label', { deg: sunMarker.alt.toFixed(0) }) }}</text>
         </template>
 
         <!-- X-axis labels -->
@@ -294,11 +296,11 @@ const gradientId = `dock-horizon-sky-${uid}`
           class="loading-label"
           font-family="JetBrains Mono"
           text-anchor="middle"
-        >Loading…</text>
+        >{{ t('dock.horizon_loading') }}</text>
       </svg>
     </div>
 
-    <div class="caption">ÍslandsDEM v1.0 · National Land Survey (CC BY 4.0)</div>
+    <div class="caption">{{ t('dock.horizon_attribution') }}</div>
 
     <div class="actions">
       <a
@@ -306,7 +308,7 @@ const gradientId = `dock-horizon-sky-${uid}`
         :href="navigateUrl"
         target="_blank"
         rel="noopener"
-      >NAVIGATE ↗</a>
+      >{{ t('dock.horizon_btn_navigate') }}</a>
     </div>
   </div>
 </template>

@@ -45,7 +45,7 @@ const subtitle = computed(() => current.value?.description || props.ctx.dir || '
         type="button"
         class="step"
         :disabled="total <= 1"
-        aria-label="Previous camera image"
+        :aria-label="t('dock.cam_aria_prev')"
         @click="emit('cam-step', -1)"
       >‹</button>
       <div class="dots">
@@ -60,7 +60,7 @@ const subtitle = computed(() => current.value?.description || props.ctx.dir || '
         type="button"
         class="step"
         :disabled="total <= 1"
-        aria-label="Next camera image"
+        :aria-label="t('dock.cam_aria_next')"
         @click="emit('cam-step', 1)"
       >›</button>
     </div>

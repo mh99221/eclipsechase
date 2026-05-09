@@ -25,7 +25,7 @@ const score = computed(() => {
           <StatusDot :status="status" :size="7" />
           {{ $t('v0.map.selected') }}
         </span>
-        <span class="lb-tot-label">{{ formatDuration(totalitySeconds).toUpperCase() }} TOTALITY</span>
+        <span class="lb-tot-label">{{ formatDuration(totalitySeconds).toUpperCase() }} {{ $t('v0.map.stat_totality') }}</span>
       </div>
       <div class="lb-name">{{ name }}</div>
       <div class="lb-strip">

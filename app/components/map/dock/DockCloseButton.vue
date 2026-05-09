@@ -1,11 +1,12 @@
 <script setup lang="ts">
 defineEmits<{ close: [] }>()
+const { t } = useI18n()
 </script>
 
 <template>
   <button
     type="button"
-    aria-label="Close"
+    :aria-label="t('map.close')"
     class="dock-close"
     @click="$emit('close')"
   >

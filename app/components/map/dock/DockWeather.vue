@@ -6,13 +6,17 @@ import type { DockWeatherCtx } from './types'
 
 const props = defineProps<{ ctx: DockWeatherCtx }>()
 
+const { t } = useI18n()
+
 const status = computed(() => cloudToStatus(props.ctx.cloud))
 const tone = computed<'good' | 'warn' | 'bad' | 'ink'>(() =>
   props.ctx.cloud == null ? 'ink' : status.value,
 )
 
 const title = computed(() =>
-  props.ctx.cloud == null ? 'No forecast' : `${props.ctx.cloud}% cloud`,
+  props.ctx.cloud == null
+    ? t('dock.weather_no_forecast')
+    : t('dock.weather_cloud_pct', { cloud: props.ctx.cloud }),
 )
 
 const forecastForLabel = computed(() => {
@@ -20,13 +24,13 @@ const forecastForLabel = computed(() => {
   const d = new Date(props.ctx.forecastValidAt)
   if (Number.isNaN(d.getTime())) return null
   const hhmm = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
-  return `Forecast for ${hhmm}`
+  return t('dock.weather_forecast_for', { time: hhmm })
 })
 </script>
 
 <template>
   <div>
-    <DockHeader eyebrow="Forecast" :dot-var="status" />
+    <DockHeader :eyebrow="t('dock.weather_eyebrow')" :dot-var="status" />
 
     <div class="title title--with-sub" :data-tone="tone">{{ title }}</div>
     <div class="detail">{{ ctx.name }}</div>

@@ -12,6 +12,8 @@ const emit = defineEmits<{
   'open-field-card': []
 }>()
 
+const { t } = useI18n()
+
 const status = computed(() => cloudToStatus(props.spot.cloud))
 const score = computed(() => {
   if (props.spot.cloud == null) return null
@@ -24,26 +26,24 @@ const scoreLabel = computed(() => score.value == null ? '—' : String(score.val
 
 <template>
   <div>
-    <DockHeader eyebrow="Selected" :dot-var="status" />
+    <DockHeader :eyebrow="t('v0.map.selected')" :dot-var="status" />
 
     <div class="title">{{ spot.name }}</div>
 
     <div class="strip">
-      <DockStat label="Totality" :value="totalityLabel" tone="totality" mono />
-      <DockStat label="Cloud" :value="cloudLabel" />
+      <DockStat :label="t('v0.map.stat_totality')" :value="totalityLabel" tone="totality" mono />
+      <DockStat :label="t('v0.map.stat_cloud')" :value="cloudLabel" />
       <!-- `title` makes the score self-documenting on hover (desktop)
            and long-press (mobile). 0–100, derived from cloud cover —
            higher = clearer. -->
-      <div
-        :title="`Score 0–100. Higher = clearer. Derived from forecast cloud cover (100 − cloud %). Today: ${scoreLabel}.`"
-      >
-        <DockStat label="Score ⓘ" :value="scoreLabel" :tone="status" />
+      <div :title="t('dock.score_tooltip', { score: scoreLabel })">
+        <DockStat :label="`${t('v0.map.stat_score')} ⓘ`" :value="scoreLabel" :tone="status" />
       </div>
     </div>
 
     <div class="actions">
-      <button class="btn-ghost btn-ghost--cta-pair" type="button" @click="emit('horizon-open')">HORIZON</button>
-      <button class="btn-cta" type="button" @click="emit('open-field-card')">OPEN FIELD CARD →</button>
+      <button class="btn-ghost btn-ghost--cta-pair" type="button" @click="emit('horizon-open')">{{ t('dock.btn_horizon') }}</button>
+      <button class="btn-cta" type="button" @click="emit('open-field-card')">{{ t('v0.map.open_field_card') }}</button>
     </div>
   </div>
 </template>
