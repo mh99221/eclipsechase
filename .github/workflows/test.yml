@@ -7,10 +7,13 @@ on:
     branches: [main]
 
 jobs:
-  # Fast lint pass — placeholder check on user-visible source. Cheap,
-  # runs first so PRs with un-resolved [TODO]/[IČO]/etc. fail in seconds
-  # rather than after a 5 min build.
-  placeholders:
+  # Fast lint pass — placeholder check on user-visible source + i18n
+  # NuxtLink guard. Both are cheap node-only scripts; running them
+  # first means PRs with raw [TODO]/[IČO] markers or new internal
+  # <NuxtLink to="/…"> usages (which break locale persistence under
+  # i18n's prefix_except_default strategy) fail in seconds rather
+  # than after a 5 min build.
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,10 +21,11 @@ jobs:
         with:
           node-version: 22
       - run: node scripts/lint-placeholders.mjs
+      - run: node scripts/lint-nuxtlink.mjs
 
   vitest:
     runs-on: ubuntu-latest
-    needs: placeholders
+    needs: lint
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

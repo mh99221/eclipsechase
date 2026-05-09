@@ -17,7 +17,8 @@
     "test:all": "vitest run && playwright test",
     "lint:a11y": "pa11y-ci --config .pa11yci.json",
     "lint:a11y:ci": "node scripts/run-a11y-audit.mjs",
-    "lint:placeholders": "node scripts/lint-placeholders.mjs"
+    "lint:placeholders": "node scripts/lint-placeholders.mjs",
+    "lint:nuxtlink": "node scripts/lint-nuxtlink.mjs"
   },
   "simple-git-hooks": {
     "pre-commit": "npx vitest run --dir tests/unit"
