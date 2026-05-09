@@ -151,6 +151,20 @@ export default defineNuxtConfig({
     ],
   },
 
+  // Mapbox GL JS is ~1.5 MB minified by design — the largest single
+  // dep in the bundle by a wide margin. It's already code-split onto
+  // a route-level dynamic import so prerendered free pages (/guide,
+  // /privacy, /terms) ship none of it; only Mapbox-using components
+  // pull the chunk on mount. The 500 kB default warning threshold
+  // doesn't reflect that reality, so raise it to 1800 to acknowledge
+  // the chunk and silence the false-positive build noise. Drop this
+  // back if we ever swap Mapbox for MapLibre.
+  vite: {
+    build: {
+      chunkSizeWarningLimit: 1800,
+    },
+  },
+
   $development: {
     nitro: {
       storage: {
