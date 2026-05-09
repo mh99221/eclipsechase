@@ -51,6 +51,7 @@ const emit = defineEmits<{
 }>()
 
 const router = useRouter()
+const localePath = useLocalePath()
 const config = useRuntimeConfig()
 const { t } = useI18n()
 const mapContainer = ref<HTMLElement | null>(null)
@@ -365,7 +366,11 @@ function wireSpotPopupNavigation(popup: mapboxgl.Popup) {
       if (!slug || !map) return
       const center = map.getCenter()
       const zoom = map.getZoom().toFixed(1)
-      router.push(`/spots/${slug}?mlat=${center.lat.toFixed(4)}&mlng=${center.lng.toFixed(4)}&mzoom=${zoom}`)
+      // localePath() prepends the active locale prefix (e.g. /is) so a
+      // user clicking a Mapbox popup on /is/map lands on /is/spots/<slug>
+      // and stays in their language. Without it the popup would drop
+      // them into the EN spot detail.
+      router.push(`${localePath(`/spots/${slug}`)}?mlat=${center.lat.toFixed(4)}&mlng=${center.lng.toFixed(4)}&mzoom=${zoom}`)
     })
   })
 }

@@ -289,17 +289,22 @@ function onOpenFieldCard() {
   const s = dockSpot.value
   if (!s) return
   // Pass current map view so /spots → "back to map" returns here.
+  // `localePath` prefixes the locale prefix when one applies (e.g. `/is/`),
+  // so this navigates to the IS spot page when the user is on /is/map
+  // instead of falling back to /spots/* which would drop them into EN.
+  const path = localePath(`/spots/${s.slug}`)
   const mapInst = eclipseMapRef.value?.map
   if (mapInst) {
     const c = mapInst.getCenter()
     const z = mapInst.getZoom().toFixed(1)
-    router.push(`/spots/${s.slug}?mlat=${c.lat.toFixed(4)}&mlng=${c.lng.toFixed(4)}&mzoom=${z}`)
+    router.push(`${path}?mlat=${c.lat.toFixed(4)}&mlng=${c.lng.toFixed(4)}&mzoom=${z}`)
   } else {
-    router.push(`/spots/${s.slug}`)
+    router.push(path)
   }
 }
 
 const router = useRouter()
+const localePath = useLocalePath()
 
 // Close profile menu on Escape or click outside.
 // Also: ← / → step the dock CAM carousel; Esc returns the dock to
