@@ -75,16 +75,19 @@ useHead(() => ({
 
       <!-- Footer -->
       <footer class="home-footer">
-        <NuxtLink to="/privacy">{{ t('footer.privacy') }}</NuxtLink>
-        <span aria-hidden="true">·</span>
-        <NuxtLink to="/terms">{{ t('footer.terms') }}</NuxtLink>
-        <span aria-hidden="true">·</span>
-        <NuxtLink to="/credits">{{ t('footer.credits') }}</NuxtLink>
-        <span aria-hidden="true">·</span>
-        <a
-          href="mailto:support@eclipsechase.is?subject=EclipseChase%20issue&body=Page%3A%20%0A%0AWhat%20happened%3A%20%0A%0AExpected%3A%20"
-          rel="noopener"
-        >{{ t('footer.report_issue') }}</a>
+        <div class="home-footer-links">
+          <NuxtLink to="/privacy">{{ t('footer.privacy') }}</NuxtLink>
+          <span aria-hidden="true">·</span>
+          <NuxtLink to="/terms">{{ t('footer.terms') }}</NuxtLink>
+          <span aria-hidden="true">·</span>
+          <NuxtLink to="/credits">{{ t('footer.credits') }}</NuxtLink>
+          <span aria-hidden="true">·</span>
+          <a
+            href="mailto:support@eclipsechase.is?subject=EclipseChase%20issue&body=Page%3A%20%0A%0AWhat%20happened%3A%20%0A%0AExpected%3A%20"
+            rel="noopener"
+          >{{ t('footer.report_issue') }}</a>
+        </div>
+        <LocaleSwitcher class="home-footer-locale" />
       </footer>
     </div>
   </PageShell>
@@ -143,13 +146,20 @@ useHead(() => ({
 
 .home-footer {
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
   padding-top: 24px;
   border-top: 1px solid rgb(var(--border-subtle) / 0.3);
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 11px;
   color: rgb(var(--ink-3));
+}
+.home-footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 .home-footer a {
   color: rgb(var(--ink-3));

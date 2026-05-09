@@ -46,6 +46,7 @@ const isCredits = computed(() => route.path === '/credits')
         >
           {{ t('footer.credits') }}
         </NuxtLink>
+        <LocaleSwitcher />
       </div>
     </div>
   </footer>

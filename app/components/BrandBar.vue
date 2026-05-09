@@ -100,6 +100,10 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
       </nav>
 
       <div class="brand-bar-right">
+        <!-- Locale switcher renders unconditionally for both free and
+             Pro users. Sits OUTSIDE the ClientOnly wrapper so it
+             appears in SSR and doesn't shift on hydrate. -->
+        <LocaleSwitcher class="hidden sm:inline-flex" />
         <ClientOnly>
           <template v-if="showFreeGetProPill">
             <NuxtLink
