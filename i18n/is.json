@@ -332,7 +332,21 @@
   },
   "guide": {
     "title": "Heildarleiðarvísir um sólmyrkvann 2026 á Íslandi",
-    "description": "Allt sem þú þarft til að skipuleggja ferðina til að sjá heilsólmyrkvann 12. ágúst 2026 á Íslandi — myrkvabálk, bestu áhorfsstaðir, veður og hvað á að taka með."
+    "description": "Allt sem þú þarft til að skipuleggja ferðina til að sjá heilsólmyrkvann 12. ágúst 2026 á Íslandi — myrkvabálk, bestu áhorfsstaðir, veður og hvað á að taka með.",
+    "eyebrow": "LEIÐARVÍSIR · 2026.08.12",
+    "h1": "Heildarleiðarvísir um sólmyrkvann 2026 á Íslandi",
+    "subtitle": "Hagnýt skipulagshandbók — eini heilsólmyrkvinn sem fer yfir Ísland næstu 170 árin.",
+    "toc": {
+      "whats_happening": "Hvað er að gerast",
+      "the_path_of_totality": "Leið heilmyrkvans",
+      "best_viewing_spots": "Bestu staðir",
+      "weather_cloud_cover": "Veður",
+      "getting_there": "Að komast þangað",
+      "what_to_bring": "Hvað á að taka með",
+      "eclipse_day_timeline": "Tímalína dagsins",
+      "faq": "Algengar spurningar"
+    },
+    "toc_aria_label": "Hlutar"
   },
   "nav": {
     "home": "Heim",

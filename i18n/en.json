@@ -332,7 +332,21 @@
   },
   "guide": {
     "title": "Complete Guide to the 2026 Total Solar Eclipse in Iceland",
-    "description": "Everything you need to plan your trip to see the August 12, 2026 total solar eclipse in Iceland — path of totality, best viewing spots, weather, and what to bring."
+    "description": "Everything you need to plan your trip to see the August 12, 2026 total solar eclipse in Iceland — path of totality, best viewing spots, weather, and what to bring.",
+    "eyebrow": "GUIDE · 2026.08.12",
+    "h1": "Complete Guide to the 2026 Total Solar Eclipse in Iceland",
+    "subtitle": "Your practical planning reference — the only total solar eclipse to cross Iceland for the next 170 years.",
+    "toc": {
+      "whats_happening": "What's happening",
+      "the_path_of_totality": "Path of totality",
+      "best_viewing_spots": "Best spots",
+      "weather_cloud_cover": "Weather",
+      "getting_there": "Getting there",
+      "what_to_bring": "What to bring",
+      "eclipse_day_timeline": "Day timeline",
+      "faq": "FAQ"
+    },
+    "toc_aria_label": "Sections"
   },
   "nav": {
     "home": "Home",

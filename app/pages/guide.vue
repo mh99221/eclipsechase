@@ -31,17 +31,24 @@ if (import.meta.client) {
   })
 }
 
+// `prefix_except_default` strategy: EN lives at /guide, IS at /is/guide.
+// Canonical + og:url + JSON-LD all need the locale-prefixed URL so search
+// engines don't treat the IS page as a duplicate of the EN canonical.
+const localizedGuideUrl = computed(() =>
+  locale.value === 'en' ? `${siteUrl}/guide` : `${siteUrl}/${locale.value}/guide`,
+)
+
 useHead(() => ({
   title: t('guide.title'),
   meta: [
     { name: 'description', content: t('guide.description') },
     { property: 'og:type', content: 'article' },
-    { property: 'og:url', content: `${siteUrl}/guide` },
+    { property: 'og:url', content: localizedGuideUrl.value },
     { property: 'og:title', content: t('guide.title') },
     { property: 'og:description', content: t('guide.description') },
   ],
   link: [
-    { rel: 'canonical', href: `${siteUrl}/guide` },
+    { rel: 'canonical', href: localizedGuideUrl.value },
   ],
   script: [
     {
@@ -55,23 +62,26 @@ useHead(() => ({
         'publisher': { '@type': 'Organization', 'name': 'EclipseChase.is' },
         'description': t('guide.description'),
         'image': `${siteUrl}/__og-image__/image/guide/og.png`,
-        'url': `${siteUrl}/guide`,
+        'url': localizedGuideUrl.value,
       }),
     },
   ],
 }))
 
-// TOC chip strip — labels match the H2s in content/guide.md.
-const toc = [
-  { id: 'whats-happening',     label: "What's happening" },
-  { id: 'the-path-of-totality', label: 'Path of totality' },
-  { id: 'best-viewing-spots',  label: 'Best spots' },
-  { id: 'weather-cloud-cover', label: 'Weather' },
-  { id: 'getting-there',       label: 'Getting there' },
-  { id: 'what-to-bring',       label: 'What to bring' },
-  { id: 'eclipse-day-timeline', label: 'Day timeline' },
-  { id: 'faq',                 label: 'FAQ' },
-] as const
+// TOC chip strip. IDs are stable across locales — both content/guide.md
+// and content/is/guide.md carry explicit {#id} anchors with the same
+// English keys, so scrollIntoView() works on /is/guide too. Labels are
+// pulled from i18n so they translate per locale.
+const toc = computed(() => [
+  { id: 'whats-happening',      label: t('guide.toc.whats_happening') },
+  { id: 'the-path-of-totality', label: t('guide.toc.the_path_of_totality') },
+  { id: 'best-viewing-spots',   label: t('guide.toc.best_viewing_spots') },
+  { id: 'weather-cloud-cover',  label: t('guide.toc.weather_cloud_cover') },
+  { id: 'getting-there',        label: t('guide.toc.getting_there') },
+  { id: 'what-to-bring',        label: t('guide.toc.what_to_bring') },
+  { id: 'eclipse-day-timeline', label: t('guide.toc.eclipse_day_timeline') },
+  { id: 'faq',                  label: t('guide.toc.faq') },
+])
 
 function scrollTo(id: string) {
   if (!import.meta.client) return
@@ -83,12 +93,12 @@ function scrollTo(id: string) {
 <template>
   <PageShell screen="guide">
     <header class="guide-header">
-      <Eyebrow tone="accent">GUIDE · 2026.08.12</Eyebrow>
-      <h1 class="guide-title">Complete Guide to the 2026 Total Solar Eclipse in Iceland</h1>
-      <p class="guide-sub">Your practical planning reference — the only total solar eclipse to cross Iceland for the next 170 years.</p>
+      <Eyebrow tone="accent">{{ t('guide.eyebrow') }}</Eyebrow>
+      <h1 class="guide-title">{{ t('guide.h1') }}</h1>
+      <p class="guide-sub">{{ t('guide.subtitle') }}</p>
     </header>
 
-    <nav class="guide-toc" aria-label="Sections">
+    <nav class="guide-toc" :aria-label="t('guide.toc_aria_label')">
       <Pill
         v-for="entry in toc"
         :key="entry.id"
