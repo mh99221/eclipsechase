@@ -243,7 +243,11 @@
     "days": "Dagar",
     "hours": "Klukkustundir",
     "minutes": "Mínútur",
-    "seconds": "Sekúndur"
+    "seconds": "Sekúndur",
+    "days_short": "Dagar",
+    "hours_short": "Klst",
+    "minutes_short": "Mín",
+    "seconds_short": "Sek"
   },
   "features": {
     "label": "Hvað þú færð",

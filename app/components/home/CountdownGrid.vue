@@ -1,11 +1,16 @@
 <script setup lang="ts">
+const { t } = useI18n()
 const { remaining } = useCountdown()
 
+// `_short` variants: tight grid cells force compact labels — IS uses
+// "Klst / Mín / Sek" (idiomatic abbreviations, used elsewhere in the
+// project) instead of the full "Klukkustundir / Mínútur / Sekúndur"
+// which would overflow the 9.5–11 px caps on a mobile cell width.
 const cells = computed(() => [
-  { v: String(remaining.value.days), u: 'Days' },
-  { v: String(remaining.value.hours).padStart(2, '0'), u: 'Hours' },
-  { v: String(remaining.value.minutes).padStart(2, '0'), u: 'Minutes' },
-  { v: String(remaining.value.seconds).padStart(2, '0'), u: 'Seconds' },
+  { v: String(remaining.value.days), u: t('countdown.days_short') },
+  { v: String(remaining.value.hours).padStart(2, '0'), u: t('countdown.hours_short') },
+  { v: String(remaining.value.minutes).padStart(2, '0'), u: t('countdown.minutes_short') },
+  { v: String(remaining.value.seconds).padStart(2, '0'), u: t('countdown.seconds_short') },
 ])
 </script>
 

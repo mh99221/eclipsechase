@@ -243,7 +243,11 @@
     "days": "Days",
     "hours": "Hours",
     "minutes": "Minutes",
-    "seconds": "Seconds"
+    "seconds": "Seconds",
+    "days_short": "Days",
+    "hours_short": "Hours",
+    "minutes_short": "Min",
+    "seconds_short": "Sec"
   },
   "features": {
     "label": "What you'll get",
