@@ -51,7 +51,7 @@ const heroSrcset = computed(() => {
     />
     <div class="spot-card-veil" aria-hidden="true" />
 
-    <div class="spot-card-region-badge">{{ regionLabel(region).toUpperCase() }}</div>
+    <div class="spot-card-region-badge">{{ regionLabel(region, t).toUpperCase() }}</div>
 
     <div class="spot-card-bottom">
       <div class="spot-card-name">{{ name }}</div>

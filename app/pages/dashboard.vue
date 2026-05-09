@@ -54,7 +54,7 @@ const { t } = useI18n()
 
         <div v-else-if="weatherBest" class="conditions-card">
           <div class="cell-l">
-            <div class="conditions-name">{{ regionLabel(weatherBest.region) }}</div>
+            <div class="conditions-name">{{ regionLabel(weatherBest.region, t) }}</div>
             <div class="conditions-sub">
               {{ t('v0.home.cloud_cover_summary', { pct: weatherBest.avgCloudCover, label: t(cloudLevel(weatherBest.avgCloudCover).labelKey) }) }}
             </div>

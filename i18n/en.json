@@ -496,6 +496,20 @@
   "popup": {
     "score_line": "Score: {score}/100"
   },
+  "region": {
+    "westfjords": "Westfjords",
+    "snaefellsnes": "Snæfellsnes",
+    "reykjanes": "Reykjanes",
+    "reykjavik": "Reykjavík",
+    "borgarfjordur": "Borgarfjörður"
+  },
+  "contact": {
+    "partial_begins": "Partial begins",
+    "totality_begins": "Totality begins",
+    "maximum": "Maximum",
+    "totality_ends": "Totality ends",
+    "partial_ends": "Partial ends"
+  },
   "spot": {
     "viewing_spot": "Viewing spot",
     "totality": "Totality",

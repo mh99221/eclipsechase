@@ -60,7 +60,7 @@ const siteUrl = useRuntimeConfig().public.siteUrl as string
 useHead({
   title: () => spot.value.name,
   meta: [
-    { name: 'description', content: () => `${spot.value.name} — eclipse viewing spot in ${regionLabel(spot.value.region)}. ${formatDuration(spot.value.totality_duration_seconds)} of totality.` },
+    { name: 'description', content: () => `${spot.value.name} — eclipse viewing spot in ${regionLabel(spot.value.region, t)}. ${formatDuration(spot.value.totality_duration_seconds)} of totality.` },
     { property: 'og:title', content: () => `${spot.value.name} — Eclipse Viewing Spot` },
     { property: 'og:description', content: () => spot.value.description },
     { property: 'og:url', content: () => `${siteUrl}/spots/${slug}` },
@@ -118,7 +118,7 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
   <PageShell screen="spot-detail">
     <SpotHeroBlock
       :name="spot.name"
-      :region="regionLabel(spot.region)"
+      :region="regionLabel(spot.region, t)"
       :hero="heroPhoto"
       :kicker="t('v0.spot_detail.kicker')"
       :lat="spot.lat"

@@ -3,12 +3,14 @@ import { REGIONS, type Region } from '~/types/spots'
 import { regionLabel } from '~/utils/eclipse'
 import Pill from '~/components/ui/Pill.vue'
 
+const { t } = useI18n()
+
 // null = "All"
 const model = defineModel<Region | null>({ required: true })
 
 const chips = computed<Array<{ id: Region | null; label: string }>>(() => ([
-  { id: null, label: 'All' },
-  ...REGIONS.map(r => ({ id: r, label: regionLabel(r) })),
+  { id: null, label: t('recommend.profile_names.all') },
+  ...REGIONS.map(r => ({ id: r, label: regionLabel(r, t) })),
 ]))
 </script>
 

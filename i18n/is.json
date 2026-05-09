@@ -496,6 +496,20 @@
   "popup": {
     "score_line": "Stig: {score}/100"
   },
+  "region": {
+    "westfjords": "Vestfirðir",
+    "snaefellsnes": "Snæfellsnes",
+    "reykjanes": "Reykjanes",
+    "reykjavik": "Reykjavík",
+    "borgarfjordur": "Borgarfjörður"
+  },
+  "contact": {
+    "partial_begins": "Deildarmyrkvi byrjar",
+    "totality_begins": "Heilmyrkvi byrjar",
+    "maximum": "Hámark",
+    "totality_ends": "Heilmyrkva lýkur",
+    "partial_ends": "Deildarmyrkva lýkur"
+  },
   "spot": {
     "viewing_spot": "Áhorfsstaður",
     "totality": "Myrkvi",

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 const props = defineProps<{
   /** ISO timestamp (UTC) when totality starts at the spot — i.e. C2. */
   totalityStart: string | null
@@ -55,11 +57,11 @@ const c4Display = computed(() => {
 })
 
 const rows = computed(() => [
-  { k: 'C1',  l: 'Partial begins',  t: c1Display.value,                                                                   big: false, faint: true },
-  { k: 'C2',  l: 'Totality begins', t: fmtUTC(props.totalityStart),                                                       big: true,  faint: false },
-  { k: 'MAX', l: 'Maximum',         t: fmtUTC(props.totalityStart, Math.floor(props.totalitySeconds / 2)),                big: false, faint: false },
-  { k: 'C3',  l: 'Totality ends',   t: fmtUTC(props.totalityStart, props.totalitySeconds),                                big: true,  faint: false },
-  { k: 'C4',  l: 'Partial ends',    t: c4Display.value,                                                                   big: false, faint: true },
+  { k: 'C1',  l: t('contact.partial_begins'),  t: c1Display.value,                                                                   big: false, faint: true },
+  { k: 'C2',  l: t('contact.totality_begins'), t: fmtUTC(props.totalityStart),                                                       big: true,  faint: false },
+  { k: 'MAX', l: t('contact.maximum'),         t: fmtUTC(props.totalityStart, Math.floor(props.totalitySeconds / 2)),                big: false, faint: false },
+  { k: 'C3',  l: t('contact.totality_ends'),   t: fmtUTC(props.totalityStart, props.totalitySeconds),                                big: true,  faint: false },
+  { k: 'C4',  l: t('contact.partial_ends'),    t: c4Display.value,                                                                   big: false, faint: true },
 ])
 </script>
 

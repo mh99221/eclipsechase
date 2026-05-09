@@ -127,9 +127,23 @@ export const REGION_LABELS: Record<Region, string> = {
   borgarfjordur: 'Borgarfjörður',
 }
 
-/** Display label for a region slug; falls back to the raw value. */
-export function regionLabel(region: string | null | undefined): string {
+/**
+ * Display label for a region slug. If a translator function is passed,
+ * it's tried first against `region.<slug>` so the label follows the
+ * active locale (e.g. "Vestfirðir" on /is/*). Without a translator —
+ * or when the i18n key is missing — falls back to the static English
+ * names in REGION_LABELS, then to the raw slug.
+ */
+export function regionLabel(
+  region: string | null | undefined,
+  t?: (key: string) => string,
+): string {
   if (!region) return ''
+  if (t) {
+    const localized = t(`region.${region}`)
+    // vue-i18n returns the key itself when missing, so guard against that.
+    if (localized && localized !== `region.${region}`) return localized
+  }
   return REGION_LABELS[region as Region] ?? region
 }
 

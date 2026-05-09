@@ -1,9 +1,20 @@
 <script setup lang="ts">
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
-const { data: page, refresh: refreshPage } = await useAsyncData('guide', () =>
-  queryCollection('content').path('/guide').first(),
+// Locale-aware content lookup. The English guide lives at
+// content/guide.md (path: /guide); each non-default locale has its
+// own translated copy at content/<locale>/guide.md (e.g.
+// content/is/guide.md → /is/guide). Re-keying the asyncData by
+// locale forces a re-fetch when the user toggles language so the
+// body swaps with the rest of the chrome.
+const contentPath = computed(() =>
+  locale.value === 'en' ? '/guide' : `/${locale.value}/guide`,
+)
+const { data: page, refresh: refreshPage } = await useAsyncData(
+  () => `guide-${locale.value}`,
+  () => queryCollection('content').path(contentPath.value).first(),
+  { watch: [locale] },
 )
 
 // Nuxt Content v3's client-side `queryCollection` occasionally returns

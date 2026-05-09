@@ -67,7 +67,7 @@ watch(mapContainer, async (el) => {
       for (const region of REGION_MARKERS) {
         const el = document.createElement('div')
         el.className = 'guide-map-label'
-        el.textContent = regionLabel(region.key)
+        el.textContent = regionLabel(region.key, t)
 
         new mapboxgl.Marker({ element: el, anchor: 'center' })
           .setLngLat([region.lng, region.lat])
