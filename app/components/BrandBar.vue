@@ -171,7 +171,15 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
   gap: 14px;
 }
 .brand-bar-inner.is-content {
-  max-width: 768px;
+  /* The masthead has to fit "LEIÐARVÍSIR" + "ENDURHEIMTA" + "FÁ PRO"
+     on /is/* without wrapping. 768 px (PageShell `reading` width) is
+     fine for the EN row but pinches the IS row tight enough that the
+     Get Pro pill stacks onto two lines. 960 px gives both locales
+     room while keeping the chrome from looking detached on wide
+     viewports. The page content underneath stays at 768 px via
+     PageShell, so the visual hierarchy is preserved — the chrome is
+     just allowed to breathe a bit wider than the column. */
+  max-width: 960px;
   margin: 0 auto;
 }
 .brand-bar-inner.is-map { width: 100%; }
@@ -195,7 +203,9 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
 .masthead {
   display: none;
   align-items: center;
-  gap: 24px;
+  /* 20 px (down from 24) keeps EN comfortable while giving IS
+     ("LEIÐARVÍSIR" / "ENDURHEIMTA") enough room without wrapping. */
+  gap: 20px;
 }
 @media (min-width: 768px) {
   .masthead { display: flex; }
@@ -210,6 +220,10 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
   color: rgb(var(--ink-1) / 0.62);
   text-decoration: none;
   padding: 4px 0;
+  /* Without nowrap, the lock-icon Map link breaks onto two lines on
+     /is/* because "KORT 🔒" no longer fits the gap. Force everything
+     onto its own row instead — overflow handled by the wider cap. */
+  white-space: nowrap;
   transition: color 0.2s ease;
 }
 .masthead-link:hover { color: rgb(var(--ink-1)); }
@@ -247,6 +261,10 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
   padding: 7px 12px;
   border-radius: 999px;
   text-decoration: none;
+  /* "FÁ PRO" was wrapping into two stacked lines on /is/*, breaking
+     the pill silhouette. Two short caps fit on one line at this size
+     in either locale; just stop the line break. */
+  white-space: nowrap;
   transition: background 0.2s ease;
 }
 .get-pro-pill:hover { background: rgb(var(--accent-strong)); }
@@ -266,6 +284,9 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
   text-decoration: none;
   min-height: 44px;
   padding: 0 4px;
+  /* "ENDURHEIMTA" is one word — keep it on one line in case sibling
+     items push it against the Get Pro pill on tighter widths. */
+  white-space: nowrap;
   transition: color 0.2s ease;
 }
 .restore-link:hover { color: rgb(var(--ink-1)); }
