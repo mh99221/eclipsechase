@@ -28,17 +28,17 @@ export default defineEventHandler(async (event) => {
   // view (description / parking_info / terrain_notes are spot-detail
   // only), so we fetch just those.
   if (locale !== 'en') {
-    const ids = data.map((s: any) => s.id)
+    const slugs = data.map((s: any) => s.slug)
     const { data: trs } = await supabase
       .from('viewing_spot_translations')
-      .select('spot_id, name, warnings')
+      .select('spot_slug, name, warnings')
       .eq('locale', locale)
-      .in('spot_id', ids)
+      .in('spot_slug', slugs)
     if (trs && trs.length > 0) {
-      const byId = new Map<string, { name: string | null; warnings: unknown }>()
-      for (const tr of trs) byId.set(tr.spot_id, { name: tr.name, warnings: tr.warnings })
+      const bySlug = new Map<string, { name: string | null; warnings: unknown }>()
+      for (const tr of trs) bySlug.set(tr.spot_slug, { name: tr.name, warnings: tr.warnings })
       for (const spot of data) {
-        const tr = byId.get((spot as any).id)
+        const tr = bySlug.get((spot as any).slug)
         if (!tr) continue
         if (tr.name) (spot as any).name = tr.name
         if (tr.warnings != null) (spot as any).warnings = tr.warnings

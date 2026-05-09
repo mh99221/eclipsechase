@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
     const { data: tr } = await supabase
       .from('viewing_spot_translations')
       .select('name, description, parking_info, terrain_notes, warnings')
-      .eq('spot_id', data.id)
+      .eq('spot_slug', data.slug)
       .eq('locale', locale)
       .maybeSingle()
     if (tr) {
