@@ -136,26 +136,29 @@ function cloudFor(spot: any): number | null {
   return h?.avg_cloud_cover ?? null
 }
 
+const { t } = useI18n()
+
 useHead({
-  title: 'Viewing Spots — EclipseChase',
+  title: () => t('spots_page.title'),
   meta: [
-    { name: 'description', content: 'Browse curated eclipse viewing spots across western Iceland for the August 12, 2026 total solar eclipse.' },
+    { name: 'description', content: () => t('spots_page.description') },
   ],
 })
 
 const headerSub = computed(() => {
-  const profileName = selectedProfile.value
-    ? PROFILES.find(p => p.id === selectedProfile.value)?.name
-    : 'All'
-  const sortLabel = sortKey.value === 'duration' ? 'totality duration' : 'historical clearness'
-  return `${profileName} · sorted by ${sortLabel}`
+  const p = PROFILES.find(p => p.id === selectedProfile.value)
+  const profileName = p ? t(p.nameKey) : t('recommend.profile_names.all')
+  const sortLabel = sortKey.value === 'duration'
+    ? t('spots_page.sort_by_duration')
+    : t('spots_page.sort_by_clearness')
+  return t('spots_page.header_sub', { profile: profileName, sort: sortLabel })
 })
 </script>
 
 <template>
   <PageShell screen="spots">
     <header class="spots-header">
-      <Eyebrow variant="dot" tone="accent">SPOTS · {{ displayItems.length }}</Eyebrow>
+      <Eyebrow variant="dot" tone="accent">{{ t('spots_page.eyebrow').toUpperCase() }} · {{ displayItems.length }}</Eyebrow>
       <p class="spots-sub">{{ headerSub }}</p>
     </header>
 
@@ -165,14 +168,14 @@ const headerSub = computed(() => {
 
     <div v-if="showProPrompt" class="pro-prompt">
       <p class="pro-prompt-text">
-        Profile-based scoring is a Pro feature.
-        <NuxtLinkLocale to="/pro" class="pro-prompt-link">Get Pro Access</NuxtLinkLocale>
+        {{ t('spots_page.pro_prompt') }}
+        <NuxtLinkLocale to="/pro" class="pro-prompt-link">{{ t('spots_page.pro_prompt_cta') }}</NuxtLinkLocale>
       </p>
-      <button type="button" class="pro-prompt-dismiss" @click="dismissProPrompt">Dismiss</button>
+      <button type="button" class="pro-prompt-dismiss" @click="dismissProPrompt">{{ t('spots_page.dismiss') }}</button>
     </div>
 
     <div v-if="selectedProfile && thinResults" class="thin-results">
-      Few spots match this profile. Try a different one for more options.
+      {{ t('spots_page.thin_results') }}
     </div>
 
     <div class="spots-list">

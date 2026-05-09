@@ -7,7 +7,10 @@ export type ProfileId = 'photographer' | 'family' | 'hiker' | 'skychaser' | 'fir
 
 export interface Profile {
   id: ProfileId
-  name: string
+  /** i18n key for the profile's short name. Consumers must run this
+   *  through useI18n().t() — the profile data layer can't resolve i18n
+   *  without coupling the composable to component scope. */
+  nameKey: string
   descriptionKey: string
   weights: { weather: number; duration: number; services: number; accessibility: number; distance: number; horizon: number }
   floors: {
@@ -23,21 +26,21 @@ export interface Profile {
 export const PROFILES: Profile[] = [
   {
     id: 'photographer',
-    name: 'Photographer',
+    nameKey: 'recommend.profile_names.photographer',
     descriptionKey: 'recommend.profiles.photographer',
     weights: { weather: 0.2625, duration: 0.2625, services: 0.0375, accessibility: 0.075, distance: 0.1125, horizon: 0.25 },
     floors: { horizonBlocked: true },
   },
   {
     id: 'family',
-    name: 'Family',
+    nameKey: 'recommend.profile_names.family',
     descriptionKey: 'recommend.profiles.family',
     weights: { weather: 0.1875, duration: 0.075, services: 0.225, accessibility: 0.1875, distance: 0.075, horizon: 0.25 },
     floors: { hasServices: true, cellCoverageNot: 'none', difficultyNot: 'challenging', horizonBlocked: true },
   },
   {
     id: 'hiker',
-    name: 'Hiker',
+    nameKey: 'recommend.profile_names.hiker',
     descriptionKey: 'recommend.profiles.hiker',
     weights: { weather: 0.1875, duration: 0.15, services: 0.0375, accessibility: 0.2625, distance: 0.1125, horizon: 0.25 },
     floors: { spotTypeNot: 'drive-up', horizonBlocked: true },
@@ -45,14 +48,14 @@ export const PROFILES: Profile[] = [
   },
   {
     id: 'skychaser',
-    name: 'Sky Chaser',
+    nameKey: 'recommend.profile_names.skychaser',
     descriptionKey: 'recommend.profiles.skychaser',
     weights: { weather: 0.375, duration: 0.1125, services: 0.0375, accessibility: 0.0375, distance: 0.1875, horizon: 0.25 },
     floors: { horizonBlocked: true },
   },
   {
     id: 'firsttimer',
-    name: 'First-Timer',
+    nameKey: 'recommend.profile_names.firsttimer',
     descriptionKey: 'recommend.profiles.firsttimer',
     weights: { weather: 0.225, duration: 0.1125, services: 0.15, accessibility: 0.15, distance: 0.1125, horizon: 0.25 },
     floors: { difficultyNot: 'challenging', horizonBlocked: true },

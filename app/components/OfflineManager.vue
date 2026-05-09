@@ -221,22 +221,22 @@ function cancel() {
           {{ t('offline.cache_status') }}
         </p>
         <div class="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[11px] font-mono text-ink-3">
-          <span>Map tiles</span>
+          <span>{{ t('offline.row_map_tiles') }}</span>
           <span>{{ tileCount > 0 ? t('offline.tiles_progress', { loaded: cachedTilesDisplay, total: estimatedTileCount, progress: cachedTilesPct }) : t('offline.not_cached') }}</span>
-          <span>Weather</span>
+          <span>{{ t('offline.row_weather') }}</span>
           <span>{{ hasCachedWeather ? lastWeatherUpdate : t('offline.not_cached') }}</span>
-          <span>Forecast</span>
+          <span>{{ t('offline.row_forecast') }}</span>
           <span>{{ lastForecastUpdate || t('offline.not_cached') }}</span>
-          <span>Spots</span>
+          <span>{{ t('offline.row_spots') }}</span>
           <span>
             <template v-if="hasCachedSpots">
               {{ spotDetailCount > 0 ? t('offline.spot_details_count', { count: spotDetailCount }) : t('offline.cached') }}
             </template>
             <template v-else>{{ t('offline.not_cached') }}</template>
           </span>
-          <span>Traffic</span>
+          <span>{{ t('offline.row_traffic') }}</span>
           <span>{{ hasCachedTraffic ? t('offline.cached') : t('offline.not_cached') }}</span>
-          <span>Cameras</span>
+          <span>{{ t('offline.row_cameras') }}</span>
           <span>{{ hasCachedCameras ? t('offline.cached') : t('offline.not_cached') }}</span>
         </div>
         <button

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 /**
  * Extended-deterministic forecast (T-15 → T-7). Pulls Open-Meteo's 16-day
  * ECMWF IFS HRES forecast at the spot's lat/lng via the server proxy.
@@ -52,7 +52,7 @@ function formatShortDate(iso: string) {
 
 // Total-cloud band label — same banding as the histogram + map markers.
 const totalLabel = computed(() =>
-  totality.value ? cloudLevel(totality.value.cloud_cover).label : null,
+  totality.value ? t(cloudLevel(totality.value.cloud_cover).labelKey) : null,
 )
 const totalColor = computed(() =>
   totality.value ? cloudColor(totality.value.cloud_cover) : null,
@@ -158,7 +158,7 @@ const totalColor = computed(() =>
           <div class="ext-sample-row">
             <template v-if="latest.cloud_cover != null">
               <span class="ext-sample-pct">{{ Math.round(latest.cloud_cover) }}%</span>
-              <span class="ext-sample-band">{{ cloudLevel(latest.cloud_cover).label }}</span>
+              <span class="ext-sample-band">{{ t(cloudLevel(latest.cloud_cover).labelKey) }}</span>
             </template>
             <template v-else>
               <span class="ext-sample-pct">—</span>

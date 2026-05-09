@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import mapboxgl from 'mapbox-gl'
 import { cloudColor, cloudLevel, formatDuration, weatherSvgHtml } from '~/utils/eclipse'
 import { addEclipsePathLayers } from '~/utils/mapLayers'
@@ -52,6 +52,7 @@ const emit = defineEmits<{
 
 const router = useRouter()
 const config = useRuntimeConfig()
+const { t } = useI18n()
 const mapContainer = ref<HTMLElement | null>(null)
 let map: mapboxgl.Map | null = null
 const mapExposed = shallowRef<mapboxgl.Map | null>(null)
@@ -318,7 +319,7 @@ function spotPopupHtml(spot: Spot, rankInfo: RankInfo | undefined, colors: Theme
   const isFiltered = rankInfo?.filtered === true
   const spotCloud = nearestCloudCover(spot.lat, spot.lng)
   const weatherIcon = weatherSvgHtml(spotCloud, 28)
-  const weatherLabel = cloudLevel(spotCloud).label
+  const weatherLabel = t(cloudLevel(spotCloud).labelKey)
   const weatherColor = cloudColor(spotCloud)
 
   const scoreHtml = rankInfo && !isFiltered

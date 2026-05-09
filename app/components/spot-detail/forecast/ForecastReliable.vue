@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { useNearestStation } from '~/composables/useNearestStation'
 import { useForecastPhase } from '~/composables/useForecastPhase'
 import { cloudColor, cloudLevel } from '~/utils/eclipse'
@@ -60,7 +60,7 @@ const nowSlot = computed<ForecastSlot | null>(
   () => stationForecasts.value?.forecasts[0] ?? null,
 )
 const nowCloud = computed(() => nowSlot.value?.cloud_cover ?? null)
-const nowLabel = computed(() => cloudLevel(nowCloud.value).label)
+const nowLabel = computed(() => t(cloudLevel(nowCloud.value).labelKey))
 const nowColor = computed(() => cloudColor(nowCloud.value))
 
 const stale = computed(() => forecastData.value?.stale ?? false)

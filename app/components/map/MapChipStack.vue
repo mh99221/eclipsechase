@@ -37,7 +37,7 @@ const emit = defineEmits<{
         size="sm"
         surface="glass"
         @click="emit('update:selectedProfile', null)"
-      >ALL</Pill>
+      >{{ t('recommend.profile_names.all').toUpperCase() }}</Pill>
       <Pill
         v-for="p in PROFILES"
         :key="p.id"
@@ -45,7 +45,7 @@ const emit = defineEmits<{
         size="sm"
         surface="glass"
         @click="emit('update:selectedProfile', p.id)"
-      >{{ p.name.toUpperCase() }}</Pill>
+      >{{ t(p.nameKey).toUpperCase() }}</Pill>
     </div>
     <div v-if="rows !== 'profiles'" class="row">
       <span class="row-label">{{ t('map.filters') }}:</span>
@@ -54,19 +54,19 @@ const emit = defineEmits<{
         size="sm"
         surface="glass"
         @click="emit('update:showWeather', !showWeather)"
-      >WEATHER</Pill>
+      >{{ t('map.layer_weather').toUpperCase() }}</Pill>
       <Pill
         :active="showTraffic"
         size="sm"
         surface="glass"
         @click="emit('update:showTraffic', !showTraffic)"
-      >ROADS</Pill>
+      >{{ t('map.layer_roads').toUpperCase() }}</Pill>
       <Pill
         :active="showCameras"
         size="sm"
         surface="glass"
         @click="emit('update:showCameras', !showCameras)"
-      >ROAD CAMS</Pill>
+      >{{ t('map.layer_cameras').toUpperCase() }}</Pill>
     </div>
   </div>
 </template>

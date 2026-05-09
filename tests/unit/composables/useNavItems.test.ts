@@ -4,6 +4,14 @@ vi.mock('~/composables/useProStatus', () => ({
   useProStatus: vi.fn(),
 }))
 
+// useNavItems() now calls useI18n() to resolve labels via t(). The
+// real vue-i18n composable insists on being called inside a setup
+// scope; mock it instead. Identity-on-key is fine — these tests
+// assert `to` and `locked`, not the label text.
+vi.mock('vue-i18n', () => ({
+  useI18n: () => ({ t: (key: string) => key }),
+}))
+
 import { useProStatus } from '~/composables/useProStatus'
 import { useNavItems } from '~/composables/useNavItems'
 

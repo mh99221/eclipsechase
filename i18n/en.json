@@ -131,6 +131,8 @@
       "eyebrow": "ECLIPSE 2026",
       "best_conditions_now": "BEST CONDITIONS NOW",
       "view_map_cta": "VIEW MAP →",
+      "cloud_cover_summary": "{pct}% cloud cover · {label}",
+      "conditions_unavailable": "Conditions unavailable.",
       "checklist_eyebrow": "ECLIPSE DAY CHECKLIST",
       "checklist": [
         "Eclipse glasses (ISO 12312-2 certified)",
@@ -271,6 +273,15 @@
     "privacy_note_link": "Privacy Policy"
   },
   "recommend": {
+    "profile_names": {
+      "all": "All",
+      "all_hint": "No preferences applied",
+      "photographer": "Photographer",
+      "family": "Family",
+      "hiker": "Hiker",
+      "skychaser": "Sky Chaser",
+      "firsttimer": "First-Timer"
+    },
     "profiles": {
       "photographer": "Longest totality + clear skies. Doesn't mind remote spots.",
       "family": "Easy access, services nearby, good cell signal. No difficult trails.",
@@ -278,6 +289,26 @@
       "skychaser": "Will drive anywhere for the clearest weather. All about the sky.",
       "firsttimer": "Balanced pick — safe, accessible, good conditions. A great first eclipse."
     }
+  },
+  "cloud": {
+    "clear": "Clear",
+    "mostly_clear": "Mostly clear",
+    "partly_cloudy": "Partly cloudy",
+    "mostly_cloudy": "Mostly cloudy",
+    "overcast": "Overcast",
+    "no_data": "No data"
+  },
+  "spots_page": {
+    "title": "Viewing Spots — EclipseChase",
+    "description": "Browse curated eclipse viewing spots across western Iceland for the August 12, 2026 total solar eclipse.",
+    "eyebrow": "Spots",
+    "header_sub": "{profile} · sorted by {sort}",
+    "sort_by_duration": "totality duration",
+    "sort_by_clearness": "historical clearness",
+    "pro_prompt": "Profile-based scoring is a Pro feature.",
+    "pro_prompt_cta": "Get Pro Access",
+    "dismiss": "Dismiss",
+    "thin_results": "Few spots match this profile. Try a different one for more options."
   },
   "footer": {
     "tagline": "Built for the once-in-170-years eclipse.",
@@ -299,9 +330,11 @@
     "description": "Everything you need to plan your trip to see the August 12, 2026 total solar eclipse in Iceland — path of totality, best viewing spots, weather, and what to bring."
   },
   "nav": {
-    "view_on_map": "VIEW ON MAP",
-    "map": "MAP",
-    "guide": "GUIDE",
+    "home": "Home",
+    "spots": "Spots",
+    "map": "Map",
+    "guide": "Guide",
+    "me": "Me",
     "back": "Back"
   },
   "map": {
@@ -351,7 +384,10 @@
     "pill_just_now": "now",
     "offline_ready": "Offline ready",
     "offline_download": "Download offline tiles",
-    "offline_downloading": "Downloading tiles…"
+    "offline_downloading": "Downloading tiles…",
+    "layer_weather": "Weather",
+    "layer_roads": "Roads",
+    "layer_cameras": "Road cams"
   },
   "pro": {
     "title": "Go Pro",
@@ -428,7 +464,13 @@
     "clear_cache": "Clear cached data",
     "data_ready": "All data cached for offline use",
     "tiles_cached": "{count} tiles cached",
-    "caching_data": "Caching data..."
+    "caching_data": "Caching data...",
+    "row_map_tiles": "Map tiles",
+    "row_weather": "Weather",
+    "row_forecast": "Forecast",
+    "row_spots": "Spots",
+    "row_traffic": "Traffic",
+    "row_cameras": "Cameras"
   },
   "forecast": {
     "timeline_title": "Cloud Forecast",

@@ -15,6 +15,14 @@ export default defineVitestConfig({
       // Server tests use node
       ['tests/server/**', 'node'],
     ],
+    // @nuxt/test-utils/runtime/entry.mjs registers a beforeAll that
+    // calls setupNuxt() with no explicit timeout. Vitest's 10 s
+    // default is not enough for the first cold boot on Windows
+    // (transform pass alone takes 60 s+ here). Bump both hook + test
+    // timeouts so happy-dom suites that still pull in the entry boot
+    // don't fail on the cold path.
+    hookTimeout: 120_000,
+    testTimeout: 30_000,
     setupFiles: ['./tests/mocks/setup.ts', './tests/server/api/_setup.ts'],
     exclude: ['tests/e2e/**', 'node_modules/**', '.claude/**', '.nuxt/**', '.output/**'],
     coverage: {

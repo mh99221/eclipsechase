@@ -133,7 +133,10 @@ const rankedForMap = computed(() => {
   })
 })
 
-const activeProfileName = computed(() => PROFILES.find(p => p.id === selectedProfile.value)?.name || null)
+const activeProfileName = computed(() => {
+  const p = PROFILES.find(p => p.id === selectedProfile.value)
+  return p ? t(p.nameKey) : null
+})
 
 // v0 mobile chrome — chip stack at top + bottom dock.
 // Seeded from ?spot= URL param so deep links open with a selection.
@@ -323,11 +326,12 @@ onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
 
-// Legend from shared constants
-const legendItems = [
-  ...CLOUD_COVER_LEVELS.map(l => ({ label: l.label, cloudCover: l.max })),
-  { label: CLOUD_COVER_NO_DATA.label, cloudCover: null as number | null },
-]
+// Legend from shared constants — labels resolve through useI18n() so
+// the legend follows the active locale.
+const legendItems = computed(() => [
+  ...CLOUD_COVER_LEVELS.map(l => ({ label: t(l.labelKey), cloudCover: l.max as number | null })),
+  { label: t(CLOUD_COVER_NO_DATA.labelKey), cloudCover: null as number | null },
+])
 
 // Traffic / road conditions layer
 interface TrafficCondition { lat: number; lng: number; condition: string; roadName?: string; description: string; updatedAt?: string }
@@ -1090,7 +1094,7 @@ const profileIcons: Record<ProfileId, string> = {
                 <svg width="12" height="12" viewBox="0 0 16 16" class="shrink-0">
                   <path :d="profileIcons[profile.id]" :fill="selectedProfile === profile.id ? '#f59e0b' : '#475569'" />
                 </svg>
-                {{ profile.name }}
+                {{ t(profile.nameKey) }}
               </button>
             </div>
           </div>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 /**
  * Day-of nowcast (T-1 → T-0 in real life). Three deliverables per spec
  * §3.4 + §11 step 7:
@@ -149,7 +149,7 @@ const nowSlot = computed<ForecastSlot | null>(
   () => stationForecasts.value?.forecasts[0] ?? null,
 )
 const nowCloud = computed(() => nowSlot.value?.cloud_cover ?? null)
-const nowLabel = computed(() => cloudLevel(nowCloud.value).label)
+const nowLabel = computed(() => t(cloudLevel(nowCloud.value).labelKey))
 const nowDotColor = computed(() => cloudColor(nowCloud.value))
 const stale = computed(() => forecastData.value?.stale ?? false)
 

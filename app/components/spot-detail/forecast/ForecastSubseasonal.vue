@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 /**
  * Sub-seasonal outlook (T-30 → T-15). Pulls Open-Meteo's 46-day six-hourly
  * ECMWF IFS04 forecast at the spot's lat/lng.
@@ -50,7 +50,7 @@ function formatShortDate(iso: string) {
 }
 
 const totalLabel = computed(() =>
-  totality.value ? cloudLevel(totality.value.cloud_cover).label : null,
+  totality.value ? t(cloudLevel(totality.value.cloud_cover).labelKey) : null,
 )
 const totalColor = computed(() =>
   totality.value ? cloudColor(totality.value.cloud_cover) : null,
@@ -107,7 +107,7 @@ const totalColor = computed(() =>
           <div class="sub-sample-row">
             <template v-if="latest.cloud_cover != null">
               <span class="sub-sample-pct">{{ Math.round(latest.cloud_cover) }}%</span>
-              <span class="sub-sample-band">{{ cloudLevel(latest.cloud_cover).label }}</span>
+              <span class="sub-sample-band">{{ t(cloudLevel(latest.cloud_cover).labelKey) }}</span>
             </template>
             <template v-else>
               <span class="sub-sample-pct">—</span>

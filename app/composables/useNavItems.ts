@@ -7,6 +7,8 @@
  *
  * `Me` stays in NAV_ITEMS_HIDDEN — its features (theme, sign out, restore)
  * already live in BrandBar's right slot or on /pro.
+ *
+ * Labels resolve through useI18n() so they follow the active locale.
  */
 export type NavIcon = 'map' | 'home' | 'spots' | 'guide' | 'me'
 
@@ -17,20 +19,16 @@ export interface NavItem {
   locked?: boolean
 }
 
-const NAV_ITEMS_HIDDEN: readonly NavItem[] = [
-  { to: '/me', label: 'Me', icon: 'me' },
-] as const
-void NAV_ITEMS_HIDDEN
-
 export function useNavItems() {
   const route = useRoute()
+  const { t } = useI18n()
   const { isPro } = useProStatus()
 
   const items = computed<NavItem[]>(() => [
-    { to: isPro.value ? '/dashboard' : '/', label: 'Home',  icon: 'home' },
-    { to: '/spots',                                label: 'Spots', icon: 'spots' },
-    { to: '/map',                                  label: 'Map',   icon: 'map', locked: !isPro.value },
-    { to: '/guide',                                label: 'Guide', icon: 'guide' },
+    { to: isPro.value ? '/dashboard' : '/', label: t('nav.home'),  icon: 'home' },
+    { to: '/spots',                          label: t('nav.spots'), icon: 'spots' },
+    { to: '/map',                            label: t('nav.map'),   icon: 'map', locked: !isPro.value },
+    { to: '/guide',                          label: t('nav.guide'), icon: 'guide' },
   ])
 
   function isActive(to: string): boolean {

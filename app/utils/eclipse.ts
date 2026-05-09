@@ -6,15 +6,18 @@ export function formatDuration(seconds: number): string {
 
 export type CloudLevelKey = 'clear' | 'mostly-clear' | 'partly-cloudy' | 'mostly-cloudy' | 'overcast'
 
+// `label` is the English fallback (kept for code paths that don't
+// have access to useI18n), `labelKey` is the i18n lookup that
+// rendering surfaces should use to follow the active locale.
 export const CLOUD_COVER_LEVELS = [
-  { key: 'clear',         max: 20,  color: '#38bdf8', label: 'Clear' },
-  { key: 'mostly-clear',  max: 40,  color: '#60a5fa', label: 'Mostly clear' },
-  { key: 'partly-cloudy', max: 60,  color: '#818cf8', label: 'Partly cloudy' },
-  { key: 'mostly-cloudy', max: 80,  color: '#94a3b8', label: 'Mostly cloudy' },
-  { key: 'overcast',      max: 100, color: '#64748b', label: 'Overcast' },
-] as const satisfies ReadonlyArray<{ key: CloudLevelKey; max: number; color: string; label: string }>
+  { key: 'clear',         max: 20,  color: '#38bdf8', label: 'Clear',          labelKey: 'cloud.clear' },
+  { key: 'mostly-clear',  max: 40,  color: '#60a5fa', label: 'Mostly clear',   labelKey: 'cloud.mostly_clear' },
+  { key: 'partly-cloudy', max: 60,  color: '#818cf8', label: 'Partly cloudy',  labelKey: 'cloud.partly_cloudy' },
+  { key: 'mostly-cloudy', max: 80,  color: '#94a3b8', label: 'Mostly cloudy',  labelKey: 'cloud.mostly_cloudy' },
+  { key: 'overcast',      max: 100, color: '#64748b', label: 'Overcast',       labelKey: 'cloud.overcast' },
+] as const satisfies ReadonlyArray<{ key: CloudLevelKey; max: number; color: string; label: string; labelKey: string }>
 
-export const CLOUD_COVER_NO_DATA = { key: 'no-data' as const, color: '#475569', label: 'No data' } as const
+export const CLOUD_COVER_NO_DATA = { key: 'no-data' as const, color: '#475569', label: 'No data', labelKey: 'cloud.no_data' } as const
 
 export type CloudLevel = (typeof CLOUD_COVER_LEVELS)[number] | typeof CLOUD_COVER_NO_DATA
 

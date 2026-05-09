@@ -14,12 +14,16 @@ interface ProfileEntry {
 }
 
 const entries = computed<ProfileEntry[]>(() => {
-  const all: ProfileEntry = { id: null, name: 'All', hint: 'No preferences applied' }
+  const all: ProfileEntry = {
+    id: null,
+    name: t('recommend.profile_names.all'),
+    hint: t('recommend.profile_names.all_hint'),
+  }
   return [
     all,
     ...PROFILES.map(p => ({
       id: p.id,
-      name: p.name,
+      name: te(p.nameKey) ? t(p.nameKey) : p.id,
       hint: te(p.descriptionKey) ? t(p.descriptionKey) : '',
     })),
   ]
@@ -34,7 +38,7 @@ function pick(id: ProfileId | null) {
 
 <template>
   <section class="profile-selector">
-    <Eyebrow tone="faint" variant="dash">VIEWER PROFILE</Eyebrow>
+    <Eyebrow tone="faint" variant="dash">{{ t('map.viewer_profile').toUpperCase() }}</Eyebrow>
     <div class="pills">
       <Pill
         v-for="e in entries"

@@ -56,7 +56,7 @@ const { t } = useI18n()
           <div class="cell-l">
             <div class="conditions-name">{{ regionLabel(weatherBest.region) }}</div>
             <div class="conditions-sub">
-              {{ weatherBest.avgCloudCover }}% cloud cover · {{ cloudLevel(weatherBest.avgCloudCover).label }}
+              {{ t('v0.home.cloud_cover_summary', { pct: weatherBest.avgCloudCover, label: t(cloudLevel(weatherBest.avgCloudCover).labelKey) }) }}
             </div>
           </div>
           <NuxtLinkLocale to="/map" class="conditions-cta">{{ t('v0.home.view_map_cta') }}</NuxtLinkLocale>
@@ -64,7 +64,7 @@ const { t } = useI18n()
 
         <div v-else class="conditions-card is-empty">
           <div class="cell-l">
-            <div class="conditions-sub">Conditions unavailable.</div>
+            <div class="conditions-sub">{{ t('v0.home.conditions_unavailable') }}</div>
           </div>
         </div>
       </section>

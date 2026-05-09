@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { cloudLevel, CLOUD_COVER_NO_DATA, type CloudLevelKey } from '~/utils/eclipse'
 import { ECLIPSE_DATE_UTC } from '~/utils/solar'
 
@@ -48,7 +48,7 @@ function timelineColor(cover: number | null): string {
 
 // Reuse labels from shared cloud cover levels
 function cloudLabel(cover: number | null): string {
-  return cloudLevel(cover).label
+  return t(cloudLevel(cover).labelKey)
 }
 
 // Hour-tick labels every 6h (00 / 06 / 12 / 18 UTC) plus the day

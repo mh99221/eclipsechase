@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { cloudLevel } from '~/utils/eclipse'
 
 interface SpotHistory {
@@ -19,7 +19,7 @@ const { t } = useI18n()
 const hasData = computed(() => (props.history?.years?.length ?? 0) > 0)
 const avgLabel = computed(() =>
   props.history?.avg_cloud_cover != null
-    ? cloudLevel(props.history.avg_cloud_cover).label
+    ? t(cloudLevel(props.history.avg_cloud_cover).labelKey)
     : null,
 )
 </script>

@@ -131,6 +131,8 @@
       "eyebrow": "SÓLMYRKVI 2026",
       "best_conditions_now": "BESTU SKILYRÐI NÚNA",
       "view_map_cta": "SJÁ KORT →",
+      "cloud_cover_summary": "{pct}% skýjahula · {label}",
+      "conditions_unavailable": "Skilyrði ekki tiltæk.",
       "checklist_eyebrow": "GÁTLISTI FYRIR MYRKVADAGINN",
       "checklist": [
         "Sólmyrkvagleraugu (vottuð skv. ISO 12312-2)",
@@ -271,6 +273,15 @@
     "privacy_note_link": "persónuverndarstefnu okkar"
   },
   "recommend": {
+    "profile_names": {
+      "all": "Allir",
+      "all_hint": "Engar óskir notaðar",
+      "photographer": "Ljósmyndari",
+      "family": "Fjölskylda",
+      "hiker": "Göngufari",
+      "skychaser": "Skýjaeltir",
+      "firsttimer": "Nýliði"
+    },
     "profiles": {
       "photographer": "Lengsti myrkvi + heiður himinn. Hefur ekkert á móti afskekktum stöðum.",
       "family": "Auðvelt aðgengi, þjónusta nálægt, gott farsímasamband. Engar erfiðar gönguleiðir.",
@@ -278,6 +289,26 @@
       "skychaser": "Keyrir hvert sem er fyrir heiðan himin. Allt snýst um veðrið.",
       "firsttimer": "Jafnvægisvalkostur — öruggur, aðgengilegur, góð skilyrði. Frábær fyrsti sólmyrkvi."
     }
+  },
+  "cloud": {
+    "clear": "Heiðskírt",
+    "mostly_clear": "Mestmegnis heiðskírt",
+    "partly_cloudy": "Léttskýjað",
+    "mostly_cloudy": "Skýjað",
+    "overcast": "Alskýjað",
+    "no_data": "Engin gögn"
+  },
+  "spots_page": {
+    "title": "Áhorfsstaðir — EclipseChase",
+    "description": "Skoðaðu valda áhorfsstaði fyrir heilsólmyrkvann 12. ágúst 2026 í Vestur-Íslandi.",
+    "eyebrow": "Staðir",
+    "header_sub": "{profile} · raðað eftir {sort}",
+    "sort_by_duration": "lengd myrkva",
+    "sort_by_clearness": "sögulegri heiðskíru",
+    "pro_prompt": "Stigagjöf eftir prófíl er Pro-eiginleiki.",
+    "pro_prompt_cta": "Fá Pro-aðgang",
+    "dismiss": "Loka",
+    "thin_results": "Fáir staðir passa við þennan prófíl. Reyndu annan fyrir fleiri valkosti."
   },
   "footer": {
     "tagline": "Gert fyrir sólmyrkvann sem kemur einu sinni á 170 árum.",
@@ -299,9 +330,11 @@
     "description": "Allt sem þú þarft til að skipuleggja ferðina til að sjá heilsólmyrkvann 12. ágúst 2026 á Íslandi — myrkvabálk, bestu áhorfsstaðir, veður og hvað á að taka með."
   },
   "nav": {
-    "view_on_map": "SKOÐA Á KORTI",
-    "map": "KORT",
-    "guide": "LEIÐARVÍSIR",
+    "home": "Heim",
+    "spots": "Staðir",
+    "map": "Kort",
+    "guide": "Leiðarvísir",
+    "me": "Ég",
     "back": "Til baka"
   },
   "map": {
@@ -351,7 +384,10 @@
     "pill_just_now": "núna",
     "offline_ready": "Tilbúið án nettengingar",
     "offline_download": "Sækja kortaflísar",
-    "offline_downloading": "Sæki flísar…"
+    "offline_downloading": "Sæki flísar…",
+    "layer_weather": "Veður",
+    "layer_roads": "Vegir",
+    "layer_cameras": "Myndavélar"
   },
   "pro": {
     "title": "Fáðu Pro",
@@ -428,7 +464,13 @@
     "clear_cache": "Hreinsa vistuð gögn",
     "data_ready": "Öll gögn vistuð fyrir notkun án nets",
     "tiles_cached": "{count} flísar vistaðar",
-    "caching_data": "Vista gögn…"
+    "caching_data": "Vista gögn…",
+    "row_map_tiles": "Kortaflísar",
+    "row_weather": "Veður",
+    "row_forecast": "Spá",
+    "row_spots": "Staðir",
+    "row_traffic": "Umferð",
+    "row_cameras": "Myndavélar"
   },
   "forecast": {
     "timeline_title": "Skýjaspá",
