@@ -175,11 +175,11 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
             :altitude="spot.sun_altitude"
             :azimuth="spot.sun_azimuth"
           />
-          <div v-else class="dial-missing">Sun position data unavailable.</div>
+          <div v-else class="dial-missing">{{ t('spot_detail_extra.dial_missing') }}</div>
         </Card>
         <div v-if="horizonProfileData" class="spacer-8" />
         <Card v-if="horizonProfileData">
-          <CardTitle>Horizon profile · 91-pt scan</CardTitle>
+          <CardTitle>{{ t('spot_detail_extra.horizon_profile_title') }}</CardTitle>
           <HorizonProfile :data="horizonProfileData" :lat="spot.lat" :lng="spot.lng" />
         </Card>
       </template>

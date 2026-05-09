@@ -146,7 +146,12 @@
     "spots": {
       "viewer_profile_eyebrow": "— ÁHORFENDAPRÓFÍLL",
       "sort_duration": "LENGD MYRKVA",
-      "sort_clearness": "SÖGULEG HEIÐSKÍRA"
+      "sort_clearness": "SÖGULEG HEIÐSKÍRA",
+      "card_stat_totality": "Myrkvi",
+      "card_stat_history": "10 ára 12. ágúst",
+      "card_cloud_pct": "{pct}% skýjað",
+      "card_cloud_missing": "— skýjað",
+      "card_aria": "{name} — {duration} myrkvi, {cloud}"
     },
     "spot_detail": {
       "kicker": "● STAÐUR",
@@ -422,6 +427,74 @@
     "already_pro": "Ertu nú þegar með Pro?",
     "restore_subtitle": "Endurheimtu kaupin þín á þessu tæki.",
     "logout": "Útskrá"
+  },
+  "restore": {
+    "idle_link": "Þegar greitt? Endurheimtu hér",
+    "heading": "Endurheimta kaup",
+    "email_prompt": "Sláðu inn netfangið sem þú notaðir við kaupin.",
+    "email_placeholder": "þú@dæmi.is",
+    "send_code": "Senda kóða",
+    "code_sent": "Kóði sendur á {email}. Athugaðu tölvupóstinn þinn.",
+    "code_input_prompt": "Sláðu inn 6-stafa kóðann sem var sendur á {email}",
+    "verifying": "Staðfesti…",
+    "success_heading": "Kaup endurheimt!",
+    "success_redirecting": "Beini á kort…",
+    "try_again": "Reyna aftur",
+    "error_generic": "Eitthvað fór úrskeiðis",
+    "error_invalid_code": "Ógildur eða útrunninn kóði"
+  },
+  "error_page": {
+    "action_back_home": "Aftur á forsíðu",
+    "action_browse_spots": "Skoða staði",
+    "action_read_guide": "Lesa leiðarvísi",
+    "title_404": "Við fundum ekki þessa síðu",
+    "title_generic": "Eitthvað fór úrskeiðis",
+    "subtitle_404": "Síðan sem þú reyndir að ná í er ekki til eða hefur verið flutt.",
+    "subtitle_generic": "Vinsamlegast reyndu aftur eftir augnablik.",
+    "head_title_404": "Síða fannst ekki",
+    "head_title_generic": "Villa"
+  },
+  "me_page": {
+    "pro_status": "Pro-staða",
+    "status_active": "Virkur",
+    "status_free": "Frí útgáfa"
+  },
+  "pro_success": {
+    "head_title": "Eclipse Pro virkjað",
+    "activating": "Virkja kaupin þín…",
+    "success_heading": "Þú ert tilbúin/n!",
+    "success_body": "Eclipse Pro er virkur. Þú ert tilbúin/n fyrir 12. ágúst.",
+    "success_cta": "Á sólmyrkvakortið →",
+    "delayed_heading": "Virkjun tekur lengri tíma en búist var við",
+    "delayed_body_1": "Greiðslan þín gekk vel. Pro-eiginleikar virkjast bráðlega.",
+    "delayed_body_2_pre": "Ef eiginleikarnir eru ekki virkir innan 5 mínútna, notaðu Endurheimta kaup á",
+    "delayed_body_2_post": ".",
+    "pro_page_link": "Pro-síðunni"
+  },
+  "spot_detail_extra": {
+    "dial_missing": "Gögn um sólstöðu ekki tiltæk.",
+    "horizon_profile_title": "Sjóndeildarhringssnið · 91 punkta skönnun"
+  },
+  "map_extra": {
+    "error_spot_load": "Gat ekki sótt áhorfsstaði.",
+    "error_dismiss": "Loka villuskilaboðum",
+    "click_to_enlarge": "Smelltu á mynd til að stækka",
+    "cam_label": "Vegamyndavél",
+    "cam_no_image": "Engin mynd tiltæk"
+  },
+  "geolocation": {
+    "not_supported": "Staðsetningarþjónusta er ekki studd"
+  },
+  "map_error": {
+    "no_token": "Enginn Mapbox-lykill stilltur",
+    "failed_to_load": "Tókst ekki að hlaða kortinu"
+  },
+  "spot_location": {
+    "parking_label": "Bílastæði",
+    "parking_recommended_for": "Mælt með bílastæði fyrir {spot}"
+  },
+  "popup": {
+    "score_line": "Stig: {score}/100"
   },
   "spot": {
     "viewing_spot": "Áhorfsstaður",

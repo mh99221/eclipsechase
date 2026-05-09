@@ -3,6 +3,11 @@ const { t } = useI18n()
 const { isPro } = useProStatus()
 const { openUpsell } = useUpsell()
 
+// Tile-eyebrow tokens — re-uses the nav.* labels so the eyebrow
+// follows the active locale. PRO is a brand token and stays
+// untranslated.
+const proEyebrow = 'PRO'
+
 function onMapTileClick(e: MouseEvent) {
   if (!isPro.value) {
     e.preventDefault()
@@ -18,7 +23,7 @@ function onMapTileClick(e: MouseEvent) {
       class="tile"
       to="/spots"
     >
-      <span class="tile-eyebrow">SPOTS</span>
+      <span class="tile-eyebrow">{{ t('nav.spots').toUpperCase() }}</span>
       <span class="tile-title">{{ t('v0.home.tile_spots_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_spots_body') }}</span>
     </NuxtLinkLocale>
@@ -28,7 +33,7 @@ function onMapTileClick(e: MouseEvent) {
       class="tile"
       to="/guide"
     >
-      <span class="tile-eyebrow">GUIDE</span>
+      <span class="tile-eyebrow">{{ t('nav.guide').toUpperCase() }}</span>
       <span class="tile-title">{{ t('v0.home.tile_guide_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_guide_body') }}</span>
     </NuxtLinkLocale>
@@ -41,7 +46,7 @@ function onMapTileClick(e: MouseEvent) {
       :class="{ locked: !isPro }"
       @click="onMapTileClick"
     >
-      <span class="tile-eyebrow">MAP<span v-if="!isPro" class="tile-lock" aria-hidden="true">🔒</span></span>
+      <span class="tile-eyebrow">{{ t('nav.map').toUpperCase() }}<span v-if="!isPro" class="tile-lock" aria-hidden="true">🔒</span></span>
       <span class="tile-title">{{ t('v0.home.tile_map_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_map_body') }}</span>
     </NuxtLinkLocale>
@@ -53,7 +58,7 @@ function onMapTileClick(e: MouseEvent) {
       to="/pro"
       class="tile tile-accent"
     >
-      <span class="tile-eyebrow">PRO</span>
+      <span class="tile-eyebrow">{{ proEyebrow }}</span>
       <span class="tile-title">{{ t('v0.home.tile_pro_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_pro_body') }}</span>
     </NuxtLinkLocale>
@@ -65,7 +70,7 @@ function onMapTileClick(e: MouseEvent) {
       to="/dashboard"
       class="tile"
     >
-      <span class="tile-eyebrow">HOME</span>
+      <span class="tile-eyebrow">{{ t('nav.home').toUpperCase() }}</span>
       <span class="tile-title">{{ t('v0.home.tile_dashboard_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_dashboard_body') }}</span>
     </NuxtLinkLocale>

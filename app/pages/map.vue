@@ -594,7 +594,7 @@ function buildCameraPopupHTML(cam: CameraData, currentIndex: number): string {
       </div>
       ${navHtml}
       <div style="text-align:center;margin-top:4px;">
-        <span data-cam-action="open" style="color:${meta};font-size:10px;cursor:pointer;border-bottom:1px solid ${border};">Click image to enlarge</span>
+        <span data-cam-action="open" style="color:${meta};font-size:10px;cursor:pointer;border-bottom:1px solid ${border};">${t('map_extra.click_to_enlarge')}</span>
       </div>
     </div>
   `
@@ -1237,10 +1237,10 @@ const profileIcons: Record<ProfileId, string> = {
         v-if="showSpotError"
         class="absolute top-16 left-1/2 -translate-x-1/2 z-20 px-4 py-2.5 rounded bg-red-900/80 backdrop-blur-sm border border-red-700/40 text-xs font-mono text-red-300 flex items-center gap-3 shadow-lg max-w-sm"
       >
-        <span>Could not load viewing spots.</span>
+        <span>{{ t('map_extra.error_spot_load') }}</span>
         <button
           class="text-status-red hover:opacity-75 transition-opacity shrink-0"
-          aria-label="Dismiss error"
+          :aria-label="t('map_extra.error_dismiss')"
           @click="showSpotError = false"
         >
           ✕

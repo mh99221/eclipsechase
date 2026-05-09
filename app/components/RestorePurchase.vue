@@ -37,7 +37,7 @@ async function sendCode() {
     }, 1500)
   }
   catch (err: any) {
-    error.value = err?.data?.statusMessage || 'Something went wrong'
+    error.value = err?.data?.statusMessage || t('restore.error_generic')
     state.value = 'error'
   }
   finally {
@@ -87,7 +87,7 @@ async function verifyCode(fullCode: string) {
     setTimeout(() => navigateTo('/map'), 2000)
   }
   catch (err: any) {
-    error.value = err?.data?.statusMessage || 'Invalid or expired code'
+    error.value = err?.data?.statusMessage || t('restore.error_invalid_code')
     state.value = 'error'
     code.value = ['', '', '', '', '', '']
   }
@@ -123,27 +123,27 @@ watch(() => route.hash, maybeAutoExpand)
         class="text-xs font-mono text-ink-3 hover:text-ink-2 transition-colors"
         @click="startRestore"
       >
-        Already purchased? Restore here
+        {{ t('restore.idle_link') }}
       </button>
     </div>
 
     <!-- Restore form -->
     <div v-else class="bg-surface-raised border border-border-subtle/40 rounded p-6">
       <h3 class="font-display text-lg font-semibold text-ink-1 mb-1">
-        Restore Purchase
+        {{ t('restore.heading') }}
       </h3>
 
       <!-- Email input -->
       <div v-if="state === 'email_input'">
         <p class="text-sm text-ink-3 mb-4">
-          Enter the email you used when purchasing.
+          {{ t('restore.email_prompt') }}
         </p>
         <div class="flex gap-2">
           <input
             ref="emailInputRef"
             v-model="email"
             type="email"
-            placeholder="you@example.com"
+            :placeholder="t('restore.email_placeholder')"
             class="flex-1 px-4 py-2.5 rounded bg-bg border border-border-subtle/40 text-ink-1 placeholder-slate-600 font-mono text-sm focus:outline-none focus:border-accent/50 transition-colors"
             @keydown.enter="sendCode"
           >
@@ -153,7 +153,7 @@ watch(() => route.hash, maybeAutoExpand)
             @click="sendCode"
           >
             <span v-if="submitting">...</span>
-            <span v-else>Send Code</span>
+            <span v-else>{{ t('restore.send_code') }}</span>
           </button>
         </div>
       </div>
@@ -161,14 +161,14 @@ watch(() => route.hash, maybeAutoExpand)
       <!-- Code sent message -->
       <div v-else-if="state === 'code_sent'">
         <p class="text-sm text-status-green">
-          Code sent to {{ maskedEmail }}. Check your email.
+          {{ t('restore.code_sent', { email: maskedEmail }) }}
         </p>
       </div>
 
       <!-- Code input -->
       <div v-else-if="state === 'code_input'">
         <p class="text-sm text-ink-3 mb-4">
-          Enter the 6-digit code sent to {{ maskedEmail }}
+          {{ t('restore.code_input_prompt', { email: maskedEmail }) }}
         </p>
         <div class="flex gap-2 justify-center mb-4">
           <input
@@ -192,7 +192,7 @@ watch(() => route.hash, maybeAutoExpand)
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
-        <p class="font-mono text-sm text-ink-3">Verifying...</p>
+        <p class="font-mono text-sm text-ink-3">{{ t('restore.verifying') }}</p>
       </div>
 
       <!-- Success -->
@@ -201,9 +201,9 @@ watch(() => route.hash, maybeAutoExpand)
           <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
         </svg>
         <p class="font-display text-lg font-semibold text-ink-1">
-          Purchase restored!
+          {{ t('restore.success_heading') }}
         </p>
-        <p class="font-mono text-xs text-ink-3 mt-1">Redirecting to map...</p>
+        <p class="font-mono text-xs text-ink-3 mt-1">{{ t('restore.success_redirecting') }}</p>
       </div>
 
       <!-- Error -->
@@ -213,7 +213,7 @@ watch(() => route.hash, maybeAutoExpand)
           class="text-sm font-mono text-accent hover:text-accent-strong transition-colors"
           @click="retry"
         >
-          Try again
+          {{ t('restore.try_again') }}
         </button>
       </div>
     </div>

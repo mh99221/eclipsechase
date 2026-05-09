@@ -12,6 +12,7 @@ const props = defineProps<{
 }>()
 
 const config = useRuntimeConfig()
+const { t } = useI18n()
 const mapContainer = ref<HTMLElement | null>(null)
 const mapError = ref('')
 const is3D = ref(false)
@@ -81,7 +82,7 @@ function addCuratedParkingMarker(lat: number, lng: number) {
   const cat = POI_CATEGORIES.parking!
   const el = document.createElement('div')
   el.className = 'poi-marker poi-marker-curated'
-  el.title = 'Parking'
+  el.title = t('spot_location.parking_label')
   el.style.cssText = `
     width: 26px; height: 26px; border-radius: 50%;
     background: ${cat.color}; color: #fff;
@@ -105,9 +106,9 @@ function addCuratedParkingMarker(lat: number, lng: number) {
     <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: ${ink}; padding: 4px;">
       <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
         <span style="width: 16px; height: 16px; border-radius: 50%; background: ${cat.color}; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #fff; flex-shrink: 0;">${cat.icon}</span>
-        <span style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 13px;">Parking</span>
+        <span style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 13px;">${t('spot_location.parking_label')}</span>
       </div>
-      <p style="color: ${inkDim}; margin: 0; font-size: 11px;">Recommended parking for ${props.spotName}</p>
+      <p style="color: ${inkDim}; margin: 0; font-size: 11px;">${t('spot_location.parking_recommended_for', { spot: props.spotName })}</p>
     </div>
   `)
 
@@ -214,7 +215,7 @@ watch(mapContainer, async (el) => {
 
   const token = config.public.mapboxToken as string
   if (!token) {
-    mapError.value = 'No Mapbox token configured'
+    mapError.value = t('map_error.no_token')
     return
   }
 
@@ -350,11 +351,11 @@ watch(mapContainer, async (el) => {
 
     map.on('error', (e: any) => {
       console.error('[SpotLocationMap] Mapbox error:', e)
-      mapError.value = 'Map failed to load'
+      mapError.value = t('map_error.failed_to_load')
     })
   } catch (err: any) {
     console.error('[SpotLocationMap]', err)
-    mapError.value = err.message || 'Map failed to load'
+    mapError.value = err.message || t('map_error.failed_to_load')
   }
 })
 

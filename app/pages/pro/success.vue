@@ -3,7 +3,7 @@ const { t } = useI18n()
 const route = useRoute()
 const { activate } = useProStatus()
 
-useHead({ title: 'Eclipse Pro Activated' })
+useHead({ title: () => t('pro_success.head_title') })
 
 const status = ref<'loading' | 'success' | 'delayed'>('loading')
 const sessionId = computed(() => route.query.session_id as string)
@@ -51,7 +51,7 @@ onMounted(async () => {
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
           <p class="font-mono text-sm text-ink-3 tracking-wider">
-            Activating your purchase...
+            {{ t('pro_success.activating') }}
           </p>
         </div>
 
@@ -64,17 +64,17 @@ onMounted(async () => {
           </div>
           <div>
             <h1 class="font-display text-2xl sm:text-3xl font-bold text-ink-1 mb-2">
-              You're all set!
+              {{ t('pro_success.success_heading') }}
             </h1>
             <p class="text-ink-3">
-              Eclipse Pro is active. You're ready for August 12.
+              {{ t('pro_success.success_body') }}
             </p>
           </div>
           <NuxtLinkLocale
             to="/map"
             class="inline-block btn-corona px-8 py-3 text-base"
           >
-            Go to Eclipse Map &rarr;
+            {{ t('pro_success.success_cta') }}
           </NuxtLinkLocale>
         </div>
 
@@ -87,14 +87,14 @@ onMounted(async () => {
           </div>
           <div>
             <h1 class="font-display text-xl font-bold text-ink-1 mb-2">
-              Activation is taking longer than expected
+              {{ t('pro_success.delayed_heading') }}
             </h1>
             <p class="text-sm text-ink-3 mb-2">
-              Your payment was successful. Pro features will activate shortly.
+              {{ t('pro_success.delayed_body_1') }}
             </p>
             <p class="text-xs text-ink-3">
-              If features aren't active within 5 minutes, use Restore Purchase on the
-              <NuxtLinkLocale to="/pro" class="text-accent hover:text-accent-strong transition-colors">Pro page</NuxtLinkLocale>.
+              {{ t('pro_success.delayed_body_2_pre') }}
+              <NuxtLinkLocale to="/pro" class="text-accent hover:text-accent-strong transition-colors">{{ t('pro_success.pro_page_link') }}</NuxtLinkLocale>{{ t('pro_success.delayed_body_2_post') }}
             </p>
           </div>
         </div>

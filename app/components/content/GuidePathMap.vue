@@ -4,6 +4,7 @@ import { readCssVar } from '~/utils/theme'
 
 const config = useRuntimeConfig()
 const colorMode = useColorMode()
+const { t } = useI18n()
 const mapContainer = ref<HTMLElement | null>(null)
 const mapError = ref('')
 let map: any = null
@@ -32,7 +33,7 @@ watch(mapContainer, async (el) => {
 
   const token = config.public.mapboxToken as string
   if (!token) {
-    mapError.value = 'No Mapbox token configured'
+    mapError.value = t('map_error.no_token')
     return
   }
 
@@ -76,11 +77,11 @@ watch(mapContainer, async (el) => {
 
     map.on('error', (e: any) => {
       console.error('[GuidePathMap] Mapbox error:', e)
-      mapError.value = 'Map failed to load'
+      mapError.value = t('map_error.failed_to_load')
     })
   } catch (err: any) {
     console.error('[GuidePathMap]', err)
-    mapError.value = err.message || 'Map failed to load'
+    mapError.value = err.message || t('map_error.failed_to_load')
   }
 })
 

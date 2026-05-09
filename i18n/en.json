@@ -146,7 +146,12 @@
     "spots": {
       "viewer_profile_eyebrow": "— VIEWER PROFILE",
       "sort_duration": "TOTALITY DURATION",
-      "sort_clearness": "HISTORICAL CLEARNESS"
+      "sort_clearness": "HISTORICAL CLEARNESS",
+      "card_stat_totality": "Totality",
+      "card_stat_history": "10-yr Aug 12",
+      "card_cloud_pct": "{pct}% cloud",
+      "card_cloud_missing": "— cloud",
+      "card_aria": "{name} — {duration} totality, {cloud}"
     },
     "spot_detail": {
       "kicker": "● SPOT",
@@ -422,6 +427,74 @@
     "already_pro": "Already purchased?",
     "restore_subtitle": "Restore your purchase on this device.",
     "logout": "Log out"
+  },
+  "restore": {
+    "idle_link": "Already purchased? Restore here",
+    "heading": "Restore Purchase",
+    "email_prompt": "Enter the email you used when purchasing.",
+    "email_placeholder": "you@example.com",
+    "send_code": "Send Code",
+    "code_sent": "Code sent to {email}. Check your email.",
+    "code_input_prompt": "Enter the 6-digit code sent to {email}",
+    "verifying": "Verifying...",
+    "success_heading": "Purchase restored!",
+    "success_redirecting": "Redirecting to map...",
+    "try_again": "Try again",
+    "error_generic": "Something went wrong",
+    "error_invalid_code": "Invalid or expired code"
+  },
+  "error_page": {
+    "action_back_home": "Go back home",
+    "action_browse_spots": "Browse spots",
+    "action_read_guide": "Read the guide",
+    "title_404": "We couldn't find that page",
+    "title_generic": "Something went wrong",
+    "subtitle_404": "The page you tried to reach doesn't exist or has moved.",
+    "subtitle_generic": "Please try again in a moment.",
+    "head_title_404": "Page not found",
+    "head_title_generic": "Error"
+  },
+  "me_page": {
+    "pro_status": "Pro status",
+    "status_active": "Active",
+    "status_free": "Free tier"
+  },
+  "pro_success": {
+    "head_title": "Eclipse Pro Activated",
+    "activating": "Activating your purchase...",
+    "success_heading": "You're all set!",
+    "success_body": "Eclipse Pro is active. You're ready for August 12.",
+    "success_cta": "Go to Eclipse Map →",
+    "delayed_heading": "Activation is taking longer than expected",
+    "delayed_body_1": "Your payment was successful. Pro features will activate shortly.",
+    "delayed_body_2_pre": "If features aren't active within 5 minutes, use Restore Purchase on the",
+    "delayed_body_2_post": ".",
+    "pro_page_link": "Pro page"
+  },
+  "spot_detail_extra": {
+    "dial_missing": "Sun position data unavailable.",
+    "horizon_profile_title": "Horizon profile · 91-pt scan"
+  },
+  "map_extra": {
+    "error_spot_load": "Could not load viewing spots.",
+    "error_dismiss": "Dismiss error",
+    "click_to_enlarge": "Click image to enlarge",
+    "cam_label": "Road camera",
+    "cam_no_image": "No image available"
+  },
+  "geolocation": {
+    "not_supported": "Geolocation not supported"
+  },
+  "map_error": {
+    "no_token": "No Mapbox token configured",
+    "failed_to_load": "Map failed to load"
+  },
+  "spot_location": {
+    "parking_label": "Parking",
+    "parking_recommended_for": "Recommended parking for {spot}"
+  },
+  "popup": {
+    "score_line": "Score: {score}/100"
   },
   "spot": {
     "viewing_spot": "Viewing spot",

@@ -12,10 +12,11 @@ const props = defineProps<{
   error: NuxtError
 }>()
 
+const { t } = useI18n()
 const is404 = computed(() => props.error?.statusCode === 404)
 
 useHead({
-  title: () => is404.value ? 'Page not found' : 'Something went wrong',
+  title: () => is404.value ? t('error_page.head_title_404') : t('error_page.head_title_generic'),
   // Override the global titleTemplate so we don't append "— EclipseChase.is"
   // twice; the template at app.head.titleTemplate adds the suffix already.
   meta: [
@@ -37,20 +38,18 @@ function goHome() {
           {{ error.statusCode }}
         </p>
         <h1 class="error-title">
-          {{ is404 ? "We couldn't find that page" : 'Something went wrong' }}
+          {{ is404 ? t('error_page.title_404') : t('error_page.title_generic') }}
         </h1>
         <p class="error-subtitle">
-          {{ is404
-            ? "The page you tried to reach doesn't exist or has moved."
-            : 'Please try again in a moment.' }}
+          {{ is404 ? t('error_page.subtitle_404') : t('error_page.subtitle_generic') }}
         </p>
 
         <div class="error-actions">
           <button type="button" class="error-cta" @click="goHome">
-            Go back home
+            {{ t('error_page.action_back_home') }}
           </button>
-          <NuxtLinkLocale to="/spots" class="error-link">Browse spots</NuxtLinkLocale>
-          <NuxtLinkLocale to="/guide" class="error-link">Read the guide</NuxtLinkLocale>
+          <NuxtLinkLocale to="/spots" class="error-link">{{ t('error_page.action_browse_spots') }}</NuxtLinkLocale>
+          <NuxtLinkLocale to="/guide" class="error-link">{{ t('error_page.action_read_guide') }}</NuxtLinkLocale>
         </div>
       </div>
     </main>

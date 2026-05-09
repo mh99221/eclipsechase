@@ -4,7 +4,8 @@ import Card from '~/components/ui/Card.vue'
 
 definePageMeta({ middleware: ['pro-gate'] })
 
-useHead({ title: 'Me — EclipseChase' })
+const { t } = useI18n()
+useHead({ title: () => `${t('nav.me')} — EclipseChase` })
 
 const { isPro } = useProStatus()
 </script>
@@ -12,16 +13,16 @@ const { isPro } = useProStatus()
 <template>
   <PageShell screen="me">
     <header class="me-header">
-      <Eyebrow tone="accent">● ACCOUNT</Eyebrow>
-      <h1 class="me-title">Me</h1>
+      <Eyebrow tone="accent">● {{ t('nav.me').toUpperCase() }}</Eyebrow>
+      <h1 class="me-title">{{ t('nav.me') }}</h1>
     </header>
 
     <div class="me-body">
       <Card>
         <div class="me-row">
-          <div class="me-row-label">Pro status</div>
+          <div class="me-row-label">{{ t('me_page.pro_status') }}</div>
           <div class="me-row-value" :data-pro="isPro">
-            {{ isPro ? 'Active' : 'Free tier' }}
+            {{ isPro ? t('me_page.status_active') : t('me_page.status_free') }}
           </div>
         </div>
       </Card>

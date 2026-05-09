@@ -1,4 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+
+// useLocation() now calls useI18n() to resolve the
+// "Geolocation not supported" error message. Mock vue-i18n so the
+// composable can run outside a Vue setup scope. Identity-on-key is
+// fine — these tests assert state shape, not message text.
+vi.mock('vue-i18n', () => ({
+  useI18n: () => ({ t: (key: string) => key }),
+}))
+
 import { useLocation } from '../../../app/composables/useLocation'
 
 const REYKJAVIK: [number, number] = [64.1466, -21.9426]
@@ -112,10 +121,14 @@ describe('useLocation', () => {
       })
     })
 
-    it('sets error "Geolocation not supported" when API unavailable', () => {
+    it('sets the geolocation-not-supported i18n key when API unavailable', () => {
+      // The composable now resolves the human message through useI18n().
+      // Our mock returns identity-on-key, so we assert the i18n key —
+      // proving the composable wired the message correctly without
+      // coupling the test to a specific locale's translation.
       const { error, request } = useLocation()
       request()
-      expect(error.value).toBe('Geolocation not supported')
+      expect(error.value).toBe('geolocation.not_supported')
     })
 
     it('coords remain at Reykjavik when geolocation unavailable', () => {

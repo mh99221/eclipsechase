@@ -6,6 +6,8 @@ import type { DockCamCtx } from './types'
 const props = defineProps<{ ctx: DockCamCtx }>()
 const emit = defineEmits<{ 'cam-step': [dir: 1 | -1] }>()
 
+const { t } = useI18n()
+
 const total = computed(() => props.ctx.images.length)
 const safeIdx = computed(() => {
   const t = total.value
@@ -21,7 +23,7 @@ const subtitle = computed(() => current.value?.description || props.ctx.dir || '
 
 <template>
   <div>
-    <DockHeader eyebrow="Road cam" dot-var="good" />
+    <DockHeader :eyebrow="t('map_extra.cam_label')" dot-var="good" />
 
     <div class="title title--with-sub">{{ ctx.name }}</div>
     <div class="dir" v-if="subtitle">{{ subtitle }}</div>
@@ -35,7 +37,7 @@ const subtitle = computed(() => current.value?.description || props.ctx.dir || '
         class="frame-img"
         loading="lazy"
       >
-      <div v-else class="frame-empty">No image available</div>
+      <div v-else class="frame-empty">{{ t('map_extra.cam_no_image') }}</div>
     </div>
 
     <div class="ctrls">

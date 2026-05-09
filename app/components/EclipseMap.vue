@@ -323,7 +323,7 @@ function spotPopupHtml(spot: Spot, rankInfo: RankInfo | undefined, colors: Theme
   const weatherColor = cloudColor(spotCloud)
 
   const scoreHtml = rankInfo && !isFiltered
-    ? `<div style="margin-top: 4px; color: ${rankInfo.score >= 80 ? '#22c55e' : rankInfo.score >= 50 ? '#fbbf24' : '#ef4444'};">Score: ${rankInfo.score}/100</div>`
+    ? `<div style="margin-top: 4px; color: ${rankInfo.score >= 80 ? '#22c55e' : rankInfo.score >= 50 ? '#fbbf24' : '#ef4444'};">${t('popup.score_line', { score: rankInfo.score })}</div>`
     : ''
 
   const spotHist = props.historical?.[spot.slug]

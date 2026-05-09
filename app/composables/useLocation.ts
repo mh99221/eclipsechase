@@ -1,13 +1,14 @@
 const REYKJAVIK: [number, number] = [64.1466, -21.9426]
 
 export function useLocation() {
+  const { t } = useI18n()
   const coords = ref<[number, number]>(REYKJAVIK)
   const isGps = ref(false)
   const error = ref<string | null>(null)
 
   function request() {
     if (!navigator.geolocation) {
-      error.value = 'Geolocation not supported'
+      error.value = t('geolocation.not_supported')
       return
     }
     navigator.geolocation.getCurrentPosition(

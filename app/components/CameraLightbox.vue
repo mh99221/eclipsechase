@@ -5,6 +5,7 @@ interface LightboxCamera { id: string; name: string; images: LightboxImage[] }
 const props = defineProps<{ camera: LightboxCamera | null; startIndex?: number }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
 
+const { t } = useI18n()
 const currentIndex = ref(0)
 
 // Reset index whenever a new camera is opened, honoring the caller's
@@ -58,9 +59,9 @@ onUnmounted(() => { document.removeEventListener('keydown', onKeydown) })
             <circle cx="8" cy="8" r="2" fill="currentColor" />
           </svg>
           <span class="title">{{ camera.name }}</span>
-          <span class="eyebrow">Road camera</span>
+          <span class="eyebrow">{{ t('map_extra.cam_label') }}</span>
         </div>
-        <button class="close-btn" @click="close">Close</button>
+        <button class="close-btn" @click="close">{{ t('map.close') }}</button>
       </div>
 
       <!-- Image -->

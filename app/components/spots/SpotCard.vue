@@ -15,8 +15,12 @@ const props = defineProps<{
   eager?: boolean
 }>()
 
+const { t } = useI18n()
+
 const status = computed(() => cloudToStatus(props.cloud))
-const cloudLabel = computed(() => props.cloud == null ? '— cloud' : `${props.cloud}% cloud`)
+const cloudLabel = computed(() => props.cloud == null
+  ? t('v0.spots.card_cloud_missing')
+  : t('v0.spots.card_cloud_pct', { pct: props.cloud }))
 const heroSrc = computed(() => props.heroFilename ? `/images/spots/${props.heroFilename}` : null)
 const heroSrcset = computed(() => {
   if (!props.heroFilename) return undefined
@@ -26,7 +30,7 @@ const heroSrcset = computed(() => {
 </script>
 
 <template>
-  <NuxtLinkLocale :to="`/spots/${slug}`" class="spot-card" :aria-label="`${name} — ${formatDuration(durationSeconds)} totality, ${cloudLabel}`">
+  <NuxtLinkLocale :to="`/spots/${slug}`" class="spot-card" :aria-label="t('v0.spots.card_aria', { name, duration: formatDuration(durationSeconds), cloud: cloudLabel })">
     <!-- Always paint a fallback gradient first so the card never shows
          page bg through the border while the hero image is loading. The
          <img> above stacks on top once decoded; if heroSrc is missing,
@@ -53,11 +57,11 @@ const heroSrcset = computed(() => {
       <div class="spot-card-name">{{ name }}</div>
       <div class="spot-card-bottom-row">
         <div class="spot-card-stat">
-          <div class="spot-card-stat-l">Totality</div>
+          <div class="spot-card-stat-l">{{ t('v0.spots.card_stat_totality') }}</div>
           <div class="spot-card-dur">{{ formatDuration(durationSeconds) }}</div>
         </div>
         <div class="spot-card-stat spot-card-stat--right">
-          <div class="spot-card-stat-l">10-yr Aug 12</div>
+          <div class="spot-card-stat-l">{{ t('v0.spots.card_stat_history') }}</div>
           <div class="spot-card-cloud" :data-status="status">{{ cloudLabel }}</div>
         </div>
       </div>
