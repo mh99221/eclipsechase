@@ -1,4 +1,8 @@
-const CACHE_NAME = 'eclipsechase-v5'
+// Bumped to v6 so existing clients invalidate stale precache entries
+// when the new `_payload.json` / `/api/_content/` network-first rules
+// land — without this, returning visitors keep getting the old SW's
+// behaviour for those URLs even after the deploy.
+const CACHE_NAME = 'eclipsechase-v6'
 const API_CACHE = 'eclipsechase-api-v2'
 const TILE_CACHE = 'eclipsechase-tiles-v1'
 const MAX_TILE_CACHE = 5000
@@ -210,6 +214,19 @@ self.addEventListener('fetch', (event) => {
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => caches.match(event.request) || caches.match('/'))
+    )
+    return
+  }
+
+  // Nuxt SPA-navigation payloads (`_payload.json`) and Nuxt Content's
+  // query API drive page hydration. Caching them risks serving the
+  // wrong revision after a deploy, which manifests as "page renders
+  // header but no body" (queryCollection returns null because the
+  // payload was the previous build's). Always go to network here;
+  // if offline, fall through to a cache match as a last resort.
+  if (url.pathname.endsWith('/_payload.json') || url.pathname.startsWith('/api/_content/')) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request) || offlineResponse())
     )
     return
   }

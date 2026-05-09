@@ -2,9 +2,23 @@
 const { t } = useI18n()
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
-const { data: page } = await useAsyncData('guide', () =>
+const { data: page, refresh: refreshPage } = await useAsyncData('guide', () =>
   queryCollection('content').path('/guide').first(),
 )
+
+// Nuxt Content v3's client-side `queryCollection` occasionally returns
+// null on SPA navigation to this prerendered page (the `_payload.json`
+// or the `/api/_content/query/*` lookup races / loses to the SW).
+// When that happens the article body silently disappears and only the
+// header + hard-coded TOC chips render. F5 fixes it because the
+// prerendered HTML inlines the data. As a defensive net, re-trigger
+// the fetch on the client when we mount with no content; for the
+// happy path this is a no-op since `page.value` is already set.
+if (import.meta.client) {
+  onMounted(() => {
+    if (!page.value) refreshPage()
+  })
+}
 
 useHead(() => ({
   title: t('guide.title'),
