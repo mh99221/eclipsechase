@@ -171,15 +171,7 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
   gap: 14px;
 }
 .brand-bar-inner.is-content {
-  /* The masthead has to fit "LEIÐARVÍSIR" + "ENDURHEIMTA" + "FÁ PRO"
-     on /is/* without wrapping. 768 px (PageShell `reading` width) is
-     fine for the EN row but pinches the IS row tight enough that the
-     Get Pro pill stacks onto two lines. 960 px gives both locales
-     room while keeping the chrome from looking detached on wide
-     viewports. The page content underneath stays at 768 px via
-     PageShell, so the visual hierarchy is preserved — the chrome is
-     just allowed to breathe a bit wider than the column. */
-  max-width: 960px;
+  max-width: 768px;
   margin: 0 auto;
 }
 .brand-bar-inner.is-map { width: 100%; }
@@ -203,9 +195,7 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
 .masthead {
   display: none;
   align-items: center;
-  /* 20 px (down from 24) keeps EN comfortable while giving IS
-     ("LEIÐARVÍSIR" / "ENDURHEIMTA") enough room without wrapping. */
-  gap: 20px;
+  gap: 24px;
 }
 @media (min-width: 768px) {
   .masthead { display: flex; }

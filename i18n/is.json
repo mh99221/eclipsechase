@@ -116,7 +116,7 @@
       "tagline": "Ísland · 12. ágúst 2026 · finndu heiðasta himininn",
       "tile_spots_title": "Skoða staði",
       "tile_spots_body": "Valdir áhorfsstaðir í öllum fimm svæðum",
-      "tile_guide_title": "Lesa leiðarvísi",
+      "tile_guide_title": "Lesa handbók",
       "tile_guide_body": "Skipuleggðu með ítarlegum sólmyrkvaleiðarvísi",
       "tile_map_title": "Lifandi veðurkort",
       "tile_map_body": "Lifandi skýjahula + raðaðir staðir (Pro)",
@@ -352,7 +352,7 @@
     "home": "Heim",
     "spots": "Staðir",
     "map": "Kort",
-    "guide": "Leiðarvísir",
+    "guide": "Handbók",
     "me": "Ég",
     "back": "Til baka"
   },
@@ -460,7 +460,7 @@
   "error_page": {
     "action_back_home": "Aftur á forsíðu",
     "action_browse_spots": "Skoða staði",
-    "action_read_guide": "Lesa leiðarvísi",
+    "action_read_guide": "Lesa handbók",
     "title_404": "Við fundum ekki þessa síðu",
     "title_generic": "Eitthvað fór úrskeiðis",
     "subtitle_404": "Síðan sem þú reyndir að ná í er ekki til eða hefur verið flutt.",
