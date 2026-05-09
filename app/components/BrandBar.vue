@@ -5,9 +5,19 @@ const route = useRoute()
 const { items: navItems, isActive: isNavActive } = useNavItems()
 const { openUpsell } = useUpsell()
 
-const isLanding = computed(() => route.path === '/')
-const isMap = computed(() => route.path === '/map')
-const isProRoute = computed(() => route.path === '/pro' || route.path.startsWith('/pro/'))
+// Resolve the route's base name (strips the ___<locale> suffix that
+// @nuxtjs/i18n appends to every route under `prefix_except_default`).
+// This is the locale-agnostic way to recognise routes — the previous
+// `route.path === '/map'` etc. comparisons missed `/is/map`,
+// `/is/pro`, `/is/` because those have a locale prefix in the path.
+// Symptom: on /is/map the BrandBar fell back to the 768 px `is-content`
+// layout instead of the full-width `is-map` one.
+const getRouteBaseName = useRouteBaseName()
+const baseName = computed(() => getRouteBaseName(route) ?? '')
+
+const isLanding = computed(() => baseName.value === 'index')
+const isMap = computed(() => baseName.value === 'map')
+const isProRoute = computed(() => baseName.value === 'pro' || baseName.value.startsWith('pro-'))
 
 // Free users see a small Get-Pro pill in the right slot on every page
 // except / (where the in-page tile already serves that purpose) and

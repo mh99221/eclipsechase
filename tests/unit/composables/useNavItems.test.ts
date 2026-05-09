@@ -12,6 +12,11 @@ vi.mock('vue-i18n', () => ({
   useI18n: () => ({ t: (key: string) => key }),
 }))
 
+// useNavItems() also uses useRouteBaseName() inside `isActive` for
+// locale-agnostic active-tab detection. We don't need to stub it here
+// — the composable resolves it lazily inside the function, so these
+// tests (which only assert on `items`) never touch it.
+
 import { useProStatus } from '~/composables/useProStatus'
 import { useNavItems } from '~/composables/useNavItems'
 

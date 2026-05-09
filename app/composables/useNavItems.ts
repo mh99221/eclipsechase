@@ -32,9 +32,27 @@ export function useNavItems() {
   ])
 
   function isActive(to: string): boolean {
-    if (to === '/spots') return route.path.startsWith('/spots')
-    if (to === '/me') return route.path.startsWith('/me')
-    return route.path === to
+    // `useRouteBaseName()` (from @nuxtjs/i18n) strips the
+    // `___<locale>` suffix that the i18n module appends to every
+    // route name, giving us a locale-agnostic identifier. Without
+    // it, the previous `route.path === '/map'` / `startsWith('/spots')`
+    // checks only matched the EN paths and left the active tab
+    // unhighlighted on /is/* pages.
+    //
+    // Lazily resolved here (not at composable setup) so unit tests
+    // that exercise only `items` don't need to wire up the i18n
+    // plugin context — the real call only happens when a template
+    // queries the active tab inside Vue's render scope.
+    const getRouteBaseName = useRouteBaseName()
+    const base = getRouteBaseName(route) ?? ''
+    // /spots and /me are parents — match their child routes too
+    // (e.g. /spots/[slug] has base name `spots-slug`).
+    if (to === '/spots') return base === 'spots' || base.startsWith('spots-')
+    if (to === '/me') return base === 'me' || base.startsWith('me-')
+    if (to === '/') return base === 'index'
+    // Strip the leading slash to get the canonical base name for the
+    // remaining flat routes (`/dashboard` → `dashboard`, etc.).
+    return base === to.replace(/^\//, '')
   }
 
   return { items, isActive }

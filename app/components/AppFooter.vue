@@ -9,9 +9,15 @@ const { t } = useI18n()
 const { goBack } = useGoBack()
 const route = useRoute()
 
-const isPrivacy = computed(() => route.path === '/privacy')
-const isTerms = computed(() => route.path === '/terms')
-const isCredits = computed(() => route.path === '/credits')
+// Compare against the route's base name so /is/privacy collapses to
+// `privacy` like /privacy does — `route.path === '/privacy'` would
+// miss the IS prefix and render a "Privacy" link on the page that
+// already IS the privacy page.
+const getRouteBaseName = useRouteBaseName()
+const baseName = computed(() => getRouteBaseName(route) ?? '')
+const isPrivacy = computed(() => baseName.value === 'privacy')
+const isTerms = computed(() => baseName.value === 'terms')
+const isCredits = computed(() => baseName.value === 'credits')
 </script>
 
 <template>
