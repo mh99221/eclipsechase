@@ -44,6 +44,8 @@ const otherHref = computed(() => switchLocalePath(otherLocale.value) || '/')
 </template>
 
 <style scoped>
+/* Plain text link, no pill. Matches the masthead-link cap-mono
+   silhouette so the toggle reads as ambient nav rather than a CTA. */
 .locale-toggle {
   display: inline-flex;
   align-items: center;
@@ -54,20 +56,18 @@ const otherHref = computed(() => switchLocalePath(otherLocale.value) || '/')
   letter-spacing: 0.12em;
   color: rgb(var(--ink-1) / 0.62);
   text-decoration: none;
-  padding: 6px 10px;
+  /* Keep a touch target ≥ 32 px tall + a little inline padding so the
+     hit area is generous, but no border / background / radius. */
+  padding: 4px 2px;
   min-height: 32px;
-  min-width: 32px;
-  border: 1px solid rgb(var(--border-subtle) / 0.16);
-  border-radius: 999px;
-  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  transition: color 0.15s ease;
 }
 .locale-toggle:hover {
   color: rgb(var(--ink-1));
-  border-color: rgb(var(--border-subtle) / 0.32);
-  background: rgb(var(--ink-1) / 0.04);
 }
 .locale-toggle:focus-visible {
   outline: 2px solid rgb(var(--accent));
   outline-offset: 2px;
+  border-radius: 4px;
 }
 </style>
