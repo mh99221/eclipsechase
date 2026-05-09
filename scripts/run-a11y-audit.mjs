@@ -16,6 +16,7 @@
  *   5. tear down the preview tree, exit with pa11y's exit code
  */
 import { spawn } from 'node:child_process'
+import { createServer } from 'node:net'
 import { setTimeout as sleep } from 'node:timers/promises'
 
 const isWin = process.platform === 'win32'
@@ -24,6 +25,24 @@ const URL = `http://localhost:${PORT}/`
 const READY_TIMEOUT_MS = 90_000
 
 const NPX = isWin ? 'npx.cmd' : 'npx'
+
+/** Resolves true if the port is free, false if something else holds it.
+ *  We bind a no-op listener on 0.0.0.0:PORT and immediately close. If
+ *  bind fails with EADDRINUSE the port is in use; any other error is
+ *  surfaced so the runner doesn't paper over real OS issues. */
+function probePort(port) {
+  return new Promise((resolve, reject) => {
+    const srv = createServer()
+    srv.unref()
+    srv.once('error', (err) => {
+      if (err.code === 'EADDRINUSE') resolve(false)
+      else reject(err)
+    })
+    srv.listen(port, '0.0.0.0', () => {
+      srv.close(() => resolve(true))
+    })
+  })
+}
 
 let server = null
 let exitCode = 0
@@ -72,6 +91,18 @@ function killTree(pid) {
 }
 
 async function main() {
+  // 0. Pre-flight: bail if port 3000 is occupied, before paying the
+  // ~3 min build cost. Most common cause is an orphan preview from a
+  // crashed earlier run; the message tells the user how to clear it.
+  const portFree = await probePort(PORT)
+  if (!portFree) {
+    const cleanup = isWin
+      ? 'Run: powershell -c "Get-NetTCPConnection -LocalPort 3000 | Stop-Process -Id { $_.OwningProcess } -Force"'
+      : 'Run: lsof -ti:3000 | xargs -r kill -9'
+    console.error(`[a11y] Port ${PORT} is already in use. ${cleanup}`)
+    process.exit(1)
+  }
+
   // 1. Build
   console.log('[a11y] Building production bundle…')
   await runStreaming(NPX, ['nuxt', 'build'])
