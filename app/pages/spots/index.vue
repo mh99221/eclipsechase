@@ -9,7 +9,11 @@ const { coords } = useLocation()
 const route = useRoute()
 const router = useRouter()
 
-const { data } = await useFetch('/api/spots')
+const { t, locale } = useI18n()
+const { data } = await useFetch('/api/spots', {
+  query: { locale: locale.value },
+  key: `spots-list-${locale.value}`,
+})
 
 // Historical cloud cover — pre-computed
 const { data: historicalData } = useFetch<{ spots: Record<string, { clear_years: number; total_years: number; avg_cloud_cover: number | null }> }>(
@@ -135,8 +139,6 @@ function cloudFor(spot: any): number | null {
   const h = historyFor(spot.slug)
   return h?.avg_cloud_cover ?? null
 }
-
-const { t } = useI18n()
 
 useHead({
   title: () => t('spots_page.title'),

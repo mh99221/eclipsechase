@@ -3,11 +3,17 @@ import { formatDuration, parseJsonb, regionLabel } from '~/utils/eclipse'
 import type { SpotPhoto } from '~/types/spots'
 import type { HorizonCheck, HorizonProfileData } from '~/types/horizon'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
 const slug = route.params.slug as string
 
-const { data, error } = await useFetch(`/api/spots/${slug}`)
+// Pass the active locale so the server can overlay translations
+// from viewing_spot_translations. Locale-scoped cache key keeps
+// EN and IS responses from trampling each other.
+const { data, error } = await useFetch(`/api/spots/${slug}`, {
+  query: { locale: locale.value },
+  key: `spot-${slug}-${locale.value}`,
+})
 
 if (error.value || !data.value?.spot) {
   throw createError({ statusCode: 404, message: 'Spot not found' })
@@ -18,7 +24,12 @@ const spot = computed(() => data.value!.spot)
 // Full spots list — used by the Plan tab's AlternatesList. Lazy + client-only
 // so it never blocks the detail-page critical path. The endpoint is cached
 // at the edge (s-maxage=300, SWR=3600 per nuxt.config), so this is cheap.
-const { data: allSpotsData } = useFetch('/api/spots', { lazy: true, server: false, key: 'all-spots' })
+const { data: allSpotsData } = useFetch('/api/spots', {
+  query: { locale: locale.value },
+  lazy: true,
+  server: false,
+  key: `all-spots-${locale.value}`,
+})
 const allSpots = computed(() => allSpotsData.value?.spots ?? null)
 
 const spotPhotos = computed<SpotPhoto[]>(() => parseJsonb<SpotPhoto[]>(spot.value.photos, []))

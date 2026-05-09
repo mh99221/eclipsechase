@@ -1,12 +1,22 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { nearestGridPoint } from '../../utils/eclipseGrid'
 
+const TRANSLATABLE_FIELDS = ['name', 'description', 'parking_info', 'terrain_notes', 'warnings'] as const
+
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
 
   if (!slug) {
     throw createError({ statusCode: 400, statusMessage: 'Slug is required' })
   }
+
+  // The client passes its active locale via `?locale=is` so the API
+  // can overlay translations from viewing_spot_translations. Default
+  // is `en` (the locale the base viewing_spots rows are seeded in).
+  const query = getQuery(event)
+  const locale = typeof query.locale === 'string' && query.locale.length <= 8
+    ? query.locale
+    : 'en'
 
   const supabase = await serverSupabaseServiceRole(event)
 
@@ -18,6 +28,26 @@ export default defineEventHandler(async (event) => {
 
   if (error || !data) {
     throw createError({ statusCode: 404, statusMessage: 'Spot not found' })
+  }
+
+  // Overlay locale-specific copy where available (see migration 008
+  // for schema). Any field that's NULL on the translation row falls
+  // back to the English base row, so partial translations are safe.
+  if (locale !== 'en') {
+    const { data: tr } = await supabase
+      .from('viewing_spot_translations')
+      .select('name, description, parking_info, terrain_notes, warnings')
+      .eq('spot_id', data.id)
+      .eq('locale', locale)
+      .maybeSingle()
+    if (tr) {
+      for (const field of TRANSLATABLE_FIELDS) {
+        const value = (tr as Record<string, unknown>)[field]
+        if (value !== null && value !== undefined) {
+          (data as Record<string, unknown>)[field] = value
+        }
+      }
+    }
   }
 
   // Enrich with C1 (partial begins) and C4 (partial ends) from the

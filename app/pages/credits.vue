@@ -8,7 +8,11 @@ useHead({
   ],
 })
 
-const { data } = await useFetch('/api/spots')
+const { locale } = useI18n()
+const { data } = await useFetch('/api/spots', {
+  query: { locale: locale.value },
+  key: `credits-spots-${locale.value}`,
+})
 
 interface SpotWithPhotos {
   name: string

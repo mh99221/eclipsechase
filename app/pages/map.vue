@@ -22,7 +22,7 @@ import MapChipStack from '~/components/map/MapChipStack.vue'
 import MapMobileStatusPill from '~/components/map/MapMobileStatusPill.vue'
 import MapStatusSheet from '~/components/map/MapStatusSheet.vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
 const focusSpot = (route.query.spot as string) || null
 const profileParam = (route.query.profile as string) || null
@@ -45,7 +45,12 @@ useHead({
 // just emit a redirect — no point pre-fetching on the server. Markers
 // and cloud-cover overlays populate reactively as each response lands.
 const { data: stationsData } = useFetch('/api/weather/stations', { lazy: true, server: false })
-const { data: spotsData, error: spotsError } = useFetch('/api/spots', { lazy: true, server: false })
+const { data: spotsData, error: spotsError } = useFetch('/api/spots', {
+  query: { locale: locale.value },
+  lazy: true,
+  server: false,
+  key: `map-spots-${locale.value}`,
+})
 const { data: cloudData, refresh: refreshCloud } = useFetch<{
   cloud_cover: Array<{
     station_id: string
