@@ -86,6 +86,16 @@ export default defineNuxtConfig({
     redirect: false,
   },
 
+  // Sitemap module — declare the dynamic spot-slug source explicitly so
+  // the module's build-time analysis sees it. Without this, it logs a
+  // misleading "No dynamic sources detected" hint suggesting zeroRuntime,
+  // which would bake the sitemap into a static file and stop reflecting
+  // spots added/edited in Supabase until the next redeploy. The handler
+  // itself lives at server/api/__sitemap__/urls.ts.
+  sitemap: {
+    sources: ['/api/__sitemap__/urls'],
+  },
+
   routeRules: {
     // Pages
     '/guide': { prerender: true },
