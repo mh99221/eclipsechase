@@ -432,7 +432,7 @@
     "idle_link": "Þegar greitt? Endurheimtu hér",
     "heading": "Endurheimta kaup",
     "email_prompt": "Sláðu inn netfangið sem þú notaðir við kaupin.",
-    "email_placeholder": "þú@dæmi.is",
+    "email_placeholder": "þú{'@'}dæmi.is",
     "send_code": "Senda kóða",
     "code_sent": "Kóði sendur á {email}. Athugaðu tölvupóstinn þinn.",
     "code_input_prompt": "Sláðu inn 6-stafa kóðann sem var sendur á {email}",

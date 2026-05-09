@@ -432,7 +432,7 @@
     "idle_link": "Already purchased? Restore here",
     "heading": "Restore Purchase",
     "email_prompt": "Enter the email you used when purchasing.",
-    "email_placeholder": "you@example.com",
+    "email_placeholder": "you{'@'}example.com",
     "send_code": "Send Code",
     "code_sent": "Code sent to {email}. Check your email.",
     "code_input_prompt": "Enter the 6-digit code sent to {email}",
