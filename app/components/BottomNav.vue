@@ -6,40 +6,15 @@ import IconGuide from './icons/IconGuide.vue'
 import IconMe from './icons/IconMe.vue'
 import type { NavIcon, NavItem } from '~/composables/useNavItems'
 
-const route = useRoute()
 const { items, isActive } = useNavItems()
 const { openUpsell } = useUpsell()
 
-const isLanding = computed(() => route.path === '/')
-
-// Scroll-aware transparency on `/`, mirroring the BrandBar pattern: bar
-// starts transparent over the cinematic hero and gains the standard
-// backdrop blur after 300px of scroll. On any other route, the bar is
-// always opaque (no listener attached).
-const scrolled = ref(false)
-function onScroll() {
-  scrolled.value = window.scrollY > 300
-}
-onMounted(() => {
-  if (!import.meta.client) return
-  if (isLanding.value) {
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-  }
-})
-onUnmounted(() => {
-  if (import.meta.client) window.removeEventListener('scroll', onScroll)
-})
-watch(isLanding, (landing) => {
-  if (!import.meta.client) return
-  if (landing) {
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-  } else {
-    window.removeEventListener('scroll', onScroll)
-    scrolled.value = false
-  }
-})
+// BottomNav stays opaque on every route. The earlier scroll-aware
+// transparency on `/` left the icons + labels visible without their
+// surface whenever the cinematic hero + content fit the viewport
+// without a 300 px scroll, which on mobile is the common case. The
+// BrandBar still does scroll-aware transparency at the top because
+// it sits directly on the hero; the bottom bar grounds the page.
 
 const iconMap: Record<NavIcon, ReturnType<typeof defineComponent>> = {
   home:  IconHome,
@@ -68,7 +43,6 @@ function onTap(item: NavItem, e: MouseEvent) {
   <!-- Bottom nav renders for all users; CSS hides it at md+ where the masthead takes over. -->
   <nav
     class="bottom-nav"
-    :class="{ 'is-landing': isLanding, 'is-scrolled': scrolled }"
     aria-label="Primary"
   >
     <NuxtLink
@@ -110,15 +84,6 @@ function onTap(item: NavItem, e: MouseEvent) {
   border-top: 1px solid rgb(var(--border-subtle) / 0.08);
   padding: 14px 0 28px;
   padding-bottom: max(28px, env(safe-area-inset-bottom));
-  transition: background 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease;
-}
-/* Cinematic / on landing — fully transparent over the hero until the
-   user scrolls past 300px (mirrors BrandBar). */
-.bottom-nav.is-landing:not(.is-scrolled) {
-  background: transparent;
-  border-top-color: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
 }
 @media (min-width: 768px) {
   .bottom-nav { display: none; }
