@@ -7,6 +7,10 @@ export function useOfflineStatus() {
   const tileCount = useState<number>('offline-tile-count', () => 0)
   const spotDetailCount = useState<number>('offline-spot-detail-count', () => 0)
 
+  // `t()` is reactive on locale, so any computed below that calls
+  // formatRelativeTime() re-evaluates when the user toggles language.
+  const { t } = useI18n()
+
   const lastWeatherUpdate = computed(() => {
     const weatherAge = cacheAges.value['/api/weather/cloud-cover']
     if (!weatherAge) return null
@@ -27,11 +31,11 @@ export function useOfflineStatus() {
 
   function formatRelativeTime(ms: number): string {
     const minutes = Math.floor(ms / 60000)
-    if (minutes < 1) return 'just now'
-    if (minutes < 60) return `${minutes} min ago`
+    if (minutes < 1) return t('offline.ago_just_now')
+    if (minutes < 60) return t('offline.ago_min', { minutes })
     const hours = Math.floor(minutes / 60)
-    if (hours < 24) return `${hours}h ago`
-    return `${Math.floor(hours / 24)}d ago`
+    if (hours < 24) return t('offline.ago_hour', { hours })
+    return t('offline.ago_day', { days: Math.floor(hours / 24) })
   }
 
   function refreshCacheStatus() {

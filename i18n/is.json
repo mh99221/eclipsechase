@@ -602,7 +602,11 @@
     "row_forecast": "Spá",
     "row_spots": "Staðir",
     "row_traffic": "Umferð",
-    "row_cameras": "Myndavélar"
+    "row_cameras": "Myndavélar",
+    "ago_just_now": "núna",
+    "ago_min": "fyrir {minutes} mín",
+    "ago_hour": "fyrir {hours} klst",
+    "ago_day": "fyrir {days} dögum"
   },
   "forecast": {
     "timeline_title": "Skýjaspá",

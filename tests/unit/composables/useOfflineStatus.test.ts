@@ -1,5 +1,26 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
+// useOfflineStatus.formatRelativeTime() now goes through t() so the
+// strings can switch between en/is. The real vue-i18n composable
+// requires a setup scope; mock it inline. The assertions below check
+// the EN-formatted output so we replicate those four EN strings here
+// — keeps the tests testing the branch logic without needing the
+// full i18n bundle wired up. If you add a fifth bucket
+// (e.g. weeks), extend this switch alongside the composable.
+vi.mock('vue-i18n', () => ({
+  useI18n: () => ({
+    t: (key: string, params?: Record<string, unknown>) => {
+      switch (key) {
+        case 'offline.ago_just_now': return 'just now'
+        case 'offline.ago_min': return `${params?.minutes} min ago`
+        case 'offline.ago_hour': return `${params?.hours}h ago`
+        case 'offline.ago_day': return `${params?.days}d ago`
+        default: return key
+      }
+    },
+  }),
+}))
+
 // We need to reset modules because useOfflineStatus has module-level state
 // (listenersRegistered flag) that must be fresh for each test.
 

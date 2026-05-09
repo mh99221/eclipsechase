@@ -602,7 +602,11 @@
     "row_forecast": "Forecast",
     "row_spots": "Spots",
     "row_traffic": "Traffic",
-    "row_cameras": "Cameras"
+    "row_cameras": "Cameras",
+    "ago_just_now": "just now",
+    "ago_min": "{minutes} min ago",
+    "ago_hour": "{hours}h ago",
+    "ago_day": "{days}d ago"
   },
   "forecast": {
     "timeline_title": "Cloud Forecast",
