@@ -7,13 +7,13 @@ description: 'Everything you need to plan your trip to see the August 12, 2026 t
 
 Your practical planning reference for August 12, 2026 — the only total solar eclipse to cross Iceland for the next 170 years.
 
-## What's Happening {#whats-happening}
+## What's Happening
 
 On **August 12, 2026**, a total solar eclipse will cross Iceland — the only easily accessible land in the path of totality. For roughly two minutes, the moon will completely block the sun, turning day into twilight and revealing the sun's corona with the naked eye.
 
 This is a once-in-a-lifetime event for Iceland. The next total solar eclipse visible from the island won't occur until **2196** — 170 years from now. Western Iceland sits directly in the path, making it the prime destination for eclipse chasers worldwide.
 
-## The Path of Totality {#the-path-of-totality}
+## The Path of Totality
 
 ::guide-path-map
 ::
@@ -30,7 +30,7 @@ The further northwest you go, the longer totality lasts — but the harder it is
 | Reykjanes | ~1m 35s – 1m 47s | ~17:46 |
 | Reykjavík | ~0–1m 06s (edge) | ~17:46 |
 
-## Best Viewing Spots {#best-viewing-spots}
+## Best Viewing Spots
 
 ### Westfjords
 
@@ -68,7 +68,7 @@ Every spot page on this site carries a **horizon verdict** (*clear*, *marginal*,
 
 [Find your perfect spot →](/map)
 
-## Weather & Cloud Cover {#weather-cloud-cover}
+## Weather & Cloud Cover
 
 Weather is the **single biggest variable** for eclipse viewing. A perfectly positioned spot means nothing under a blanket of clouds.
 
@@ -80,7 +80,7 @@ This is why real-time weather tracking on eclipse day matters far more than any 
 
 [Check live conditions →](/map)
 
-## Getting There {#getting-there}
+## Getting There
 
 ### Flights
 
@@ -107,7 +107,7 @@ August roads are generally good. Ring Road (Route 1) and main regional roads are
 
 Expect **heavy traffic** on routes toward the eclipse path on August 12. Leave early — ideally be at your viewing spot by noon. Return traffic after the eclipse will be significant.
 
-## What to Bring {#what-to-bring}
+## What to Bring
 
 - **Eclipse glasses** (ISO 12312-2 certified) — mandatory for all partial phases. Without these, you cannot safely look at the sun before or after totality.
 - **Camera gear:** tripod, solar filter for partial phases, remove filter only during totality. A remote shutter release avoids shake.
@@ -117,7 +117,7 @@ Expect **heavy traffic** on routes toward the eclipse path on August 12. Leave e
 - **Food and water** — remote spots have no services. Pack lunch and plenty of water.
 - **Binoculars** (optional) — incredible for viewing the corona and prominences during totality. Do NOT use during partial phases without solar filters.
 
-## Eclipse Day Timeline {#eclipse-day-timeline}
+## Eclipse Day Timeline
 
 ::countdown-bar
 ::
@@ -139,7 +139,7 @@ Here's what happens and when (all times approximate, UTC):
 - Look at the horizon for the 360° sunset effect
 - Listen — birds and animals react to the sudden darkness
 
-## FAQ {#faq}
+## FAQ
 
 <details>
 <summary>Is it safe to look at the eclipse?</summary>

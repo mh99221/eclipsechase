@@ -7,13 +7,13 @@ description: 'Allt sem þú þarft til að skipuleggja ferðina til að sjá hei
 
 Hagnýt skipulagshandbók fyrir 12. ágúst 2026 — eina heilsólmyrkvann sem fer yfir Ísland næstu 170 árin.
 
-## Hvað er að gerast {#whats-happening}
+## Hvað er að gerast
 
 Þann **12. ágúst 2026** mun heilsólmyrkvi fara yfir Ísland — eina aðgengilega landið á leið heilmyrkvans. Í um tvær mínútur mun tunglið hylja sólina algjörlega, breyta degi í rökkur og leyfa þér að sjá kórónu sólarinnar með berum augum.
 
 Þetta er einstakur viðburður fyrir Ísland. Næsti heilsólmyrkvi sem sést frá eyjunni verður ekki fyrr en árið **2196** — eftir 170 ár. Vestur-Ísland liggur beint á leiðinni, sem gerir landið að helsta áfangastað sólmyrkvaáhugamanna um heim allan.
 
-## Leið heilmyrkvans {#the-path-of-totality}
+## Leið heilmyrkvans
 
 ::guide-path-map
 ::
@@ -30,7 +30,7 @@ Leið heilmyrkvans kemur inn í Ísland úr norðvestri, fer yfir **Vestfirði**
 | Reykjanes | ~1m 35s – 1m 47s | ~17:46 |
 | Reykjavík | ~0–1m 06s (jaðar) | ~17:46 |
 
-## Bestu áhorfsstaðirnir {#best-viewing-spots}
+## Bestu áhorfsstaðirnir
 
 ### Vestfirðir
 
@@ -68,7 +68,7 @@ Hver staðasíða á þessu vefsvæði ber **dómur um sjóndeildarhring** (*gre
 
 [Finndu þinn fullkomna stað →](/map)
 
-## Veður og skýjahula {#weather-cloud-cover}
+## Veður og skýjahula
 
 Veðrið er **stærsti einstaki breytileikinn** fyrir sólmyrkvaeftirlit. Fullkomlega staðsettur staður þýðir ekkert undir alskýjuðu lofti.
 
@@ -80,7 +80,7 @@ Veðrið er **stærsti einstaki breytileikinn** fyrir sólmyrkvaeftirlit. Fullko
 
 [Skoðaðu lifandi skilyrði →](/map)
 
-## Að komast þangað {#getting-there}
+## Að komast þangað
 
 ### Flug
 
@@ -107,7 +107,7 @@ Vegir í ágúst eru almennt góðir. Hringvegurinn (Þjóðvegur 1) og helstu l
 
 Búast má við **mikilli umferð** á leiðum að myrkvabálki 12. ágúst. Farðu snemma — helst að vera á áhorfsstaðnum um hádegi. Umferð til baka eftir myrkva verður mikil.
 
-## Hvað á að taka með {#what-to-bring}
+## Hvað á að taka með
 
 - **Sólmyrkvagleraugu** (vottuð skv. ISO 12312-2) — nauðsynleg fyrir alla deildarmyrkvafasa. Án þeirra geturðu ekki á öruggan hátt horft á sólina fyrir eða eftir heilmyrkva.
 - **Myndavélabúnaður:** þrífótur, sólarsía fyrir deildarmyrkvafasa, fjarlægðu síuna aðeins við heilmyrkva. Fjarstýrð smelluhleypa kemur í veg fyrir hristing.
@@ -117,7 +117,7 @@ Búast má við **mikilli umferð** á leiðum að myrkvabálki 12. ágúst. Far
 - **Matur og vatn** — afskekktir staðir eru þjónustulausir. Pakkaðu hádegismat og nóg vatn.
 - **Sjónauki** (valfrjálst) — frábær til að sjá kórónu og sprotagos í heilmyrkva. Notaðu EKKI í deildarmyrkvafasa án sólarsíu.
 
-## Tímalína sólmyrkvadagsins {#eclipse-day-timeline}
+## Tímalína sólmyrkvadagsins
 
 ::countdown-bar
 ::
@@ -139,7 +139,7 @@ Hér er hvað gerist og hvenær (allir tímar áætlaðir, UTC):
 - Horfðu á sjóndeildarhringinn fyrir 360° sólarlagseffektinn
 - Hlustaðu — fuglar og dýr bregðast við skyndilegu myrkrinu
 
-## Algengar spurningar {#faq}
+## Algengar spurningar
 
 <details>
 <summary>Er óhætt að horfa á sólmyrkvann?</summary>
