@@ -487,7 +487,8 @@
   },
   "spot_detail_extra": {
     "dial_missing": "Gögn um sólstöðu ekki tiltæk.",
-    "horizon_profile_title": "Sjóndeildarhringssnið · 91 punkta skönnun"
+    "horizon_profile_title": "Sjóndeildarhringssnið · 91 punkta skönnun",
+    "advisories_label": "Viðvaranir ({count})"
   },
   "map_extra": {
     "error_spot_load": "Gat ekki sótt áhorfsstaði.",

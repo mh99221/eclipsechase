@@ -7,6 +7,8 @@ defineProps<{
   expanded: boolean
 }>()
 const emit = defineEmits<{ toggle: [] }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -19,7 +21,7 @@ const emit = defineEmits<{ toggle: [] }>()
     @click="emit('toggle')"
   >
     <span class="advisory-badge-glyph" aria-hidden="true">!</span>
-    <span class="advisory-badge-label">Advisories ({{ count }})</span>
+    <span class="advisory-badge-label">{{ t('spot_detail_extra.advisories_label', { count }) }}</span>
     <svg
       class="advisory-badge-chevron"
       :data-expanded="expanded"

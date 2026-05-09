@@ -487,7 +487,8 @@
   },
   "spot_detail_extra": {
     "dial_missing": "Sun position data unavailable.",
-    "horizon_profile_title": "Horizon profile · 91-pt scan"
+    "horizon_profile_title": "Horizon profile · 91-pt scan",
+    "advisories_label": "Advisories ({count})"
   },
   "map_extra": {
     "error_spot_load": "Could not load viewing spots.",
