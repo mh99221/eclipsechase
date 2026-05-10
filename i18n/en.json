@@ -559,6 +559,24 @@
     "totality_ends": "Totality ends",
     "partial_ends": "Partial ends"
   },
+  "logistics": {
+    "row_trail": "Trail",
+    "row_parking": "Parking",
+    "row_services": "Services",
+    "row_signal": "Signal",
+    "row_terrain": "Terrain",
+    "row_access": "Access",
+    "trail_value": "{distance} km · {time} min",
+    "services_on_site": "On site / nearby",
+    "services_none": "None nearby",
+    "coverage_good": "Vodafone 4G · strong",
+    "coverage_limited": "Patchy · check carrier",
+    "coverage_none": "No signal",
+    "type_drive_up": "Drive-up",
+    "type_short_walk": "Short walk",
+    "type_moderate_hike": "Moderate hike",
+    "type_serious_hike": "Serious hike"
+  },
   "spot": {
     "viewing_spot": "Viewing spot",
     "totality": "Totality",

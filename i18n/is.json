@@ -559,6 +559,24 @@
     "totality_ends": "Heilmyrkva lýkur",
     "partial_ends": "Deildarmyrkva lýkur"
   },
+  "logistics": {
+    "row_trail": "Gönguleið",
+    "row_parking": "Bílastæði",
+    "row_services": "Þjónusta",
+    "row_signal": "Símasamband",
+    "row_terrain": "Landslag",
+    "row_access": "Aðgengi",
+    "trail_value": "{distance} km · {time} mín",
+    "services_on_site": "Á staðnum / nálægt",
+    "services_none": "Engin nálægt",
+    "coverage_good": "Vodafone 4G · sterkt",
+    "coverage_limited": "Misjafnt · athugaðu farsímafyrirtæki",
+    "coverage_none": "Ekkert samband",
+    "type_drive_up": "Aðgengilegt á bíl",
+    "type_short_walk": "Stutt ganga",
+    "type_moderate_hike": "Meðalganga",
+    "type_serious_hike": "Erfið ganga"
+  },
   "spot": {
     "viewing_spot": "Áhorfsstaður",
     "totality": "Myrkvi",

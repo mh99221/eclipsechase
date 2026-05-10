@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { SPOT_TYPE_LABELS } from '~/utils/eclipse'
-
 const props = defineProps<{
   /** Raw spot row — only the relevant fields are read. */
   spot: {
@@ -14,24 +12,56 @@ const props = defineProps<{
   }
 }>()
 
-const coverageLabels: Record<string, string> = {
-  good:    'Vodafone 4G · strong',
-  limited: 'Patchy · check carrier',
-  none:    'No signal',
+const { t } = useI18n()
+
+// Cell-coverage enum → translated value. Falls through to the raw
+// value if a coverage code we haven't mapped shows up (defensive
+// against future schema changes).
+const COVERAGE_KEYS: Record<string, string> = {
+  good:    'logistics.coverage_good',
+  limited: 'logistics.coverage_limited',
+  none:    'logistics.coverage_none',
+}
+
+// spot_type enum → translated value. Same fallback behaviour.
+const SPOT_TYPE_KEYS: Record<string, string> = {
+  'drive-up':       'logistics.type_drive_up',
+  'short-walk':     'logistics.type_short_walk',
+  'moderate-hike':  'logistics.type_moderate_hike',
+  'serious-hike':   'logistics.type_serious_hike',
 }
 
 const rows = computed(() => {
   const r: Array<[string, string]> = []
   if (props.spot.trail_distance_km != null && props.spot.trail_time_minutes != null) {
-    r.push(['Trail', `${props.spot.trail_distance_km} km · ${props.spot.trail_time_minutes} min`])
+    r.push([
+      t('logistics.row_trail'),
+      t('logistics.trail_value', {
+        distance: props.spot.trail_distance_km,
+        time: props.spot.trail_time_minutes,
+      }),
+    ])
   }
-  if (props.spot.parking_info)  r.push(['Parking',   props.spot.parking_info])
+  if (props.spot.parking_info) {
+    r.push([t('logistics.row_parking'), props.spot.parking_info])
+  }
   if (props.spot.has_services != null) {
-    r.push(['Services', props.spot.has_services ? 'On site / nearby' : 'None nearby'])
+    r.push([
+      t('logistics.row_services'),
+      t(props.spot.has_services ? 'logistics.services_on_site' : 'logistics.services_none'),
+    ])
   }
-  if (props.spot.cell_coverage) r.push(['Signal',    coverageLabels[props.spot.cell_coverage] ?? props.spot.cell_coverage])
-  if (props.spot.terrain_notes) r.push(['Terrain',   props.spot.terrain_notes])
-  if (props.spot.spot_type)     r.push(['Access',    SPOT_TYPE_LABELS[props.spot.spot_type] ?? props.spot.spot_type])
+  if (props.spot.cell_coverage) {
+    const key = COVERAGE_KEYS[props.spot.cell_coverage]
+    r.push([t('logistics.row_signal'), key ? t(key) : props.spot.cell_coverage])
+  }
+  if (props.spot.terrain_notes) {
+    r.push([t('logistics.row_terrain'), props.spot.terrain_notes])
+  }
+  if (props.spot.spot_type) {
+    const key = SPOT_TYPE_KEYS[props.spot.spot_type]
+    r.push([t('logistics.row_access'), key ? t(key) : props.spot.spot_type])
+  }
   return r
 })
 </script>
