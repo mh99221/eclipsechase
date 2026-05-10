@@ -171,7 +171,12 @@ const is = {
       'Söguleg steinkirkja frá 1887 á opinni suðurströnd Reykjanesskagans, í dramatískum sandöldum og hrauni með algjörlega óhindruðu útsýni til suðurs og vesturs. Skáldið Hallgrímur Pétursson þjónaði hér sem prestur. Kirkjan veitir táknræna umgjörð fyrir sólmyrkvann.',
     parking_info: 'Lítið frítt bílastæði við kirkjuna. Malbikaður aðkeyrsluvegur um Þjóðveg 44 frá Sandgerði.',
     terrain_notes: 'Grasi vaxinn kirkjugarður með malarstígum. Opin strandhraunbreiða með sandöldum og hraun til suðurs og vesturs — algjörlega óhindraður vestursjóndeildarhringur.',
-    warnings_titles: [],
+    // Order must match production EN warnings (set by migration 009).
+    warnings_titles: [
+      'Mjög vindasamur strandstaður — festu búnað og klæddu þig í vindheldar flíkur',
+      'Lítið frítt bílastæði við sveitarkirkju — komdu snemma á sólmyrkvadegi, sérstaklega vegna nálægðar við Keflavíkurflugvöll',
+      'Reykjanesskagi er enn virkur eldfjallasvæði — athugaðu vegaaðstæður á safetravel.is áður en þú keyrir',
+    ],
   },
 
   'isafjordur-harbour': {
