@@ -87,7 +87,6 @@ useHead(() => ({
             rel="noopener"
           >{{ t('footer.report_issue') }}</a>
         </div>
-        <LocaleSwitcher class="home-footer-locale" />
       </footer>
     </div>
   </PageShell>
