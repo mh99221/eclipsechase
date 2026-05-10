@@ -27,20 +27,10 @@ const spots = computed<SpotWithPhotos[]>(() => {
 
 const licenseLabels: Record<string, string> = {
   unsplash: 'Unsplash License',
-  pixabay: 'Pixabay License',
-  'cc-by': 'CC BY 4.0',
-  'cc-by-sa': 'CC BY-SA 4.0',
-  cc0: 'Public Domain (CC0)',
-  'nasa-pd': 'NASA Public Domain',
 }
 
 const licenseBadgeColor: Record<string, string> = {
   unsplash: 'text-ink-3 border-border-subtle',
-  pixabay: 'text-ink-3 border-border-subtle',
-  'cc-by': 'text-accent border-accent/40',
-  'cc-by-sa': 'text-accent border-accent/40',
-  cc0: 'text-green-600 dark:text-green-400 border-green-600/40 dark:border-green-700/40',
-  'nasa-pd': 'text-blue-600 dark:text-blue-400 border-blue-600/40 dark:border-blue-700/40',
 }
 </script>
 
@@ -105,24 +95,16 @@ const licenseBadgeColor: Record<string, string> = {
         <h2 class="font-display text-lg font-semibold text-ink-1 mb-4">License Information</h2>
         <div class="space-y-3 text-sm text-ink-3">
           <p>
+            <strong class="text-ink-2">© All rights reserved (Martin Herchl / EclipseChase.is)</strong> --
+            Original photographs by Martin Herchl. Reuse, redistribution, or modification is not permitted without prior written permission.
+          </p>
+          <p>
+            <strong class="text-ink-2">Shutterstock (Standard License)</strong> --
+            Licensed from Shutterstock for use on this website. The license permits use in digital and printed media but does not transfer ownership; redistribution or resale of the images is not permitted. See shutterstock.com/license for full terms.
+          </p>
+          <p>
             <strong class="text-ink-2">Unsplash License</strong> --
-            Free to use for commercial and non-commercial purposes. No permission needed. Attribution appreciated but not required.
-          </p>
-          <p>
-            <strong class="text-ink-2">CC BY 4.0</strong> --
-            Free to share and adapt, with appropriate credit to the creator.
-          </p>
-          <p>
-            <strong class="text-ink-2">CC BY-SA 4.0</strong> --
-            Free to share and adapt with credit. Adaptations must be shared under the same license.
-          </p>
-          <p>
-            <strong class="text-ink-2">CC0 / Public Domain</strong> --
-            No rights reserved. Free to use without any conditions.
-          </p>
-          <p>
-            <strong class="text-ink-2">NASA Public Domain</strong> --
-            NASA imagery is generally not copyrighted. Credit to NASA is a courtesy.
+            Free to use for commercial and non-commercial purposes. No permission needed; attribution to the photographer is appreciated but not required. See unsplash.com/license for full terms.
           </p>
         </div>
       </div>
