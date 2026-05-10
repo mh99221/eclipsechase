@@ -439,7 +439,13 @@
     "withdrawal_waiver_and": "og",
     "terms_link_text": "Skilmála",
     "privacy_link_text": "Persónuverndarstefnu",
-    "waiver_required": "Vinsamlegast samþykktu skilmálana áður en þú heldur áfram."
+    "waiver_required": "Vinsamlegast samþykktu skilmálana áður en þú heldur áfram.",
+    "email_label": "Netfang",
+    "email_required": "Vinsamlegast sláðu inn netfang.",
+    "checking_email": "Athuga…",
+    "already_pro_heading": "Þú átt þegar EclipseChase Pro",
+    "already_pro_body": "Við fundum virk kaup á þessu netfangi. Notaðu Endurheimt fyrir neðan til að opna Pro á þessu tæki — við sendum 6 stafa kóða í pósthólfið þitt. Þú þarft ekki að borga aftur.",
+    "go_to_restore": "Fara í Endurheimt"
   },
   "auth": {
     "already_pro": "Ertu nú þegar með Pro?",

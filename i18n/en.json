@@ -439,7 +439,13 @@
     "withdrawal_waiver_and": "and",
     "terms_link_text": "Terms of Service",
     "privacy_link_text": "Privacy Policy",
-    "waiver_required": "Please accept the terms before proceeding."
+    "waiver_required": "Please accept the terms before proceeding.",
+    "email_label": "Email",
+    "email_required": "Please enter your email.",
+    "checking_email": "Checking…",
+    "already_pro_heading": "You already own EclipseChase Pro",
+    "already_pro_body": "We found an active purchase for this email. Use Restore below to unlock Pro on this device — we'll send a 6-digit code to your inbox. No need to pay again.",
+    "go_to_restore": "Go to Restore"
   },
   "auth": {
     "already_pro": "Already purchased?",

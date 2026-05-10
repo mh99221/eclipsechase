@@ -22,19 +22,55 @@ watch(isPro, (pro) => {
 const checkoutSubmitting = ref(false)
 const checkoutError = ref('')
 const waiverAccepted = ref(false)
+const email = ref('')
+const alreadyPro = ref(false)
+
+function isValidEmailFormat(s: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)
+}
+
+// Editing the email after a duplicate hit clears the callout so the
+// user can retry with a different address.
+watch(email, () => { alreadyPro.value = false })
 
 async function handleCheckout() {
-  if (!waiverAccepted.value) {
-    checkoutError.value = t('pro.waiver_required')
+  checkoutError.value = ''
+
+  const trimmed = email.value.trim()
+  if (!trimmed) {
+    checkoutError.value = t('pro.email_required')
+    return
+  }
+  if (!isValidEmailFormat(trimmed)) {
+    checkoutError.value = t('pro.email_invalid')
     return
   }
 
-  checkoutError.value = ''
   checkoutSubmitting.value = true
 
   try {
+    // Duplicate-purchase guard. Catches honest users who cleared their
+    // browser data and would otherwise pay a second time instead of
+    // restoring. Runs before the waiver check so already-Pro users get
+    // routed to Restore without accepting terms they don't need.
+    // We accept the existence leak here — see server/api/pro/lookup.post.ts.
+    const lookup = await $fetch<{ exists: boolean }>('/api/pro/lookup', {
+      method: 'POST',
+      body: { email: trimmed },
+    })
+    if (lookup.exists) {
+      alreadyPro.value = true
+      return
+    }
+
+    if (!waiverAccepted.value) {
+      checkoutError.value = t('pro.waiver_required')
+      return
+    }
+
     const { url } = await $fetch<{ url: string }>('/api/stripe/checkout', {
       method: 'POST',
+      body: { email: trimmed },
     })
 
     if (url) {
@@ -50,6 +86,13 @@ async function handleCheckout() {
   finally {
     checkoutSubmitting.value = false
   }
+}
+
+function goToRestore() {
+  // RestorePurchase auto-expands when the URL hash becomes #restore
+  // (see its maybeAutoExpand watcher). Setting the hash via Vue Router
+  // keeps the back button sane.
+  navigateTo({ hash: '#restore' })
 }
 
 // Three-bucket comparison shown above the price card. Order matters:
@@ -178,45 +221,76 @@ const compareSections: Array<{ titleKey: string; rows: CompareRow[] }> = [
         <Eyebrow tone="accent" align="center">{{ t('pro.price') }}</Eyebrow>
         <div class="price-amount">&euro;9.99</div>
 
-        <!-- Withdrawal waiver checkbox -->
-        <div class="price-waiver">
-          <label class="price-waiver-label">
-            <input
-              v-model="waiverAccepted"
-              type="checkbox"
-              class="price-waiver-cb"
-            >
-            <span>
-              {{ t('pro.withdrawal_waiver_pre') }}
-              <NuxtLinkLocale to="/terms">{{ t('pro.terms_link_text') }}</NuxtLinkLocale>
-              {{ t('pro.withdrawal_waiver_and') }}
-              <NuxtLinkLocale to="/privacy">{{ t('pro.privacy_link_text') }}</NuxtLinkLocale>.
-            </span>
-          </label>
+        <!-- Email input -->
+        <div class="price-email">
+          <label class="price-email-label" for="pro-email">{{ t('pro.email_label') }}</label>
+          <input
+            id="pro-email"
+            v-model="email"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            :placeholder="t('pro.email_placeholder')"
+            class="price-email-input"
+          >
         </div>
 
-        <!-- Error -->
-        <p v-if="checkoutError" class="price-error">
-          {{ checkoutError }}
-        </p>
+        <!-- Already-Pro callout: shown when the lookup says this email
+             already owns Pro. Replaces the waiver + CTA so users don't
+             accidentally re-pay. -->
+        <div v-if="alreadyPro" class="price-already-pro">
+          <p class="price-already-pro-heading">{{ t('pro.already_pro_heading') }}</p>
+          <p class="price-already-pro-body">{{ t('pro.already_pro_body') }}</p>
+          <button class="price-cta" @click="goToRestore">
+            {{ t('pro.go_to_restore') }}
+          </button>
+        </div>
 
-        <!-- Checkout button -->
-        <button
-          :disabled="checkoutSubmitting || !waiverAccepted"
-          class="price-cta"
-          @click="handleCheckout"
-        >
-          <span v-if="checkoutSubmitting" class="price-cta-loading">
-            <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-            <span>{{ t('pro.processing') }}</span>
-          </span>
-          <span v-else>{{ t('pro.get_access') }}</span>
-        </button>
+        <!-- Checkout flow -->
+        <template v-else>
+          <!-- Withdrawal waiver checkbox -->
+          <div class="price-waiver">
+            <label class="price-waiver-label">
+              <input
+                v-model="waiverAccepted"
+                type="checkbox"
+                class="price-waiver-cb"
+              >
+              <span>
+                {{ t('pro.withdrawal_waiver_pre') }}
+                <NuxtLinkLocale to="/terms">{{ t('pro.terms_link_text') }}</NuxtLinkLocale>
+                {{ t('pro.withdrawal_waiver_and') }}
+                <NuxtLinkLocale to="/privacy">{{ t('pro.privacy_link_text') }}</NuxtLinkLocale>.
+              </span>
+            </label>
+          </div>
 
-        <p class="price-stripe-note">{{ t('pro.stripe_note') }}</p>
+          <!-- Error -->
+          <p v-if="checkoutError" class="price-error">
+            {{ checkoutError }}
+          </p>
+
+          <!-- Checkout button. Not gated on waiver — handleCheckout
+               validates email first so already-Pro users hit the
+               restore callout without having to accept terms they
+               don't need. -->
+          <button
+            :disabled="checkoutSubmitting"
+            class="price-cta"
+            @click="handleCheckout"
+          >
+            <span v-if="checkoutSubmitting" class="price-cta-loading">
+              <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              <span>{{ t('pro.processing') }}</span>
+            </span>
+            <span v-else>{{ t('pro.get_access') }}</span>
+          </button>
+
+          <p class="price-stripe-note">{{ t('pro.stripe_note') }}</p>
+        </template>
       </div>
 
       <!-- Restore Purchase — `#restore` anchor target so the BrandBar
@@ -337,6 +411,66 @@ const compareSections: Array<{ titleKey: string; rows: CompareRow[] }> = [
 }
 @media (min-width: 768px) {
   .price-amount { font-size: 68px; }
+}
+
+.price-email {
+  max-width: 320px;
+  margin: 0 auto 14px;
+  text-align: left;
+}
+.price-email-label {
+  display: block;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgb(var(--ink-1) / 0.62);
+  margin-bottom: 6px;
+}
+.price-email-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgb(var(--bg));
+  border: 1px solid rgb(var(--border-subtle) / 0.4);
+  border-radius: 8px;
+  color: rgb(var(--ink-1));
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+.price-email-input:focus {
+  outline: none;
+  border-color: rgb(var(--accent) / 0.5);
+}
+.price-email-input::placeholder {
+  color: rgb(var(--ink-1) / 0.32);
+}
+
+.price-already-pro {
+  max-width: 320px;
+  margin: 0 auto;
+  text-align: left;
+  padding: 16px;
+  background: rgb(var(--accent) / 0.06);
+  border: 1px solid rgb(var(--accent) / 0.32);
+  border-radius: 8px;
+}
+.price-already-pro-heading {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(var(--ink-1));
+  margin: 0 0 6px;
+}
+.price-already-pro-body {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgb(var(--ink-1) / 0.72);
+  margin: 0 0 14px;
+}
+.price-already-pro .price-cta {
+  margin-top: 0;
 }
 
 .price-waiver {

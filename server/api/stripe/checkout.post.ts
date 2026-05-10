@@ -8,6 +8,9 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, statusMessage: 'Stripe Price ID is not configured' })
   }
 
+  const body = await readBody<{ email?: string }>(event).catch(() => ({} as { email?: string }))
+  const customerEmail = body?.email && isValidEmail(body.email) ? normalizeEmail(body.email) : undefined
+
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
     line_items: [
@@ -16,6 +19,7 @@ export default defineEventHandler(async (event) => {
         quantity: 1,
       },
     ],
+    customer_email: customerEmail,
     metadata: {
       product: 'eclipse_pro_2026',
     },
