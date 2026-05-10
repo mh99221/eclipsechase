@@ -83,7 +83,7 @@ export async function sendRestoreCode(to: string, code: string): Promise<void> {
       subject: 'Your EclipseChase.is restore code',
       html: `
         <div style="font-family: sans-serif; max-width: 400px; margin: 0 auto; background: #050810; padding: 32px 24px;">
-          <h2 style="color: #f59e0b; margin: 0 0 16px;">EclipseChase.is</h2>
+          ${brandHeaderHtml()}
           <p style="color: #94a3b8; font-size: 15px;">Your restore code is:</p>
           <div style="font-size: 32px; font-weight: bold; letter-spacing: 8px;
                       background: #1a2232; color: #f59e0b; padding: 16px 24px;
@@ -104,6 +104,14 @@ export async function sendRestoreCode(to: string, code: string): Promise<void> {
   }
 }
 
+function brandHeaderHtml(): string {
+  return `
+    <div style="text-align:center;margin-bottom:32px;">
+      <img src="https://eclipsechase.is/email/brand-icon.png" width="22" height="22" alt="" style="vertical-align:middle;display:inline-block;border:0;outline:0;">
+      <span style="vertical-align:middle;margin-left:10px;font-size:14px;font-weight:600;color:#f1f5f9;letter-spacing:2px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">ECLIPSECHASE</span>
+    </div>`
+}
+
 function purchaseHtml(): string {
   return `
 <!DOCTYPE html>
@@ -115,12 +123,7 @@ function purchaseHtml(): string {
 <body style="margin:0;padding:0;background:#050810;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
   <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
 
-    <!-- Header -->
-    <div style="text-align:center;margin-bottom:32px;">
-      <div style="font-size:24px;font-weight:700;color:#f1f5f9;letter-spacing:0.02em;">
-        EclipseChase<span style="color:#f59e0b;">.is</span>
-      </div>
-    </div>
+    ${brandHeaderHtml()}
 
     <!-- Body -->
     <div style="background:#0a1020;border:1px solid #1a2540;border-radius:6px;padding:32px 24px;">
@@ -190,12 +193,7 @@ function welcomeHtml(): string {
 <body style="margin:0;padding:0;background:#050810;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
   <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
 
-    <!-- Header -->
-    <div style="text-align:center;margin-bottom:32px;">
-      <div style="font-size:24px;font-weight:700;color:#f1f5f9;letter-spacing:0.02em;">
-        EclipseChase<span style="color:#f59e0b;">.is</span>
-      </div>
-    </div>
+    ${brandHeaderHtml()}
 
     <!-- Body -->
     <div style="background:#0a1020;border:1px solid #1a2540;border-radius:6px;padding:32px 24px;">
