@@ -4,18 +4,15 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const stripe = new Stripe(config.stripeSecretKey)
 
+  if (!config.stripeProPriceId) {
+    throw createError({ statusCode: 500, statusMessage: 'Stripe Price ID is not configured' })
+  }
+
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
     line_items: [
       {
-        price_data: {
-          currency: 'eur',
-          unit_amount: 999,
-          product_data: {
-            name: 'EclipseChase Pro',
-            description: 'Live weather map, personalized recommendations, offline maps & road conditions for the 2026 Iceland eclipse.',
-          },
-        },
+        price: config.stripeProPriceId,
         quantity: 1,
       },
     ],
