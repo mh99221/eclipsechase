@@ -176,6 +176,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     stripeSecretKey: '',
     stripeWebhookSecret: '',
+    stripeProPriceId: '',
     resendApiKey: '',
     proJwtPrivateKey: '',
     adminSecret: '',
