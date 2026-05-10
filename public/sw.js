@@ -1,9 +1,9 @@
-// Bumped to v6 so existing clients invalidate stale precache entries
-// when the new `_payload.json` / `/api/_content/` network-first rules
-// land — without this, returning visitors keep getting the old SW's
-// behaviour for those URLs even after the deploy.
-const CACHE_NAME = 'eclipsechase-v6'
-const API_CACHE = 'eclipsechase-api-v2'
+// Bumped to v7 so previously-cached Pro-gated responses (cameras /
+// traffic) get evicted on update. Those endpoints are now server-gated
+// by requirePro() and the SW must not cache them by URL — see
+// PRO_ONLY_PATHS below.
+const CACHE_NAME = 'eclipsechase-v7'
+const API_CACHE = 'eclipsechase-api-v3'
 const TILE_CACHE = 'eclipsechase-tiles-v1'
 const MAX_TILE_CACHE = 5000
 
@@ -18,16 +18,37 @@ const PRECACHE_URLS = [
   '/eclipse-data/roads.geojson'
 ]
 
-// API endpoints to precache for offline use
+// API endpoints to precache for offline use. Pro-only endpoints
+// (/api/cameras, /api/traffic/*) are deliberately omitted — the SW
+// can't include the Authorization: Bearer header without coordinating
+// with the page, so a bare precache fetch would just get 401 and pin
+// that response. Even if it did fetch the real body, caching a Pro
+// response by URL only would let a future non-Pro user of the same
+// browser profile see the data offline.
 const API_PRECACHE_URLS = [
   '/api/spots',
   '/api/weather/stations',
   '/api/weather/cloud-cover',
-  '/api/weather/forecast-timeline?hours=24',
+  '/api/weather/forecast-timeline?hours=24'
+]
+
+// Paths whose responses MUST NOT enter the SW cache. The server's
+// requirePro() gate authenticates by Bearer JWT in the Authorization
+// header, but Cache Storage keys by URL+method only — so without a
+// per-token cache key, caching here would let a previous Pro user's
+// response be served back to a non-Pro / different visitor of the
+// same browser profile, bypassing the gate.
+const PRO_ONLY_PATHS = [
+  '/api/cameras',
   '/api/traffic/conditions',
   '/api/traffic/segments',
-  '/api/cameras'
+  '/api/horizon/check',
+  '/api/pro/verify'
 ]
+
+function isProOnlyPath(pathname) {
+  return PRO_ONLY_PATHS.some((p) => pathname === p || pathname.startsWith(p + '?') || pathname.startsWith(p + '/'))
+}
 
 function offlineResponse() {
   return new Response(
@@ -228,6 +249,16 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(event.request).catch(() => caches.match(event.request) || offlineResponse())
     )
+    return
+  }
+
+  // Pro-only endpoints: pure passthrough, never cached. The server
+  // authenticates via Bearer JWT (server/utils/proAuth.ts:requirePro)
+  // and the cache has no way to key on that, so caching would create a
+  // cross-user data-leak window on shared devices. Offline = endpoint
+  // fails, which is correct: there's no offline Pro answer to serve.
+  if (url.pathname.startsWith('/api/') && isProOnlyPath(url.pathname)) {
+    event.respondWith(fetch(event.request))
     return
   }
 

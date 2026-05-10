@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { safeJsonLd } from '~/utils/jsonLd'
+
 const { t, locale } = useI18n()
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
@@ -53,7 +55,7 @@ useHead(() => ({
   script: [
     {
       type: 'application/ld+json',
-      innerHTML: JSON.stringify({
+      innerHTML: safeJsonLd({
         '@context': 'https://schema.org',
         '@type': 'Article',
         'headline': t('guide.title'),

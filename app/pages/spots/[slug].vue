@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatDuration, parseJsonb, regionLabel } from '~/utils/eclipse'
+import { safeJsonLd } from '~/utils/jsonLd'
 import type { SpotPhoto } from '~/types/spots'
 import type { HorizonCheck, HorizonProfileData } from '~/types/horizon'
 
@@ -89,7 +90,9 @@ useHead({
   script: [
     {
       type: 'application/ld+json',
-      innerHTML: JSON.stringify({
+      // safeJsonLd escapes < and > so a translated name / description
+      // can't break out of this inline-script tag.
+      innerHTML: safeJsonLd({
         '@context': 'https://schema.org',
         '@type': 'TouristAttraction',
         'name': spot.value.name,
