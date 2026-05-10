@@ -90,4 +90,12 @@ Object.assign(globalThis, {
   generateProToken: vi.fn().mockResolvedValue('mock_jwt_token'),
   sendWelcomeEmail: vi.fn().mockResolvedValue(undefined),
   sendRestoreCode: vi.fn().mockResolvedValue(undefined),
+  sendPurchaseEmail: vi.fn().mockResolvedValue(undefined),
+  // requirePro is the Pro-paywall gate on cameras / traffic / horizon
+  // endpoints. Tests in this directory exercise the business logic, so
+  // we mock it as a pass-through. Auth-gate behaviour is covered in
+  // tests targeting server/utils/proAuth.ts directly.
+  requirePro: vi.fn().mockResolvedValue(null),
+  verifyProToken: vi.fn().mockResolvedValue({ valid: true }),
+  verifyProTokenSignature: vi.fn().mockResolvedValue({ sub: 'mock', pid: 1, tv: 1 }),
 })

@@ -27,15 +27,15 @@ describe('POST /api/stripe/restore/request', () => {
   })
 
   it('does NOT send code when no purchase exists', async () => {
-    setResult([]) // no purchases
+    setResult([]) // no purchases (and no recent codes for rate-limit count)
     const event = createTestEvent({ supabase: mockSupabase, body: { email: 'nobody@test.com' } })
     await handler(event)
 
-    // restore_codes.insert should NOT be called (only pro_purchases queried)
-    // The from('pro_purchases') is called but not from('restore_codes')
+    // pro_purchases is queried; restore_codes is queried for the
+    // DB-backed rate limit but should NOT have insert called on it.
     const fromCalls = mockSupabase.from.mock.calls.map((c: any[]) => c[0])
     expect(fromCalls).toContain('pro_purchases')
-    expect(fromCalls).not.toContain('restore_codes')
+    expect(mockSupabase.insert).not.toHaveBeenCalled()
   })
 
   it('throws 400 for missing email', async () => {

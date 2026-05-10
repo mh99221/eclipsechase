@@ -5,7 +5,9 @@ const CACHE_TTL_MS = 15 * 60 * 1000 // 15 minutes
 
 const cache = createTtlCache<RoadCondition[]>(CACHE_TTL_MS)
 
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
+  await requirePro(event)
+
   const hit = cache.get()
 
   if (hit !== null) {

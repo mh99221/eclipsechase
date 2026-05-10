@@ -9,6 +9,7 @@ import type { DockHorizonCtx } from './types'
 const props = defineProps<{ ctx: DockHorizonCtx }>()
 
 const { t } = useI18n()
+const { authHeaders } = useProStatus()
 
 const loading = ref(true)
 const error = ref<'pro_required' | 'outside_coverage' | 'outside_path' | 'failed' | null>(null)
@@ -31,6 +32,7 @@ watch(
       const data = await $fetch<HorizonCheckResponse>('/api/horizon/check', {
         method: 'POST',
         body: { lat, lng },
+        headers: await authHeaders(),
       })
       if (id !== requestId) return
       if (!data.in_totality_path) error.value = 'outside_path'

@@ -19,19 +19,38 @@ describe('POST /api/stripe/activate', () => {
   })
 
   it('marks purchase as activated on first retrieval', async () => {
-    setResult({ activation_token: 'jwt_abc', email: 'buyer@test.com', activated: false })
+    setResult({ activation_token: 'jwt_abc', email: 'buyer@test.com', activated: false, activated_at: null })
     const event = createTestEvent({ supabase: mockSupabase, body: { session_id: 'cs_test_123' } })
     await handler(event)
 
-    expect(mockSupabase.update).toHaveBeenCalledWith({ activated: true })
+    // One-time activation: now stamps activated_at alongside the flag.
+    expect(mockSupabase.update).toHaveBeenCalledWith(
+      expect.objectContaining({ activated: true, activated_at: expect.any(String) }),
+    )
   })
 
-  it('skips activation on subsequent retrieval', async () => {
-    setResult({ activation_token: 'jwt_abc', email: 'buyer@test.com', activated: true })
+  it('skips activation on subsequent retrieval (within grace window)', async () => {
+    setResult({
+      activation_token: 'jwt_abc',
+      email: 'buyer@test.com',
+      activated: true,
+      activated_at: new Date().toISOString(),
+    })
     const event = createTestEvent({ supabase: mockSupabase, body: { session_id: 'cs_test_123' } })
     await handler(event)
 
     expect(mockSupabase.update).not.toHaveBeenCalled()
+  })
+
+  it('throws 410 when activation grace window has elapsed', async () => {
+    setResult({
+      activation_token: 'jwt_abc',
+      email: 'buyer@test.com',
+      activated: true,
+      activated_at: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+    })
+    const event = createTestEvent({ supabase: mockSupabase, body: { session_id: 'cs_test_123' } })
+    await expect(handler(event)).rejects.toMatchObject({ statusCode: 410 })
   })
 
   it('throws 400 when session_id missing', async () => {

@@ -69,6 +69,12 @@ CREATE TABLE email_signups (
 );
 
 -- Pro tier purchases
+--   activated_at — set on first /api/stripe/activate call. Allows a short
+--                  network-retry grace window, then rejects replays.
+--   token_version — bumped on every restore. Server-side verify rejects
+--                   JWTs whose `tv` claim is below this, so a leaked
+--                   historical token stops working once the legitimate
+--                   owner re-restores.
 CREATE TABLE pro_purchases (
   id BIGSERIAL PRIMARY KEY,
   email TEXT NOT NULL,
@@ -78,6 +84,8 @@ CREATE TABLE pro_purchases (
   purchased_at TIMESTAMPTZ DEFAULT NOW(),
   is_active BOOLEAN DEFAULT TRUE,
   activated BOOLEAN DEFAULT FALSE,
+  activated_at TIMESTAMPTZ,
+  token_version INTEGER NOT NULL DEFAULT 1,
   restored_count INTEGER DEFAULT 0,
   last_restored_at TIMESTAMPTZ
 );
@@ -87,16 +95,21 @@ CREATE INDEX idx_pro_purchases_email_hash ON pro_purchases(email_hash);
 CREATE INDEX idx_pro_purchases_stripe_session ON pro_purchases(stripe_session_id);
 
 -- Restore codes (short-lived)
+--   attempts — per-code wrong-guess counter. Hits MAX_ATTEMPTS_PER_CODE
+--              and the code is burned. Stops a brute-force campaign from
+--              sitting on one code for unlimited guesses.
 CREATE TABLE restore_codes (
   id BIGSERIAL PRIMARY KEY,
   email_hash TEXT NOT NULL,
   code TEXT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   expires_at TIMESTAMPTZ NOT NULL,
-  used BOOLEAN DEFAULT FALSE
+  used BOOLEAN DEFAULT FALSE,
+  attempts INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE INDEX idx_restore_codes_lookup ON restore_codes(email_hash, code);
+CREATE INDEX idx_restore_codes_email_created ON restore_codes(email_hash, created_at DESC);
 
 -- Enable Row Level Security on public-facing tables
 ALTER TABLE email_signups ENABLE ROW LEVEL SECURITY;

@@ -47,16 +47,37 @@ export function useProStatus() {
         return
       }
 
+      // Local signature check first so we work offline. If a stale/bad
+      // token is in storage, this rejects it without any network call.
       const publicKey = await getPublicKey()
       await jwtVerify(token, publicKey)
       isPro.value = true
+      loading.value = false
+
+      // Online revocation check — confirms the JWT's `tv` (token version)
+      // still matches the live row. Lets the Restore flow actually evict
+      // a leaked historical token instead of leaving it valid until the
+      // absolute expiry. Skipped silently when offline.
+      if (navigator.onLine !== false) {
+        try {
+          const result = await $fetch<{ valid: boolean; reason: string | null }>('/api/pro/verify', {
+            method: 'POST',
+            body: { token },
+          })
+          if (!result.valid && (result.reason === 'revoked' || result.reason === 'inactive' || result.reason === 'not-found')) {
+            console.warn('[Pro] Server reports token revoked:', result.reason)
+            isPro.value = false
+            await removeTokenFromIndexedDB()
+          }
+        } catch {
+          // Network / server hiccup — keep locally-verified Pro status.
+        }
+      }
     }
     catch (err) {
       console.error('[Pro] JWT verification failed, removing token:', err)
       isPro.value = false
       await removeTokenFromIndexedDB()
-    }
-    finally {
       loading.value = false
     }
   }
@@ -75,9 +96,25 @@ export function useProStatus() {
     isPro.value = false
   }
 
+  /**
+   * Returns an `Authorization: Bearer <jwt>` header object for use in
+   * $fetch calls to Pro-gated endpoints (see server/utils/proAuth.ts).
+   * Empty object if no token is available — caller will get a 401 in
+   * that case which the page should treat as a gate failure.
+   */
+  async function authHeaders(): Promise<Record<string, string>> {
+    if (!import.meta.client) return {}
+    try {
+      const token = await getTokenFromIndexedDB()
+      return token ? { Authorization: `Bearer ${token}` } : {}
+    } catch {
+      return {}
+    }
+  }
+
   onMounted(() => {
     if (loading.value) checkStatus()
   })
 
-  return { isPro, loading, checkStatus, activate, clearPro }
+  return { isPro, loading, checkStatus, activate, clearPro, authHeaders }
 }

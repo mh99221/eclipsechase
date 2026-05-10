@@ -1,6 +1,10 @@
 import { randomInt } from 'crypto'
 import { serverSupabaseServiceRole } from '#supabase/server'
 
+const REQUEST_WINDOW_MS = 60 * 60 * 1000 // 1 hour
+const MAX_REQUESTS_PER_WINDOW = 3
+const CODE_TTL_MS = 15 * 60 * 1000
+
 export default defineEventHandler(async (event) => {
   const { email } = await readBody<{ email: string }>(event)
 
@@ -9,18 +13,26 @@ export default defineEventHandler(async (event) => {
   }
 
   const normalizedEmail = normalizeEmail(email)
-
-  // Rate limit: 3 requests per email per hour
-  if (!checkRateLimit(`restore-request:${normalizedEmail}`, 3, 60 * 60 * 1000)) {
-    throw createError({ statusCode: 429, statusMessage: 'Too many requests. Try again later.' })
-  }
-
   const emailHash = hashEmail(normalizedEmail)
   const masked = maskEmail(normalizedEmail)
 
   const supabase = await serverSupabaseServiceRole(event)
 
-  // Check if purchase exists (limit 1 — user may have multiple purchases)
+  // DB-backed rate limit (replaces the per-lambda in-memory counter).
+  // Counts every code created in the last hour against this email hash
+  // so requests across cold starts / concurrent warm lambdas can't be
+  // multiplied.
+  const windowStart = new Date(Date.now() - REQUEST_WINDOW_MS).toISOString()
+  const { count: recentCount } = await supabase
+    .from('restore_codes')
+    .select('id', { count: 'exact', head: true })
+    .eq('email_hash', emailHash)
+    .gte('created_at', windowStart)
+
+  if ((recentCount ?? 0) >= MAX_REQUESTS_PER_WINDOW) {
+    throw createError({ statusCode: 429, statusMessage: 'Too many requests. Try again later.' })
+  }
+
   const { data: purchases } = await supabase
     .from('pro_purchases')
     .select('id')
@@ -31,22 +43,29 @@ export default defineEventHandler(async (event) => {
 
   if (purchase) {
     console.log('[restore] Purchase found for', masked, '— generating code')
-    // Generate 6-digit code
+
+    // Invalidate any prior un-used codes for this email so an attacker
+    // can't keep up to N codes concurrently valid to enlarge the
+    // effective hit-rate of a brute-force campaign.
+    await supabase
+      .from('restore_codes')
+      .update({ used: true })
+      .eq('email_hash', emailHash)
+      .eq('used', false)
+
     const code = String(randomInt(100000, 1000000))
 
-    // Store code with 15 min TTL
     await supabase.from('restore_codes').insert({
       email_hash: emailHash,
       code,
-      expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+      expires_at: new Date(Date.now() + CODE_TTL_MS).toISOString(),
     })
 
-    // Must await — Vercel kills the function after response is sent
+    // Await — Vercel kills the function after response is sent.
     await sendRestoreCode(normalizedEmail, code)
   } else {
     console.log('[restore] No active purchase found for', masked)
   }
 
-  // Always return same response regardless of whether purchase exists
   return { sent: true, masked_email: masked }
 })

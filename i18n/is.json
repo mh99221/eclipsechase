@@ -493,7 +493,10 @@
     "delayed_body_1": "Greiðslan þín gekk vel. Pro-eiginleikar virkjast bráðlega.",
     "delayed_body_2_pre": "Ef eiginleikarnir eru ekki virkir innan 5 mínútna, notaðu Endurheimta kaup á",
     "delayed_body_2_post": ".",
-    "pro_page_link": "Pro-síðunni"
+    "pro_page_link": "Pro-síðunni",
+    "already_activated_heading": "Þessi kaup eru þegar virkjuð",
+    "already_activated_body": "Eclipse Pro hefur þegar verið virkjað í öðru tæki. Til að nota það hér, notaðu Endurheimta kaup með netfanginu sem þú keyptir með.",
+    "already_activated_cta": "Endurheimta kaup"
   },
   "spot_detail_extra": {
     "dial_missing": "Gögn um sólstöðu ekki tiltæk.",

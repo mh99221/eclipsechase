@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { createMockSupabase, createTestEvent } from '../_helpers'
 
-const { client: mockSupabase } = createMockSupabase()
+const { client: mockSupabase, setResult } = createMockSupabase()
 const mockConstructEvent = vi.fn()
 
 vi.mock('stripe', () => {
@@ -35,6 +35,9 @@ describe('POST /api/stripe/webhook', () => {
   })
 
   it('returns { received: true } for valid checkout.session.completed', async () => {
+    // Webhook now upserts the row, reads back `id, token_version` for JWT
+    // binding, then updates the row with the signed token.
+    setResult({ id: 42, token_version: 1 })
     mockConstructEvent.mockReturnValue({
       type: 'checkout.session.completed',
       data: {

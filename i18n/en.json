@@ -493,7 +493,10 @@
     "delayed_body_1": "Your payment was successful. Pro features will activate shortly.",
     "delayed_body_2_pre": "If features aren't active within 5 minutes, use Restore Purchase on the",
     "delayed_body_2_post": ".",
-    "pro_page_link": "Pro page"
+    "pro_page_link": "Pro page",
+    "already_activated_heading": "This purchase is already activated",
+    "already_activated_body": "Eclipse Pro has already been activated on another device. To unlock it here, use Restore Purchase with the email you bought with.",
+    "already_activated_cta": "Restore purchase"
   },
   "spot_detail_extra": {
     "dial_missing": "Sun position data unavailable.",

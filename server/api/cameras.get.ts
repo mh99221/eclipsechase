@@ -86,7 +86,9 @@ interface CameraLocation {
 
 const cache = createTtlCache<CameraLocation[]>(CACHE_TTL_MS)
 
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
+  await requirePro(event)
+
   const hit = cache.get()
   if (hit !== null && hit.length > 0) {
     return { cameras: hit, cached: true }

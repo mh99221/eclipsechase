@@ -4,6 +4,8 @@ import type { HorizonCheckResponse, HorizonSweepPoint } from '~/types/horizon'
 import { findNearestGridPoint, loadHorizonGrid } from '../../utils/horizonGrid'
 
 export default defineEventHandler(async (event) => {
+  await requirePro(event)
+
   // Rate limit: 10 req/min per IP
   const rawIp = getHeader(event, 'x-forwarded-for') || getHeader(event, 'x-real-ip') || 'unknown'
   const ip = rawIp.split(',')[0]!.trim()

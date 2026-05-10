@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { createMockSupabase, createTestEvent } from '../_helpers'
 
-const { client: mockSupabase } = createMockSupabase()
+const { client: mockSupabase, setResult } = createMockSupabase()
 
 const { default: handler } = await import('../../../../server/api/admin/grant-pro.post')
 
@@ -9,6 +9,9 @@ describe('POST /api/admin/grant-pro', () => {
   beforeEach(() => { vi.clearAllMocks() })
 
   it('grants Pro access with valid admin secret', async () => {
+    // grant-pro upserts the row, reads back `id, token_version` to bind
+    // into the JWT, then updates the row with the signed token.
+    setResult({ id: 99, token_version: 1 })
     const event = createTestEvent({
       supabase: mockSupabase,
       body: { email: 'user@test.com', secret: 'test-admin-secret' },

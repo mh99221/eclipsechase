@@ -11,6 +11,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const { authHeaders } = useProStatus()
 
 const loading = ref(true)
 const error = ref<string | null>(null)
@@ -37,6 +38,7 @@ onMounted(async () => {
     const data = await $fetch<HorizonCheckResponse>('/api/horizon/check', {
       method: 'POST',
       body: { lat: props.lat, lng: props.lng },
+      headers: await authHeaders(),
     })
     result.value = data
   } catch (e: any) {

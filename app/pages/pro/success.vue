@@ -5,10 +5,10 @@ const { activate } = useProStatus()
 
 useHead({ title: () => t('pro_success.head_title') })
 
-const status = ref<'loading' | 'success' | 'delayed'>('loading')
+const status = ref<'loading' | 'success' | 'delayed' | 'already_activated'>('loading')
 const sessionId = computed(() => route.query.session_id as string)
 
-async function tryActivate(retries = 3): Promise<boolean> {
+async function tryActivate(retries = 3): Promise<'success' | 'delayed' | 'already_activated'> {
   for (let i = 0; i < retries; i++) {
     try {
       const result = await $fetch<{ token: string; email: string }>('/api/stripe/activate', {
@@ -16,17 +16,20 @@ async function tryActivate(retries = 3): Promise<boolean> {
         body: { session_id: sessionId.value },
       })
       await activate(result.token)
-      return true
+      return 'success'
     }
     catch (err: any) {
+      // 410 = activation window has closed (one-time activation defense
+      // against session_id replay). Push the user to Restore instead.
+      if (err?.statusCode === 410) return 'already_activated'
       if (err?.statusCode === 404 && i < retries - 1) {
         await new Promise(r => setTimeout(r, 2000))
         continue
       }
-      return false
+      return 'delayed'
     }
   }
-  return false
+  return 'delayed'
 }
 
 onMounted(async () => {
@@ -35,8 +38,7 @@ onMounted(async () => {
     return
   }
 
-  const success = await tryActivate()
-  status.value = success ? 'success' : 'delayed'
+  status.value = await tryActivate()
 })
 </script>
 
@@ -76,6 +78,29 @@ onMounted(async () => {
           >
             {{ t('pro_success.success_cta') }}
           </NuxtLinkLocale>
+        </div>
+
+        <!-- Already activated (one-time activation window closed) -->
+        <div v-else-if="status === 'already_activated'" class="space-y-4">
+          <div class="w-16 h-16 mx-auto rounded-full bg-amber-900/20 border border-amber-700/30 flex items-center justify-center">
+            <svg class="w-8 h-8 text-status-amber" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="font-display text-xl font-bold text-ink-1 mb-2">
+              {{ t('pro_success.already_activated_heading') }}
+            </h1>
+            <p class="text-sm text-ink-3 mb-4">
+              {{ t('pro_success.already_activated_body') }}
+            </p>
+            <NuxtLinkLocale
+              to="/pro"
+              class="inline-block btn-corona px-6 py-2 text-sm"
+            >
+              {{ t('pro_success.already_activated_cta') }}
+            </NuxtLinkLocale>
+          </div>
         </div>
 
         <!-- Delayed -->

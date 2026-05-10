@@ -38,25 +38,47 @@ export default defineEventHandler(async (event) => {
 
     const normalizedEmail = normalizeEmail(email)
     const emailHash = hashEmail(normalizedEmail)
-    const token = await generateProToken(normalizedEmail, session.id)
 
     const supabase = await serverSupabaseServiceRole(event)
 
-    const { error } = await supabase.from('pro_purchases').upsert(
-      {
-        email: normalizedEmail,
-        email_hash: emailHash,
-        stripe_session_id: session.id,
-        activation_token: token,
-        purchased_at: new Date().toISOString(),
-        is_active: true,
-      },
-      { onConflict: 'stripe_session_id' },
-    )
+    // Insert the purchase first so we have an id to bind into the JWT
+    // (the `pid` claim is what server-side verifyProToken uses to check
+    // revocation status). activation_token is filled in with a second
+    // update once the JWT is signed.
+    const { data: inserted, error: insertError } = await supabase
+      .from('pro_purchases')
+      .upsert(
+        {
+          email: normalizedEmail,
+          email_hash: emailHash,
+          stripe_session_id: session.id,
+          activation_token: '',
+          purchased_at: new Date().toISOString(),
+          is_active: true,
+        },
+        { onConflict: 'stripe_session_id' },
+      )
+      .select('id, token_version')
+      .single()
 
-    if (error) {
-      console.error('Failed to insert pro purchase:', error)
+    if (insertError || !inserted) {
+      console.error('Failed to insert pro purchase:', insertError)
       throw createError({ statusCode: 500, statusMessage: 'Failed to save purchase' })
+    }
+
+    const token = await generateProToken(normalizedEmail, session.id, {
+      purchaseId: inserted.id,
+      tokenVersion: inserted.token_version ?? 1,
+    })
+
+    const { error: updateError } = await supabase
+      .from('pro_purchases')
+      .update({ activation_token: token })
+      .eq('id', inserted.id)
+
+    if (updateError) {
+      console.error('Failed to update pro purchase with token:', updateError)
+      throw createError({ statusCode: 500, statusMessage: 'Failed to save purchase token' })
     }
 
     await sendPurchaseEmail(normalizedEmail)

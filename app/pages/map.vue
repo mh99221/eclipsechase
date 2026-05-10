@@ -24,6 +24,7 @@ import MapStatusSheet from '~/components/map/MapStatusSheet.vue'
 
 const { t, locale } = useI18n()
 const route = useRoute()
+const { authHeaders } = useProStatus()
 const focusSpot = (route.query.spot as string) || null
 const profileParam = (route.query.profile as string) || null
 
@@ -681,7 +682,9 @@ useMapOverlay<CameraData>({
   active: showCameras,
   mapRef: eclipseMapRef,
   fetchData: async () => {
-    const { cameras } = await $fetch<{ cameras: CameraData[] }>('/api/cameras')
+    const { cameras } = await $fetch<{ cameras: CameraData[] }>('/api/cameras', {
+      headers: await authHeaders(),
+    })
     return cameras
   },
   buildMarker: (cam, { map }) => buildCameraMarker(cam, map),
@@ -695,9 +698,10 @@ useMapOverlay<TrafficCondition>({
   active: showTraffic,
   mapRef: eclipseMapRef,
   fetchData: async () => {
+    const headers = await authHeaders()
     const [conditionsRes, segmentsRes, roadsRes] = await Promise.all([
-      $fetch<{ conditions: TrafficCondition[] }>('/api/traffic/conditions'),
-      trafficSegmentsCache ? Promise.resolve(trafficSegmentsCache) : $fetch<{ segments: any[] }>('/api/traffic/segments'),
+      $fetch<{ conditions: TrafficCondition[] }>('/api/traffic/conditions', { headers }),
+      trafficSegmentsCache ? Promise.resolve(trafficSegmentsCache) : $fetch<{ segments: any[] }>('/api/traffic/segments', { headers }),
       trafficRoadsCache ? Promise.resolve(trafficRoadsCache) : $fetch('/eclipse-data/roads.geojson'),
     ])
     trafficSegmentsCache = segmentsRes
