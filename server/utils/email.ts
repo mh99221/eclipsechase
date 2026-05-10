@@ -49,6 +49,26 @@ export async function sendWelcomeEmail(to: string) {
   }
 }
 
+export async function sendPurchaseEmail(to: string) {
+  const resend = getResend()
+  if (!resend) {
+    console.log('[email] Resend not configured, skipping purchase email to', maskEmail(to))
+    return
+  }
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: 'You\'re in — EclipseChase Pro is active',
+      html: purchaseHtml(),
+    })
+    console.log('[email] Purchase email sent to', maskEmail(to))
+  } catch (err: any) {
+    console.error('[email] Failed to send purchase email to', maskEmail(to), ':', err.message || err)
+  }
+}
+
 export async function sendRestoreCode(to: string, code: string): Promise<void> {
   const resend = getResend()
   if (!resend) {
@@ -82,6 +102,81 @@ export async function sendRestoreCode(to: string, code: string): Promise<void> {
   catch (err: any) {
     console.error('[email] Failed to send restore code to', maskEmail(to), ':', err.message || err)
   }
+}
+
+function purchaseHtml(): string {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="margin:0;padding:0;background:#050810;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:24px;font-weight:700;color:#f1f5f9;letter-spacing:0.02em;">
+        EclipseChase<span style="color:#f59e0b;">.is</span>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div style="background:#0a1020;border:1px solid #1a2540;border-radius:6px;padding:32px 24px;">
+      <h1 style="margin:0 0 16px;font-size:20px;font-weight:600;color:#f1f5f9;">
+        You're in. Pro is active.
+      </h1>
+      <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#94a3b8;">
+        Thanks for backing EclipseChase. Your Pro access is unlocked on the device you used to purchase &mdash;
+        the live weather map, personalized spot recommendations, and offline mode are ready to go.
+      </p>
+
+      <!-- CTA -->
+      <div style="text-align:center;margin:24px 0 8px;">
+        <a href="https://eclipsechase.is/dashboard"
+           style="display:inline-block;padding:12px 32px;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#050810;font-size:14px;font-weight:600;text-decoration:none;border-radius:3px;letter-spacing:0.03em;">
+          OPEN DASHBOARD
+        </a>
+      </div>
+    </div>
+
+    <!-- Save this email -->
+    <div style="margin-top:24px;background:#0a1020;border:1px solid #1a2540;border-radius:6px;padding:24px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.2em;color:#f59e0b;margin-bottom:12px;">
+        SAVE THIS EMAIL
+      </div>
+      <p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:#94a3b8;">
+        To use Pro on another device (or if you clear your browser data), open
+        <a href="https://eclipsechase.is/pro" style="color:#f59e0b;text-decoration:none;border-bottom:1px solid rgba(245,158,11,0.3);">eclipsechase.is/pro</a>,
+        click <strong style="color:#f1f5f9;">Restore here</strong>, and enter the address this email was sent to.
+        We'll email you a 6-digit code to unlock Pro again.
+      </p>
+      <p style="margin:0;font-size:13px;line-height:1.6;color:#64748b;">
+        Stripe sent a separate payment receipt for your records.
+      </p>
+    </div>
+
+    <!-- Eclipse stats -->
+    <div style="margin-top:24px;padding:16px;text-align:center;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.2em;color:#475569;margin-bottom:8px;">
+        TOTAL SOLAR ECLIPSE
+      </div>
+      <div style="font-size:13px;color:#94a3b8;">
+        August 12, 2026 &middot; ~17:45 UTC &middot; Western Iceland
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="margin-top:32px;padding-top:16px;border-top:1px solid #1a2540;text-align:center;">
+      <p style="margin:0;font-size:12px;color:#475569;">
+        <a href="https://eclipsechase.is" style="color:#475569;text-decoration:none;">eclipsechase.is</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+`
 }
 
 function welcomeHtml(): string {

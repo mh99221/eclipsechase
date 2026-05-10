@@ -58,6 +58,8 @@ export default defineEventHandler(async (event) => {
       console.error('Failed to insert pro purchase:', error)
       throw createError({ statusCode: 500, statusMessage: 'Failed to save purchase' })
     }
+
+    await sendPurchaseEmail(normalizedEmail)
   }
 
   return { received: true }
