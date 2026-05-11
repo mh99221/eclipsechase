@@ -21,10 +21,16 @@ function openDB(): Promise<IDBDatabase> {
   return dbPromise
 }
 
-export async function saveTokenToIndexedDB(token: string): Promise<void> {
-  // Always save to localStorage as reliable backup
-  try { localStorage.setItem(LS_KEY, token) } catch {}
+// One-time cleanup of the legacy localStorage mirror. The token lives
+// in IndexedDB only now (drops the XSS-readable surface) — but earlier
+// builds wrote it to localStorage too, so existing users still have a
+// copy there. Strip it on every load until everyone's migrated.
+function clearLegacyLocalStorage(): void {
+  try { localStorage.removeItem(LS_KEY) } catch {}
+}
 
+export async function saveTokenToIndexedDB(token: string): Promise<void> {
+  clearLegacyLocalStorage()
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite')
@@ -35,30 +41,21 @@ export async function saveTokenToIndexedDB(token: string): Promise<void> {
 }
 
 export async function getTokenFromIndexedDB(): Promise<string | null> {
-  // Try IndexedDB first, fall back to localStorage
   try {
     const db = await openDB()
-    const token = await new Promise<string | null>((resolve, reject) => {
+    return await new Promise<string | null>((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, 'readonly')
       const request = tx.objectStore(STORE_NAME).get(TOKEN_KEY)
       request.onsuccess = () => resolve(request.result ?? null)
       request.onerror = () => reject(request.error)
     })
-    if (token) return token
-  } catch {
-    // IndexedDB failed, try localStorage
-  }
-
-  // Fallback: check localStorage
-  try {
-    return localStorage.getItem(LS_KEY)
   } catch {
     return null
   }
 }
 
 export async function removeTokenFromIndexedDB(): Promise<void> {
-  try { localStorage.removeItem(LS_KEY) } catch {}
+  clearLegacyLocalStorage()
 
   try {
     const db = await openDB()

@@ -75,6 +75,8 @@ CREATE TABLE email_signups (
 --   activation_count — counter beats a timestamp. The atomic activate
 --                      flow uses `UPDATE … WHERE activation_count < 1`
 --                      so exactly one request can hand out the token.
+--                      Migration 012 backfills `=1` for rows already
+--                      activated under the pre-011 time-grace flow.
 --   token_version — bumped on every restore. Server-side verify rejects
 --                   JWTs whose `tv` claim is below this, so a leaked
 --                   historical token stops working once the legitimate
