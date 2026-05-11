@@ -42,10 +42,8 @@ export default defineEventHandler(async (event) => {
     const supabase = await serverSupabaseServiceRole(event)
 
     // Stripe retries successful webhook deliveries on transient errors.
-    // INSERT … ON CONFLICT DO NOTHING (`ignoreDuplicates: true`) means
-    // the second delivery doesn't overwrite anything. The follow-up
-    // SELECT tells us whether a token has already been minted for this
-    // session — if so, return early and skip the re-sign.
+    // `ignoreDuplicates: true` makes the retry a no-op; the follow-up
+    // SELECT then lets us short-circuit on already-signed rows.
     await supabase
       .from('pro_purchases')
       .upsert(

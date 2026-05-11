@@ -18,18 +18,10 @@ export default defineEventHandler(async (event) => {
 
   const supabase = await serverSupabaseServiceRole(event)
 
-  // DB-backed rate limit (replaces the per-lambda in-memory counter).
-  // Counts every code created in the last hour against this email hash
-  // so requests across cold starts / concurrent warm lambdas can't be
-  // multiplied.
-  const windowStart = new Date(Date.now() - REQUEST_WINDOW_MS).toISOString()
-  const { count: recentCount } = await supabase
-    .from('restore_codes')
-    .select('id', { count: 'exact', head: true })
-    .eq('email_hash', emailHash)
-    .gte('created_at', windowStart)
-
-  if ((recentCount ?? 0) >= MAX_REQUESTS_PER_WINDOW) {
+  if (!await checkDbRateLimit(supabase, 'restore_codes', emailHash, {
+    windowMs: REQUEST_WINDOW_MS,
+    max: MAX_REQUESTS_PER_WINDOW,
+  })) {
     throw createError({ statusCode: 429, statusMessage: 'Too many requests. Try again later.' })
   }
 
@@ -59,30 +51,30 @@ export default defineEventHandler(async (event) => {
       .select('id')
       .single()
 
+    if (!inserted?.id) {
+      throw createError({ statusCode: 500, statusMessage: 'Failed to save restore code' })
+    }
+
     try {
-      // Await — Vercel kills the function after response is sent.
+      // Vercel kills the function after response, so await before returning.
       await sendRestoreCode(normalizedEmail, code)
     } catch (err) {
-      // Email send failed — undo the rate-limit charge so the user
-      // can retry. Older outstanding codes are still alive.
-      if (inserted?.id) {
-        await supabase.from('restore_codes').delete().eq('id', inserted.id)
-      }
+      // Email send failed — delete the row so the rate-limit slot isn't
+      // burned and prior outstanding codes (if any) remain valid.
+      await supabase.from('restore_codes').delete().eq('id', inserted.id)
       throw err
     }
 
-    // Email sent successfully — invalidate any OTHER outstanding codes
-    // for this email so an attacker can't keep multiple codes valid in
-    // parallel. Scoped to `id < new_code.id` so concurrent requesters
-    // don't trample each other.
-    if (inserted?.id) {
-      await supabase
-        .from('restore_codes')
-        .update({ used: true })
-        .eq('email_hash', emailHash)
-        .eq('used', false)
-        .neq('id', inserted.id)
-    }
+    // Email landed. Invalidate codes inserted BEFORE this one so a
+    // brute-force campaign can't keep multiple codes valid in parallel.
+    // Scoped to `id < new_code.id` so a concurrent requester who slipped
+    // in a newer code doesn't get their fresh code burned.
+    await supabase
+      .from('restore_codes')
+      .update({ used: true })
+      .eq('email_hash', emailHash)
+      .eq('used', false)
+      .lt('id', inserted.id)
   } else {
     console.log('[restore] No active purchase found for', masked)
   }

@@ -106,11 +106,12 @@ if (typeof (globalThis as any).useStorage === 'undefined') {
 // ---------------------------------------------------------------------------
 // Server util auto-imports (Nitro auto-imports everything from server/utils/)
 // ---------------------------------------------------------------------------
-import { checkRateLimit } from '../../../server/utils/rateLimit'
+import { checkRateLimit, checkDbRateLimit } from '../../../server/utils/rateLimit'
 import { hashEmail, isValidEmail, maskEmail, normalizeEmail } from '../../../server/utils/email'
 
 Object.assign(globalThis, {
   checkRateLimit,
+  checkDbRateLimit,
   hashEmail,
   isValidEmail,
   maskEmail,

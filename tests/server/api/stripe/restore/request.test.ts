@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { createMockSupabase, createTestEvent } from '../../_helpers'
 
-const { client: mockSupabase, setResult } = createMockSupabase()
+const { client: mockSupabase, queueResults } = createMockSupabase()
 
 const { default: handler } = await import('../../../../../server/api/stripe/restore/request.post')
 
@@ -9,7 +9,12 @@ describe('POST /api/stripe/restore/request', () => {
   beforeEach(() => { vi.clearAllMocks() })
 
   it('always returns { sent: true } for valid email', async () => {
-    setResult([{ id: 1 }])
+    queueResults(
+      { data: [], error: null },                                                    // rate-limit count (no recent codes)
+      { data: [{ id: 1 }] },                                                        // purchase lookup
+      { data: { id: 99 } },                                                         // insert.select().single() → new code row
+      { data: null },                                                               // bulk invalidate older codes
+    )
     const event = createTestEvent({ supabase: mockSupabase, body: { email: 'buyer@test.com' } })
     const result = await handler(event)
 
@@ -18,7 +23,12 @@ describe('POST /api/stripe/restore/request', () => {
   })
 
   it('stores restore code and sends email when purchase exists', async () => {
-    setResult([{ id: 1 }])
+    queueResults(
+      { data: [] },
+      { data: [{ id: 1 }] },
+      { data: { id: 99 } },
+      { data: null },
+    )
     const event = createTestEvent({ supabase: mockSupabase, body: { email: 'buyer@test.com' } })
     await handler(event)
 
@@ -27,12 +37,13 @@ describe('POST /api/stripe/restore/request', () => {
   })
 
   it('does NOT send code when no purchase exists', async () => {
-    setResult([]) // no purchases (and no recent codes for rate-limit count)
+    queueResults(
+      { data: [] },          // rate-limit count
+      { data: [] },          // purchase lookup — empty
+    )
     const event = createTestEvent({ supabase: mockSupabase, body: { email: 'nobody@test.com' } })
     await handler(event)
 
-    // pro_purchases is queried; restore_codes is queried for the
-    // DB-backed rate limit but should NOT have insert called on it.
     const fromCalls = mockSupabase.from.mock.calls.map((c: any[]) => c[0])
     expect(fromCalls).toContain('pro_purchases')
     expect(mockSupabase.insert).not.toHaveBeenCalled()

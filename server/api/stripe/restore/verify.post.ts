@@ -16,10 +16,8 @@ export default defineEventHandler(async (event) => {
 
   const supabase = await serverSupabaseServiceRole(event)
 
-  // DB-backed rate limit: count failed-attempt rows in the last hour.
-  // We count by summing `attempts` across all this email's recent codes
-  // — that's the total number of guesses, regardless of how the lambda
-  // pool routed them.
+  // Rate limit by summed `attempts` across recent codes for this email
+  // — total guesses regardless of which lambda routed them.
   const windowStart = new Date(Date.now() - VERIFY_WINDOW_MS).toISOString()
   const { data: recent } = await supabase
     .from('restore_codes')
@@ -27,15 +25,17 @@ export default defineEventHandler(async (event) => {
     .eq('email_hash', emailHash)
     .gte('created_at', windowStart)
 
-  const totalAttempts = (recent ?? []).reduce((sum, r: any) => sum + (r.attempts ?? 0), 0)
+  const totalAttempts = (recent ?? []).reduce(
+    (sum: number, r: { attempts: number | null }) => sum + (r.attempts ?? 0),
+    0,
+  )
   if (totalAttempts >= MAX_VERIFY_PER_WINDOW) {
     throw createError({ statusCode: 429, statusMessage: 'Too many attempts. Try again later.' })
   }
 
-  // Look up the most recent un-used code for this email_hash. We don't
-  // match on `code` in the query — we match only on email_hash so any
-  // mismatch increments the attempt counter on the current outstanding
-  // code (defense against unlimited guessing against a single code).
+  // Match on `email_hash` + `used=false` only, NOT on `code` — a
+  // mismatch then increments the attempt counter on the current
+  // outstanding code, defeating unlimited guessing against a single code.
   const { data: restoreCode } = await supabase
     .from('restore_codes')
     .select('id, code, expires_at, used, attempts')
@@ -54,8 +54,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Code expired' })
   }
 
-  // Constant-time compare so an attacker can't infer prefixes from
-  // timing. Both strings are 6-digit ASCII so length is fixed.
+  // Constant-time compare so timing can't leak prefix matches.
   const provided = Buffer.from(code, 'utf8')
   const expected = Buffer.from(restoreCode.code, 'utf8')
   const match = provided.length === expected.length
@@ -91,23 +90,20 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Purchase not found' })
   }
 
-  // Bump token_version atomically so concurrent restores can't both
-  // mint a JWT at the same tv. The `eq('token_version', observed)`
-  // clause makes the UPDATE a compare-and-swap — if another verify
-  // has already bumped the version, this update affects 0 rows and
-  // we return 409 (client retries; this is rare).
+  // Compare-and-swap on token_version so two concurrent verifies can't
+  // both mint a JWT at the same tv (which the revocation check accepts
+  // — see verifyProToken). Mismatch → 0 rows updated → 409.
   const observedVersion = purchase.token_version ?? 1
-  const nextVersion = observedVersion + 1
 
   const token = await generateProToken(normalizedEmail, `restore_${purchase.id}`, {
     purchaseId: purchase.id,
-    tokenVersion: nextVersion,
+    tokenVersion: observedVersion + 1,
   })
 
   const { data: updated } = await supabase.from('pro_purchases')
     .update({
       activation_token: token,
-      token_version: nextVersion,
+      token_version: observedVersion + 1,
       restored_count: (purchase.restored_count || 0) + 1,
       last_restored_at: new Date().toISOString(),
     })

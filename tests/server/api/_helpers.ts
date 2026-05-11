@@ -12,15 +12,18 @@ import { Socket } from 'node:net'
 
 /**
  * Build a chainable mock Supabase client.
- * Every chaining method (.select, .eq, etc.) returns a thenable object
- * so `await supabase.from('x').select('*')` resolves to { data, error }.
- * The top-level client is NOT thenable (so `await serverSupabaseServiceRole(event)`
- * returns the mock client, not { data, error }).
+ *
+ * Chaining methods (.select, .eq, etc.) return a thenable so
+ * `await supabase.from('x').select('*')` resolves to `{ data, error }`.
+ * The top-level client is NOT thenable so
+ * `await serverSupabaseServiceRole(event)` returns the mock itself.
+ *
+ * Use `queueResults(...)` to feed per-call results (FIFO) for handlers
+ * that hit the DB multiple times; the queue takes precedence over the
+ * single fallback set by `setResult(...)`.
  */
 export function createMockSupabase() {
   const state = { data: null as unknown, error: null as unknown }
-  // FIFO queue of per-call results. Consumed by the next terminal call;
-  // when empty, falls back to `state.data` (the legacy single-result mode).
   const resultQueue: Array<{ data: unknown; error: unknown }> = []
 
   const terminal = () => {
@@ -56,16 +59,11 @@ export function createMockSupabase() {
   client.single = thenableChain.single
   client.maybeSingle = thenableChain.maybeSingle
 
-  /** Set the fallback result for any terminal call. */
   const setResult = (data: unknown, error: unknown = null) => {
     state.data = data
     state.error = error
   }
 
-  /** Queue per-call results — consumed FIFO. Handlers that touch the DB
-   *  multiple times (webhook upsert → select → update, etc.) need to
-   *  return distinct shapes per step; the legacy single-result mode
-   *  returned the same value for every terminal call. */
   const queueResults = (...results: Array<{ data?: unknown; error?: unknown }>) => {
     for (const r of results) {
       resultQueue.push({ data: r.data ?? null, error: r.error ?? null })

@@ -59,13 +59,9 @@ function extractBearerToken(event: H3Event): string | null {
 
 /**
  * Gate a Pro-only API endpoint. Throws 401 if the request lacks a valid
- * Pro JWT.
- *
- * Dev bypass requires BOTH `import.meta.dev === true` (a Vite-baked
- * build-time constant — false in any production bundle) AND the env
- * opt-in `NUXT_ALLOW_PRO_BYPASS=1`. Inverting the default and pinning
- * to a build-time constant means no production runtime config — no
- * missing NODE_ENV, no platform port — can silently open the gate.
+ * Pro JWT. Dev bypass needs BOTH the build-time `import.meta.dev` flag
+ * (false in any production bundle) AND opt-in `NUXT_ALLOW_PRO_BYPASS=1`
+ * so no production runtime config can silently open the gate.
  */
 export async function requirePro(event: H3Event): Promise<VerifiedProClaims | null> {
   if (import.meta.dev && process.env.NUXT_ALLOW_PRO_BYPASS === '1') {
