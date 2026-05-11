@@ -1,9 +1,8 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
 
-// `defineSitemapEventHandler` is auto-imported at runtime by Nitro via
-// the @nuxtjs/sitemap module — declared on globalThis so the explicit
-// `import … from '#imports'` would be redundant (and breaks vitest,
-// which can't resolve the `#imports` virtual module under env: node).
+// Nitro auto-imports `defineSitemapEventHandler` at runtime via
+// @nuxtjs/sitemap. An explicit `import … from '#imports'` would break
+// Vitest under env:node (the virtual module is unresolvable there).
 declare const defineSitemapEventHandler: <T>(
   fn: (event: import('h3').H3Event) => T | Promise<T>,
 ) => (event: import('h3').H3Event) => T | Promise<T>

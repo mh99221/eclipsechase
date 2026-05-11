@@ -71,10 +71,7 @@ describe('OfflineManager', () => {
   })
 
   it('shows cached indicator when tiles are cached', async () => {
-    // The component clamps the displayed numerator at ESTIMATED_TILE_COUNT
-    // (currently 1338) so a runaway tileCount can't render "2000 / 1338";
-    // see app/utils/offlineTiles.ts. We assert on the cached-state CSS
-    // hook (`text-status-green`) rather than a numeric value.
+    // tileCount > 10% of ESTIMATED_TILE_COUNT flips the cached-state hook.
     mockTileCount.value = 2000
     const wrapper = await mountSuspended(OfflineManager, {
       props: { map: {} },

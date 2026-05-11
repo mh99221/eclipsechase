@@ -5,6 +5,18 @@
 
 export type TrafficCondition = 'good' | 'difficult' | 'closed' | 'unknown'
 
+/** Row shape returned by /api/traffic/conditions. Distinct from the
+ *  `TrafficCondition` status union — this is the object the map page
+ *  iterates over to render hazard markers. */
+export interface TrafficConditionItem {
+  lat: number
+  lng: number
+  condition: string
+  roadName?: string
+  description: string
+  updatedAt?: string
+}
+
 export const CONDITION_COLORS: Record<TrafficCondition, string> = {
   good: '#22c55e',
   difficult: '#f97316',

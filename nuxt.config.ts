@@ -77,10 +77,6 @@ export default defineNuxtConfig({
       { code: 'is', name: 'Íslenska', file: 'is.json' },
     ],
     defaultLocale: 'en',
-    // `lazy: true` was removed from the option type in @nuxtjs/i18n v9 —
-    // lazy loading is now the default and no longer toggleable. Keeping
-    // file-based locales (`locales[].file`) preserves the same shipped
-    // behaviour: per-locale message bundles are imported on demand.
     langDir: '../i18n',
     strategy: 'prefix_except_default',
   },

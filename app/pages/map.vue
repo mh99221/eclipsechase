@@ -4,7 +4,7 @@ definePageMeta({ middleware: ['pro-gate'] })
 import mapboxgl from 'mapbox-gl'
 import { CLOUD_COVER_LEVELS, CLOUD_COVER_NO_DATA } from '~/utils/eclipse'
 import { conditionPriority, getTrafficColor, getTrafficLabel } from '~/utils/traffic'
-import type { TrafficCondition } from '~/utils/traffic'
+import type { TrafficCondition, TrafficConditionItem } from '~/utils/traffic'
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId } from '~/composables/useRecommendation'
 import type {
@@ -247,9 +247,6 @@ function onCamStep(dir: 1 | -1) {
   if (total === 0) return
   const next = ((dockCamCtx.value.idx + dir) % total + total) % total
   dockCamCtx.value.idx = next
-  // camIndexById is keyed by camera id (which is a number from the
-  // Vegagerðin API). DockCamCtx allows `string | number` so a caller
-  // could conceivably pass a string id — normalise here.
   camIndexById.set(Number(dockCamCtx.value.id), next)
 }
 
@@ -348,12 +345,6 @@ const legendItems = computed(() => [
 ])
 
 // Traffic / road conditions layer
-// Local row shape returned by /api/traffic/conditions. Named distinctly
-// from the `TrafficCondition` string union (auto-imported from
-// ~/utils/traffic) so type narrowing of `condition: string` →
-// `'good' | 'difficult' | 'closed' | 'unknown'` via normaliseCond()
-// flows cleanly.
-interface TrafficConditionItem { lat: number; lng: number; condition: string; roadName?: string; description: string; updatedAt?: string }
 
 const showTraffic = ref(false)
 
@@ -726,8 +717,7 @@ useMapOverlay<TrafficConditionItem>({
 })
 
 // ─── Mobile Peek Sheet ───
-// `as const` so TS treats the tuple as `readonly [110, 400]` and the
-// indexed lookups below resolve to `number` rather than `number | undefined`.
+// peek (just fits the 3 control buttons), full (legend visible)
 const sheetSnapPoints = [110, 400] as const
 const sheetHeight = ref<number>(sheetSnapPoints[0])
 const sheetDragging = ref(false)

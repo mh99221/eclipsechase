@@ -6,46 +6,40 @@ import { resolve } from 'node:path'
 import { setupServer } from 'msw/node'
 import { handlers } from './handlers'
 
-// happy-dom ships a `localStorage` object but its `setItem` is missing
-// in some versions, which makes @nuxtjs/color-mode's setup watcher
-// log "TypeError: window.localStorage?.setItem is not a function"
-// on every component mount. Install a Map-backed stub before any test
-// touches the DOM so the runtime is silent and the color-mode plugin
-// can persist its preference no-op-style.
-if (typeof globalThis.window !== 'undefined' && globalThis.window) {
-  const store = new Map<string, string>()
-  const stub: Storage = {
-    get length() { return store.size },
-    clear: () => store.clear(),
-    getItem: (key) => (store.has(key) ? store.get(key)! : null),
-    setItem: (key, value) => { store.set(key, String(value)) },
-    removeItem: (key) => { store.delete(key) },
-    key: (index) => Array.from(store.keys())[index] ?? null,
+// happy-dom's localStorage is missing `setItem` in some versions, which
+// makes @nuxtjs/color-mode log a TypeError on every mount. Map-backed
+// stubs cleared between tests below.
+function createStorageStub(): Storage & { _store: Map<string, string> } {
+  const _store = new Map<string, string>()
+  return {
+    _store,
+    get length() { return _store.size },
+    clear: () => _store.clear(),
+    getItem: (key) => (_store.has(key) ? _store.get(key)! : null),
+    setItem: (key, value) => { _store.set(key, String(value)) },
+    removeItem: (key) => { _store.delete(key) },
+    key: (index) => Array.from(_store.keys())[index] ?? null,
   }
+}
+
+const localStorageStub = createStorageStub()
+const sessionStorageStub = createStorageStub()
+
+if (typeof globalThis.window !== 'undefined' && globalThis.window) {
   Object.defineProperty(globalThis.window, 'localStorage', {
-    value: stub,
-    writable: true,
-    configurable: true,
+    value: localStorageStub, writable: true, configurable: true,
   })
   Object.defineProperty(globalThis.window, 'sessionStorage', {
-    value: stub,
-    writable: true,
-    configurable: true,
+    value: sessionStorageStub, writable: true, configurable: true,
   })
 }
 
-// Read en.json at runtime via fs — `import enMessages from … json`
-// goes through @intlify/unplugin-vue-i18n which compiles each string
-// into an AST node, leaving us with `{ type, body, loc }` shapes
-// instead of strings. fs.readFileSync + JSON.parse sidesteps that.
+// `import enMessages from 'i18n/en.json'` goes through
+// @intlify/unplugin-vue-i18n which compiles each string into an AST node;
+// fs.readFileSync + JSON.parse sidesteps that.
 const enJsonPath = resolve(process.cwd(), 'i18n/en.json')
 const enMessages = JSON.parse(readFileSync(enJsonPath, 'utf8')) as Record<string, unknown>
 
-// Resolve a dotted i18n key against the real en.json so component tests
-// asserting on rendered text (e.g. "Already purchased", "Map tiles") see
-// the same strings users would, not the raw key. Falls back to the key
-// itself when not found, matching the previous passthrough behaviour
-// for tests that intentionally assert on keys.
 function lookupMessage(key: string): string {
   const parts = key.split('.')
   let cur: unknown = enMessages as unknown
@@ -59,26 +53,23 @@ function lookupMessage(key: string): string {
   return typeof cur === 'string' ? cur : key
 }
 
+// vue-i18n's "static text" escape — `{'@'}` renders a literal `@` so
+// the `@` in restore.email_placeholder isn't parsed as a linked-key ref.
+const STATIC_ESCAPE_RE = /\{'([^']+)'\}/g
+const PARAM_RE = /\{(\w+)\}/g
+
 function interpolate(template: string, params?: Record<string, unknown>): string {
-  // Handle vue-i18n's "static text" escape — `{'@'}` renders a literal `@`,
-  // `{'{'}` renders `{`, etc. en.json's `restore.email_placeholder` uses
-  // this so the `@` isn't mis-parsed as a linked-key reference.
-  let out = template.replace(/\{'([^']+)'\}/g, '$1')
+  let out = template.replace(STATIC_ESCAPE_RE, '$1')
   if (params) {
-    out = out.replace(/\{(\w+)\}/g, (_, name) =>
+    out = out.replace(PARAM_RE, (_, name) =>
       name in params ? String(params[name]) : `{${name}}`,
     )
   }
   return out
 }
 
-// Global component stubs for component tests.
-//
-// `@nuxtjs/i18n`'s NuxtLinkLocale requires the plugin context
-// (_nuxtI18n.composableCtx) which never installs in the Vitest runtime.
-// We stub it as a plain anchor that forwards `to` to `href` so tests
-// that assert link existence / href still work, without needing
-// per-test mounting plugins.
+// NuxtLinkLocale needs `_nuxtI18n.composableCtx` which never installs in
+// Vitest — stub as a plain anchor so href / slot assertions still work.
 config.global.stubs = {
   ...(config.global.stubs || {}),
   NuxtLinkLocale: defineComponent({
@@ -99,40 +90,21 @@ config.global.stubs = {
   }),
 }
 
-// Global @nuxtjs/i18n composables stub. The runtime helpers throw
-// "i18n context is not initialized" without the plugin context that
-// only the full Nuxt app provides. Components reach for these via
-// auto-imports (`useLocalePath()`, `useRouteBaseName()`, etc.), which
-// resolve at compile time to imports from
-// `@nuxtjs/i18n/dist/runtime/composables/index.js` — stub that module
-// to return passthrough implementations safe for unit tests.
-// @nuxtjs/i18n runtime composables (useRouteBaseName, useLocalePath,
-// etc.) are redirected to tests/mocks/nuxt-i18n-composables.ts via
-// vitest's resolve.alias — see vitest.config.ts.
+// @nuxtjs/i18n composables (useRouteBaseName, useLocalePath, …) need the
+// plugin context the full Nuxt app provides. Redirected to
+// tests/mocks/nuxt-i18n-composables.ts via vitest's resolve.alias —
+// see vitest.config.ts.
 
-// Global i18n stub for component tests.
-//
-// `nuxt.config.ts` configures @nuxtjs/i18n with `lazy: true`, so locale
-// messages aren't loaded in the Vitest runtime. Without this stub, any
-// component calling `useI18n()` throws `[intlify] Must be called at
-// setup top level` because the i18n plugin never installed. The
-// passthrough returns:
-//   - `t(key, fallback?)` echoes the key (or the fallback if provided)
-//   - `tm(key)` returns `[]` (Checklist.vue iterates this)
-//   - `te(key)` returns `true` (ProfileSelector.vue gates on this)
-//   - `locale` / `locales` are refs to keep components that read .value happy
-// Component tests can still override with their own `vi.mock('vue-i18n', …)`
-// if they need richer behaviour — vi.mock at the top of a test file takes
-// precedence over setup-file mocks.
+// useI18n stub resolves keys against the real en.json so component tests
+// assert on user-visible strings, not raw keys. Per-file vi.mock takes
+// precedence if a test needs richer behaviour.
 vi.mock('vue-i18n', async (importOriginal) => {
   const actual = await importOriginal<Record<string, unknown>>()
   return {
     ...actual,
     useI18n: () => ({
-      // Real-translation lookup so component tests asserting on
-      // user-visible English text (e.g. "Already purchased") match. The
-      // second arg can be either a default-string fallback OR an
-      // interpolation params object — vue-i18n's `t()` is overloaded.
+      // Second arg is either a default-string fallback OR interpolation
+      // params — vue-i18n's `t()` is overloaded.
       t: (k: string, fallbackOrParams?: string | Record<string, unknown>) => {
         const msg = lookupMessage(k)
         if (msg !== k) {
@@ -156,5 +128,11 @@ vi.mock('vue-i18n', async (importOriginal) => {
 export const server = setupServer(...handlers)
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }))
-afterEach(() => server.resetHandlers())
+afterEach(() => {
+  server.resetHandlers()
+  // Prevent storage state leaking between tests (e.g. a test setting
+  // ec-color-mode would otherwise persist into the next test's mount).
+  localStorageStub.clear()
+  sessionStorageStub.clear()
+})
 afterAll(() => server.close())

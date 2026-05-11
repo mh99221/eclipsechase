@@ -44,9 +44,6 @@ export function useNavItems() {
     // plugin context — the real call only happens when a template
     // queries the active tab inside Vue's render scope.
     const getRouteBaseName = useRouteBaseName()
-    // Coerce — the type is `keyof RouteMapI18n | undefined` which TS
-    // surfaces as `string | number | symbol`. All our route names are
-    // strings, so the cast is safe and matches runtime behaviour.
     const base = String(getRouteBaseName(route) ?? '')
     // /spots and /me are parents — match their child routes too
     // (e.g. /spots/[slug] has base name `spots-slug`).

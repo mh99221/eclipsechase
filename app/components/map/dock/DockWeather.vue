@@ -8,8 +8,7 @@ const props = defineProps<{ ctx: DockWeatherCtx }>()
 
 const { t } = useI18n()
 
-const status = computed(() => cloudToStatus(props.ctx.cloud))
-const dotTone = computed(() => statusToTone(status.value))
+const dotTone = computed(() => statusToTone(cloudToStatus(props.ctx.cloud)))
 const tone = computed<'good' | 'warn' | 'bad' | 'ink'>(() =>
   props.ctx.cloud == null ? 'ink' : dotTone.value,
 )
