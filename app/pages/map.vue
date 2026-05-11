@@ -247,7 +247,10 @@ function onCamStep(dir: 1 | -1) {
   if (total === 0) return
   const next = ((dockCamCtx.value.idx + dir) % total + total) % total
   dockCamCtx.value.idx = next
-  camIndexById.set(dockCamCtx.value.id, next)
+  // camIndexById is keyed by camera id (which is a number from the
+  // Vegagerðin API). DockCamCtx allows `string | number` so a caller
+  // could conceivably pass a string id — normalise here.
+  camIndexById.set(Number(dockCamCtx.value.id), next)
 }
 
 function onHorizonOpen() {
@@ -345,7 +348,12 @@ const legendItems = computed(() => [
 ])
 
 // Traffic / road conditions layer
-interface TrafficCondition { lat: number; lng: number; condition: string; roadName?: string; description: string; updatedAt?: string }
+// Local row shape returned by /api/traffic/conditions. Named distinctly
+// from the `TrafficCondition` string union (auto-imported from
+// ~/utils/traffic) so type narrowing of `condition: string` →
+// `'good' | 'difficult' | 'closed' | 'unknown'` via normaliseCond()
+// flows cleanly.
+interface TrafficConditionItem { lat: number; lng: number; condition: string; roadName?: string; description: string; updatedAt?: string }
 
 const showTraffic = ref(false)
 
@@ -362,7 +370,7 @@ let trafficRoadsCache: any = null
 const trafficMarkerEls = new Map<string, HTMLElement>()
 const cameraMarkerEls = new Map<number, HTMLElement>()
 
-function trafficKey(c: TrafficCondition): string {
+function trafficKey(c: TrafficConditionItem): string {
   return `${c.lat.toFixed(5)},${c.lng.toFixed(5)}`
 }
 
@@ -371,7 +379,7 @@ function normaliseCond(raw: string): TrafficCondition {
   return 'unknown'
 }
 
-function buildTrafficMarker(c: TrafficCondition, map: mapboxgl.Map): mapboxgl.Marker {
+function buildTrafficMarker(c: TrafficConditionItem, map: mapboxgl.Map): mapboxgl.Marker {
   const color = getTrafficColor(c.condition)
   const el = document.createElement('div')
   el.className = 'traffic-marker'
@@ -549,7 +557,7 @@ const eclipseMapRef = ref<any>(null)
 
 // Road cameras — carousel state + full-screen lightbox
 interface CameraImage { url: string; description: string }
-interface CameraData { id: string; name: string; lat: number; lng: number; images: CameraImage[] }
+interface CameraData { id: number; name: string; lat: number; lng: number; images: CameraImage[] }
 
 const activeLightboxCamera = ref<CameraData | null>(null)
 const lightboxStartIndex = ref(0)
@@ -694,13 +702,13 @@ useMapOverlay<CameraData>({
   },
 })
 
-useMapOverlay<TrafficCondition>({
+useMapOverlay<TrafficConditionItem>({
   active: showTraffic,
   mapRef: eclipseMapRef,
   fetchData: async () => {
     const headers = await authHeaders()
     const [conditionsRes, segmentsRes, roadsRes] = await Promise.all([
-      $fetch<{ conditions: TrafficCondition[] }>('/api/traffic/conditions', { headers }),
+      $fetch<{ conditions: TrafficConditionItem[] }>('/api/traffic/conditions', { headers }),
       trafficSegmentsCache ? Promise.resolve(trafficSegmentsCache) : $fetch<{ segments: any[] }>('/api/traffic/segments', { headers }),
       trafficRoadsCache ? Promise.resolve(trafficRoadsCache) : $fetch('/eclipse-data/roads.geojson'),
     ])
@@ -718,20 +726,26 @@ useMapOverlay<TrafficCondition>({
 })
 
 // ─── Mobile Peek Sheet ───
-const sheetSnapPoints = [110, 400] // peek (just fits the 3 control buttons), full (legend visible)
-const sheetHeight = ref(sheetSnapPoints[0])
+// `as const` so TS treats the tuple as `readonly [110, 400]` and the
+// indexed lookups below resolve to `number` rather than `number | undefined`.
+const sheetSnapPoints = [110, 400] as const
+const sheetHeight = ref<number>(sheetSnapPoints[0])
 const sheetDragging = ref(false)
 const sheetStartY = ref(0)
 const sheetStartHeight = ref(0)
 
 function sheetTouchStart(e: TouchEvent) {
+  const t = e.touches[0]
+  if (!t) return
   sheetDragging.value = true
-  sheetStartY.value = e.touches[0].clientY
+  sheetStartY.value = t.clientY
   sheetStartHeight.value = sheetHeight.value
 }
 function sheetTouchMove(e: TouchEvent) {
   if (!sheetDragging.value) return
-  const dy = sheetStartY.value - e.touches[0].clientY
+  const t = e.touches[0]
+  if (!t) return
+  const dy = sheetStartY.value - t.clientY
   sheetHeight.value = Math.max(sheetSnapPoints[0], Math.min(sheetSnapPoints[1] + 40, sheetStartHeight.value + dy))
 }
 function sheetTouchEnd() {
@@ -853,7 +867,7 @@ const profileIds = PROFILES.map(p => p.id)
 function cycleProfile() {
   const idx = selectedProfile.value ? profileIds.indexOf(selectedProfile.value) : -1
   if (idx < profileIds.length - 1) {
-    selectedProfile.value = profileIds[idx + 1]
+    selectedProfile.value = profileIds[idx + 1] ?? null
     if (selectedProfile.value) requestGps()
   } else {
     selectedProfile.value = null

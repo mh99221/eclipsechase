@@ -170,7 +170,9 @@ function normalize(model: Model, raw: any): NormalizedForecast {
   let totalityIdx = -1
   let bestDelta = Number.POSITIVE_INFINITY
   for (let i = 0; i < times.length; i++) {
-    const ms = times[i] * 1000
+    const ts = times[i]
+    if (ts == null) continue
+    const ms = ts * 1000
     const delta = Math.abs(ms - ECLIPSE_TARGET_MS)
     if (delta < bestDelta && delta <= TOTALITY_TOLERANCE_MS) {
       bestDelta = delta
@@ -179,10 +181,11 @@ function normalize(model: Model, raw: any): NormalizedForecast {
   }
 
   const latestIdx = times.length - 1
+  const latestTs = times[latestIdx]!
   return {
     model,
     forecast_days: model === 'ifs_hres' ? 16 : 46,
-    horizon_end: new Date(times[latestIdx] * 1000).toISOString(),
+    horizon_end: new Date(latestTs * 1000).toISOString(),
     totality_slot: totalityIdx >= 0 ? buildSlot(block, totalityIdx) : null,
     latest_slot: buildSlot(block, latestIdx),
     fetched_at,

@@ -17,3 +17,13 @@ export function statusColor(status: V0Status): string {
   if (status === 'bad') return 'rgb(var(--bad))'
   return 'rgb(var(--warn))'
 }
+
+/** Map V0Status onto the tone-prop union used by Dock* / Stat / Pill — the
+ *  shared v0 primitives use `warn` while V0Status uses `marginal` (which
+ *  is also the value on `[data-status='marginal']` CSS hooks across the
+ *  app). Use this helper at the boundary so type narrowing flows cleanly
+ *  without renaming the existing data-attribute selectors. */
+export type V0Tone = 'good' | 'warn' | 'bad'
+export function statusToTone(status: V0Status): V0Tone {
+  return status === 'marginal' ? 'warn' : status
+}

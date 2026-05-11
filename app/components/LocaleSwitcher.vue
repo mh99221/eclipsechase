@@ -30,7 +30,11 @@ const otherLocale = computed(() => {
 })
 
 const otherShort = computed(() => SHORT[otherLocale.value] ?? otherLocale.value.toUpperCase())
-const otherHref = computed(() => switchLocalePath(otherLocale.value) || '/')
+// `switchLocalePath` is typed against the configured locale union
+// (`'en' | 'is'`). At runtime we only ever pass one of those — the
+// `find()` above filters the configured `locales` list — but TS sees
+// the post-`find` value as `string`. Cast to keep the typecheck honest.
+const otherHref = computed(() => switchLocalePath(otherLocale.value as 'en' | 'is') || '/')
 </script>
 
 <template>

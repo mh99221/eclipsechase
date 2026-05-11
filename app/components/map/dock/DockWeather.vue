@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import DockHeader from './DockHeader.vue'
-import { cloudToStatus } from '~/utils/v0'
+import { cloudToStatus, statusToTone } from '~/utils/v0'
 import type { DockWeatherCtx } from './types'
 
 const props = defineProps<{ ctx: DockWeatherCtx }>()
@@ -9,8 +9,9 @@ const props = defineProps<{ ctx: DockWeatherCtx }>()
 const { t } = useI18n()
 
 const status = computed(() => cloudToStatus(props.ctx.cloud))
+const dotTone = computed(() => statusToTone(status.value))
 const tone = computed<'good' | 'warn' | 'bad' | 'ink'>(() =>
-  props.ctx.cloud == null ? 'ink' : status.value,
+  props.ctx.cloud == null ? 'ink' : dotTone.value,
 )
 
 const title = computed(() =>
@@ -30,7 +31,7 @@ const forecastForLabel = computed(() => {
 
 <template>
   <div>
-    <DockHeader :eyebrow="t('dock.weather_eyebrow')" :dot-var="status" />
+    <DockHeader :eyebrow="t('dock.weather_eyebrow')" :dot-var="dotTone" />
 
     <div class="title title--with-sub" :data-tone="tone">{{ title }}</div>
     <div class="detail">{{ ctx.name }}</div>

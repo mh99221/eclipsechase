@@ -11,7 +11,38 @@ const slug = route.params.slug as string
 // Pass the active locale so the server can overlay translations
 // from viewing_spot_translations. Locale-scoped cache key keeps
 // EN and IS responses from trampling each other.
-const { data, error } = await useFetch(`/api/spots/${slug}`, {
+// The spot row mirrors viewing_spots + enriched c1/c4 from the eclipse
+// grid. Kept open with `[k: string]: any` because individual child
+// components (LogisticsRows, AlternatesList, etc.) pick out their own
+// subsets — the explicit keys here are the ones this page reads.
+interface SpotRow {
+  name: string
+  slug: string
+  region: string
+  description?: string | null
+  lat: number
+  lng: number
+  totality_start?: string | null
+  totality_duration_seconds?: number | null
+  sun_altitude?: number | null
+  sun_azimuth?: number | null
+  parking_info?: string | null
+  terrain_notes?: string | null
+  has_services?: boolean | null
+  cell_coverage?: string | null
+  spot_type?: string | null
+  trail_distance_km?: number | null
+  trail_time_minutes?: number | null
+  trailhead_lat?: number | null
+  trailhead_lng?: number | null
+  photos?: unknown
+  horizon_check?: unknown
+  warnings?: unknown
+  c1?: string | null
+  c4?: string | null
+  [k: string]: unknown
+}
+const { data, error } = await useFetch<{ spot: SpotRow }>(`/api/spots/${slug}`, {
   query: { locale: locale.value },
   key: `spot-${slug}-${locale.value}`,
 })
@@ -72,7 +103,7 @@ const siteUrl = useRuntimeConfig().public.siteUrl as string
 useHead({
   title: () => spot.value.name,
   meta: [
-    { name: 'description', content: () => `${spot.value.name} — eclipse viewing spot in ${regionLabel(spot.value.region, t)}. ${formatDuration(spot.value.totality_duration_seconds)} of totality.` },
+    { name: 'description', content: () => `${spot.value.name} — eclipse viewing spot in ${regionLabel(spot.value.region, t)}. ${formatDuration(spot.value.totality_duration_seconds ?? 0)} of totality.` },
     { property: 'og:title', content: () => `${spot.value.name} — Eclipse Viewing Spot` },
     { property: 'og:description', content: () => spot.value.description },
     { property: 'og:url', content: () => `${siteUrl}/spots/${slug}` },
@@ -155,7 +186,7 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
 
     <div class="spot-body">
       <StatStrip
-        :totality-seconds="spot.totality_duration_seconds"
+        :totality-seconds="spot.totality_duration_seconds ?? 0"
         :cloud-pct="spotHistory?.avg_cloud_cover ?? null"
       />
 
@@ -168,8 +199,8 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
         <Card>
           <CardTitle>{{ t('v0.spot_detail.card_contact') }}</CardTitle>
           <ContactList
-            :totality-start="spot.totality_start"
-            :totality-seconds="spot.totality_duration_seconds"
+            :totality-start="spot.totality_start ?? null"
+            :totality-seconds="spot.totality_duration_seconds ?? 0"
             :c1="spot.c1"
             :c4="spot.c4"
           />
@@ -214,7 +245,16 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
       </template>
 
       <template v-else-if="activeTab === 'plan'">
-        <AlternatesList :current="spot" :spots="allSpots" />
+        <AlternatesList
+          :current="{
+            slug: spot.slug,
+            name: spot.name,
+            lat: spot.lat,
+            lng: spot.lng,
+            totality_duration_seconds: spot.totality_duration_seconds ?? null,
+          }"
+          :spots="allSpots"
+        />
         <div class="spacer-8" />
         <Card>
           <CardTitle>{{ t('v0.spot_detail.card_map') }}</CardTitle>

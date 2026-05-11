@@ -50,7 +50,7 @@ function handleDigitInput(index: number, event: Event) {
   const value = input.value.replace(/\D/g, '')
 
   if (value.length > 0) {
-    code.value[index] = value[0]
+    code.value[index] = value[0] ?? ''
     // Auto-advance to next input
     if (index < 5) {
       nextTick(() => codeInputRefs.value[index + 1]?.focus())

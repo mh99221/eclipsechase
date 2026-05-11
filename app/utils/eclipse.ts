@@ -30,7 +30,10 @@ export function cloudLevel(cover: number | null | undefined): CloudLevel {
   for (const level of CLOUD_COVER_LEVELS) {
     if (cover <= level.max) return level
   }
-  return CLOUD_COVER_LEVELS[CLOUD_COVER_LEVELS.length - 1]
+  // CLOUD_COVER_LEVELS is a non-empty const tuple — TS still sees the
+  // final lookup as `union | undefined` under noUncheckedIndexedAccess.
+  // The fallback is reachable only when cover > 100, treat as overcast.
+  return CLOUD_COVER_LEVELS[CLOUD_COVER_LEVELS.length - 1]!
 }
 
 // Cloud path templates (single-outline, puffy cumulus style)

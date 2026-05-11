@@ -1,6 +1,9 @@
 <script setup lang="ts">
 interface LightboxImage { url: string; description: string }
-interface LightboxCamera { id: string; name: string; images: LightboxImage[] }
+// `id` accepts either form — Vegagerðin returns it as a number, our
+// /api/cameras endpoint preserves that. Stringification at the call
+// site (e.g. for use in DOM keys) is fine; both types coerce safely.
+interface LightboxCamera { id: string | number; name: string; images: LightboxImage[] }
 
 const props = defineProps<{ camera: LightboxCamera | null; startIndex?: number }>()
 const emit = defineEmits<{ (e: 'close'): void }>()

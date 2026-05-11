@@ -13,7 +13,10 @@ const { openUpsell } = useUpsell()
 // Symptom: on /is/map the BrandBar fell back to the 768 px `is-content`
 // layout instead of the full-width `is-map` one.
 const getRouteBaseName = useRouteBaseName()
-const baseName = computed(() => getRouteBaseName(route) ?? '')
+// `getRouteBaseName` returns `keyof RouteMapI18n | undefined`, which is
+// typed as `string | number | symbol | undefined`. The route names this
+// codebase uses are all strings — coerce so .startsWith() etc. work.
+const baseName = computed(() => String(getRouteBaseName(route) ?? ''))
 
 const isLanding = computed(() => baseName.value === 'index')
 const isMap = computed(() => baseName.value === 'map')

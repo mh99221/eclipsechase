@@ -122,8 +122,8 @@ const xAxisTicks = computed<TickPoint[]>(() => {
         >{{ xAxisTicks.find(t => t.index === i)!.label }}</span>
       </div>
     </div>
-    <div v-else class="flex justify-between text-[9px] font-mono text-ink-3/70">
-      <span>{{ formatHour(forecasts[0].valid_time) }}</span>
+    <div v-else-if="forecasts.length > 0" class="flex justify-between text-[9px] font-mono text-ink-3/70">
+      <span>{{ formatHour(forecasts[0]!.valid_time) }}</span>
       <span
         v-if="forecasts.some(f => isEclipseWindow(f.valid_time))"
         class="text-accent/70 flex items-center gap-0.5"
@@ -134,7 +134,7 @@ const xAxisTicks = computed<TickPoint[]>(() => {
         </svg>
         {{ t('forecast.eclipse_window') }}
       </span>
-      <span>{{ formatHour(forecasts[forecasts.length - 1].valid_time) }}</span>
+      <span>{{ formatHour(forecasts[forecasts.length - 1]!.valid_time) }}</span>
     </div>
 
     <!-- Legend -->

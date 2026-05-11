@@ -44,6 +44,8 @@ export default defineEventHandler(async (event) => {
   }>>()
 
   for (const row of forecastResult.data || []) {
+    // station_id is nullable in the row schema; ingest never inserts null.
+    if (!row.station_id) continue
     if (!byStation.has(row.station_id)) {
       byStation.set(row.station_id, [])
     }

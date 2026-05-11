@@ -28,6 +28,10 @@ export default defineEventHandler(async (event) => {
 
   const cloudByStation = new Map<string, { cloud_cover: number | null; valid_time: string | null }>()
   for (const row of forecastRows || []) {
+    // `station_id` is nullable on the row schema (FK to weather_stations
+    // can technically be null). The ingest pipeline never inserts null
+    // station IDs — guard so the typecheck flows cleanly anyway.
+    if (!row.station_id) continue
     if (!cloudByStation.has(row.station_id)) {
       cloudByStation.set(row.station_id, { cloud_cover: row.cloud_cover, valid_time: row.valid_time })
     }

@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import DockHeader from './DockHeader.vue'
 import DockStat from './DockStat.vue'
 import { formatDuration } from '~/utils/eclipse'
-import { cloudToStatus } from '~/utils/v0'
+import { cloudToStatus, statusToTone } from '~/utils/v0'
 import type { DockSpotData } from './types'
 
 const props = defineProps<{ spot: DockSpotData }>()
@@ -15,6 +15,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 const status = computed(() => cloudToStatus(props.spot.cloud))
+const tone = computed(() => statusToTone(status.value))
 const score = computed(() => {
   if (props.spot.cloud == null) return null
   return Math.max(0, Math.min(100, 100 - props.spot.cloud))
@@ -26,7 +27,7 @@ const scoreLabel = computed(() => score.value == null ? '—' : String(score.val
 
 <template>
   <div>
-    <DockHeader :eyebrow="t('v0.map.selected')" :dot-var="status" />
+    <DockHeader :eyebrow="t('v0.map.selected')" :dot-var="tone" />
 
     <div class="title">{{ spot.name }}</div>
 
@@ -37,7 +38,7 @@ const scoreLabel = computed(() => score.value == null ? '—' : String(score.val
            and long-press (mobile). 0–100, derived from cloud cover —
            higher = clearer. -->
       <div :title="t('dock.score_tooltip', { score: scoreLabel })">
-        <DockStat :label="`${t('v0.map.stat_score')} ⓘ`" :value="scoreLabel" :tone="status" />
+        <DockStat :label="`${t('v0.map.stat_score')} ⓘ`" :value="scoreLabel" :tone="tone" />
       </div>
     </div>
 
