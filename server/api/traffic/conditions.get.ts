@@ -18,18 +18,30 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  const conditions = await fetchRoadConditions()
+  try {
+    const conditions = await fetchRoadConditions()
 
-  // Only update cache if we got results (keep stale data if fetch fails).
-  // First-ever fetch always primes the cache, even if empty.
-  if (conditions.length > 0 || cache.cachedAt === 0) {
-    cache.set(conditions)
-  }
+    // Only update cache if we got results (keep stale data if fetch fails).
+    // First-ever fetch always primes the cache, even if empty.
+    if (conditions.length > 0 || cache.cachedAt === 0) {
+      cache.set(conditions)
+    }
 
-  const current = cache.peek() ?? []
-  return {
-    conditions: current,
-    cached: false,
-    fetchedAt: new Date(cache.cachedAt).toISOString(),
+    const current = cache.peek() ?? []
+    return {
+      conditions: current,
+      cached: false,
+      fetchedAt: new Date(cache.cachedAt).toISOString(),
+    }
+  } catch (err: any) {
+    // Vegagerdin outage shouldn't 500 the map — degrade to stale cache
+    // (or empty if we've never fetched) so the /map traffic overlay
+    // just renders as empty rather than failing the page load.
+    console.error('[traffic/conditions] fetch failed:', err?.message || err)
+    return {
+      conditions: cache.peek() ?? [],
+      cached: true,
+      fetchedAt: cache.cachedAt > 0 ? new Date(cache.cachedAt).toISOString() : null,
+    }
   }
 })

@@ -7,6 +7,28 @@
  * Also patches `serverSupabaseServiceRole` to read from event context,
  * allowing tests to provide a mock Supabase client.
  */
+
+// Nuxt's `useRuntimeConfig` resolves from process.env at module init
+// in the test environment (auto-imported, not globalThis). Set the
+// underlying env vars BEFORE any handler / runtimeConfig is touched so
+// declared `runtimeConfig` keys aren't empty strings at test time.
+// Real CI env vars still win — process.env assignment is a no-op if
+// the var is already defined.
+const TEST_ENV_DEFAULTS: Record<string, string> = {
+  NUXT_STRIPE_SECRET_KEY: 'sk_test_mock',
+  NUXT_STRIPE_WEBHOOK_SECRET: 'whsec_test_mock',
+  NUXT_STRIPE_PRO_PRICE_ID: 'price_test_mock',
+  NUXT_RESEND_API_KEY: 'test_resend_key',
+  NUXT_PRO_JWT_PRIVATE_KEY: 'test_private_key',
+  NUXT_ADMIN_SECRET: 'test-admin-secret',
+  NUXT_PUBLIC_SITE_URL: 'http://localhost:3000',
+  NUXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
+  NUXT_PUBLIC_SUPABASE_KEY: 'test-anon-key',
+}
+for (const [k, v] of Object.entries(TEST_ENV_DEFAULTS)) {
+  if (!process.env[k]) process.env[k] = v
+}
+
 import { vi, beforeAll } from 'vitest'
 import {
   defineEventHandler,
@@ -34,38 +56,44 @@ Object.assign(globalThis, {
 })
 
 // ---------------------------------------------------------------------------
-// Nuxt server globals — only set if not already defined by Nuxt test env
+// Nuxt server globals — always wrap useRuntimeConfig so test-mode mocks
+// fill in fields Nuxt's test env doesn't set (Stripe / Resend / JWT /
+// admin secrets). The base config wins for any key it provides, so this
+// only patches gaps — never clobbers env values supplied by the test env.
 // ---------------------------------------------------------------------------
-const existingConfig = typeof (globalThis as any).useRuntimeConfig === 'function'
-  ? (globalThis as any).useRuntimeConfig()
-  : null
+const originalUseRuntimeConfig = (globalThis as any).useRuntimeConfig as
+  | ((event?: any) => any)
+  | undefined
 
-if (!existingConfig || !existingConfig.supabase) {
-  const originalUseRuntimeConfig = (globalThis as any).useRuntimeConfig
-  ;(globalThis as any).useRuntimeConfig = (event?: any) => {
-    const base = originalUseRuntimeConfig ? originalUseRuntimeConfig(event) : {}
-    return {
-      ...base,
-      stripeSecretKey: 'sk_test_mock',
-      stripeWebhookSecret: 'whsec_test_mock',
-      resendApiKey: 'test_resend_key',
-      proJwtPrivateKey: 'test_private_key',
-      adminSecret: 'test-admin-secret',
+;(globalThis as any).useRuntimeConfig = (event?: any) => {
+  const base = originalUseRuntimeConfig ? originalUseRuntimeConfig(event) : {}
+  // Mock values take precedence — Nuxt's declared `runtimeConfig` keys
+  // resolve to empty strings in the test env, which would defeat the
+  // mocks if `base` were spread after. (Real test-env env vars would
+  // also override these; that's intentional — set them in CI if you
+  // want a different value.)
+  return {
+    ...base,
+    stripeSecretKey: 'sk_test_mock',
+    stripeWebhookSecret: 'whsec_test_mock',
+    stripeProPriceId: 'price_test_mock',
+    resendApiKey: 'test_resend_key',
+    proJwtPrivateKey: 'test_private_key',
+    adminSecret: 'test-admin-secret',
+    supabase: {
+      ...(base?.supabase || {}),
+      secretKey: 'test-supabase-secret',
+      serviceKey: 'test-supabase-service',
+    },
+    public: {
+      ...(base?.public || {}),
+      siteUrl: 'http://localhost:3000',
       supabase: {
-        secretKey: 'test-supabase-secret',
-        serviceKey: 'test-supabase-service',
-        ...(base?.supabase || {}),
+        ...(base?.public?.supabase || {}),
+        url: 'https://test.supabase.co',
+        key: 'test-anon-key',
       },
-      public: {
-        siteUrl: 'http://localhost:3000',
-        supabase: {
-          url: 'https://test.supabase.co',
-          key: 'test-anon-key',
-          ...(base?.public?.supabase || {}),
-        },
-        ...(base?.public || {}),
-      },
-    }
+    },
   }
 }
 
