@@ -1,5 +1,11 @@
 import { SignJWT, jwtVerify, importPKCS8, importSPKI } from 'jose'
-import type { KeyLike, JWTPayload } from 'jose'
+import type { JWTPayload } from 'jose'
+
+// Jose v6 renamed `KeyLike` to a structural union of `CryptoKey | KeyObject`;
+// we only ever store the output of importPKCS8 / importSPKI, both of which
+// return `CryptoKey` on Node 22+ and modern browsers. Aliasing keeps the
+// rest of the file readable without depending on an export jose no longer ships.
+type KeyLike = CryptoKey
 
 const TOKEN_EXPIRY = Math.floor(new Date('2026-08-31T23:59:59Z').getTime() / 1000)
 

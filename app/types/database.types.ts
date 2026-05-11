@@ -71,29 +71,121 @@ export type Database = {
         }
         Relationships: []
       }
-      pro_users: {
+      pro_purchases: {
         Row: {
+          activated: boolean | null
+          activated_at: string | null
+          activation_token: string
           email: string
+          email_hash: string
           id: number
           is_active: boolean | null
+          last_restored_at: string | null
           purchased_at: string | null
-          stripe_session_id: string | null
+          restored_count: number | null
+          stripe_session_id: string
+          token_version: number
         }
         Insert: {
+          activated?: boolean | null
+          activated_at?: string | null
+          activation_token: string
           email: string
+          email_hash: string
           id?: number
           is_active?: boolean | null
+          last_restored_at?: string | null
           purchased_at?: string | null
-          stripe_session_id?: string | null
+          restored_count?: number | null
+          stripe_session_id: string
+          token_version?: number
         }
         Update: {
+          activated?: boolean | null
+          activated_at?: string | null
+          activation_token?: string
           email?: string
+          email_hash?: string
           id?: number
           is_active?: boolean | null
+          last_restored_at?: string | null
           purchased_at?: string | null
-          stripe_session_id?: string | null
+          restored_count?: number | null
+          stripe_session_id?: string
+          token_version?: number
         }
         Relationships: []
+      }
+      restore_codes: {
+        Row: {
+          attempts: number
+          code: string
+          created_at: string | null
+          email_hash: string
+          expires_at: string
+          id: number
+          used: boolean | null
+        }
+        Insert: {
+          attempts?: number
+          code: string
+          created_at?: string | null
+          email_hash: string
+          expires_at: string
+          id?: number
+          used?: boolean | null
+        }
+        Update: {
+          attempts?: number
+          code?: string
+          created_at?: string | null
+          email_hash?: string
+          expires_at?: string
+          id?: number
+          used?: boolean | null
+        }
+        Relationships: []
+      }
+      viewing_spot_translations: {
+        Row: {
+          description: string | null
+          locale: string
+          name: string | null
+          parking_info: string | null
+          spot_slug: string
+          terrain_notes: string | null
+          updated_at: string
+          warnings: Json | null
+        }
+        Insert: {
+          description?: string | null
+          locale: string
+          name?: string | null
+          parking_info?: string | null
+          spot_slug: string
+          terrain_notes?: string | null
+          updated_at?: string
+          warnings?: Json | null
+        }
+        Update: {
+          description?: string | null
+          locale?: string
+          name?: string | null
+          parking_info?: string | null
+          spot_slug?: string
+          terrain_notes?: string | null
+          updated_at?: string
+          warnings?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "viewing_spot_translations_spot_slug_fkey"
+            columns: ["spot_slug"]
+            isOneToOne: false
+            referencedRelation: "viewing_spots"
+            referencedColumns: ["slug"]
+          },
+        ]
       }
       viewing_spots: {
         Row: {
@@ -102,12 +194,15 @@ export type Database = {
           difficulty: string | null
           elevation_gain_m: number | null
           has_services: boolean | null
+          horizon_check: Json | null
           id: string
           lat: number
           lng: number
           name: string
+          nearby_poi: Json | null
+          observer_height_above_ground: number | null
           parking_info: string | null
-          photo_url: string | null
+          photos: Json | null
           region: string
           slug: string
           spot_type: string | null
@@ -120,6 +215,7 @@ export type Database = {
           trail_time_minutes: number | null
           trailhead_lat: number | null
           trailhead_lng: number | null
+          warnings: Json | null
         }
         Insert: {
           cell_coverage?: string | null
@@ -127,12 +223,15 @@ export type Database = {
           difficulty?: string | null
           elevation_gain_m?: number | null
           has_services?: boolean | null
+          horizon_check?: Json | null
           id: string
           lat: number
           lng: number
           name: string
+          nearby_poi?: Json | null
+          observer_height_above_ground?: number | null
           parking_info?: string | null
-          photo_url?: string | null
+          photos?: Json | null
           region: string
           slug: string
           spot_type?: string | null
@@ -145,6 +244,7 @@ export type Database = {
           trail_time_minutes?: number | null
           trailhead_lat?: number | null
           trailhead_lng?: number | null
+          warnings?: Json | null
         }
         Update: {
           cell_coverage?: string | null
@@ -152,12 +252,15 @@ export type Database = {
           difficulty?: string | null
           elevation_gain_m?: number | null
           has_services?: boolean | null
+          horizon_check?: Json | null
           id?: string
           lat?: number
           lng?: number
           name?: string
+          nearby_poi?: Json | null
+          observer_height_above_ground?: number | null
           parking_info?: string | null
-          photo_url?: string | null
+          photos?: Json | null
           region?: string
           slug?: string
           spot_type?: string | null
@@ -170,12 +273,14 @@ export type Database = {
           trail_time_minutes?: number | null
           trailhead_lat?: number | null
           trailhead_lng?: number | null
+          warnings?: Json | null
         }
         Relationships: []
       }
       weather_forecasts: {
         Row: {
           cloud_cover: number | null
+          fetched_at: string
           forecast_time: string
           id: number
           precipitation_prob: number | null
@@ -185,6 +290,7 @@ export type Database = {
         }
         Insert: {
           cloud_cover?: number | null
+          fetched_at?: string
           forecast_time: string
           id?: number
           precipitation_prob?: number | null
@@ -194,6 +300,7 @@ export type Database = {
         }
         Update: {
           cloud_cover?: number | null
+          fetched_at?: string
           forecast_time?: string
           id?: number
           precipitation_prob?: number | null
@@ -204,50 +311,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "weather_forecasts_station_id_fkey"
-            columns: ["station_id"]
-            isOneToOne: false
-            referencedRelation: "weather_stations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      weather_observations: {
-        Row: {
-          cloud_cover: number | null
-          id: number
-          precipitation: number | null
-          station_id: string | null
-          temp: number | null
-          timestamp: string
-          visibility: number | null
-          wind_dir: string | null
-          wind_speed: number | null
-        }
-        Insert: {
-          cloud_cover?: number | null
-          id?: number
-          precipitation?: number | null
-          station_id?: string | null
-          temp?: number | null
-          timestamp: string
-          visibility?: number | null
-          wind_dir?: string | null
-          wind_speed?: number | null
-        }
-        Update: {
-          cloud_cover?: number | null
-          id?: number
-          precipitation?: number | null
-          station_id?: string | null
-          temp?: number | null
-          timestamp?: string
-          visibility?: number | null
-          wind_dir?: string | null
-          wind_speed?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "weather_observations_station_id_fkey"
             columns: ["station_id"]
             isOneToOne: false
             referencedRelation: "weather_stations"
@@ -420,5 +483,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-A new version of Supabase CLI is available: v2.78.1 (currently installed v2.76.12)
-We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli

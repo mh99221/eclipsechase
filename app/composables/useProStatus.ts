@@ -1,6 +1,9 @@
 import { jwtVerify, importSPKI } from 'jose'
-import type { KeyLike } from 'jose'
 import { getTokenFromIndexedDB, saveTokenToIndexedDB, removeTokenFromIndexedDB } from '~/utils/proStorage'
+
+// jose v6 dropped the `KeyLike` export; `importSPKI` returns `CryptoKey`
+// in the browser / modern Node which is all this composable consumes.
+type KeyLike = CryptoKey
 
 const PUBLIC_KEY_PEM = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv/rPri8Iy0lr22jC8rSP

@@ -21,7 +21,7 @@
     "lint:nuxtlink": "node scripts/lint-nuxtlink.mjs"
   },
   "simple-git-hooks": {
-    "pre-commit": "npx vitest run --dir tests/unit"
+    "pre-commit": "npx vitest run"
   },
   "dependencies": {
     "@nuxt/content": "^3.12.0",

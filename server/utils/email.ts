@@ -13,6 +13,7 @@ export function isValidEmail(s: string): boolean {
 
 export function maskEmail(email: string): string {
   const [local, domain] = email.split('@')
+  if (!local || !domain) return email
   return local.length > 1
     ? local[0] + '***' + local[local.length - 1] + '@' + domain
     : local + '***@' + domain

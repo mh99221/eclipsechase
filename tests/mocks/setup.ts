@@ -6,6 +6,34 @@ import { resolve } from 'node:path'
 import { setupServer } from 'msw/node'
 import { handlers } from './handlers'
 
+// happy-dom ships a `localStorage` object but its `setItem` is missing
+// in some versions, which makes @nuxtjs/color-mode's setup watcher
+// log "TypeError: window.localStorage?.setItem is not a function"
+// on every component mount. Install a Map-backed stub before any test
+// touches the DOM so the runtime is silent and the color-mode plugin
+// can persist its preference no-op-style.
+if (typeof globalThis.window !== 'undefined' && globalThis.window) {
+  const store = new Map<string, string>()
+  const stub: Storage = {
+    get length() { return store.size },
+    clear: () => store.clear(),
+    getItem: (key) => (store.has(key) ? store.get(key)! : null),
+    setItem: (key, value) => { store.set(key, String(value)) },
+    removeItem: (key) => { store.delete(key) },
+    key: (index) => Array.from(store.keys())[index] ?? null,
+  }
+  Object.defineProperty(globalThis.window, 'localStorage', {
+    value: stub,
+    writable: true,
+    configurable: true,
+  })
+  Object.defineProperty(globalThis.window, 'sessionStorage', {
+    value: stub,
+    writable: true,
+    configurable: true,
+  })
+}
+
 // Read en.json at runtime via fs — `import enMessages from … json`
 // goes through @intlify/unplugin-vue-i18n which compiles each string
 // into an AST node, leaving us with `{ type, body, loc }` shapes
