@@ -95,16 +95,13 @@ export function useProStatus() {
   }
 
   async function clearPro() {
-    // Best-effort server-side revoke: bumps token_version so any
-    // captured copy of this JWT stops verifying on the next
-    // /api/pro/verify call. Failures don't block local sign-out.
-    try {
-      const token = await getTokenFromIndexedDB()
-      if (token && navigator.onLine !== false) {
-        await $fetch('/api/pro/revoke', { method: 'POST', body: { token } })
-      }
-    } catch {
-      // Offline or revoke failed — local removal still proceeds.
+    // Fire-and-forget server-side revoke so the UI doesn't wait on a
+    // network round-trip. Local removal below is what actually signs
+    // the user out; the server bump just hardens against captured
+    // copies of the JWT (see /api/pro/revoke).
+    const token = await getTokenFromIndexedDB()
+    if (token && navigator.onLine !== false) {
+      $fetch('/api/pro/revoke', { method: 'POST', body: { token } }).catch(() => {})
     }
     await removeTokenFromIndexedDB()
     isPro.value = false

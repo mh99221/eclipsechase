@@ -1,4 +1,5 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
+import { bumpTokenVersion } from '../../../utils/proAuth'
 
 const VERIFY_WINDOW_MS = 60 * 60 * 1000 // 1 hour
 const MAX_VERIFY_PER_WINDOW = 5
@@ -90,9 +91,8 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Purchase not found' })
   }
 
-  // Compare-and-swap on token_version so two concurrent verifies can't
-  // both mint a JWT at the same tv (which the revocation check accepts
-  // — see verifyProToken). Mismatch → 0 rows updated → 409.
+  // bumpTokenVersion is a CAS — concurrent verifies that already bumped
+  // the version see 0 affected rows and we return 409 (rare; client retries).
   const observedVersion = purchase.token_version ?? 1
 
   const token = await generateProToken(normalizedEmail, `restore_${purchase.id}`, {
@@ -100,19 +100,13 @@ export default defineEventHandler(async (event) => {
     tokenVersion: observedVersion + 1,
   })
 
-  const { data: updated } = await supabase.from('pro_purchases')
-    .update({
-      activation_token: token,
-      token_version: observedVersion + 1,
-      restored_count: (purchase.restored_count || 0) + 1,
-      last_restored_at: new Date().toISOString(),
-    })
-    .eq('id', purchase.id)
-    .eq('token_version', observedVersion)
-    .select('id')
-    .maybeSingle()
+  const { bumped } = await bumpTokenVersion(supabase, purchase.id, observedVersion, {
+    activation_token: token,
+    restored_count: (purchase.restored_count || 0) + 1,
+    last_restored_at: new Date().toISOString(),
+  })
 
-  if (!updated) {
+  if (!bumped) {
     throw createError({ statusCode: 409, statusMessage: 'Concurrent restore detected; please retry' })
   }
 

@@ -21,10 +21,8 @@ function openDB(): Promise<IDBDatabase> {
   return dbPromise
 }
 
-// One-time cleanup of the legacy localStorage mirror. The token lives
-// in IndexedDB only now (drops the XSS-readable surface) — but earlier
-// builds wrote it to localStorage too, so existing users still have a
-// copy there. Strip it on every load until everyone's migrated.
+// Purge the localStorage mirror written by pre-2026-05 builds — the
+// token lives in IndexedDB only now to shrink the XSS-readable surface.
 function clearLegacyLocalStorage(): void {
   try { localStorage.removeItem(LS_KEY) } catch {}
 }

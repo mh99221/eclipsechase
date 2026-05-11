@@ -3,13 +3,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 const LS_KEY = 'eclipsechase_pro_token'
 const SAMPLE_TOKEN = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.sample.signature'
 
-/**
- * proStorage persists the Pro JWT in IndexedDB only — the older
- * localStorage mirror was dropped to remove the XSS-readable surface.
- * save/remove still purge the legacy `eclipsechase_pro_token` key
- * (one-time cleanup for users who upgraded from a build that wrote it).
- */
-
 let store: Record<string, string> = {}
 
 const localStorageMock = {
@@ -19,9 +12,8 @@ const localStorageMock = {
   clear: vi.fn(() => { store = {} }),
 }
 
-// IndexedDB stubbed to always fail open() so we exercise the "no IndexedDB"
-// fallback path — getTokenFromIndexedDB returns null, save/remove still
-// purge legacy localStorage.
+// IndexedDB stubbed to always fail open() so we exercise the "no
+// IndexedDB" path — get returns null, save/remove still purge legacy.
 const indexedDBMock = {
   open: vi.fn(() => {
     const req: any = {}

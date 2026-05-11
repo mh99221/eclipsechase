@@ -9,6 +9,30 @@ export interface ProVerifyResult {
 }
 
 /**
+ * Atomic token-version bump for a pro_purchases row. The `eq` on
+ * `token_version` makes it a compare-and-swap: only the caller that
+ * observed `expectedVersion` writes; concurrent racers see 0 affected
+ * rows and `bumped: false`. Optional `extraFields` is merged into the
+ * SET clause (used by the restore flow to also rewrite
+ * `activation_token` and bump `restored_count`).
+ */
+export async function bumpTokenVersion(
+  supabase: any,
+  purchaseId: number,
+  expectedVersion: number,
+  extraFields?: Record<string, unknown>,
+): Promise<{ bumped: boolean }> {
+  const { data } = await supabase
+    .from('pro_purchases')
+    .update({ token_version: expectedVersion + 1, ...(extraFields || {}) })
+    .eq('id', purchaseId)
+    .eq('token_version', expectedVersion)
+    .select('id')
+    .maybeSingle()
+  return { bumped: Boolean(data) }
+}
+
+/**
  * Verify a Pro JWT against signature *and* live revocation state in
  * `pro_purchases`. Tokens minted before the v1.1 hardening lack `pid`/`tv`
  * claims — they are grandfathered (signature check only) so existing
