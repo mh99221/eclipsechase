@@ -1,6 +1,24 @@
 import { fileURLToPath } from 'node:url'
 import { defineVitestConfig } from '@nuxt/test-utils/config'
 
+const i18nStub = fileURLToPath(new URL('./tests/mocks/nuxt-i18n-composables.ts', import.meta.url))
+
+// Vite resolves Nuxt's @nuxtjs/i18n auto-imports via a relative path
+// (`../node_modules/@nuxtjs/i18n/dist/runtime/composables/index`),
+// so a plain alias entry doesn't match. Intercept at the resolveId
+// stage instead — runs before Vite's default resolution and catches
+// any spelling that ends in the composables-index path.
+const stubNuxtI18nComposables = {
+  name: 'stub-nuxt-i18n-composables',
+  enforce: 'pre' as const,
+  resolveId(source: string) {
+    if (/@nuxtjs[\\/]i18n[\\/]dist[\\/]runtime[\\/]composables[\\/]index(\.js)?$/.test(source)) {
+      return i18nStub
+    }
+    return null
+  },
+}
+
 export default defineVitestConfig({
   test: {
     environment: 'nuxt',
@@ -40,4 +58,5 @@ export default defineVitestConfig({
       '#supabase/server': fileURLToPath(new URL('./tests/mocks/supabase-server.ts', import.meta.url)),
     },
   },
+  plugins: [stubNuxtI18nComposables],
 })

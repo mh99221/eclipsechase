@@ -2,16 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import UpsellSheet from '~/components/UpsellSheet.vue'
 
-// i18n is configured with `lazy: true` in nuxt.config — locale messages aren't
-// loaded in the test runtime, so calling useI18n() throws. Stub useI18n to
-// return a passthrough `t` that echoes the key.
-vi.mock('vue-i18n', async (importOriginal) => {
-  const actual = await importOriginal<Record<string, unknown>>()
-  return {
-    ...actual,
-    useI18n: () => ({ t: (k: string) => k }),
-  }
-})
+// vue-i18n is stubbed globally in tests/mocks/setup.ts.
 
 beforeEach(() => {
   // Force isOpen=true via direct state seed

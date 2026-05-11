@@ -15,7 +15,9 @@ describe('ForecastTimeline', () => {
     const wrapper = await mountSuspended(ForecastTimeline, {
       props: { forecasts },
     })
-    const bars = wrapper.findAll('.flex-1')
+    // .flex-1 appears twice per slot (bar + x-axis tick), so scope to
+    // the bar container so we count one element per forecast.
+    const bars = wrapper.findAll('.timeline-bars > .flex-1')
     expect(bars.length).toBe(8)
   })
 

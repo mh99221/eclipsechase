@@ -2,13 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import BrandBar from '~/components/BrandBar.vue'
 
-vi.mock('vue-i18n', async (importOriginal) => {
-  const actual = await importOriginal<Record<string, unknown>>()
-  return {
-    ...actual,
-    useI18n: () => ({ t: (k: string, fallback?: string) => fallback ?? k }),
-  }
-})
+// vue-i18n is stubbed globally in tests/mocks/setup.ts — that stub
+// provides `t`, `tm`, `te`, `locale`, and `locales`, which LocaleSwitcher
+// (rendered inside BrandBar) needs.
 
 vi.mock('~/composables/useProStatus', () => ({
   useProStatus: vi.fn(),

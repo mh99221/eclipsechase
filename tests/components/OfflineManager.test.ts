@@ -71,13 +71,14 @@ describe('OfflineManager', () => {
   })
 
   it('shows cached indicator when tiles are cached', async () => {
-    // Set enough tiles to exceed 10% threshold
+    // The component clamps the displayed numerator at ESTIMATED_TILE_COUNT
+    // (currently 1338) so a runaway tileCount can't render "2000 / 1338";
+    // see app/utils/offlineTiles.ts. We assert on the cached-state CSS
+    // hook (`text-status-green`) rather than a numeric value.
     mockTileCount.value = 2000
     const wrapper = await mountSuspended(OfflineManager, {
       props: { map: {} },
     })
-    // Should show the green checkmark / cached state
-    const html = wrapper.html()
-    expect(html).toContain('2000')
+    expect(wrapper.find('.text-status-green').exists()).toBe(true)
   })
 })

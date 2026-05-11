@@ -34,10 +34,15 @@ describe('OfflineBanner', () => {
     expect(wrapper.find('.ec-banner-warn').exists()).toBe(true)
   })
 
-  it('shows stale data banner when weather is stale', async () => {
+  it('does not show stale data banner — that signal moved to MapStatusStack', async () => {
+    // Component comment: "Stale-data state is conveyed by the MapStatusStack
+    // pill (desktop) and the MapMobileStatusPill (mobile), so the banner now
+    // only surfaces the offline (network-down) case to avoid duplicating
+    // the same signal." This assertion locks in that behaviour.
     mockIsWeatherStale.value = true
     const wrapper = await mountSuspended(OfflineBanner)
-    expect(wrapper.find('.ec-banner-info').exists()).toBe(true)
+    expect(wrapper.find('.ec-banner-info').exists()).toBe(false)
+    expect(wrapper.find('.ec-banner-warn').exists()).toBe(false)
   })
 
   it('shows last weather update time when available', async () => {
