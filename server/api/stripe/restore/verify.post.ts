@@ -91,16 +91,20 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Purchase not found' })
   }
 
-  // Bump token_version so any historical JWT for this purchase fails the
-  // server-side revocation check on its next /api/pro/verify call.
-  const nextVersion = (purchase.token_version ?? 1) + 1
+  // Bump token_version atomically so concurrent restores can't both
+  // mint a JWT at the same tv. The `eq('token_version', observed)`
+  // clause makes the UPDATE a compare-and-swap — if another verify
+  // has already bumped the version, this update affects 0 rows and
+  // we return 409 (client retries; this is rare).
+  const observedVersion = purchase.token_version ?? 1
+  const nextVersion = observedVersion + 1
 
   const token = await generateProToken(normalizedEmail, `restore_${purchase.id}`, {
     purchaseId: purchase.id,
     tokenVersion: nextVersion,
   })
 
-  await supabase.from('pro_purchases')
+  const { data: updated } = await supabase.from('pro_purchases')
     .update({
       activation_token: token,
       token_version: nextVersion,
@@ -108,6 +112,13 @@ export default defineEventHandler(async (event) => {
       last_restored_at: new Date().toISOString(),
     })
     .eq('id', purchase.id)
+    .eq('token_version', observedVersion)
+    .select('id')
+    .maybeSingle()
+
+  if (!updated) {
+    throw createError({ statusCode: 409, statusMessage: 'Concurrent restore detected; please retry' })
+  }
 
   return { token }
 })

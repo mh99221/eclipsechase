@@ -75,7 +75,8 @@ export type Database = {
         Row: {
           activated: boolean | null
           activated_at: string | null
-          activation_token: string
+          activation_count: number
+          activation_token: string | null
           email: string
           email_hash: string
           id: number
@@ -89,7 +90,8 @@ export type Database = {
         Insert: {
           activated?: boolean | null
           activated_at?: string | null
-          activation_token: string
+          activation_count?: number
+          activation_token?: string | null
           email: string
           email_hash: string
           id?: number
@@ -103,7 +105,8 @@ export type Database = {
         Update: {
           activated?: boolean | null
           activated_at?: string | null
-          activation_token?: string
+          activation_count?: number
+          activation_token?: string | null
           email?: string
           email_hash?: string
           id?: number
@@ -113,6 +116,24 @@ export type Database = {
           restored_count?: number | null
           stripe_session_id?: string
           token_version?: number
+        }
+        Relationships: []
+      }
+      pro_lookup_attempts: {
+        Row: {
+          id: number
+          email_hash: string
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          email_hash: string
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          email_hash?: string
+          created_at?: string
         }
         Relationships: []
       }

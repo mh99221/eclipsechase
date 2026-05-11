@@ -41,47 +41,61 @@ export default defineEventHandler(async (event) => {
 
     const supabase = await serverSupabaseServiceRole(event)
 
-    // Insert the purchase first so we have an id to bind into the JWT
-    // (the `pid` claim is what server-side verifyProToken uses to check
-    // revocation status). activation_token is filled in with a second
-    // update once the JWT is signed.
-    const { data: inserted, error: insertError } = await supabase
+    // Stripe retries successful webhook deliveries on transient errors.
+    // INSERT … ON CONFLICT DO NOTHING (`ignoreDuplicates: true`) means
+    // the second delivery doesn't overwrite anything. The follow-up
+    // SELECT tells us whether a token has already been minted for this
+    // session — if so, return early and skip the re-sign.
+    await supabase
       .from('pro_purchases')
       .upsert(
         {
           email: normalizedEmail,
           email_hash: emailHash,
           stripe_session_id: session.id,
-          activation_token: '',
+          activation_token: null,
           purchased_at: new Date().toISOString(),
           is_active: true,
         },
-        { onConflict: 'stripe_session_id' },
+        { onConflict: 'stripe_session_id', ignoreDuplicates: true },
       )
-      .select('id, token_version')
-      .single()
 
-    if (insertError || !inserted) {
-      console.error('Failed to insert pro purchase:', insertError)
+    const { data: existing, error: selectError } = await supabase
+      .from('pro_purchases')
+      .select('id, token_version, activation_token')
+      .eq('stripe_session_id', session.id)
+      .maybeSingle()
+
+    if (selectError || !existing) {
+      console.error('Failed to read pro purchase after upsert:', selectError)
       throw createError({ statusCode: 500, statusMessage: 'Failed to save purchase' })
     }
 
-    const token = await generateProToken(normalizedEmail, session.id, {
-      purchaseId: inserted.id,
-      tokenVersion: inserted.token_version ?? 1,
-    })
-
-    const { error: updateError } = await supabase
-      .from('pro_purchases')
-      .update({ activation_token: token })
-      .eq('id', inserted.id)
-
-    if (updateError) {
-      console.error('Failed to update pro purchase with token:', updateError)
-      throw createError({ statusCode: 500, statusMessage: 'Failed to save purchase token' })
+    if (existing.activation_token) {
+      // Retry path — token already minted on a prior delivery.
+      return { received: true }
     }
 
-    await sendPurchaseEmail(normalizedEmail)
+    const token = await generateProToken(normalizedEmail, session.id, {
+      purchaseId: existing.id,
+      tokenVersion: existing.token_version ?? 1,
+    })
+
+    // Conditional update — only the first writer for this row wins.
+    // A concurrent retry that won the race already set
+    // activation_token; ours becomes a no-op.
+    const { data: updated } = await supabase
+      .from('pro_purchases')
+      .update({ activation_token: token })
+      .eq('id', existing.id)
+      .is('activation_token', null)
+      .select('id')
+      .maybeSingle()
+
+    if (updated) {
+      // We were the first writer — send the welcome email.
+      await sendPurchaseEmail(normalizedEmail)
+    }
   }
 
   return { received: true }

@@ -44,25 +44,45 @@ export default defineEventHandler(async (event) => {
   if (purchase) {
     console.log('[restore] Purchase found for', masked, '— generating code')
 
-    // Invalidate any prior un-used codes for this email so an attacker
-    // can't keep up to N codes concurrently valid to enlarge the
-    // effective hit-rate of a brute-force campaign.
-    await supabase
-      .from('restore_codes')
-      .update({ used: true })
-      .eq('email_hash', emailHash)
-      .eq('used', false)
-
     const code = String(randomInt(100000, 1000000))
 
-    await supabase.from('restore_codes').insert({
-      email_hash: emailHash,
-      code,
-      expires_at: new Date(Date.now() + CODE_TTL_MS).toISOString(),
-    })
+    // Insert the new code BEFORE invalidating older ones — otherwise
+    // a transient insert/email failure would leave the user with no
+    // working code AND a burned rate-limit slot.
+    const { data: inserted } = await supabase
+      .from('restore_codes')
+      .insert({
+        email_hash: emailHash,
+        code,
+        expires_at: new Date(Date.now() + CODE_TTL_MS).toISOString(),
+      })
+      .select('id')
+      .single()
 
-    // Await — Vercel kills the function after response is sent.
-    await sendRestoreCode(normalizedEmail, code)
+    try {
+      // Await — Vercel kills the function after response is sent.
+      await sendRestoreCode(normalizedEmail, code)
+    } catch (err) {
+      // Email send failed — undo the rate-limit charge so the user
+      // can retry. Older outstanding codes are still alive.
+      if (inserted?.id) {
+        await supabase.from('restore_codes').delete().eq('id', inserted.id)
+      }
+      throw err
+    }
+
+    // Email sent successfully — invalidate any OTHER outstanding codes
+    // for this email so an attacker can't keep multiple codes valid in
+    // parallel. Scoped to `id < new_code.id` so concurrent requesters
+    // don't trample each other.
+    if (inserted?.id) {
+      await supabase
+        .from('restore_codes')
+        .update({ used: true })
+        .eq('email_hash', emailHash)
+        .eq('used', false)
+        .neq('id', inserted.id)
+    }
   } else {
     console.log('[restore] No active purchase found for', masked)
   }

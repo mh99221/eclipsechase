@@ -19,24 +19,31 @@ import { Socket } from 'node:net'
  */
 export function createMockSupabase() {
   const state = { data: null as unknown, error: null as unknown }
+  // FIFO queue of per-call results. Consumed by the next terminal call;
+  // when empty, falls back to `state.data` (the legacy single-result mode).
+  const resultQueue: Array<{ data: unknown; error: unknown }> = []
 
-  const terminal = () => Promise.resolve({ data: state.data, error: state.error })
+  const terminal = () => {
+    if (resultQueue.length > 0) {
+      const next = resultQueue.shift()!
+      return Promise.resolve({ data: next.data, error: next.error })
+    }
+    return Promise.resolve({ data: state.data, error: state.error })
+  }
 
-  // Create a thenable chain object (returned by chaining methods)
   const thenableChain: Record<string, any> = {}
   const chainMethods = [
     'select', 'insert', 'upsert', 'update', 'delete',
-    'eq', 'gte', 'gt', 'lte', 'lt', 'order', 'limit', 'neq', 'in',
+    'eq', 'gte', 'gt', 'lte', 'lt', 'order', 'limit', 'neq', 'in', 'is',
   ]
   for (const m of chainMethods) {
     thenableChain[m] = vi.fn().mockImplementation(() => thenableChain)
   }
   thenableChain.single = vi.fn().mockImplementation(terminal)
   thenableChain.maybeSingle = vi.fn().mockImplementation(terminal)
-  // Make the chain thenable so `await supabase.from('x').select('*')` works
+  // `await supabase.from('x').select('*')` resolves via this hook.
   thenableChain.then = (resolve: any, reject: any) => terminal().then(resolve, reject)
 
-  // The client object has `.from()` which starts a chain
   const client: Record<string, any> = {
     from: vi.fn().mockImplementation(() => thenableChain),
   }
@@ -49,12 +56,23 @@ export function createMockSupabase() {
   client.single = thenableChain.single
   client.maybeSingle = thenableChain.maybeSingle
 
+  /** Set the fallback result for any terminal call. */
   const setResult = (data: unknown, error: unknown = null) => {
     state.data = data
     state.error = error
   }
 
-  return { client: client as any, setResult, state }
+  /** Queue per-call results — consumed FIFO. Handlers that touch the DB
+   *  multiple times (webhook upsert → select → update, etc.) need to
+   *  return distinct shapes per step; the legacy single-result mode
+   *  returned the same value for every terminal call. */
+  const queueResults = (...results: Array<{ data?: unknown; error?: unknown }>) => {
+    for (const r of results) {
+      resultQueue.push({ data: r.data ?? null, error: r.error ?? null })
+    }
+  }
+
+  return { client: client as any, setResult, queueResults, state }
 }
 
 // ---------------------------------------------------------------------------

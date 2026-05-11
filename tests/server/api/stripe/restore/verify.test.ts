@@ -54,8 +54,13 @@ const mockSupabase = {
         limit: vi.fn().mockImplementation(() => Promise.resolve(purchaseRows)),
         then: (resolve: any) => Promise.resolve(purchaseRows).then(resolve),
       }
-      const updateChain = {
-        eq: vi.fn().mockReturnValue(Promise.resolve(updateResult)),
+      // Conditional update chain: .update({...}).eq(id).eq(token_version).select('id').maybeSingle()
+      // returns `{ data: { id }, error: null }` when the version matches,
+      // or `{ data: null }` for the lost-race case (per-test override).
+      const updateChain: any = {
+        eq: vi.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
+        maybeSingle: vi.fn().mockImplementation(() => Promise.resolve(updateResult)),
         then: (resolve: any) => Promise.resolve(updateResult).then(resolve),
       }
       return {
@@ -86,11 +91,28 @@ describe('POST /api/stripe/restore/verify', () => {
       attempts: 0,
     }
     purchaseRows.data = [{ id: 42, restored_count: 0, token_version: 1 }]
+    // Conditional update wins the optimistic-concurrency check.
+    updateResult.data = { id: 42 }
 
     const event = createTestEvent({ supabase: mockSupabase, body: { email: 'buyer@test.com', code: '123456' } })
     const result = await handler(event)
 
     expect(result.token).toBe('mock_jwt_token')
+  })
+
+  it('throws 409 when a concurrent restore already bumped token_version', async () => {
+    restoreCodeRow.data = {
+      id: 1,
+      code: '123456',
+      expires_at: new Date(Date.now() + 600_000).toISOString(),
+      used: false,
+      attempts: 0,
+    }
+    purchaseRows.data = [{ id: 42, restored_count: 0, token_version: 1 }]
+    updateResult.data = null  // lost the race — UPDATE affected 0 rows
+
+    const event = createTestEvent({ supabase: mockSupabase, body: { email: 'buyer@test.com', code: '123456' } })
+    await expect(handler(event)).rejects.toMatchObject({ statusCode: 409 })
   })
 
   it('throws 400 for invalid code (none outstanding)', async () => {

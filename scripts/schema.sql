@@ -69,22 +69,29 @@ CREATE TABLE email_signups (
 );
 
 -- Pro tier purchases
---   activated_at — set on first /api/stripe/activate call. Allows a short
---                  network-retry grace window, then rejects replays.
+--   activation_token — NULL until the Stripe webhook signs a JWT. The
+--                      idempotent webhook flow short-circuits on retry
+--                      if this column is already non-NULL.
+--   activation_count — counter beats a timestamp. The atomic activate
+--                      flow uses `UPDATE … WHERE activation_count < 1`
+--                      so exactly one request can hand out the token.
 --   token_version — bumped on every restore. Server-side verify rejects
 --                   JWTs whose `tv` claim is below this, so a leaked
 --                   historical token stops working once the legitimate
---                   owner re-restores.
+--                   owner re-restores. Updates are conditional on the
+--                   observed version (optimistic concurrency) so two
+--                   parallel restores can't both mint at the same tv.
 CREATE TABLE pro_purchases (
   id BIGSERIAL PRIMARY KEY,
   email TEXT NOT NULL,
   email_hash TEXT NOT NULL,
   stripe_session_id TEXT UNIQUE NOT NULL,
-  activation_token TEXT NOT NULL,
+  activation_token TEXT,
   purchased_at TIMESTAMPTZ DEFAULT NOW(),
   is_active BOOLEAN DEFAULT TRUE,
   activated BOOLEAN DEFAULT FALSE,
   activated_at TIMESTAMPTZ,
+  activation_count INTEGER NOT NULL DEFAULT 0,
   token_version INTEGER NOT NULL DEFAULT 1,
   restored_count INTEGER DEFAULT 0,
   last_restored_at TIMESTAMPTZ
@@ -110,6 +117,21 @@ CREATE TABLE restore_codes (
 
 CREATE INDEX idx_restore_codes_lookup ON restore_codes(email_hash, code);
 CREATE INDEX idx_restore_codes_email_created ON restore_codes(email_hash, created_at DESC);
+
+-- Pre-checkout Pro-lookup attempts. DB-backed rate limiter for
+-- /api/pro/lookup so concurrent lambdas share one counter (the prior
+-- in-memory limiter was per-lambda and trivially defeated by Vercel's
+-- autoscaling, enabling enumeration of which emails have Pro).
+CREATE TABLE pro_lookup_attempts (
+  id BIGSERIAL PRIMARY KEY,
+  email_hash TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_pro_lookup_attempts_email_created
+  ON pro_lookup_attempts (email_hash, created_at DESC);
+
+ALTER TABLE pro_lookup_attempts ENABLE ROW LEVEL SECURITY;
 
 -- Enable Row Level Security on public-facing tables
 ALTER TABLE email_signups ENABLE ROW LEVEL SECURITY;
