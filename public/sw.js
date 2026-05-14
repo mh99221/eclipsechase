@@ -1,8 +1,8 @@
-// Bumped to v7 so previously-cached Pro-gated responses (cameras /
-// traffic) get evicted on update. Those endpoints are now server-gated
-// by requirePro() and the SW must not cache them by URL — see
-// PRO_ONLY_PATHS below.
-const CACHE_NAME = 'eclipsechase-v7'
+// v8: manifest.json now references PNG icons under /icons/ so PWA
+// install criteria are met (Chrome refuses to fire beforeinstallprompt
+// without 192 + 512 raster icons). Bump invalidates clients still
+// holding the old icon-less manifest.
+const CACHE_NAME = 'eclipsechase-v8'
 const API_CACHE = 'eclipsechase-api-v3'
 const TILE_CACHE = 'eclipsechase-tiles-v1'
 const MAX_TILE_CACHE = 5000
@@ -13,6 +13,9 @@ const PRECACHE_URLS = [
   '/pro',
   '/manifest.json',
   '/favicon.svg',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+  '/icons/icon-maskable-512.png',
   '/eclipse-data/path.geojson',
   '/eclipse-data/grid.json',
   '/eclipse-data/roads.geojson'
