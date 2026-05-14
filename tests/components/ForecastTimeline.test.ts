@@ -54,17 +54,20 @@ describe('ForecastTimeline', () => {
     expect(wrapper.text()).toContain('Overcast')
   })
 
-  it('colors bars by cloud cover level', async () => {
+  it('colors bars by cloud cover level via v0 semantic tokens', async () => {
     const forecasts = [
-      { valid_time: '2026-08-12T12:00:00Z', cloud_cover: 10, precip_prob: null },
-      { valid_time: '2026-08-12T13:00:00Z', cloud_cover: 90, precip_prob: null },
+      { valid_time: '2026-08-12T12:00:00Z', cloud_cover: 10, precip_prob: null }, // good
+      { valid_time: '2026-08-12T13:00:00Z', cloud_cover: 55, precip_prob: null }, // warn
+      { valid_time: '2026-08-12T14:00:00Z', cloud_cover: 90, precip_prob: null }, // bad
     ]
     const wrapper = await mountSuspended(ForecastTimeline, {
       props: { forecasts },
     })
     const html = wrapper.html()
-    // Green for clear, red for overcast
-    expect(html).toContain('#22c55e')
-    expect(html).toContain('#ef4444')
+    // Theme-aware CSS vars from utils/v0.ts -> statusColor(). Matches the
+    // 10-yr CloudHistogram so both charts share one palette.
+    expect(html).toContain('rgb(var(--good))')
+    expect(html).toContain('rgb(var(--warn))')
+    expect(html).toContain('rgb(var(--bad))')
   })
 })

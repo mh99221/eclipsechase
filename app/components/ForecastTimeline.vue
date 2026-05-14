@@ -1,5 +1,6 @@
 ﻿<script setup lang="ts">
-import { cloudLevel, CLOUD_COVER_NO_DATA, type CloudLevelKey } from '~/utils/eclipse'
+import { cloudLevel, CLOUD_COVER_NO_DATA } from '~/utils/eclipse'
+import { cloudToStatus, statusColor } from '~/utils/v0'
 import { ECLIPSE_DATE_UTC } from '~/utils/solar'
 
 const { t } = useI18n()
@@ -30,23 +31,19 @@ function isEclipseWindow(isoString: string): boolean {
   return mins >= ECLIPSE_START_UTC && mins <= ECLIPSE_END_UTC
 }
 
-// Traffic-light color palette for the timeline chart (green=clear, red=overcast).
-// Intentionally different from the blue-toned map marker palette in eclipse.ts —
-// only the threshold predicate is shared (via cloudLevel().key).
-const TIMELINE_PALETTE: Record<CloudLevelKey | 'no-data', string> = {
-  'clear':          '#22c55e',
-  'mostly-clear':   '#84cc16',
-  'partly-cloudy':  '#f59e0b',
-  'mostly-cloudy':  '#f97316',
-  'overcast':       '#ef4444',
-  'no-data':        CLOUD_COVER_NO_DATA.color,
-}
-
+// Theme-aware 3-band palette via the v0 semantic tokens — matches the
+// 10-yr cloud histogram next to it (CloudHistogram.vue) so both charts
+// read as the same metric. `cloudToStatus` shares the 40 / 70 % thresholds
+// with the rest of the v0 redesign, so the bar colour, the legend chip,
+// and the "best region" verdict on /dashboard all agree.
 function timelineColor(cover: number | null): string {
-  return TIMELINE_PALETTE[cloudLevel(cover).key]
+  if (cover == null) return CLOUD_COVER_NO_DATA.color
+  return statusColor(cloudToStatus(cover))
 }
 
-// Reuse labels from shared cloud cover levels
+// Reuse labels from shared cloud cover levels (5-band narrative — kept on
+// the tooltip so hover detail is still granular even though the bar
+// itself collapses to 3 colour bands).
 function cloudLabel(cover: number | null): string {
   return t(cloudLevel(cover).labelKey)
 }
@@ -100,7 +97,7 @@ const xAxisTicks = computed<TickPoint[]>(() => {
           :style="{
             height: `${Math.max((fc.cloud_cover ?? 50) / 100 * 40, 4)}px`,
             backgroundColor: timelineColor(fc.cloud_cover),
-            opacity: fc.cloud_cover !== null ? 0.8 : 0.3,
+            opacity: fc.cloud_cover !== null ? 1 : 0.3,
           }"
         />
       </div>
@@ -137,16 +134,16 @@ const xAxisTicks = computed<TickPoint[]>(() => {
       <span>{{ formatHour(forecasts[forecasts.length - 1]!.valid_time) }}</span>
     </div>
 
-    <!-- Legend -->
+    <!-- Legend — matches the 10-yr histogram's 3-band semantic tokens. -->
     <div class="flex gap-3 text-[9px] font-mono text-ink-3/70 mt-1">
       <span class="flex items-center gap-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-green-500" />Clear
+        <span class="w-1.5 h-1.5 rounded-full bg-good" />Clear
       </span>
       <span class="flex items-center gap-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-amber-500" />Cloudy
+        <span class="w-1.5 h-1.5 rounded-full bg-warn" />Cloudy
       </span>
       <span class="flex items-center gap-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-red-500" />Overcast
+        <span class="w-1.5 h-1.5 rounded-full bg-bad" />Overcast
       </span>
     </div>
   </div>
