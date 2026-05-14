@@ -78,6 +78,12 @@ onMounted(async () => {
           >
             {{ t('pro_success.success_cta') }}
           </NuxtLinkLocale>
+
+          <ClientOnly>
+            <div class="text-left">
+              <InstallPwaPrompt variant="hero" />
+            </div>
+          </ClientOnly>
         </div>
 
         <!-- Already activated (one-time activation window closed) -->

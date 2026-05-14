@@ -4,6 +4,25 @@
     "description": "Rauntíma veðureftirlit fyrir heilsólmyrkvann 12. ágúst 2026 á Íslandi."
   },
   "v0": {
+    "install_prompt": {
+      "eyebrow": "SETJA UPP",
+      "hero_title": "Settu EclipseChase upp í símann",
+      "hero_body": "Margir áhorfsstaðir á Vestfjörðum og Snæfellsnesi hafa ekkert farsímasamband. Settu appið upp núna svo kortið, staðirnir og Pro-aðgangurinn virki án nettengingar á sólmyrkvadaginn.",
+      "cta_android": "Setja upp app",
+      "cta_ios": "Sjá leiðbeiningar",
+      "banner_title": "Settu upp fyrir notkun án nets",
+      "banner_body": "Bættu við heimaskjáinn — virkar án sambands á afskekktum stöðum.",
+      "banner_cta_android": "Setja upp",
+      "banner_cta_ios": "Hvernig",
+      "dismiss": "Loka",
+      "ios_modal_title": "Bæta á heimaskjá",
+      "ios_step_1": "Smelltu á {share}-hnappinn neðst í Safari.",
+      "ios_step_1_share": "Deila",
+      "ios_step_2": "Skrunaðu niður og smelltu á {add}.",
+      "ios_step_2_add": "Bæta á heimaskjá",
+      "ios_step_3": "Smelltu á Bæta við. EclipseChase opnast eins og venjulegt app — í fullri skjámynd og tilbúið án nets.",
+      "ios_modal_note": "iOS leyfir aðeins uppsetningu úr Safari (ekki Chrome eða Firefox)."
+    },
     "upsell": {
       "title": "Lifandi veðurkort er hluti af Pro-aðgangi",
       "bullet_weather": "Lifandi skýjahula frá 55 veðurstöðvum, uppfærð á 15 mín fresti",

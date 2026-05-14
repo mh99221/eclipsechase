@@ -4,6 +4,25 @@
     "description": "Real-time weather tracking for the August 12, 2026 total solar eclipse in Iceland."
   },
   "v0": {
+    "install_prompt": {
+      "eyebrow": "INSTALL APP",
+      "hero_title": "Install EclipseChase on your phone",
+      "hero_body": "Many viewing spots in the Westfjords and Snæfellsnes have no cell signal. Install the app now so your map, spots and Pro pass keep working offline on eclipse day.",
+      "cta_android": "Install app",
+      "cta_ios": "Show install steps",
+      "banner_title": "Install for offline access",
+      "banner_body": "Add to your home screen — works without signal at remote spots.",
+      "banner_cta_android": "Install",
+      "banner_cta_ios": "How",
+      "dismiss": "Dismiss",
+      "ios_modal_title": "Add to Home Screen",
+      "ios_step_1": "Tap the {share} button at the bottom of Safari.",
+      "ios_step_1_share": "Share",
+      "ios_step_2": "Scroll and tap {add}.",
+      "ios_step_2_add": "Add to Home Screen",
+      "ios_step_3": "Tap Add. EclipseChase will open like a normal app — full-screen and offline-ready.",
+      "ios_modal_note": "iOS only allows installing from Safari (not Chrome or Firefox)."
+    },
     "upsell": {
       "title": "Live weather map is part of Pro Access",
       "bullet_weather": "Live cloud cover from 55 weather stations, refreshed every 15 min",

@@ -69,6 +69,8 @@ const { t } = useI18n()
         </div>
       </section>
 
+      <InstallPwaPrompt variant="banner" />
+
       <Checklist />
 
       <ClientOnly><OfflineBanner /></ClientOnly>
