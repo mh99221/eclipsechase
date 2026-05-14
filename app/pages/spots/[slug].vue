@@ -213,16 +213,6 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
       </template>
 
       <template v-else-if="activeTab === 'sky'">
-        <Card>
-          <CardTitle>{{ t('v0.spot_detail.card_sun_position') }}</CardTitle>
-          <HorizonDial
-            v-if="spot.sun_altitude != null && spot.sun_azimuth != null"
-            :altitude="spot.sun_altitude"
-            :azimuth="spot.sun_azimuth"
-          />
-          <div v-else class="dial-missing">{{ t('spot_detail_extra.dial_missing') }}</div>
-        </Card>
-        <div v-if="horizonProfileData" class="spacer-8" />
         <Card v-if="horizonProfileData">
           <CardTitle>{{ t('spot_detail_extra.horizon_profile_title') }}</CardTitle>
           <HorizonProfile :data="horizonProfileData" :lat="spot.lat" :lng="spot.lng" />
@@ -291,13 +281,6 @@ const { count: advisoriesCount, topLevel: advisoriesTopLevel } = useAdvisories(w
   line-height: 1.55;
   color: rgb(var(--ink-1) / 0.85);
   margin: 0;
-}
-
-.dial-missing {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 13px;
-  color: rgb(var(--ink-1) / 0.42);
-  padding: 8px 0;
 }
 
 .plan-map {

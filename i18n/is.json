@@ -185,7 +185,6 @@
       "stat_horizon": "SJÓNDEILD",
       "card_contact": "Snertingartímar · UTC",
       "card_logistics": "Aðstæður",
-      "card_sun_position": "Sólstaða við myrkva",
       "card_cloud_cover": "Skýjahula · 10 ára 12. ágúst",
       "card_plan_b": "Vara­áætlun · innan 30 mín",
       "card_map": "Kort",
@@ -518,7 +517,6 @@
     "already_activated_cta": "Endurheimta kaup"
   },
   "spot_detail_extra": {
-    "dial_missing": "Gögn um sólstöðu ekki tiltæk.",
     "horizon_profile_title": "Sjóndeildarhringssnið · 91 punkta skönnun",
     "advisories_label": "Viðvaranir ({count})"
   },

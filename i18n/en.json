@@ -185,7 +185,6 @@
       "stat_horizon": "HORIZON",
       "card_contact": "Contact times · UTC",
       "card_logistics": "Logistics",
-      "card_sun_position": "Sun position at totality",
       "card_cloud_cover": "Cloud cover · 10-yr Aug 12",
       "card_plan_b": "Plan B · within 30 min",
       "card_map": "Map",
@@ -518,7 +517,6 @@
     "already_activated_cta": "Restore purchase"
   },
   "spot_detail_extra": {
-    "dial_missing": "Sun position data unavailable.",
     "horizon_profile_title": "Horizon profile · 91-pt scan",
     "advisories_label": "Advisories ({count})"
   },
