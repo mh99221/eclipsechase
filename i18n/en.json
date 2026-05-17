@@ -206,7 +206,7 @@
       "faq_q_offline": "Will it work without cell coverage?",
       "faq_a_offline": "Yes. Pro users can download offline maps and full spot data. Essential for the Westfjords where cell service is unreliable.",
       "faq_q_accuracy": "How accurate are the horizon checks?",
-      "faq_a_accuracy": "Geometric accuracy is high — terrain at 30 m resolution (ÍslandsDEM v1.0), Skyfield-computed sun position. The verdict (clear/marginal/risky/blocked) reflects terrain only — weather is reported separately.",
+      "faq_a_accuracy": "For curated viewing spots, very high — terrain at 30 m resolution (ÍslandsDEM v1.0), Skyfield-computed sun position, sampled at the spot's exact coordinates. For tap-anywhere checks on the map, your tap snaps to the nearest pre-computed grid point — typically within ~150 m on roads, up to ~2 km in the back-country. The map shows the snapped sample point whenever it's more than ~250 m from where you tapped. The verdict (clear/marginal/risky/blocked) reflects terrain only — weather is reported separately.",
       "faq_q_clouds": "What if it's cloudy?",
       "faq_a_clouds": "Cloud cover in Iceland is unpredictable. We provide forecasts and live conditions; you choose. The Pro recommendation engine on the day suggests where to move based on current conditions.",
       "email_title": "Eclipse updates",
