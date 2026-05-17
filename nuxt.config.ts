@@ -164,12 +164,17 @@ export default defineNuxtConfig({
   vite: {
     build: {
       chunkSizeWarningLimit: 1800,
-      // Ship source maps so DevTools can resolve minified stack traces
-      // to original source — useful for triaging real-user errors via
-      // Sentry/console reports and silences Lighthouse's
-      // `valid-source-maps` audit. Client code is downloadable anyway.
-      sourcemap: true,
     },
+  },
+
+  // Ship client + server source maps so DevTools can resolve minified
+  // stack traces to original source (useful for triaging real-user
+  // error reports) and Lighthouse's `valid-source-maps` audit passes.
+  // Nuxt's top-level `sourcemap` is the right knob — setting it via
+  // `vite.build.sourcemap` was silently dropped on the client build.
+  sourcemap: {
+    client: true,
+    server: true,
   },
 
   $development: {
