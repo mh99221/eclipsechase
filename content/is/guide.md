@@ -197,9 +197,9 @@ Reykjavík liggur á **ystu jaðri** myrkvabálksins. Eftir nákvæmri staðsetn
 
 </details>
 
-## Skráðu þig
+## Áminningar fyrir sólmyrkvadaginn
 
-Fáðu tilkynningu þegar EclipseChase.is opnar með lifandi veðureftirliti fyrir sólmyrkvadaginn.
+Við sendum einn eða tvo tölvupósta þegar nær dregur 12. ágúst — veðurspár, lágmarksupplýsingar á síðustu stundu og áminningu kvöldið áður.
 
 ::email-signup
 ::

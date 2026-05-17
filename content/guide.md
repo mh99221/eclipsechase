@@ -197,9 +197,9 @@ Reykjavík sits at the **very edge** of the totality path. Depending on your exa
 
 </details>
 
-## Sign Up
+## Eclipse-Day Reminders
 
-Get notified when EclipseChase.is launches with live weather tracking for eclipse day.
+We'll send one or two emails as August 12 approaches — weather-window forecasts, last-minute logistics, and a heads-up the night before.
 
 ::email-signup
 ::
