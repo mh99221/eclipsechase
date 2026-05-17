@@ -1,6 +1,6 @@
 ﻿<script setup lang="ts">
 import { cloudToStatus } from '~/utils/v0'
-import { formatDuration, regionLabel } from '~/utils/eclipse'
+import { formatDuration, regionLabel, spotThumbUrl } from '~/utils/eclipse'
 
 const props = defineProps<{
   slug: string
@@ -21,16 +21,10 @@ const status = computed(() => cloudToStatus(props.cloud))
 const cloudLabel = computed(() => props.cloud == null
   ? t('v0.spots.card_cloud_missing')
   : t('v0.spots.card_cloud_pct', { pct: props.cloud }))
-// The list view paints a 160 px-tall card capped at ~360 px wide.
-// At DPR 2 that's ~720 px of pixels needed — the 600 w thumb (vs the
-// 1200 w hero) is close enough and ~70 % smaller per image. The full
-// hero stays on /spots/[slug]. Previously a srcset offered both and
-// browsers picked the 1200 w on retina mobiles, costing ~640 KB/page.
-const heroSrc = computed(() => {
-  if (!props.heroFilename) return null
-  const thumb = props.heroFilename.replace(/\.webp$/, '-thumb.webp')
-  return `/images/spots/${thumb}`
-})
+// The 160×360 card uses the thumb only; a srcset would let browsers
+// upgrade to the 1200 w hero on retina mobile (~640 KB/page wasted per
+// Lighthouse). The full hero stays on /spots/[slug].
+const heroSrc = computed(() => props.heroFilename ? spotThumbUrl(props.heroFilename) : null)
 </script>
 
 <template>

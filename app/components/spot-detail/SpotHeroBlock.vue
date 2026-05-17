@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { spotThumbUrl } from '~/utils/eclipse'
 import type { SpotPhoto } from '~/types/spots'
 
 const props = defineProps<{
@@ -15,8 +16,7 @@ const props = defineProps<{
 // PageShell-reading inner (≤768) minus 24px side margins → ~720px.
 const heroSrcset = computed(() => {
   if (!props.hero) return undefined
-  const thumb = props.hero.filename.replace(/\.webp$/, '-thumb.webp')
-  return `/images/spots/${thumb} 600w, /images/spots/${props.hero.filename} 1200w`
+  return `${spotThumbUrl(props.hero.filename)} 600w, /images/spots/${props.hero.filename} 1200w`
 })
 
 // Format like "63.8121° N · 22.7068° W". Iceland is always N+/W-.

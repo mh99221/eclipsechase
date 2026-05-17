@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { spotThumbUrl } from '~/utils/eclipse'
 import type { SpotPhoto } from '~/types/spots'
 
 useHead({
@@ -59,7 +60,7 @@ const licenseBadgeColor: Record<string, string> = {
             >
               <!-- Thumbnail -->
               <img
-                :src="`/images/spots/${photo.filename.replace(/\.webp$/, '-thumb.webp')}`"
+                :src="spotThumbUrl(photo.filename)"
                 :alt="photo.alt"
                 loading="lazy"
                 width="120"

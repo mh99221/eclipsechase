@@ -219,3 +219,10 @@ export function compassDirection(azimuth: number): string {
   const index = Math.round(azimuth / 22.5) % 16
   return dirs[index]!
 }
+
+// Build a public URL for the small (`-thumb.webp`) variant of a spot photo.
+// scripts/process-spot-photos.mjs always emits `<stem>-thumb.webp` next to
+// `<stem>.webp` under /images/spots/, so the suffix swap is canonical.
+export function spotThumbUrl(filename: string): string {
+  return `/images/spots/${filename.replace(/\.webp$/, '-thumb.webp')}`
+}
