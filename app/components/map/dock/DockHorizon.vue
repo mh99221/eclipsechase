@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { computed, ref, useId, watch } from 'vue'
 import DockHeader from './DockHeader.vue'
-import type { HorizonCheckResponse } from '~/types/horizon'
+import type { HorizonCheck, HorizonCheckResponse } from '~/types/horizon'
 import { computeSunTrajectory, formatUtcTime } from '~/utils/solar'
 import type { SunTrajectoryPoint } from '~/utils/solar'
 import type { DockHorizonCtx } from './types'
 
 const props = defineProps<{ ctx: DockHorizonCtx }>()
+const emit = defineEmits<{
+  /** Snapped grid point + its distance from the requested coords, or null
+   *  when no snap applies (curated-spot bypass, missing data, error). The
+   *  map listens to drop a secondary "data sampled here" marker. */
+  'snap-point': [{ lat: number; lng: number; distance_m: number } | null]
+}>()
 
 const { t } = useI18n()
 const { authHeaders } = useProStatus()
@@ -15,19 +21,45 @@ const loading = ref(true)
 const error = ref<'pro_required' | 'outside_coverage' | 'outside_path' | 'failed' | null>(null)
 const result = ref<HorizonCheckResponse | null>(null)
 
-// Watch only the coordinates — spotName-only changes (e.g. switching
-// between two co-located spots) shouldn't refetch since the API request
-// is keyed solely by lat/lng. Each fetch tags itself with `requestId`
-// so a slow earlier response can't overwrite a fresher result if the
-// user taps a new location while one is still in flight.
+// Synthesise a HorizonCheckResponse from a curated spot's stored
+// horizon_check. The stored shape lacks the request-only fields
+// (peakfinder_url, totality_duration_seconds, in_totality_path), so we
+// derive them from the surrounding context. Source coords are the spot's
+// exact lat/lng, so no grid_lat/grid_lng/snap_distance_m are returned —
+// the map uses their absence to suppress the snap marker.
+function responseFromStored(stored: HorizonCheck, lat: number, lng: number, td: number | null): HorizonCheckResponse {
+  return {
+    ...stored,
+    peakfinder_url: `https://www.peakfinder.com/?lat=${lat}&lng=${lng}&name=Custom%20Location&ele=${Math.round(stored.observer_elevation_m)}&azi=${Math.round(stored.sun_azimuth)}`,
+    totality_duration_seconds: td,
+    in_totality_path: td != null && td > 0,
+  }
+}
+
+// Watch the coordinates AND the stored-check pointer — switching between
+// a bare-map tap and a spot pin at the same coords needs to flip modes.
+// Each fetch tags itself with `requestId` so a slow earlier response
+// can't overwrite a fresher result if the user taps a new location
+// while one is still in flight.
 let requestId = 0
 watch(
-  () => [props.ctx.lat, props.ctx.lng] as const,
-  async ([lat, lng]) => {
+  () => [props.ctx.lat, props.ctx.lng, props.ctx.horizonCheck] as const,
+  async ([lat, lng, stored]) => {
     const id = ++requestId
     loading.value = true
     error.value = null
     result.value = null
+
+    // Fast path: curated spot with a pre-computed horizon_check. Use it
+    // directly so the dock and the spot's Sky tab agree. No API call,
+    // no grid snap, no snap marker.
+    if (stored) {
+      result.value = responseFromStored(stored, lat, lng, props.ctx.totalityDurationSeconds)
+      loading.value = false
+      emit('snap-point', null)
+      return
+    }
+
     try {
       const data = await $fetch<HorizonCheckResponse>('/api/horizon/check', {
         method: 'POST',
@@ -35,13 +67,23 @@ watch(
         headers: await authHeaders(),
       })
       if (id !== requestId) return
-      if (!data.in_totality_path) error.value = 'outside_path'
-      else result.value = data
+      if (!data.in_totality_path) {
+        error.value = 'outside_path'
+        emit('snap-point', null)
+      } else {
+        result.value = data
+        if (data.grid_lat != null && data.grid_lng != null && data.snap_distance_m != null) {
+          emit('snap-point', { lat: data.grid_lat, lng: data.grid_lng, distance_m: data.snap_distance_m })
+        } else {
+          emit('snap-point', null)
+        }
+      }
     } catch (e: any) {
       if (id !== requestId) return
       if (e?.statusCode === 401 || e?.statusCode === 403) error.value = 'pro_required'
       else if (e?.statusCode === 422) error.value = 'outside_coverage'
       else error.value = 'failed'
+      emit('snap-point', null)
     } finally {
       if (id === requestId) loading.value = false
     }

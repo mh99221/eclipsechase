@@ -25,6 +25,7 @@ const emit = defineEmits<{
   'horizon-open':    []
   'open-field-card': []
   'cam-step':        [dir: 1 | -1]
+  'snap-point':      [{ lat: number; lng: number; distance_m: number } | null]
   'close':           []
 }>()
 
@@ -57,6 +58,7 @@ const hasContent = computed(() => {
         @horizon-open="emit('horizon-open')"
         @open-field-card="emit('open-field-card')"
         @cam-step="(d) => emit('cam-step', d)"
+        @snap-point="(p) => emit('snap-point', p)"
         @close="emit('close')"
       />
     </div>

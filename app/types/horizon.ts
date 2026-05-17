@@ -37,4 +37,13 @@ export interface HorizonCheckResponse extends HorizonCheck {
   peakfinder_url: string
   totality_duration_seconds: number | null
   in_totality_path: boolean
+  /** Lat of the grid point the request snapped to. Absent when the
+   *  check came from a curated spot's stored horizon_check (sampled at
+   *  the exact spot coords). */
+  grid_lat?: number
+  grid_lng?: number
+  /** Great-circle distance between the requested point and the snapped
+   *  grid point. Useful to decide whether to surface a "data sampled
+   *  here" marker on the map. */
+  snap_distance_m?: number
 }

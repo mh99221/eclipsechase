@@ -61,10 +61,21 @@ export interface DockCamCtx {
   idx: number
 }
 
+import type { HorizonCheck } from '~/types/horizon'
+
 export interface DockHorizonCtx {
   lat: number
   lng: number
   /** When provided, dock subtitle reads "<verdict text> · <name>".
    *  Set when HORIZON was opened from a spot pin; null when from a bare-map tap. */
   spotName: string | null
+  /** Pre-computed horizon_check from viewing_spots, sampled at the exact
+   *  spot coordinates by scripts/recompute-spot-horizons.mjs. When set,
+   *  DockHorizon skips the grid-snap API call and renders this directly,
+   *  so curated spots and their /spots/[slug] Sky tab always agree.
+   *  Null for bare-map taps and for spots that don't have a stored check. */
+  horizonCheck: HorizonCheck | null
+  /** Pre-computed totality duration in seconds (from viewing_spots).
+   *  Used to populate the response shape when bypassing the API. */
+  totalityDurationSeconds: number | null
 }

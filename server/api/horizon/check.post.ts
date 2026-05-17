@@ -48,6 +48,13 @@ export default defineEventHandler(async (event) => {
 
   const peakfinderUrl = `https://www.peakfinder.com/?lat=${body.lat}&lng=${body.lng}&name=Custom%20Location&ele=${Math.round(point.oe)}&azi=${Math.round(point.sz)}`
 
+  // Snap distance in metres — equirectangular approximation is plenty
+  // here since the bucket index already caps the search at ~3 km, well
+  // inside the regime where great-circle vs. flat-earth differ < 1 m.
+  const dLatM = (body.lat - point.lat) * 111_320
+  const dLngM = (body.lng - point.lng) * 111_320 * Math.cos(body.lat * Math.PI / 180)
+  const snapDistanceM = Math.sqrt(dLatM * dLatM + dLngM * dLngM)
+
   const response: HorizonCheckResponse = {
     verdict: point.v as HorizonCheckResponse['verdict'],
     clearance_degrees: point.c,
@@ -62,6 +69,9 @@ export default defineEventHandler(async (event) => {
     peakfinder_url: peakfinderUrl,
     totality_duration_seconds: point.td,
     in_totality_path: point.td != null && point.td > 0,
+    grid_lat: point.lat,
+    grid_lng: point.lng,
+    snap_distance_m: snapDistanceM,
   }
 
   return response

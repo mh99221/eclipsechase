@@ -2,7 +2,8 @@
 definePageMeta({ middleware: ['pro-gate'] })
 
 import mapboxgl from 'mapbox-gl'
-import { CLOUD_COVER_LEVELS, CLOUD_COVER_NO_DATA } from '~/utils/eclipse'
+import { CLOUD_COVER_LEVELS, CLOUD_COVER_NO_DATA, parseJsonb } from '~/utils/eclipse'
+import type { HorizonCheck } from '~/types/horizon'
 import { conditionPriority, getTrafficColor, getTrafficLabel } from '~/utils/traffic'
 import type { TrafficCondition, TrafficConditionItem } from '~/utils/traffic'
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
@@ -253,7 +254,20 @@ function onCamStep(dir: 1 | -1) {
 function onHorizonOpen() {
   const s = dockSpot.value
   if (!s) return
-  dockHorizonCtx.value = { lat: s.lat, lng: s.lng, spotName: s.name }
+  // Pull the spot's pre-computed horizon_check straight from the spots
+  // list response. DockHorizon uses it instead of calling the grid-snap
+  // API, so curated spots and their /spots/[slug] Sky tab always show
+  // the same profile. parseJsonb tolerates both already-parsed objects
+  // and raw JSONB strings, depending on how Supabase returned the row.
+  const raw = selectedSpotData.value as any
+  const stored = parseJsonb<HorizonCheck | null>(raw?.horizon_check, null)
+  dockHorizonCtx.value = {
+    lat: s.lat,
+    lng: s.lng,
+    spotName: s.name,
+    horizonCheck: stored,
+    totalityDurationSeconds: s.totality_duration_seconds || null,
+  }
   dockMode.value = 'horizon'
   dockDismissed.value = false
 }
@@ -271,7 +285,15 @@ function onDockClose() {
   selectedCamId.value = null
   selectedTrafficKey.value = null
   if (horizonMarker) { horizonMarker.remove(); horizonMarker = null }
+  clearSnapMarker()
 }
+
+// Clear the snap marker whenever the dock leaves horizon mode — the
+// dock unmounts on a mode switch and can't emit a final null event from
+// inside its watcher, so we mirror the state here.
+watch(dockMode, (mode) => {
+  if (mode !== 'horizon') clearSnapMarker()
+})
 
 // Selection-highlight watchers: flip [data-selected] on the matching
 // marker DOM element so CSS can render a glowing ring without
@@ -771,6 +793,37 @@ onUnmounted(() => { window.removeEventListener('resize', updateIsMobile) })
 let horizonMarker: any = null
 onScopeDispose(() => { horizonMarker?.remove(); horizonMarker = null })
 
+// Snap-point marker — drawn at the grid point the horizon API actually
+// sampled, so the user can see when the result came from up to ~3 km
+// away (see MAX_SNAP_DIST_DEG in server/utils/horizonGrid.ts). Suppressed
+// when the dock is in spot-pin mode (data came from the spot's exact
+// coords) or when the snap is too short to bother visualising.
+const SNAP_MARKER_MIN_DISTANCE_M = 250
+let snapMarker: any = null
+function clearSnapMarker() {
+  if (snapMarker) { snapMarker.remove(); snapMarker = null }
+}
+onScopeDispose(clearSnapMarker)
+function onSnapPoint(p: { lat: number; lng: number; distance_m: number } | null) {
+  clearSnapMarker()
+  if (!p || p.distance_m < SNAP_MARKER_MIN_DISTANCE_M) return
+  const mapInstance = eclipseMapRef.value?.map
+  if (!mapInstance) return
+  // Dotted secondary marker — visually distinct from the primary
+  // crosshair so it reads as "data sampled here", not as a tap target.
+  // Title attribute exposes the distance for tooltips on desktop.
+  const el = document.createElement('div')
+  el.style.cssText = 'width: 18px; height: 18px; pointer-events: none;'
+  el.setAttribute('title', `Data sampled ${Math.round(p.distance_m)} m away`)
+  el.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <circle cx="9" cy="9" r="7" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2" fill="rgba(15,23,42,0.55)" opacity="0.85"/>
+    <circle cx="9" cy="9" r="2" fill="#94a3b8"/>
+  </svg>`
+  snapMarker = new mapboxgl.Marker({ element: el })
+    .setLngLat([p.lng, p.lat])
+    .addTo(mapInstance)
+}
+
 // ─── Offline tile download overlay ───
 const tileDownloading = ref(false)
 const tileProgress = ref({ loaded: 0, total: 0 })
@@ -846,8 +899,15 @@ function handleMapClick(coords: { lat: number; lng: number }) {
   }
 
   // Drive the dock into HORIZON mode for the tapped lat/lng. spotName
-  // is null because this is a bare-map tap, not a spot selection.
-  dockHorizonCtx.value = { lat: coords.lat, lng: coords.lng, spotName: null }
+  // is null because this is a bare-map tap, not a spot selection — and
+  // no pre-computed check, so DockHorizon will call the grid-snap API.
+  dockHorizonCtx.value = {
+    lat: coords.lat,
+    lng: coords.lng,
+    spotName: null,
+    horizonCheck: null,
+    totalityDurationSeconds: null,
+  }
   dockMode.value = 'horizon'
   dockDismissed.value = false
 }
@@ -952,6 +1012,7 @@ const profileIcons: Record<ProfileId, string> = {
         @horizon-open="onHorizonOpen"
         @open-field-card="onOpenFieldCard"
         @cam-step="onCamStep"
+        @snap-point="onSnapPoint"
         @close="onDockClose"
       />
     </div>
@@ -979,6 +1040,7 @@ const profileIcons: Record<ProfileId, string> = {
       @horizon-open="onHorizonOpen"
       @open-field-card="onOpenFieldCard"
       @cam-step="onCamStep"
+      @snap-point="onSnapPoint"
       @close="onDockClose"
     />
 

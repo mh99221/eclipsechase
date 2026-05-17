@@ -164,6 +164,16 @@ function findNearestSun(lat: number, lng: number) {
 const LAT_STEP = 0.018  // ~2km
 const LNG_STEP = 0.043  // ~2km at 65°N
 
+// Adaptive densification near roads. Most user clicks on /map happen at
+// or near a road (pullouts, parking, viewpoints), so we want the
+// snap-distance there to be much smaller than the coarse 2 km step. We
+// lay a ~700 m secondary grid inside a small buffer along every road
+// in roads.geojson. Tune DENSE_*_STEP up to trade precompute time for
+// snap accuracy; DENSE_ROAD_SAMPLE_M trades road coverage for the same.
+const DENSE_LAT_STEP = 0.0063  // ~700m
+const DENSE_LNG_STEP = 0.0150  // ~700m at 65°N
+const DENSE_ROAD_SAMPLE_M = 350  // resample each road segment this often
+
 // Bounds: intersection of DEM coverage and totality path
 const gridMinLat = Math.max(meta.minLat, 63.5)
 const gridMaxLat = Math.min(meta.maxLat, 66.5)
@@ -205,12 +215,127 @@ for (let latIdx = 0; latIdx <= latSteps; latIdx++) {
   }
 }
 
-console.log(`\nDone: ${points.length} land points, ${skippedOcean} ocean/null skipped`)
+console.log(`\nCoarse pass done: ${points.length} land points, ${skippedOcean} ocean/null skipped`)
+
+// ── Adaptive densification near roads ──────────────────────────────
+// Walk every LineString in roads.geojson, resample at DENSE_ROAD_SAMPLE_M
+// intervals, snap each sample to the dense grid, and run a horizon check
+// on every unique dense cell that hasn't already been covered by the
+// coarse pass. The dense and coarse grids are not aligned, so any
+// dense-cell horizon check sits ~700 m or less from a tap on a road —
+// well inside the snap radius — while the coarse 2 km pass continues to
+// cover the back-country.
+const roadsPath = join(root, 'public', 'eclipse-data', 'roads.geojson')
+console.log(`\nLoading roads from ${roadsPath}...`)
+const roadsRaw = JSON.parse(readFileSync(roadsPath, 'utf-8')) as {
+  features: Array<{
+    geometry:
+      | { type: 'LineString'; coordinates: [number, number][] }
+      | { type: 'MultiLineString'; coordinates: [number, number][][] }
+  }>
+}
+
+function* iterateLines(): Generator<[number, number][]> {
+  for (const f of roadsRaw.features) {
+    if (f.geometry.type === 'LineString') yield f.geometry.coordinates
+    else if (f.geometry.type === 'MultiLineString') for (const line of f.geometry.coordinates) yield line
+  }
+}
+
+// Haversine in metres — only used for road segment lengths; the
+// coordinate steps along a segment use moveAlongBearing for accuracy.
+function haversineM(aLat: number, aLng: number, bLat: number, bLng: number): number {
+  const φ1 = aLat * DEG_TO_RAD
+  const φ2 = bLat * DEG_TO_RAD
+  const dφ = (bLat - aLat) * DEG_TO_RAD
+  const dλ = (bLng - aLng) * DEG_TO_RAD
+  const x = Math.sin(dφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(dλ / 2) ** 2
+  return 2 * EARTH_RADIUS * Math.asin(Math.sqrt(x))
+}
+
+function bearing(aLat: number, aLng: number, bLat: number, bLng: number): number {
+  const φ1 = aLat * DEG_TO_RAD, φ2 = bLat * DEG_TO_RAD
+  const dλ = (bLng - aLng) * DEG_TO_RAD
+  const y = Math.sin(dλ) * Math.cos(φ2)
+  const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(dλ)
+  return (Math.atan2(y, x) / DEG_TO_RAD + 360) % 360
+}
+
+// Snap a sample point onto the dense grid. Origin is the same as the
+// coarse grid's lower-left corner so dense cells line up consistently
+// across re-runs.
+function denseCell(lat: number, lng: number): { lat: number; lng: number; key: string } {
+  const latIdx = Math.round((lat - gridMinLat) / DENSE_LAT_STEP)
+  const lngIdx = Math.round((lng - gridMinLng) / DENSE_LNG_STEP)
+  const cellLat = Math.round((gridMinLat + latIdx * DENSE_LAT_STEP) * 1e6) / 1e6
+  const cellLng = Math.round((gridMinLng + lngIdx * DENSE_LNG_STEP) * 1e6) / 1e6
+  return { lat: cellLat, lng: cellLng, key: `${latIdx}:${lngIdx}` }
+}
+
+// Already-covered cell keys (coarse). The coarse grid does not align
+// with the dense grid, so this is approximate — but exact-position
+// dedup further down catches the rare collision.
+const coarseDenseKeys = new Set<string>()
+for (const p of points) coarseDenseKeys.add(denseCell(p.lat, p.lng).key)
+
+const denseCellsToCompute = new Map<string, { lat: number; lng: number }>()
+let roadSampleCount = 0
+let roadLineCount = 0
+
+for (const line of iterateLines()) {
+  roadLineCount++
+  for (let i = 0; i < line.length - 1; i++) {
+    const a = line[i]!, b = line[i + 1]!
+    const [aLng, aLat] = a
+    const [bLng, bLat] = b
+    if (aLat == null || aLng == null || bLat == null || bLng == null) continue
+    const segLenM = haversineM(aLat, aLng, bLat, bLng)
+    if (segLenM === 0) continue
+    const brg = bearing(aLat, aLng, bLat, bLng)
+    // Sample at fixed metre spacing along the segment, plus the endpoint.
+    const stepCount = Math.max(1, Math.floor(segLenM / DENSE_ROAD_SAMPLE_M))
+    for (let s = 0; s <= stepCount; s++) {
+      const distM = (s / stepCount) * segLenM
+      const [sLat, sLng] = moveAlongBearing(aLat, aLng, brg, distM)
+      // Skip samples outside the coverage box (some roads dip out and back).
+      if (sLat < gridMinLat || sLat > gridMaxLat || sLng < gridMinLng || sLng > gridMaxLng) continue
+      roadSampleCount++
+      const cell = denseCell(sLat, sLng)
+      if (coarseDenseKeys.has(cell.key)) continue
+      if (denseCellsToCompute.has(cell.key)) continue
+      denseCellsToCompute.set(cell.key, { lat: cell.lat, lng: cell.lng })
+    }
+  }
+}
+
+console.log(`Sampled ${roadSampleCount} points along ${roadLineCount} road lines`)
+console.log(`Dense cells to compute (after dedup vs coarse): ${denseCellsToCompute.size}`)
+
+let denseLandPoints = 0
+let denseSkipped = 0
+let denseDone = 0
+for (const { lat, lng } of denseCellsToCompute.values()) {
+  denseDone++
+  const elev = getElevation(lat, lng, data, meta)
+  if (elev === null || elev <= 0) { denseSkipped++; continue }
+  const sun = findNearestSun(lat, lng)
+  const result = checkHorizon(lat, lng, sun.sun_altitude, sun.sun_azimuth, data, meta)
+  points.push({ lat, lng, td: sun.duration_seconds, ...result })
+  denseLandPoints++
+  if (denseDone % 500 === 0) {
+    console.log(`  Dense ${denseDone}/${denseCellsToCompute.size}, ${denseLandPoints} land, ${denseSkipped} ocean/null`)
+  }
+}
+
+console.log(`Dense pass done: +${denseLandPoints} land points (${denseSkipped} ocean/null skipped)`)
+console.log(`\nTotal: ${points.length} points`)
 
 // Write output
 const output = {
   generated_at: new Date().toISOString(),
   grid_step_deg: [LAT_STEP, LNG_STEP],
+  dense_step_deg: [DENSE_LAT_STEP, DENSE_LNG_STEP],
+  dense_road_sample_m: DENSE_ROAD_SAMPLE_M,
   point_count: points.length,
   // Key mapping for compact format
   keys: {

@@ -31,6 +31,9 @@ const emit = defineEmits<{
   'horizon-open':    []
   'open-field-card': []
   'cam-step':        [dir: 1 | -1]
+  /** DockHorizon snap-point — forwarded so the parent can drop a
+   *  "data sampled here" marker on the map. */
+  'snap-point':      [{ lat: number; lng: number; distance_m: number } | null]
   /** Close button — parent dismisses whatever mode is active and
    *  returns to the default SPOT card. No-op visually in spot mode. */
   'close':           []
@@ -64,6 +67,7 @@ const emit = defineEmits<{
         <DockHorizon
           v-else-if="mode === 'horizon' && horizonCtx"
           :ctx="horizonCtx"
+          @snap-point="(p) => emit('snap-point', p)"
         />
         <div v-else class="dock-empty">
           Tap a pin or anywhere on the map.
