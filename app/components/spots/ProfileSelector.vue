@@ -38,7 +38,7 @@ function pick(id: ProfileId | null) {
 
 <template>
   <section class="profile-selector">
-    <Eyebrow tone="faint" variant="dash">{{ t('map.viewer_profile').toUpperCase() }}</Eyebrow>
+    <Eyebrow tone="dim" variant="dash">{{ t('map.viewer_profile').toUpperCase() }}</Eyebrow>
     <div class="pills">
       <Pill
         v-for="e in entries"

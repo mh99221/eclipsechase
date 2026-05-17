@@ -21,16 +21,20 @@ const status = computed(() => cloudToStatus(props.cloud))
 const cloudLabel = computed(() => props.cloud == null
   ? t('v0.spots.card_cloud_missing')
   : t('v0.spots.card_cloud_pct', { pct: props.cloud }))
-const heroSrc = computed(() => props.heroFilename ? `/images/spots/${props.heroFilename}` : null)
-const heroSrcset = computed(() => {
-  if (!props.heroFilename) return undefined
+// The list view paints a 160 px-tall card capped at ~360 px wide.
+// At DPR 2 that's ~720 px of pixels needed — the 600 w thumb (vs the
+// 1200 w hero) is close enough and ~70 % smaller per image. The full
+// hero stays on /spots/[slug]. Previously a srcset offered both and
+// browsers picked the 1200 w on retina mobiles, costing ~640 KB/page.
+const heroSrc = computed(() => {
+  if (!props.heroFilename) return null
   const thumb = props.heroFilename.replace(/\.webp$/, '-thumb.webp')
-  return `/images/spots/${thumb} 600w, /images/spots/${props.heroFilename} 1200w`
+  return `/images/spots/${thumb}`
 })
 </script>
 
 <template>
-  <NuxtLinkLocale :to="`/spots/${slug}`" class="spot-card" :aria-label="t('v0.spots.card_aria', { name, duration: formatDuration(durationSeconds), cloud: cloudLabel })">
+  <NuxtLinkLocale :to="`/spots/${slug}`" class="spot-card">
     <!-- Always paint a fallback gradient first so the card never shows
          page bg through the border while the hero image is loading. The
          <img> above stacks on top once decoded; if heroSrc is missing,
@@ -39,8 +43,6 @@ const heroSrcset = computed(() => {
     <img
       v-if="heroSrc"
       :src="heroSrc"
-      :srcset="heroSrcset"
-      sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 360px"
       :alt="heroAlt || name"
       class="spot-card-img"
       :loading="eager ? 'eager' : 'lazy'"

@@ -169,8 +169,7 @@
       "card_stat_totality": "Myrkvi",
       "card_stat_history": "10 ára 12. ágúst",
       "card_cloud_pct": "{pct}% skýjað",
-      "card_cloud_missing": "— skýjað",
-      "card_aria": "{name} — {duration} myrkvi, {cloud}"
+      "card_cloud_missing": "— skýjað"
     },
     "spot_detail": {
       "kicker": "● STAÐUR",

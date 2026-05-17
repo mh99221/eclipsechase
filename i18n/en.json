@@ -229,8 +229,7 @@
       "card_stat_totality": "Totality",
       "card_stat_history": "10-yr Aug 12",
       "card_cloud_pct": "{pct}% cloud",
-      "card_cloud_missing": "— cloud",
-      "card_aria": "{name} — {duration} totality, {cloud}"
+      "card_cloud_missing": "— cloud"
     },
     "spot_detail": {
       "kicker": "● SPOT",
