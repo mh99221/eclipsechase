@@ -1,5 +1,10 @@
 ﻿<script setup lang="ts">
 import mapboxgl from 'mapbox-gl'
+// Bundle Mapbox CSS into the same chunk so it ships only when this
+// component is imported. Previously the stylesheet was preloaded
+// globally from api.mapbox.com on every route, which set third-party
+// session cookies on free pages that never showed a map.
+import 'mapbox-gl/dist/mapbox-gl.css'
 import { cloudColor, cloudLevel, formatDuration, weatherSvgHtml } from '~/utils/eclipse'
 import { addEclipsePathLayers } from '~/utils/mapLayers'
 import { MAP_CONFIG, MARKER_SIZES } from '~/utils/mapConfig'

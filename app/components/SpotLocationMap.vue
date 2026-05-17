@@ -1,4 +1,7 @@
 <script setup lang="ts">
+// Bundle Mapbox CSS into the same chunk so it ships only when this
+// component is imported (see EclipseMap.vue for the migration rationale).
+import 'mapbox-gl/dist/mapbox-gl.css'
 import { addEclipsePathLayers } from '~/utils/mapLayers'
 import { readCssVar } from '~/utils/theme'
 

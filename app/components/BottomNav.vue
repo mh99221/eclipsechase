@@ -48,11 +48,10 @@ function onTap(item: NavItem, e: MouseEvent) {
     <NuxtLinkLocale
       v-for="item in items"
       :key="item.to"
-      :to="item.locked ? '#' : item.to"
+      :to="item.locked ? '/pro' : item.to"
       class="bottom-nav-item"
       :class="{ active: isActive(item.to), locked: item.locked }"
       :aria-current="isActive(item.to) ? 'page' : undefined"
-      :aria-disabled="item.locked || undefined"
       @click="(e: MouseEvent) => onTap(item, e)"
     >
       <span class="bottom-nav-icon-wrap">

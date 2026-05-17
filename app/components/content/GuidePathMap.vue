@@ -7,6 +7,10 @@ const colorMode = useColorMode()
 const { t } = useI18n()
 const mapContainer = ref<HTMLElement | null>(null)
 const mapError = ref('')
+// An IntersectionObserver gates the mapbox-gl dynamic import so visitors
+// who never scroll to the map section don't pay the 1.5 MB download.
+// The same component renders inside <ClientOnly> so the observer + the
+// dynamic import only ever fire in the browser.
 let map: any = null
 
 const mapboxStyleFor = (mode: string) =>
@@ -28,8 +32,22 @@ function applyEclipsePath() {
   })
 }
 
-watch(mapContainer, async (el) => {
-  if (!el || map) return
+// Observe the placeholder container; kick off the map init the first
+// time it crosses into (or near) the viewport. 400 px rootMargin gives
+// a small pre-fetch lead so the map is already initialising by the time
+// the user scrolls it into view, hiding latency without paying the cost
+// for visitors who never reach the section.
+let io: IntersectionObserver | null = null
+let initStarted = false
+
+async function initMap() {
+  if (initStarted) return
+  initStarted = true
+  const el = mapContainer.value
+  if (!el) {
+    initStarted = false
+    return
+  }
 
   const token = config.public.mapboxToken as string
   if (!token) {
@@ -38,8 +56,13 @@ watch(mapContainer, async (el) => {
   }
 
   try {
-    const mapboxgl = (await import('mapbox-gl')).default
-    const { regionLabel } = await import('~/utils/eclipse')
+    const [{ default: mapboxgl }, { regionLabel }] = await Promise.all([
+      import('mapbox-gl'),
+      import('~/utils/eclipse'),
+      // CSS rides along in its own chunk; Vite handles the import.
+      // @ts-expect-error - CSS module has no type declaration
+      import('mapbox-gl/dist/mapbox-gl.css'),
+    ])
 
     mapboxgl.accessToken = token
 
@@ -83,6 +106,29 @@ watch(mapContainer, async (el) => {
     console.error('[GuidePathMap]', err)
     mapError.value = err.message || t('map_error.failed_to_load')
   }
+}
+
+// The template ref binds when <ClientOnly> renders its default slot
+// post-hydration. Watching the ref means we attach the observer the
+// first time the element actually exists in the DOM, regardless of how
+// many ticks ClientOnly takes to swap from fallback to default.
+watch(mapContainer, (el) => {
+  if (!el || io || map) return
+  if (typeof IntersectionObserver === 'undefined') {
+    initMap()
+    return
+  }
+  io = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        io?.disconnect()
+        io = null
+        initMap()
+        break
+      }
+    }
+  }, { rootMargin: '400px' })
+  io.observe(el)
 })
 
 // Swap Mapbox base style when the app theme toggles. The style reset
@@ -96,6 +142,8 @@ watch(() => colorMode.value, (mode) => {
 })
 
 onUnmounted(() => {
+  io?.disconnect()
+  io = null
   map?.remove()
   map = null
 })

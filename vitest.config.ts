@@ -19,6 +19,7 @@ const stubNuxtI18nComposables = {
   },
 }
 
+
 export default defineVitestConfig({
   test: {
     environment: 'nuxt',
@@ -53,7 +54,11 @@ export default defineVitestConfig({
     },
   },
   resolve: {
+    // CSS subpath listed first so the bare-name `mapbox-gl` alias
+    // doesn't rewrite it to `<mapbox-gl-stub.ts>/dist/mapbox-gl.css`.
+    // Vite walks alias keys in insertion order.
     alias: {
+      'mapbox-gl/dist/mapbox-gl.css': fileURLToPath(new URL('./tests/mocks/mapbox-gl.css.ts', import.meta.url)),
       'mapbox-gl': fileURLToPath(new URL('./tests/mocks/mapbox-gl.ts', import.meta.url)),
       '#supabase/server': fileURLToPath(new URL('./tests/mocks/supabase-server.ts', import.meta.url)),
     },

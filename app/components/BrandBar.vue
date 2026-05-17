@@ -79,7 +79,13 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
     :class="{ 'is-landing': isLanding, 'is-scrolled': scrolled }"
   >
     <div :class="['brand-bar-inner', isMap ? 'is-map' : 'is-content']">
-      <NuxtLinkLocale to="/" aria-label="EclipseChase — Home" class="brand-mark">
+      <!-- prefetch="false": the brand-mark sits in every page's viewport,
+           so Nuxt would otherwise prefetch the landing page's chunks on
+           every route. Visitors on /guide rarely click back to home, and
+           the landing-only CSS (~11 KB, 100% unused per Lighthouse) was
+           leaking onto every page through this link. The page is fast
+           enough to fetch on-demand. -->
+      <NuxtLinkLocale to="/" :prefetch="false" aria-label="EclipseChase — Home" class="brand-mark">
         <BrandLogo />
       </NuxtLinkLocale>
 
@@ -92,11 +98,10 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
         <NuxtLinkLocale
           v-for="item in navItems"
           :key="item.to + item.icon"
-          :to="item.locked ? '#' : item.to"
+          :to="item.locked ? '/pro' : item.to"
           class="masthead-link"
           :class="{ active: isNavActive(item.to), locked: item.locked }"
           :aria-current="isNavActive(item.to) ? 'page' : undefined"
-          :aria-disabled="item.locked || undefined"
           @click="(e: MouseEvent) => onMastheadClick(item, e)"
         >
           {{ item.label }}
