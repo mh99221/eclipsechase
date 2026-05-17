@@ -1,16 +1,8 @@
 <script setup lang="ts">
-const isVisible = ref(false)
-
-onMounted(() => {
-  isVisible.value = true
-})
 </script>
 
 <template>
-  <div
-    class="relative w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96"
-    :class="{ 'opacity-0': !isVisible, 'opacity-100 transition-opacity duration-[2000ms]': isVisible }"
-  >
+  <div class="relative w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 eclipse-hero-fade">
     <!-- CSS blur glow behind SVG for soft ambient haze -->
     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
       <div class="eclipse-haze w-[65%] h-[65%] rounded-full" />
@@ -196,6 +188,14 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.eclipse-hero-fade {
+  animation: eclipse-hero-fade-in 2s ease-out both;
+}
+@keyframes eclipse-hero-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 .eclipse-haze {
   background: radial-gradient(
     circle,

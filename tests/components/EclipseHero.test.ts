@@ -22,11 +22,10 @@ describe('EclipseHero', () => {
     expect(moonDisc.length).toBe(1)
   })
 
-  it('starts with opacity-0 and transitions to visible after mount', async () => {
+  it('applies the CSS fade-in class on the root element', async () => {
     const wrapper = await mountSuspended(EclipseHero)
-    // After mount, isVisible = true
     const container = wrapper.find('div')
-    expect(container.classes()).toContain('opacity-100')
+    expect(container.classes()).toContain('eclipse-hero-fade')
   })
 
   it('matches snapshot', async () => {
