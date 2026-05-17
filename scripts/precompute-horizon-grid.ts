@@ -167,12 +167,12 @@ const LNG_STEP = 0.043  // ~2km at 65°N
 // Adaptive densification near roads. Most user clicks on /map happen at
 // or near a road (pullouts, parking, viewpoints), so we want the
 // snap-distance there to be much smaller than the coarse 2 km step. We
-// lay a ~700 m secondary grid inside a small buffer along every road
+// lay a ~150 m secondary grid inside a small buffer along every road
 // in roads.geojson. Tune DENSE_*_STEP up to trade precompute time for
 // snap accuracy; DENSE_ROAD_SAMPLE_M trades road coverage for the same.
-const DENSE_LAT_STEP = 0.0063  // ~700m
-const DENSE_LNG_STEP = 0.0150  // ~700m at 65°N
-const DENSE_ROAD_SAMPLE_M = 350  // resample each road segment this often
+const DENSE_LAT_STEP = 0.00135  // ~150m
+const DENSE_LNG_STEP = 0.00319  // ~150m at 65°N
+const DENSE_ROAD_SAMPLE_M = 100  // resample each road segment this often
 
 // Bounds: intersection of DEM coverage and totality path
 const gridMinLat = Math.max(meta.minLat, 63.5)
