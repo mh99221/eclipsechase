@@ -4,12 +4,21 @@ import type { HorizonCheckResponse, HorizonSweepPoint } from '~/types/horizon'
 import { findNearestGridPoint, loadHorizonGrid } from '../../utils/horizonGrid'
 
 export default defineEventHandler(async (event) => {
-  await requirePro(event)
+  const claims = await requirePro(event)
 
-  // Rate limit: 10 req/min per IP
-  const rawIp = getHeader(event, 'x-forwarded-for') || getHeader(event, 'x-real-ip') || 'unknown'
-  const ip = rawIp.split(',')[0]!.trim()
-  if (!checkRateLimit(`horizon:${ip}`, 10, 60_000)) {
+  // Rate limit: 60 req/min, keyed on the verified Pro JWT's email_hash
+  // (claims.sub) so users sharing a NAT/carrier IP don't collide. Falls
+  // back to IP only when claims are absent — i.e. the dev bypass path
+  // in requirePro (NUXT_ALLOW_PRO_BYPASS=1).
+  const subject = claims?.sub
+  let key: string
+  if (subject) {
+    key = `horizon:sub:${subject}`
+  } else {
+    const rawIp = getHeader(event, 'x-forwarded-for') || getHeader(event, 'x-real-ip') || 'unknown'
+    key = `horizon:ip:${rawIp.split(',')[0]!.trim()}`
+  }
+  if (!checkRateLimit(key, 60, 60_000)) {
     throw createError({ statusCode: 429, statusMessage: 'Too many requests, try again in a minute' })
   }
 
