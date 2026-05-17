@@ -101,7 +101,9 @@ function onTap(item: NavItem, e: MouseEvent) {
 }
 .bottom-nav-item:hover { color: rgb(var(--ink-1)); }
 .bottom-nav-item.active { color: rgb(var(--accent)); }
-.bottom-nav-item.locked { color: rgb(var(--ink-1) / 0.45); }
+/* Match the default 0.62 dim — the lock icon already signals gated
+   state, and 0.45 alpha on the 11 px label fell below WCAG AA 4.5:1. */
+.bottom-nav-item.locked { color: rgb(var(--ink-1) / 0.62); }
 
 .bottom-nav-icon-wrap {
   position: relative;

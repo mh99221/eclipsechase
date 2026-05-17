@@ -41,7 +41,7 @@ function onMapTileClick(e: MouseEvent) {
     <NuxtLinkLocale
       data-testid="home-tile"
       data-testid-extra="home-tile-map"
-      :to="isPro ? '/map' : '#'"
+      :to="isPro ? '/map' : '/pro'"
       class="tile"
       :class="{ locked: !isPro }"
       @click="onMapTileClick"
