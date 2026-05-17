@@ -52,7 +52,7 @@ Borgarfjarðardalurinn (Reykholt, Borgarnes, Glymur) liggur **rétt utan** leið
 
 Næst Keflavíkurflugvelli — aðeins 45 mínútur frá Reykjavík. Heilmyrkvinn varir um **1m 35s til 1m 45s** yfir skagann, sem er gulli staðurinn fyrir „stutt akstur + marktækan heilmyrkva". Eldfjallalandslagið bætir sérstöðu.
 
-Helstu staðir: [Reykjanestáviti](/spots/reykjanesta-lighthouse) · [Garðsviti](/spots/gardur-lighthouse) · [Sandgerði](/spots/sandgerdi-shore) · [Keflavík (Ásbrú)](/spots/keflavik-asbru-viewpoint) · [Bláa lónið](/spots/blue-lagoon)
+Helstu staðir: [Reykjanestáviti](/spots/reykjanesta-lighthouse) · [Garðsviti](/spots/gardur-lighthouse) · [Hvalsneskirkja](/spots/hvalsneskirkja) · [Keflavík (Ásbrú)](/spots/keflavik-asbru-viewpoint) · [Bláa lónið](/spots/blue-lagoon)
 
 ### Reykjavík
 

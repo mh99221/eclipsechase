@@ -52,7 +52,7 @@ The inland Borgarfjörður valley (Reykholt, Borgarnes, Glymur) sits **just outs
 
 Closest to Keflavík Airport — only 45 minutes from Reykjavík. Totality runs about **1m 35s to 1m 45s** across the peninsula, which is the sweet spot of "short drive + meaningful totality." Volcanic landscape adds character.
 
-Top spots: [Reykjanestá Lighthouse](/spots/reykjanesta-lighthouse) · [Garður Lighthouse](/spots/gardur-lighthouse) · [Sandgerði Shore](/spots/sandgerdi-shore) · [Keflavík (Ásbrú)](/spots/keflavik-asbru-viewpoint) · [Blue Lagoon](/spots/blue-lagoon)
+Top spots: [Reykjanestá Lighthouse](/spots/reykjanesta-lighthouse) · [Garður Lighthouse](/spots/gardur-lighthouse) · [Hvalsneskirkja](/spots/hvalsneskirkja) · [Keflavík (Ásbrú)](/spots/keflavik-asbru-viewpoint) · [Blue Lagoon](/spots/blue-lagoon)
 
 ### Reykjavík
 
