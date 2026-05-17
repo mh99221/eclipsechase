@@ -184,6 +184,28 @@ export function parseJsonb<T>(raw: unknown, fallback: T): T {
   return raw as T
 }
 
+/** PeakFinder.com URL for a given observer + sun bearing. `date` is the
+ *  eclipse timestamp on PeakFinder's format — when omitted, the link
+ *  opens at PeakFinder's default time-of-day. */
+export function buildPeakfinderUrl(opts: {
+  lat: number
+  lng: number
+  elevation: number
+  azimuth: number
+  name?: string
+  date?: string
+}): string {
+  const params = [
+    `lat=${opts.lat}`,
+    `lng=${opts.lng}`,
+    `name=${encodeURIComponent(opts.name ?? 'Custom Location')}`,
+    `ele=${Math.round(opts.elevation)}`,
+    `azi=${Math.round(opts.azimuth)}`,
+  ]
+  if (opts.date) params.push(`date=${opts.date}`)
+  return `https://www.peakfinder.com/?${params.join('&')}`
+}
+
 export function formatTrailTime(minutes: number): string {
   if (minutes < 60) return `${minutes} min`
   const h = Math.floor(minutes / 60)

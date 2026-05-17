@@ -2,6 +2,7 @@
 import { computed, ref, useId, watch } from 'vue'
 import DockHeader from './DockHeader.vue'
 import type { HorizonCheck, HorizonCheckResponse } from '~/types/horizon'
+import { buildPeakfinderUrl } from '~/utils/eclipse'
 import { computeSunTrajectory, formatUtcTime } from '~/utils/solar'
 import type { SunTrajectoryPoint } from '~/utils/solar'
 import type { DockHorizonCtx } from './types'
@@ -21,26 +22,27 @@ const loading = ref(true)
 const error = ref<'pro_required' | 'outside_coverage' | 'outside_path' | 'failed' | null>(null)
 const result = ref<HorizonCheckResponse | null>(null)
 
-// Synthesise a HorizonCheckResponse from a curated spot's stored
-// horizon_check. The stored shape lacks the request-only fields
-// (peakfinder_url, totality_duration_seconds, in_totality_path), so we
-// derive them from the surrounding context. Source coords are the spot's
-// exact lat/lng, so no grid_lat/grid_lng/snap_distance_m are returned —
-// the map uses their absence to suppress the snap marker.
+// Curated spots store the request-only fields (peakfinder_url,
+// totality_duration_seconds, in_totality_path) outside the JSONB shape,
+// so re-derive them here. Coords are the spot's exact lat/lng, hence no
+// grid_lat/grid_lng/snap_distance_m — absence suppresses the snap marker.
 function responseFromStored(stored: HorizonCheck, lat: number, lng: number, td: number | null): HorizonCheckResponse {
   return {
     ...stored,
-    peakfinder_url: `https://www.peakfinder.com/?lat=${lat}&lng=${lng}&name=Custom%20Location&ele=${Math.round(stored.observer_elevation_m)}&azi=${Math.round(stored.sun_azimuth)}`,
+    peakfinder_url: buildPeakfinderUrl({
+      lat, lng,
+      elevation: stored.observer_elevation_m,
+      azimuth: stored.sun_azimuth,
+    }),
     totality_duration_seconds: td,
     in_totality_path: td != null && td > 0,
   }
 }
 
-// Watch the coordinates AND the stored-check pointer — switching between
-// a bare-map tap and a spot pin at the same coords needs to flip modes.
-// Each fetch tags itself with `requestId` so a slow earlier response
-// can't overwrite a fresher result if the user taps a new location
-// while one is still in flight.
+// `requestId` guards against an older slower fetch overwriting a fresh
+// result if the user taps a new location mid-flight. The watcher emits
+// `snap-point: null` up-front so any prior snap marker is cleared
+// immediately; the only positive emit is on a real grid-snap below.
 let requestId = 0
 watch(
   () => [props.ctx.lat, props.ctx.lng, props.ctx.horizonCheck] as const,
@@ -49,14 +51,11 @@ watch(
     loading.value = true
     error.value = null
     result.value = null
+    emit('snap-point', null)
 
-    // Fast path: curated spot with a pre-computed horizon_check. Use it
-    // directly so the dock and the spot's Sky tab agree. No API call,
-    // no grid snap, no snap marker.
     if (stored) {
       result.value = responseFromStored(stored, lat, lng, props.ctx.totalityDurationSeconds)
       loading.value = false
-      emit('snap-point', null)
       return
     }
 
@@ -69,21 +68,17 @@ watch(
       if (id !== requestId) return
       if (!data.in_totality_path) {
         error.value = 'outside_path'
-        emit('snap-point', null)
-      } else {
-        result.value = data
-        if (data.grid_lat != null && data.grid_lng != null && data.snap_distance_m != null) {
-          emit('snap-point', { lat: data.grid_lat, lng: data.grid_lng, distance_m: data.snap_distance_m })
-        } else {
-          emit('snap-point', null)
-        }
+        return
+      }
+      result.value = data
+      if (data.grid_lat != null && data.grid_lng != null && data.snap_distance_m != null) {
+        emit('snap-point', { lat: data.grid_lat, lng: data.grid_lng, distance_m: data.snap_distance_m })
       }
     } catch (e: any) {
       if (id !== requestId) return
       if (e?.statusCode === 401 || e?.statusCode === 403) error.value = 'pro_required'
       else if (e?.statusCode === 422) error.value = 'outside_coverage'
       else error.value = 'failed'
-      emit('snap-point', null)
     } finally {
       if (id === requestId) loading.value = false
     }

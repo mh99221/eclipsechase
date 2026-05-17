@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { buildPeakfinderUrl } from '~/utils/eclipse'
+
 const props = defineProps<{
   lat: number
   lng: number
@@ -9,9 +11,14 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const url = computed(() =>
-  `https://www.peakfinder.com/?lat=${props.lat}&lng=${props.lng}&name=${encodeURIComponent(props.spotName)}&ele=${Math.round(props.elevation)}&azi=${Math.round(props.sunAzimuth)}&date=2026-08-12T17:40:22Z`,
-)
+const url = computed(() => buildPeakfinderUrl({
+  lat: props.lat,
+  lng: props.lng,
+  elevation: props.elevation,
+  azimuth: props.sunAzimuth,
+  name: props.spotName,
+  date: '2026-08-12T17:40:22Z',
+}))
 </script>
 
 <template>
