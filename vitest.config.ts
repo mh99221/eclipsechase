@@ -19,7 +19,6 @@ const stubNuxtI18nComposables = {
   },
 }
 
-
 export default defineVitestConfig({
   test: {
     environment: 'nuxt',

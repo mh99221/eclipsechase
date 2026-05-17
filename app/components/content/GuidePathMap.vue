@@ -7,47 +7,34 @@ const colorMode = useColorMode()
 const { t } = useI18n()
 const mapContainer = ref<HTMLElement | null>(null)
 const mapError = ref('')
-// An IntersectionObserver gates the mapbox-gl dynamic import so visitors
-// who never scroll to the map section don't pay the 1.5 MB download.
-// The same component renders inside <ClientOnly> so the observer + the
-// dynamic import only ever fire in the browser.
+// The component renders inside <ClientOnly>, and the inner template ref
+// (`mapContainer`) only binds once the default slot replaces the SSR
+// fallback. An IntersectionObserver attached to that element gates the
+// mapbox-gl dynamic import — visitors who never scroll to the eclipse
+// path map don't pay the 1.5 MB download.
 let map: any = null
+let io: IntersectionObserver | null = null
+let addEclipsePathLayers: typeof import('~/utils/mapLayers').addEclipsePathLayers | null = null
 
 const mapboxStyleFor = (mode: string) =>
   mode === 'light' ? 'mapbox://styles/mapbox/light-v11' : 'mapbox://styles/mapbox/dark-v11'
 
-/** Re-add eclipse path with current theme colors. */
 function applyEclipsePath() {
-  if (!map) return
-  // Dynamically import to keep the initial bundle small
-  import('~/utils/mapLayers').then(({ addEclipsePathLayers }) => {
-    addEclipsePathLayers(map, {
-      borderWidth: 1,
-      centerlineOpacity: 0.8,
-      colors: {
-        accent:       readCssVar('--accent',        '#f59e0b'),
-        accentStrong: readCssVar('--accent-strong', '#fbbf24'),
-      },
-    })
+  if (!map || !addEclipsePathLayers) return
+  addEclipsePathLayers(map, {
+    borderWidth: 1,
+    centerlineOpacity: 0.8,
+    colors: {
+      accent:       readCssVar('--accent',        '#f59e0b'),
+      accentStrong: readCssVar('--accent-strong', '#fbbf24'),
+    },
   })
 }
 
-// Observe the placeholder container; kick off the map init the first
-// time it crosses into (or near) the viewport. 400 px rootMargin gives
-// a small pre-fetch lead so the map is already initialising by the time
-// the user scrolls it into view, hiding latency without paying the cost
-// for visitors who never reach the section.
-let io: IntersectionObserver | null = null
-let initStarted = false
-
 async function initMap() {
-  if (initStarted) return
-  initStarted = true
+  if (map) return
   const el = mapContainer.value
-  if (!el) {
-    initStarted = false
-    return
-  }
+  if (!el) return
 
   const token = config.public.mapboxToken as string
   if (!token) {
@@ -56,13 +43,19 @@ async function initMap() {
   }
 
   try {
-    const [{ default: mapboxgl }, { regionLabel }] = await Promise.all([
+    const [{ default: mapboxgl }, { regionLabel }, mapLayersMod] = await Promise.all([
       import('mapbox-gl'),
       import('~/utils/eclipse'),
-      // CSS rides along in its own chunk; Vite handles the import.
+      import('~/utils/mapLayers'),
       // @ts-expect-error - CSS module has no type declaration
       import('mapbox-gl/dist/mapbox-gl.css'),
     ])
+
+    // The component may have unmounted while the chunks were resolving;
+    // Vue clears template refs on unmount, so this is the cancel signal.
+    if (!mapContainer.value) return
+
+    addEclipsePathLayers = mapLayersMod.addEclipsePathLayers
 
     mapboxgl.accessToken = token
 
@@ -108,10 +101,10 @@ async function initMap() {
   }
 }
 
-// The template ref binds when <ClientOnly> renders its default slot
-// post-hydration. Watching the ref means we attach the observer the
-// first time the element actually exists in the DOM, regardless of how
-// many ticks ClientOnly takes to swap from fallback to default.
+// 400 px rootMargin pre-fetches mapbox-gl just before the placeholder
+// scrolls into view, so the map is initialising by the time the user
+// reaches it. Watch (rather than onMounted) is required because the
+// template ref only binds after <ClientOnly> swaps to its default slot.
 watch(mapContainer, (el) => {
   if (!el || io || map) return
   if (typeof IntersectionObserver === 'undefined') {

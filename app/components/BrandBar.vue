@@ -79,12 +79,9 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
     :class="{ 'is-landing': isLanding, 'is-scrolled': scrolled }"
   >
     <div :class="['brand-bar-inner', isMap ? 'is-map' : 'is-content']">
-      <!-- prefetch="false": the brand-mark sits in every page's viewport,
-           so Nuxt would otherwise prefetch the landing page's chunks on
-           every route. Visitors on /guide rarely click back to home, and
-           the landing-only CSS (~11 KB, 100% unused per Lighthouse) was
-           leaking onto every page through this link. The page is fast
-           enough to fetch on-demand. -->
+      <!-- prefetch="false": brand-mark is in every page's viewport, so
+           default prefetch leaks the landing-page chunk (~11 KB CSS,
+           100% unused per Lighthouse) onto every route. -->
       <NuxtLinkLocale to="/" :prefetch="false" aria-label="EclipseChase — Home" class="brand-mark">
         <BrandLogo />
       </NuxtLinkLocale>

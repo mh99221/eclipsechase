@@ -51,12 +51,10 @@ export default defineNuxtConfig({
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         { rel: 'preload', as: 'style', href: 'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap', onload: "this.onload=null;this.rel='stylesheet'" },
-        // mapbox-gl.css used to be preloaded globally so the map page felt
-        // instant, but that fetch also set Mapbox session cookies on every
-        // visit (and dragged a third-party-cookies Lighthouse failure with
-        // it). Components that actually use Mapbox (EclipseMap,
-        // GuidePathMap) import mapbox-gl, which loads the matching CSS
-        // itself — no preload needed on free, map-less pages.
+        // mapbox-gl.css is no longer preloaded globally — the upstream
+        // fetch set Mapbox session cookies on every visit. Map-using
+        // components import the stylesheet themselves so it ships only
+        // with their chunk.
       ],
     },
   },
