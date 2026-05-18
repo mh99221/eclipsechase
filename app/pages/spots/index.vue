@@ -1,5 +1,6 @@
 ﻿<script setup lang="ts">
 import { parseJsonb } from '~/utils/eclipse'
+import { safeJsonLd } from '~/utils/jsonLd'
 import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId, RankedSpot } from '~/composables/useRecommendation'
 import type { Region, SpotPhoto } from '~/types/spots'
@@ -146,12 +147,77 @@ defineOgImageComponent('Default', {
   subtitle: t('spots_page.description'),
 })
 
-useHead({
+const siteUrl = useRuntimeConfig().public.siteUrl as string
+
+// Localised canonical URL for the list page itself + a helper for each
+// spot's detail URL. `prefix_except_default` strategy: EN lives at
+// /spots, IS at /is/spots.
+const localePrefix = computed(() => (locale.value === 'en' ? '' : `/${locale.value}`))
+const canonicalListUrl = computed(() => `${siteUrl}${localePrefix.value}/spots`)
+function spotDetailUrl(slug: string) {
+  return `${siteUrl}${localePrefix.value}/spots/${slug}`
+}
+
+// JSON-LD ItemList — uses the API's canonical order (totality duration
+// desc), not the user's UI-filtered order. Crawlers should see the
+// stable list, not whatever profile / region filter is in the URL.
+const itemListElements = computed(() =>
+  (data.value?.spots ?? []).map((spot: any, i: number) => {
+    const photos = parseJsonb<SpotPhoto[]>(spot.photos, [])
+    const hero = photos.find(p => p.is_hero) || photos[0]
+    return {
+      '@type': 'ListItem',
+      'position': i + 1,
+      'item': {
+        '@type': 'TouristAttraction',
+        'name': spot.name,
+        'url': spotDetailUrl(spot.slug),
+        'geo': {
+          '@type': 'GeoCoordinates',
+          'latitude': spot.lat,
+          'longitude': spot.lng,
+        },
+        'isAccessibleForFree': true,
+        ...(hero?.filename
+          ? { 'image': `${siteUrl}/images/spots/${hero.filename}` }
+          : {}),
+      },
+    }
+  }),
+)
+
+useHead(() => ({
   title: () => t('spots_page.title'),
   meta: [
     { name: 'description', content: () => t('spots_page.description') },
+    { property: 'og:url', content: canonicalListUrl.value },
+    { property: 'og:type', content: 'website' },
   ],
-})
+  link: [
+    { rel: 'canonical', href: canonicalListUrl.value },
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      // CollectionPage wraps the ItemList so crawlers understand this
+      // is a curated index page, not a single article. Each TouristAttraction
+      // entry mirrors the shape used on /spots/[slug] for consistency.
+      innerHTML: safeJsonLd({
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        'name': t('spots_page.title'),
+        'description': t('spots_page.description'),
+        'url': canonicalListUrl.value,
+        'inLanguage': locale.value,
+        'mainEntity': {
+          '@type': 'ItemList',
+          'numberOfItems': itemListElements.value.length,
+          'itemListElement': itemListElements.value,
+        },
+      }),
+    },
+  ],
+}))
 
 const headerSub = computed(() => {
   const p = PROFILES.find(p => p.id === selectedProfile.value)
