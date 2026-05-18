@@ -1,10 +1,27 @@
 <script setup lang="ts">
 import { safeJsonLd } from '~/utils/jsonLd'
+import type { HorizonProfileData } from '~/types/horizon'
+// Bundled at build time — ~10 KB, two pre-computed horizon profiles
+// (Ísafjörður roadside vs Búðir Black Church). Importing it directly
+// instead of fetching avoids the dev SSR 404 (Nuxt's server-side fetcher
+// can't resolve /public/ assets) and ships the data in the page chunk so
+// the chart renders in initial HTML.
+import horizonComparisonRaw from '~/assets/eclipse/horizon-comparison.json'
 
 const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 const { isPro } = useProStatus()
+
+interface HorizonComparisonEntry {
+  id: string
+  lat: number
+  lng: number
+  profile: HorizonProfileData
+}
+const horizonComparisons = horizonComparisonRaw.comparisons as HorizonComparisonEntry[]
+const blockedComparison = horizonComparisons.find(c => c.id === 'isafjordur-roadside') ?? null
+const clearComparison = horizonComparisons.find(c => c.id === 'budir-black-church') ?? null
 
 // defineOgImageComponent emits the og:image / twitter:image meta tags
 // pointing at the Satori-rendered card. Social crawlers and Google Rich
@@ -122,13 +139,13 @@ const faqItems = computed(() => [
 
         <div class="tricky-grid">
           <NuxtLinkLocale
-            to="/spots/snaefellsjokull-summit"
+            to="/spots/latrabjarg-cliffs"
             class="tricky-card tricky-card-warn"
           >
             <div class="tricky-photo">
               <img
-                src="/images/spots/snaefellsjokull-summit-hero-thumb.webp"
-                alt="Snæfellsjökull glacier summit on Snæfellsnes peninsula"
+                src="/images/spots/latrabjarg-cliffs-hero-thumb.webp"
+                alt="Atlantic puffin on the cliff edge at Látrabjarg, Westfjords"
                 loading="lazy"
                 width="600"
                 height="400"
@@ -143,13 +160,13 @@ const faqItems = computed(() => [
           </NuxtLinkLocale>
 
           <NuxtLinkLocale
-            to="/spots/djupalonssandur-beach"
+            to="/spots/gardur-lighthouse"
             class="tricky-card tricky-card-good"
           >
             <div class="tricky-photo">
               <img
-                src="/images/spots/djupalonssandur-beach-hero-thumb.webp"
-                alt="Djúpalónssandur black pebble beach, Snæfellsnes"
+                src="/images/spots/gardur-lighthouse-hero-thumb.webp"
+                alt="Garður lighthouse at Garðskagi, northwestern tip of the Reykjanes peninsula"
                 loading="lazy"
                 width="600"
                 height="400"
@@ -163,6 +180,53 @@ const faqItems = computed(() => [
             </div>
           </NuxtLinkLocale>
         </div>
+      </section>
+
+      <!-- Horizon check, visualised. Sits AFTER the tricky-spot photos so
+           the page goes: emotional hook (real places might fail you) →
+           technical proof (here's the chart that decides). Visible to
+           everyone — it's the engineering differentiator, not a free
+           upsell. Two HorizonProfile charts make the data legible: the
+           Ísafjörður roadside grid point (blocked) and Búðir Black
+           Church (clear). -->
+      <section class="home-section home-horizon" aria-labelledby="horizon-heading">
+        <p class="home-eyebrow">{{ t('v0.home.horizon_eyebrow') }}</p>
+        <h2 id="horizon-heading" class="home-h2">{{ t('v0.home.horizon_title') }}</h2>
+        <p class="home-body">{{ t('v0.home.horizon_body') }}</p>
+
+        <div class="horizon-grid">
+          <article v-if="blockedComparison" class="horizon-card">
+            <div class="horizon-meta">
+              <h3 class="horizon-name">{{ t('v0.home.horizon_blocked_name') }}</h3>
+              <p class="horizon-caption">{{ t('v0.home.horizon_blocked_caption') }}</p>
+            </div>
+            <HorizonProfile
+              :data="blockedComparison.profile"
+              :lat="blockedComparison.lat"
+              :lng="blockedComparison.lng"
+              :width="480"
+              :height="280"
+              :interactive="false"
+            />
+          </article>
+
+          <article v-if="clearComparison" class="horizon-card">
+            <div class="horizon-meta">
+              <h3 class="horizon-name">{{ t('v0.home.horizon_clear_name') }}</h3>
+              <p class="horizon-caption">{{ t('v0.home.horizon_clear_caption') }}</p>
+            </div>
+            <HorizonProfile
+              :data="clearComparison.profile"
+              :lat="clearComparison.lat"
+              :lng="clearComparison.lng"
+              :width="480"
+              :height="280"
+              :interactive="false"
+            />
+          </article>
+        </div>
+
+        <p class="horizon-note">{{ t('v0.home.horizon_note') }}</p>
       </section>
 
       <!-- Free vs Pro comparison: non-Pro only -->
@@ -410,6 +474,58 @@ const faqItems = computed(() => [
   line-height: 1.6;
   color: rgb(var(--ink-2));
   margin: 0;
+}
+
+/* ── Horizon comparison ─────────────────────────────────
+   Breakpoint + gap mirror .tricky-grid so the two sections
+   align edge-to-edge when scrolled past each other. */
+.horizon-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 8px;
+}
+@media (min-width: 640px) {
+  .horizon-grid { grid-template-columns: 1fr 1fr; gap: 18px; }
+}
+.horizon-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 14px 12px;
+  background: rgb(var(--surface) / 0.04);
+  border: 1px solid rgb(var(--border-subtle) / 0.08);
+  border-radius: 8px;
+}
+.horizon-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 2px;
+}
+.horizon-name {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(var(--ink-1));
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+.horizon-caption {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgb(var(--ink-2));
+  margin: 0;
+}
+.horizon-note {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+  color: rgb(var(--ink-3));
+  margin: 6px 0 0;
+  text-transform: uppercase;
 }
 
 /* ── Tricky comparison ──────────────────────────────────── */
