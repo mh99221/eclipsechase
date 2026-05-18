@@ -99,18 +99,21 @@ function onMapTileClick(e: MouseEvent) {
      matching the convention in Card.vue, AdvisoryCard.vue, etc. Using it
      without alpha rendered the tiles solid white in dark mode. */
   background: rgb(var(--surface) / 0.04);
-  border: 1px solid rgb(var(--border-subtle) / 0.4);
-  border-radius: 4px;
+  border: 1px solid rgb(var(--border-subtle) / 0.08);
+  border-radius: 8px;
   text-decoration: none;
   color: rgb(var(--ink-1));
   transition: border-color 0.2s ease, background 0.2s ease;
   min-height: 124px;
 }
 .tile:hover {
-  border-color: rgb(var(--border-subtle) / 0.8);
+  border-color: rgb(var(--border-subtle) / 0.16);
   background: rgb(var(--surface) / 0.08);
 }
 .tile.locked { color: rgb(var(--ink-2)); }
+/* PRO tile keeps its accent emphasis — heavier border + amber wash so
+   the upgrade target stays visually distinct from the matter-of-fact
+   navigation tiles around it. */
 .tile-accent {
   border-color: rgb(var(--accent) / 0.5);
   background: rgb(var(--accent) / 0.06);
@@ -123,8 +126,9 @@ function onMapTileClick(e: MouseEvent) {
 .tile-eyebrow {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 10px;
-  letter-spacing: 0.16em;
-  color: rgb(var(--ink-3));
+  letter-spacing: 0.14em;
+  color: rgb(var(--ink-1) / 0.62);
+  font-weight: 500;
   text-transform: uppercase;
 }
 .tile-lock {

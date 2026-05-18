@@ -416,15 +416,15 @@ const faqItems = computed(() => [
   display: flex;
   flex-direction: column;
   background: rgb(var(--surface) / 0.04);
-  border: 1px solid rgb(var(--border-subtle) / 0.4);
-  border-radius: 4px;
+  border: 1px solid rgb(var(--border-subtle) / 0.08);
+  border-radius: 8px;
   overflow: hidden;
   text-decoration: none;
   color: rgb(var(--ink-1));
   transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
 }
 .tricky-card:hover {
-  border-color: rgb(var(--border-subtle) / 0.8);
+  border-color: rgb(var(--border-subtle) / 0.16);
   background: rgb(var(--surface) / 0.08);
 }
 .tricky-card-warn:hover { border-color: rgb(var(--warn) / 0.6); }
