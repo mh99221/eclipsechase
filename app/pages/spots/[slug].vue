@@ -100,6 +100,18 @@ const spotHistory = computed(() => historicalData.value?.spots?.[slug] ?? null)
 
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
+// When a spot has a hero photo, we prefer that as the og:image (a real
+// photo of the location beats a synthetic card on social previews). For
+// spots without a hero photo, fall back to the Satori-rendered default
+// card so the route still has a valid OG image instead of nothing.
+if (!heroPhoto.value) {
+  defineOgImageComponent('Default', {
+    label: regionLabel(spot.value.region, t).toUpperCase(),
+    title: spot.value.name,
+    subtitle: `${formatDuration(spot.value.totality_duration_seconds ?? 0)} of totality on August 12, 2026.`,
+  })
+}
+
 useHead({
   title: () => spot.value.name,
   meta: [

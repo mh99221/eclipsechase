@@ -140,6 +140,12 @@ function cloudFor(spot: any): number | null {
   return h?.avg_cloud_cover ?? null
 }
 
+defineOgImageComponent('Default', {
+  label: t('spots_page.eyebrow').toUpperCase(),
+  title: t('spots_page.title'),
+  subtitle: t('spots_page.description'),
+})
+
 useHead({
   title: () => t('spots_page.title'),
   meta: [

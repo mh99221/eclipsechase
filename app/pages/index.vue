@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import { safeJsonLd } from '~/utils/jsonLd'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 const { isPro } = useProStatus()
+
+// defineOgImageComponent emits the og:image / twitter:image meta tags
+// pointing at the Satori-rendered card. Social crawlers and Google Rich
+// Results read from those meta tags — we deliberately don't duplicate
+// the URL into JSON-LD because the v6 URL scheme is content-addressed
+// (/_og/s/{encoded-params}.png) and would drift if props change.
+defineOgImageComponent('Default', {
+  label: 'AUGUST 12, 2026',
+  title: 'Find Clear Skies on Eclipse Day',
+  subtitle: 'Real-time weather and 24+ curated viewing spots for the total solar eclipse over western Iceland.',
+})
 
 useHead(() => ({
   title: t('meta.title'),
@@ -53,7 +64,6 @@ useHead(() => ({
               'address': { '@type': 'PostalAddress', 'addressCountry': 'IS', 'addressRegion': 'Western Iceland' },
             },
             'description': 'Total solar eclipse visible from Western Iceland. Maximum totality duration 2m 18s. Path crosses Westfjords, Snæfellsnes, and Reykjanes.',
-            'image': `${siteUrl}/og-image.jpg`,
             'url': siteUrl,
             'organizer': { '@type': 'Organization', 'name': 'EclipseChase.is', 'url': siteUrl },
           },

@@ -40,6 +40,16 @@ const localizedGuideUrl = computed(() =>
   locale.value === 'en' ? `${siteUrl}/guide` : `${siteUrl}/${locale.value}/guide`,
 )
 
+// defineOgImageComponent emits the og:image / twitter:image meta tags.
+// Props are captured at setup time per locale (EN renders /guide, IS
+// renders /is/guide as separate routes), so each locale gets its own
+// Satori-rendered card against the right translation strings.
+defineOgImageComponent('Default', {
+  label: t('guide.eyebrow'),
+  title: t('guide.title'),
+  subtitle: t('guide.description'),
+})
+
 useHead(() => ({
   title: t('guide.title'),
   meta: [
@@ -63,7 +73,6 @@ useHead(() => ({
         'author': { '@type': 'Organization', 'name': 'EclipseChase.is', 'url': siteUrl },
         'publisher': { '@type': 'Organization', 'name': 'EclipseChase.is' },
         'description': t('guide.description'),
-        'image': `${siteUrl}/__og-image__/image/guide/og.png`,
         'url': localizedGuideUrl.value,
       }),
     },

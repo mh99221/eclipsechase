@@ -10,7 +10,31 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxtjs/sitemap',
     '@nuxtjs/color-mode',
+    'nuxt-og-image',
   ],
+
+  // Satori-rendered OG cards. Template lives at
+  // app/components/OgImage/OgImageDefault.satori.vue and is bundled by
+  // page-level `defineOgImageComponent('Default', { ... })` calls.
+  //
+  // nuxt-og-image v6 removed the `fonts` option — fonts now come from
+  // the @nuxt/fonts module. We don't ship @nuxt/fonts, so Satori falls
+  // back to its bundled Inter, which is close enough to Inter Tight for
+  // OG cards (Tight is just a tighter-tracking sibling of Inter). The
+  // mono blocks in the template degrade to system monospace, which is
+  // acceptable for social previews.
+  ogImage: {
+    defaults: {
+      component: 'Default',
+      extension: 'png',
+      width: 1200,
+      height: 630,
+      // Generated PNG is deterministic per route; one-week edge cache is
+      // safe (rebuild flushes Vercel's cache anyway). Per-route overrides
+      // possible via the defineOgImageComponent call.
+      cacheMaxAgeSeconds: 60 * 60 * 24 * 7,
+    },
+  },
 
   colorMode: {
     preference: 'dark',      // fallback when user has no system / stored preference

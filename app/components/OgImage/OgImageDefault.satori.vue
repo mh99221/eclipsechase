@@ -18,7 +18,7 @@ defineProps<{
       background: radial-gradient(ellipse at 50% 0%, #0a1628 0%, #050810 70%);
       position: relative;
       overflow: hidden;
-      font-family: 'Manrope', system-ui, sans-serif;
+      font-family: 'Inter Tight', system-ui, sans-serif;
     "
   >
     <!-- Ambient glow -->
@@ -50,7 +50,7 @@ defineProps<{
     <div
       v-if="label"
       style="
-        font-family: 'IBM Plex Mono', monospace;
+        font-family: 'JetBrains Mono', monospace;
         font-size: 14px;
         color: #f59e0b;
         opacity: 0.7;
@@ -108,7 +108,7 @@ defineProps<{
         position: absolute;
         bottom: 40px;
         right: 80px;
-        font-family: 'IBM Plex Mono', monospace;
+        font-family: 'JetBrains Mono', monospace;
         font-size: 14px;
         color: #475569;
         letter-spacing: 0.15em;
