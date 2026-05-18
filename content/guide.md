@@ -9,7 +9,7 @@ Your practical planning reference for August 12, 2026 — the only total solar e
 
 ## What's Happening
 
-On **August 12, 2026**, a total solar eclipse will cross Iceland — the only easily accessible land in the path of totality. For roughly two minutes, the moon will completely block the sun, turning day into twilight and revealing the sun's corona with the naked eye.
+On **August 12, 2026**, a total solar eclipse will cross Iceland — the prime landfall on a path that continues into **northern Spain**. In Iceland the sun sits about 24° above the horizon at totality; by the time the shadow reaches Spain it's nearly setting. For roughly two minutes, the moon will completely block the sun, turning day into twilight and revealing the sun's corona with the naked eye.
 
 This is a once-in-a-lifetime event for Iceland. The next total solar eclipse visible from the island won't occur until **2196** — 170 years from now. Western Iceland sits directly in the path, making it the prime destination for eclipse chasers worldwide.
 
@@ -24,11 +24,11 @@ The further northwest you go, the longer totality lasts — but the harder it is
 
 | Region | Totality Duration | Totality Starts (UTC) |
 |--------|------------------|-----------------------|
-| Westfjords | ~1m 30s – 2m 13s | ~17:43 |
-| Snæfellsnes | ~1m 25s – 2m 10s | ~17:44 |
-| Borgarfjörður (Akranes only) | ~1m 02s | ~17:45 |
-| Reykjanes | ~1m 35s – 1m 47s | ~17:46 |
-| Reykjavík | ~0–1m 06s (edge) | ~17:46 |
+| Westfjords | ~1m 30s – 2m 13s | ~17:45 |
+| Snæfellsnes | ~1m 25s – 2m 10s | ~17:46 |
+| Borgarfjörður (Akranes only) | ~1m 02s | ~17:47 |
+| Reykjanes | ~1m 35s – 1m 47s | ~17:47 |
+| Reykjavík | ~0–1m 06s (edge) | ~17:47 |
 
 ## Best Viewing Spots
 
@@ -50,7 +50,7 @@ The inland Borgarfjörður valley (Reykholt, Borgarnes, Glymur) sits **just outs
 
 ### Reykjanes
 
-Closest to Keflavík Airport — only 45 minutes from Reykjavík. Totality runs about **1m 35s to 1m 45s** across the peninsula, which is the sweet spot of "short drive + meaningful totality." Volcanic landscape adds character.
+Closest to Keflavík Airport — only 45 minutes from Reykjavík. Totality runs about **1m 35s to 1m 47s** across the peninsula, which is the sweet spot of "short drive + meaningful totality." Volcanic landscape adds character.
 
 Top spots: [Reykjanestá Lighthouse](/spots/reykjanesta-lighthouse) · [Garður Lighthouse](/spots/gardur-lighthouse) · [Hvalsneskirkja](/spots/hvalsneskirkja) · [Keflavík (Ásbrú)](/spots/keflavik-asbru-viewpoint) · [Blue Lagoon](/spots/blue-lagoon)
 
@@ -72,7 +72,7 @@ Every spot page on this site carries a **horizon verdict** (*clear*, *marginal*,
 
 Weather is the **single biggest variable** for eclipse viewing. A perfectly positioned spot means nothing under a blanket of clouds.
 
-**Historical August cloud cover** for western Iceland runs **50–70%** on average. Coastal areas tend to be cloudier than inland valleys. The Westfjords are particularly unpredictable.
+**Historical August 12 cloud cover** varies sharply by region. Over the last decade the Reykjanes peninsula has averaged **around 60%**, Snæfellsnes **70–75%**, and the **Westfjords over 90%** — fully overcast in 9 of the last 10 years at Látrabjarg. Coastal areas tend to be cloudier than inland valleys, and the Westfjords are particularly unforgiving.
 
 This is why real-time weather tracking on eclipse day matters far more than any forecast made days ahead. Cloud patterns in Iceland shift rapidly — a spot that's overcast at noon could be clear by afternoon.
 
@@ -111,7 +111,7 @@ Expect **heavy traffic** on routes toward the eclipse path on August 12. Leave e
 
 - **Eclipse glasses** (ISO 12312-2 certified) — mandatory for all partial phases. Without these, you cannot safely look at the sun before or after totality.
 - **Camera gear:** tripod, solar filter for partial phases, remove filter only during totality. A remote shutter release avoids shake.
-- **Warm layers:** August in Iceland averages 8–12°C. Wind chill makes it feel colder. Bring a waterproof jacket and wind-resistant outer layer.
+- **Warm layers:** August in western Iceland averages 8–13°C (overnight 8°C, mid-afternoon around 13°C). Wind chill makes it feel colder. Bring a waterproof jacket and wind-resistant outer layer.
 - **Offline maps:** Cell coverage is limited in Westfjords and remote Snæfellsnes. Download offline maps before you leave Reykjavík.
 - **Power bank** — keep your phone charged for weather checking and navigation.
 - **Food and water** — remote spots have no services. Pack lunch and plenty of water.
@@ -126,16 +126,16 @@ Here's what happens and when (all times approximate, UTC):
 
 | Time (UTC) | Phase | What to Do |
 |------------|-------|-----------|
-| ~16:48 | **First contact** — partial eclipse begins | Put on eclipse glasses. The moon starts crossing the sun's disk. |
-| ~17:43–17:46 | **Second contact** — totality begins | **Glasses OFF.** Look with naked eyes. You'll see the corona, possibly Baily's beads and the diamond ring effect. |
+| ~16:43–16:48 | **First contact** — partial eclipse begins | Put on eclipse glasses. The moon starts crossing the sun's disk. Westfjords spots see C1 first, Reykjavík last. |
+| ~17:45–17:47 | **Second contact** — totality begins | **Glasses OFF.** Look with naked eyes. You'll see the corona, possibly Baily's beads and the diamond ring effect. |
 | During totality | **Mid-eclipse** | Look around — notice the 360° sunset on the horizon, temperature drop, stars appearing. This is your 1–2 minutes. |
-| ~17:45–17:48 | **Third contact** — totality ends | **Glasses back ON immediately.** The diamond ring reappears. |
-| ~18:35 | **Fourth contact** — partial eclipse ends | The moon fully leaves the sun's disk. Eclipse is over. |
+| ~17:47–17:48 | **Third contact** — totality ends | **Glasses back ON immediately.** The diamond ring reappears. |
+| ~18:43–18:46 | **Fourth contact** — partial eclipse ends | The moon fully leaves the sun's disk. Eclipse is over. |
 
 **Tips for totality:**
 - Don't spend the whole time photographing — experience it with your eyes first
 - Watch for the corona (the sun's outer atmosphere), Baily's beads (light through lunar valleys), and the diamond ring effect
-- Notice the sudden temperature drop (can be 5–10°C)
+- Notice the temperature drop (typically 2–5°C in Iceland's cool maritime climate during the brief 2-minute totality)
 - Look at the horizon for the 360° sunset effect
 - Listen — birds and animals react to the sudden darkness
 
@@ -172,7 +172,7 @@ Yes, but manage expectations. Phone cameras can capture a bright blob where the 
 <details>
 <summary>How early should I get to my spot?</summary>
 
-Be at your chosen viewing location by **noon at the latest**. Traffic will be heavy, and you want time to set up, find parking, and settle in. The partial eclipse begins around 16:48 UTC, but parking and road access will be challenging if you arrive late.
+Be at your chosen viewing location by **noon at the latest**. Traffic will be heavy, and you want time to set up, find parking, and settle in. The partial eclipse begins around 16:43–16:48 UTC (Westfjords first, Reykjavík last), but parking and road access will be challenging if you arrive late.
 
 </details>
 
@@ -186,7 +186,7 @@ Yes. Expect tens of thousands of visitors concentrated in western Iceland. Popul
 <details>
 <summary>What's the weather usually like in August?</summary>
 
-August in western Iceland averages 10–13°C with frequent cloud cover (50–70% historically). Rain is possible but not constant. Wind is common, especially on the coast. Dress in layers, bring waterproof gear, and be prepared for conditions to change rapidly.
+August in western Iceland averages 8–13°C with frequent cloud cover — historically about 60% on the Reykjanes peninsula, 70–75% on Snæfellsnes, and over 90% in the Westfjords on August 12 specifically. Rain is possible but not constant. Wind is common, especially on the coast. Dress in layers, bring waterproof gear, and be prepared for conditions to change rapidly.
 
 </details>
 

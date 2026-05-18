@@ -9,7 +9,7 @@ Hagnýt skipulagshandbók fyrir 12. ágúst 2026 — eina heilsólmyrkvann sem f
 
 ## Hvað er að gerast
 
-Þann **12. ágúst 2026** mun heilsólmyrkvi fara yfir Ísland — eina aðgengilega landið á leið heilmyrkvans. Í um tvær mínútur mun tunglið hylja sólina algjörlega, breyta degi í rökkur og leyfa þér að sjá kórónu sólarinnar með berum augum.
+Þann **12. ágúst 2026** mun heilsólmyrkvi fara yfir Ísland — besti staðurinn á leið sem heldur áfram til **Norður-Spánar**. Á Íslandi situr sólin um 24° fyrir ofan sjóndeildarhringinn við heilmyrkva; þegar skugginn nær Spáni er sólin nær því að setjast. Í um tvær mínútur mun tunglið hylja sólina algjörlega, breyta degi í rökkur og leyfa þér að sjá kórónu sólarinnar með berum augum.
 
 Þetta er einstakur viðburður fyrir Ísland. Næsti heilsólmyrkvi sem sést frá eyjunni verður ekki fyrr en árið **2196** — eftir 170 ár. Vestur-Ísland liggur beint á leiðinni, sem gerir landið að helsta áfangastað sólmyrkvaáhugamanna um heim allan.
 
@@ -24,11 +24,11 @@ Leið heilmyrkvans kemur inn í Ísland úr norðvestri, fer yfir **Vestfirði**
 
 | Svæði | Lengd heilmyrkva | Heilmyrkvi byrjar (UTC) |
 |--------|------------------|-----------------------|
-| Vestfirðir | ~1m 30s – 2m 13s | ~17:43 |
-| Snæfellsnes | ~1m 25s – 2m 10s | ~17:44 |
-| Borgarfjörður (aðeins Akranes) | ~1m 02s | ~17:45 |
-| Reykjanes | ~1m 35s – 1m 47s | ~17:46 |
-| Reykjavík | ~0–1m 06s (jaðar) | ~17:46 |
+| Vestfirðir | ~1m 30s – 2m 13s | ~17:45 |
+| Snæfellsnes | ~1m 25s – 2m 10s | ~17:46 |
+| Borgarfjörður (aðeins Akranes) | ~1m 02s | ~17:47 |
+| Reykjanes | ~1m 35s – 1m 47s | ~17:47 |
+| Reykjavík | ~0–1m 06s (jaðar) | ~17:47 |
 
 ## Bestu áhorfsstaðirnir
 
@@ -50,7 +50,7 @@ Borgarfjarðardalurinn (Reykholt, Borgarnes, Glymur) liggur **rétt utan** leið
 
 ### Reykjanes
 
-Næst Keflavíkurflugvelli — aðeins 45 mínútur frá Reykjavík. Heilmyrkvinn varir um **1m 35s til 1m 45s** yfir skagann, sem er gulli staðurinn fyrir „stutt akstur + marktækan heilmyrkva". Eldfjallalandslagið bætir sérstöðu.
+Næst Keflavíkurflugvelli — aðeins 45 mínútur frá Reykjavík. Heilmyrkvinn varir um **1m 35s til 1m 47s** yfir skagann, sem er gulli staðurinn fyrir „stutt akstur + marktækan heilmyrkva". Eldfjallalandslagið bætir sérstöðu.
 
 Helstu staðir: [Reykjanestáviti](/spots/reykjanesta-lighthouse) · [Garðsviti](/spots/gardur-lighthouse) · [Hvalsneskirkja](/spots/hvalsneskirkja) · [Keflavík (Ásbrú)](/spots/keflavik-asbru-viewpoint) · [Bláa lónið](/spots/blue-lagoon)
 
@@ -72,7 +72,7 @@ Hver staðasíða á þessu vefsvæði ber **dómur um sjóndeildarhring** (*gre
 
 Veðrið er **stærsti einstaki breytileikinn** fyrir sólmyrkvaeftirlit. Fullkomlega staðsettur staður þýðir ekkert undir alskýjuðu lofti.
 
-**Söguleg skýjahula í ágúst** í Vestur-Íslandi er að meðaltali **50–70%**. Strandasvæði eru oftast skýjaðri en innlandsdalir. Vestfirðir eru sérstaklega ófyrirsjáanlegir.
+**Söguleg skýjahula 12. ágúst** er mjög ólík eftir svæðum. Síðasta áratug hefur Reykjanesskaginn að meðaltali verið með **um 60% skýjahulu**, Snæfellsnes **70–75%** og **Vestfirðir yfir 90%** — alskýjað 9 af síðustu 10 árum við Látrabjarg. Strandasvæði eru oftast skýjaðri en innlandsdalir, og Vestfirðir eru sérstaklega óhliðhollir.
 
 Þess vegna skiptir rauntímaeftirlit með veðri á sólmyrkvadaginn miklu meira máli en spá sem gerð er nokkrum dögum fyrirfram. Skýjamynstur á Íslandi breytast hratt — staður sem er alskýjaður um hádegi getur verið heiðskír síðdegis.
 
@@ -111,7 +111,7 @@ Búast má við **mikilli umferð** á leiðum að myrkvabálki 12. ágúst. Far
 
 - **Sólmyrkvagleraugu** (vottuð skv. ISO 12312-2) — nauðsynleg fyrir alla deildarmyrkvafasa. Án þeirra geturðu ekki á öruggan hátt horft á sólina fyrir eða eftir heilmyrkva.
 - **Myndavélabúnaður:** þrífótur, sólarsía fyrir deildarmyrkvafasa, fjarlægðu síuna aðeins við heilmyrkva. Fjarstýrð smelluhleypa kemur í veg fyrir hristing.
-- **Hlý lög:** ágúst á Íslandi er að meðaltali 8–12°C. Vindkæling gerir það kaldara. Taktu með vatnsheldan jakka og vindheldan ytri lag.
+- **Hlý lög:** ágúst í Vestur-Íslandi er að meðaltali 8–13°C (að nóttu um 8°C, síðdegis um 13°C). Vindkæling gerir það kaldara. Taktu með vatnsheldan jakka og vindheldan ytri lag.
 - **Ónettengd kort:** Farsímaþjónusta er takmörkuð á Vestfjörðum og afskekktum Snæfellsnesi. Sæktu ónettengd kort áður en þú yfirgefur Reykjavík.
 - **Aukarafhlaða** — haltu símanum hlaðnum fyrir veðureftirlit og leiðsögn.
 - **Matur og vatn** — afskekktir staðir eru þjónustulausir. Pakkaðu hádegismat og nóg vatn.
@@ -126,16 +126,16 @@ Hér er hvað gerist og hvenær (allir tímar áætlaðir, UTC):
 
 | Tími (UTC) | Fasi | Hvað á að gera |
 |------------|-------|-----------|
-| ~16:48 | **Fyrsti snertingarpunktur** — deildarmyrkvi byrjar | Settu á þig sólmyrkvagleraugun. Tunglið byrjar að fara yfir sólskífuna. |
-| ~17:43–17:46 | **Annar snertingarpunktur** — heilmyrkvi byrjar | **Gleraugun AF.** Horfðu með berum augum. Þú sérð kórónuna, hugsanlega Baily-perlur og demantshringinn. |
+| ~16:43–16:48 | **Fyrsti snertingarpunktur** — deildarmyrkvi byrjar | Settu á þig sólmyrkvagleraugun. Tunglið byrjar að fara yfir sólskífuna. Vestfirðir sjá C1 fyrst, Reykjavík síðast. |
+| ~17:45–17:47 | **Annar snertingarpunktur** — heilmyrkvi byrjar | **Gleraugun AF.** Horfðu með berum augum. Þú sérð kórónuna, hugsanlega Baily-perlur og demantshringinn. |
 | Á meðan heilmyrkvi varir | **Miðmyrkvi** | Líttu í kring — taktu eftir 360° sólarlaginu á sjóndeildarhring, hitafalli, stjörnum sem birtast. Þetta eru þínar 1–2 mínútur. |
-| ~17:45–17:48 | **Þriðji snertingarpunktur** — heilmyrkva lýkur | **Gleraugun aftur Á strax.** Demantshringurinn birtist aftur. |
-| ~18:35 | **Fjórði snertingarpunktur** — deildarmyrkva lýkur | Tunglið yfirgefur sólskífuna alveg. Myrkvanum er lokið. |
+| ~17:47–17:48 | **Þriðji snertingarpunktur** — heilmyrkva lýkur | **Gleraugun aftur Á strax.** Demantshringurinn birtist aftur. |
+| ~18:43–18:46 | **Fjórði snertingarpunktur** — deildarmyrkva lýkur | Tunglið yfirgefur sólskífuna alveg. Myrkvanum er lokið. |
 
 **Ráð fyrir heilmyrkvann:**
 - Ekki eyða öllum tímanum í myndatöku — upplifðu hann fyrst með augunum
 - Fylgstu með kórónunni (ytra lofthjúp sólarinnar), Baily-perlum (ljós í gegnum dali tunglsins) og demantshringnum
-- Taktu eftir skyndilegu hitafalli (getur verið 5–10°C)
+- Taktu eftir hitafallinu (yfirleitt 2–5°C í köldu sjávarloftslagi Íslands í þeim stuttu 2 mínútum sem heilmyrkvi varir)
 - Horfðu á sjóndeildarhringinn fyrir 360° sólarlagseffektinn
 - Hlustaðu — fuglar og dýr bregðast við skyndilegu myrkrinu
 
@@ -172,7 +172,7 @@ Já, en vertu raunsær með væntingar. Símamyndavélar geta tekið mynd af bja
 <details>
 <summary>Hvað snemma ætti ég að koma á staðinn?</summary>
 
-Vertu á völdum áhorfsstað **um hádegi í síðasta lagi**. Umferðin verður mikil og þú vilt hafa tíma til að setja upp, finna bílastæði og koma þér fyrir. Deildarmyrkvinn byrjar um kl. 16:48 UTC, en bílastæði og vegaaðgangur verða krefjandi ef þú kemur seint.
+Vertu á völdum áhorfsstað **um hádegi í síðasta lagi**. Umferðin verður mikil og þú vilt hafa tíma til að setja upp, finna bílastæði og koma þér fyrir. Deildarmyrkvinn byrjar um kl. 16:43–16:48 UTC (Vestfirðir fyrst, Reykjavík síðast), en bílastæði og vegaaðgangur verða krefjandi ef þú kemur seint.
 
 </details>
 
@@ -186,7 +186,7 @@ Já. Búast má við tugum þúsunda gesta sem safnast í Vestur-Íslandi. Vins�
 <details>
 <summary>Hvernig er veðrið venjulega í ágúst?</summary>
 
-Ágúst í Vestur-Íslandi er að meðaltali 10–13°C með tíðum skýjum (50–70% sögulega). Rigning er möguleg en ekki stöðug. Vindur er algengur, sérstaklega við ströndina. Klæddu þig í lög, taktu með vatnsheldan búnað og vertu tilbúin/n fyrir snöggar veðurbreytingar.
+Ágúst í Vestur-Íslandi er að meðaltali 8–13°C með tíðum skýjum — sögulega um 60% á Reykjanesi, 70–75% á Snæfellsnesi og yfir 90% á Vestfjörðum þann 12. ágúst sérstaklega. Rigning er möguleg en ekki stöðug. Vindur er algengur, sérstaklega við ströndina. Klæddu þig í lög, taktu með vatnsheldan búnað og vertu tilbúin/n fyrir snöggar veðurbreytingar.
 
 </details>
 
