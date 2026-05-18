@@ -494,12 +494,15 @@ const faqItems = computed(() => [
   margin-top: 2px;
 }
 
-/* ── Free vs Pro table ──────────────────────────────────── */
+/* ── Free vs Pro table — mirrors the guide-content table style
+   (soft surface, 8px corner, ink-1/0.62 mono-caps header, hairline
+   row dividers). Grid stays because ✓/— needs fixed tier columns. */
 .compare-table {
   display: flex;
   flex-direction: column;
-  border: 1px solid rgb(var(--border-subtle) / 0.4);
-  border-radius: 4px;
+  background: rgb(var(--surface) / 0.04);
+  border: 1px solid rgb(var(--border-subtle) / 0.08);
+  border-radius: 8px;
   overflow: hidden;
   margin-top: 4px;
 }
@@ -507,32 +510,31 @@ const faqItems = computed(() => [
   display: grid;
   grid-template-columns: 1fr 60px 60px;
   align-items: center;
-  border-bottom: 1px solid rgb(var(--border-subtle) / 0.3);
+  border-bottom: 1px solid rgb(var(--border-subtle) / 0.06);
 }
 @media (min-width: 640px) {
   .compare-row { grid-template-columns: 1fr 90px 90px; }
 }
 .compare-row:last-child { border-bottom: none; }
-.compare-row-head {
-  background: rgb(var(--surface) / 0.06);
-}
 .compare-row-head .compare-cell {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 10px;
   letter-spacing: 0.14em;
-  color: rgb(var(--ink-3));
+  color: rgb(var(--ink-1) / 0.62);
   text-transform: uppercase;
-  font-weight: 600;
-  padding: 12px 14px;
+  font-weight: 500;
+  padding: 10px 14px;
 }
+.compare-row-head { border-bottom: 1px solid rgb(var(--border-subtle) / 0.08); }
 .compare-cell {
-  padding: 12px 14px;
+  padding: 9px 14px;
   font-family: 'Inter Tight', system-ui, sans-serif;
   font-size: 13px;
   line-height: 1.4;
+  font-variant-numeric: tabular-nums;
 }
 @media (min-width: 640px) {
-  .compare-cell { font-size: 14px; padding: 14px 16px; }
+  .compare-cell { font-size: 14px; }
 }
 .compare-cell-feature {
   color: rgb(var(--ink-1));
@@ -614,51 +616,62 @@ const faqItems = computed(() => [
 }
 .compare-restore-link:hover { color: rgb(var(--ink-1)); }
 
-/* ── FAQ ────────────────────────────────────────────────── */
+/* ── FAQ — mirrors guide-content details/summary so the FAQ on /
+   and the FAQ inside /guide read as one design language. */
 .faq-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   margin-top: 4px;
 }
 .faq-item {
-  border: 1px solid rgb(var(--border-subtle) / 0.4);
-  border-radius: 4px;
   background: rgb(var(--surface) / 0.04);
-  padding: 0;
+  border: 1px solid rgb(var(--border-subtle) / 0.08);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
 }
 .faq-q {
-  padding: 14px 16px;
+  padding: 13px 16px;
   cursor: pointer;
   font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: rgb(var(--ink-1));
   list-style: none;
-  position: relative;
-  padding-right: 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
 }
 .faq-q::-webkit-details-marker { display: none; }
-.faq-q::after {
+.faq-q::before {
   content: '+';
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 18px;
-  color: rgb(var(--ink-3));
-  transition: transform 0.2s ease;
+  font-size: 14px;
+  color: rgb(var(--accent));
+  opacity: 0.7;
+  border: 1px solid rgb(var(--accent) / 0.3);
+  border-radius: 3px;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
 }
-.faq-item[open] .faq-q::after {
-  content: '−';
+.faq-item[open] .faq-q::before { content: '−'; opacity: 1; }
+.faq-q:hover { background: rgb(var(--accent) / 0.04); }
+.faq-item[open] .faq-q {
+  border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
 }
 .faq-a {
-  padding: 0 16px 14px;
+  padding: 14px 16px;
   font-family: 'Inter Tight', system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.6;
-  color: rgb(var(--ink-2));
+  color: rgb(var(--ink-1) / 0.85);
   margin: 0;
 }
 
