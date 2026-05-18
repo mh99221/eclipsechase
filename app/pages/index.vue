@@ -687,29 +687,30 @@ const faqItems = computed(() => [
   margin: 0;
 }
 
-/* ── Data sources ───────────────────────────────────────── */
+/* ── Data sources — same chrome as guide tables / FAQ items so the
+   landing reads as one design language with /guide. */
 .sources-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 6px;
   margin: 4px 0 0;
 }
 .sources-item {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 12px 14px;
+  padding: 13px 16px;
   background: rgb(var(--surface) / 0.04);
-  border: 1px solid rgb(var(--border-subtle) / 0.4);
-  border-radius: 4px;
+  border: 1px solid rgb(var(--border-subtle) / 0.08);
+  border-radius: 8px;
 }
 .sources-label {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 10px;
   letter-spacing: 0.14em;
-  color: rgb(var(--ink-3));
+  color: rgb(var(--ink-1) / 0.62);
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 500;
   margin: 0;
 }
 .sources-body {
