@@ -183,7 +183,7 @@
       "tricky_left_cta": "See cloud history →",
       "tricky_right_badge": "1M 43S · 59% CLOUDY",
       "tricky_right_name": "Garður Lighthouse",
-      "tricky_right_caption": "Northwestern tip of the Reykjanes peninsula, 20 minutes from Keflavík Airport. Less totality, but 4 of the last 10 August 12s have been clear or near-clear — the best odds on the path.",
+      "tricky_right_caption": "Northernmost tip of the Reykjanes peninsula, 20 minutes from Keflavík Airport. Less totality, but 4 of the last 10 August 12s have been clear or near-clear — the best odds on the path.",
       "tricky_right_cta": "See cloud history →",
       "pro_compare_eyebrow": "FREE VS PRO",
       "pro_compare_title": "The core info is free. Always.",
@@ -191,7 +191,7 @@
       "pro_compare_col_feature": "Feature",
       "pro_compare_col_free": "Free",
       "pro_compare_col_pro": "Pro",
-      "pro_compare_row_map": "Eclipse map with totality path",
+      "pro_compare_row_map": "Totality-path overlay on spot pages",
       "pro_compare_row_spots": "24+ curated viewing spots",
       "pro_compare_row_horizon": "Horizon checks on curated spots",
       "pro_compare_row_countdown": "Eclipse countdown & timing",
@@ -226,9 +226,7 @@
       "sources_weather_label": "Weather",
       "sources_weather_body": "Real-time conditions and forecasts from Veðurstofa Íslands (Icelandic Meteorological Office), the national weather service.",
       "sources_eclipse_label": "Eclipse geometry",
-      "sources_eclipse_body": "Computed with Skyfield using precise Besselian elements. Cross-validated against published values from NASA and eclipse2026.is.",
-      "sources_photos_label": "Spot photography",
-      "sources_photos_body": "Sources credited per spot. All licenses verified for commercial use."
+      "sources_eclipse_body": "Computed with Skyfield using JPL DE421 ephemerides — topocentric Sun and Moon positions per grid point, contact times found by bisecting their angular separation to ~1 second precision."
     },
     "spots": {
       "viewer_profile_eyebrow": "— VIEWER PROFILE",

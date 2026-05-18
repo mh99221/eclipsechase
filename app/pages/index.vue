@@ -324,10 +324,6 @@ const faqItems = computed(() => [
             <dt class="sources-label">{{ t('v0.home.sources_eclipse_label') }}</dt>
             <dd class="sources-body">{{ t('v0.home.sources_eclipse_body') }}</dd>
           </div>
-          <div class="sources-item">
-            <dt class="sources-label">{{ t('v0.home.sources_photos_label') }}</dt>
-            <dd class="sources-body">{{ t('v0.home.sources_photos_body') }}</dd>
-          </div>
         </dl>
       </section>
 
