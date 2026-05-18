@@ -6,7 +6,7 @@ const MAX_REQUESTS_PER_WINDOW = 3
 const CODE_TTL_MS = 15 * 60 * 1000
 
 export default defineEventHandler(async (event) => {
-  const { email } = await readBody<{ email: string }>(event)
+  const { email, locale: bodyLocale } = await readBody<{ email: string; locale?: string }>(event)
 
   if (!email || typeof email !== 'string' || !isValidEmail(email)) {
     throw createError({ statusCode: 400, statusMessage: 'Valid email is required' })
@@ -55,9 +55,19 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 500, statusMessage: 'Failed to save restore code' })
     }
 
+    // Locale precedence: client-supplied (the current page the user is
+    // restoring from) wins, falling back to whatever locale they
+    // signed up for the newsletter in, then 'en'.
+    const { data: signup } = await supabase
+      .from('email_signups')
+      .select('locale')
+      .eq('email', normalizedEmail)
+      .maybeSingle()
+    const locale = bodyLocale || signup?.locale || 'en'
+
     try {
       // Vercel kills the function after response, so await before returning.
-      await sendRestoreCode(normalizedEmail, code)
+      await sendRestoreCode(normalizedEmail, code, locale)
     } catch (err) {
       // Email send failed — delete the row so the rate-limit slot isn't
       // burned and prior outstanding codes (if any) remain valid.

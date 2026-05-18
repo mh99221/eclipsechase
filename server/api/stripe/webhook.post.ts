@@ -91,8 +91,18 @@ export default defineEventHandler(async (event) => {
       .maybeSingle()
 
     if (updated) {
-      // We were the first writer — send the welcome email.
-      await sendPurchaseEmail(normalizedEmail)
+      // We were the first writer — send the welcome email. Look up the
+      // locale from email_signups so an IS buyer (who likely signed up
+      // for the newsletter from the IS landing first) gets the IS
+      // template. Fall back to Stripe's session.locale, then 'en'.
+      // Both lookups are best-effort: missing rows just default to EN.
+      const { data: signup } = await supabase
+        .from('email_signups')
+        .select('locale')
+        .eq('email', normalizedEmail)
+        .maybeSingle()
+      const locale = signup?.locale || session.locale || 'en'
+      await sendPurchaseEmail(normalizedEmail, locale)
     }
   }
 

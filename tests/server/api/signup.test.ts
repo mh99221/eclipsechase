@@ -47,8 +47,18 @@ describe('POST /api/signup', () => {
     const event = createTestEvent({ supabase: mockSupabase, body: { email: 'new@test.com' } })
     await handler(event)
 
-    // sendWelcomeEmail is a global mock set in _setup.ts
-    expect(mockSendWelcomeEmail).toHaveBeenCalledWith('new@test.com')
+    // sendWelcomeEmail is a global mock set in _setup.ts. Second arg is
+    // the locale; undefined here matches a request that didn't include
+    // a locale field (the email helper falls back to 'en').
+    expect(mockSendWelcomeEmail).toHaveBeenCalledWith('new@test.com', undefined)
+  })
+
+  it('forwards locale to the welcome email', async () => {
+    mockMaybeSingleResult.data = null
+    const event = createTestEvent({ supabase: mockSupabase, body: { email: 'is-user@test.com', locale: 'is' } })
+    await handler(event)
+
+    expect(mockSendWelcomeEmail).toHaveBeenCalledWith('is-user@test.com', 'is')
   })
 
   it('does NOT send welcome email for existing signups', async () => {

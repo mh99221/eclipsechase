@@ -44,9 +44,11 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Send welcome email only for new signups (not re-submissions)
+  // Send welcome email only for new signups (not re-submissions).
+  // body.locale was already validated above; pass it so the welcome
+  // email matches the language the user signed up in.
   if (!existing) {
-    sendWelcomeEmail(email)
+    sendWelcomeEmail(email, body.locale)
   }
 
   return { success: true }

@@ -1,6 +1,6 @@
 ﻿<script setup lang="ts">
 const props = defineProps<{ compact?: boolean }>()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const email = ref('')
 const status = ref<'idle' | 'loading' | 'success' | 'error'>('idle')
 const errorMessage = ref('')
@@ -14,7 +14,7 @@ async function handleSubmit() {
   try {
     await $fetch('/api/signup', {
       method: 'POST',
-      body: { email: email.value },
+      body: { email: email.value, locale: locale.value },
     })
     status.value = 'success'
     email.value = ''

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { activate } = useProStatus()
 
 type State = 'idle' | 'email_input' | 'code_sent' | 'code_input' | 'verifying' | 'success' | 'error'
@@ -26,7 +26,7 @@ async function sendCode() {
   try {
     const result = await $fetch<{ sent: boolean; masked_email: string }>('/api/stripe/restore/request', {
       method: 'POST',
-      body: { email: email.value },
+      body: { email: email.value, locale: locale.value },
     })
     maskedEmail.value = result.masked_email
     state.value = 'code_sent'
