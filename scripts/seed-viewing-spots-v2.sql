@@ -121,7 +121,7 @@ ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLU
 INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parking_info, terrain_notes, has_services, cell_coverage, totality_duration_seconds, totality_start, sun_altitude, sun_azimuth, spot_type) VALUES
 ('hellissandur', 'Hellissandur Village', 'hellissandur-village',
   64.9176, -23.8856, 'snaefellsnes',
-  'The westernmost village on the Snæfellsnes peninsula, at the foot of Snæfellsjökull. Open views to the north and west from the village outskirts. The old radio mast nearby is a local landmark.',
+  'The westernmost village on the Snæfellsnes peninsula, at the foot of Snæfellsjökull. Open views to the north and west from the village outskirts.',
   'Free parking in the village centre and near the old radio mast.',
   'Flat ground with open views. Sheltered from south winds by Snæfellsjökull.',
   true, 'good', 118, '2026-08-12T17:45:55Z', 24, 249, 'drive-up')
@@ -130,7 +130,7 @@ ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLU
 INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parking_info, terrain_notes, has_services, cell_coverage, totality_duration_seconds, totality_start, sun_altitude, sun_azimuth, spot_type) VALUES
 ('budir', 'Búðir Black Church', 'budir-black-church',
   64.8217, -23.3840, 'snaefellsnes',
-  'The iconic black wooden church at Búðir sits on an open lava field with sweeping views to the west across Faxaflói bay. The stark contrast of the black church against the darkened eclipse sky makes this a photographer''s dream spot. Hotel Búðir provides upscale services nearby.',
+  'The iconic black wooden church at Búðir sits on an open lava field on the south coast of Snæfellsnes, with sweeping views south and southwest across Faxaflói bay — directly along the eclipse sun''s bearing. The stark contrast of the black church against the darkened eclipse sky makes this a photographer''s dream spot. Hotel Búðir provides upscale services nearby.',
   'Parking at Hotel Búðir and near the church. Free.',
   'Open lava field with mossy ground. Flat terrain around the church.',
   true, 'limited', 105, '2026-08-12T17:46:15Z', 24, 249, 'drive-up')
@@ -151,7 +151,7 @@ ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLU
 INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parking_info, terrain_notes, has_services, cell_coverage, totality_duration_seconds, totality_start, sun_altitude, sun_azimuth, spot_type, trail_distance_km, trail_time_minutes, difficulty, elevation_gain_m, trailhead_lat, trailhead_lng) VALUES
 ('djupalonssandur', 'Djúpalónssandur Beach', 'djupalonssandur-beach',
   64.7535, -23.8952, 'snaefellsnes',
-  'Black lava pebble beach on the western tip of Snæfellsnes, inside Snæfellsjökull National Park. A short walk from parking through lava formations to the dramatic beach. Faces due west — perfect alignment for the eclipsed sun at 249° azimuth. Restrooms at parking.',
+  'Black lava pebble beach on the western tip of Snæfellsnes, inside Snæfellsjökull National Park. A short walk from parking through lava formations to the dramatic beach. The shoreline runs east–west and the beach opens south to the Atlantic — well aligned with the eclipse sun''s bearing in the west-southwest. Restrooms at parking.',
   'Paved parking area at the trailhead. Free, restrooms available.',
   'Gravel path through lava formations, gentle descent to beach. Some uneven footing.',
   false, 'limited', 112, '2026-08-12T17:46:05Z', 24, 249,
@@ -258,7 +258,7 @@ ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLU
 INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parking_info, terrain_notes, has_services, cell_coverage, totality_duration_seconds, totality_start, sun_altitude, sun_azimuth, spot_type) VALUES
 ('hvalsneskirkja', 'Hvalsneskirkja', 'hvalsneskirkja',
   63.9899, -22.7358, 'reykjanes',
-  'A historic 1887 stone church on the open south coast of the Reykjanes peninsula, set in dramatic dunes and lava flats with completely unobstructed views to the south and west. The poet Hallgrímur Pétursson served as pastor here in the 1640s — his daughter Steinunn''s tombstone stands inside. The exposed coastal setting offers a clean western ocean horizon — exactly the direction of the eclipse sun at totality. About 5 km south of Sandgerði Shore and 30 minutes from Keflavík Airport.',
+  'A historic 1887 stone church on the open south coast of the Reykjanes peninsula, set in dramatic dunes and lava flats with completely unobstructed views to the south and west. The poet Hallgrímur Pétursson served as pastor here in the 1640s — his daughter Steinunn''s tombstone stands inside. The exposed coastal setting offers a clean western ocean horizon — exactly the direction of the eclipse sun at totality. About 5 km south of Sandgerði and 15–20 minutes from Keflavík Airport.',
   'Small free parking area at the church. Paved access road via Route 44 from Sandgerði.',
   'Grassy churchyard with gravel paths. Open coastal flatlands with sand dunes and lava plain to the south and west — completely unobstructed western horizon.',
   false, 'good', 100, '2026-08-12T17:48:08Z', 25, 252, 'drive-up')

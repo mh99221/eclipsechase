@@ -66,7 +66,7 @@ WITH translations(spot_slug, locale, name, description, parking_info, terrain_no
     (
       'budir-black-church', 'is',
       'Búðakirkja (svarta kirkjan)',
-      'Hin táknræna svarta timburkirkja á Búðum stendur á opinni hraunbreiðu með víðu útsýni til vesturs yfir Faxaflóa. Andstæða svörtu kirkjunnar við myrkan sólmyrkvahimininn gerir þennan stað að einum mest myndræna sólmyrkvasjónarhornanna á Íslandi.',
+      'Hin táknræna svarta timburkirkja á Búðum stendur á opinni hraunbreiðu á suðurströnd Snæfellsness, með víðu útsýni til suðurs og suðvesturs yfir Faxaflóa — beint í stefnu sólmyrkvasólarinnar. Andstæða svörtu kirkjunnar við myrkan sólmyrkvahimininn gerir þennan stað að einum mest myndræna sólmyrkvasjónarhornanna á Íslandi.',
       'Bílastæði við Hótel Búðir og nálægt kirkjunni. Frítt.',
       'Opin hraunbreiða með mosa á yfirborði. Sléttur jarðvegur umhverfis kirkjuna.',
       '[{"level":"info","title":"Bílastæði Hótels Búða eru fyrir hótelgesti — leggðu meðfram veginum ef stæðið er fullt","body":""},{"level":"info","title":"Búðakirkja er starfandi kirkja — sýndu virðingu ef messur fara fram","body":""},{"level":"warn","title":"Takmörkuð bílastæði (~20 bílar) — mættu snemma á sólmyrkvadegi","body":""}]'::jsonb
@@ -74,7 +74,7 @@ WITH translations(spot_slug, locale, name, description, parking_info, terrain_no
     (
       'djupalonssandur-beach', 'is',
       'Djúpalónssandur',
-      'Svört hraunsteinsströnd á vesturodda Snæfellsness, innan þjóðgarðs Snæfellsjökuls. Stutt ganga frá bílastæði í gegnum hraunmyndanir niður á dramatíska ströndina. Snýr beint í vestur — fullkomið fyrir sólmyrkvann. Ein helsta sólmyrkvaperla Snæfellsness.',
+      'Svört hraunsteinsströnd á vesturodda Snæfellsness, innan þjóðgarðs Snæfellsjökuls. Stutt ganga frá bílastæði í gegnum hraunmyndanir niður á dramatíska ströndina. Strandlínan liggur austur–vestur og fjaran opnast til suðurs út í Atlantshafið — vel staðsett miðað við stefnu sólarinnar í vest-suðvestri við sólmyrkva. Ein helsta sólmyrkvaperla Snæfellsness.',
       'Malbikað bílastæði við upphaf gönguleiðarinnar. Frítt, salerni á staðnum.',
       'Malarstígur í gegnum hraunmyndanir, mild halli niður á ströndina. Sumstaðar ójafnt undirlag.',
       '[{"level":"warn","title":"Innan þjóðgarðs Snæfellsjökuls — búast má við miklu fjölmenni á sólmyrkvadegi","body":""},{"level":"info","title":"Engin þjónusta á ströndinni — salerni eingöngu á bílastæðinu","body":""},{"level":"info","title":"Stutt en grýtt ganga niður á ströndina — farðu í góðum gönguskóm","body":""},{"level":"info","title":"Strandyfirborðið er svört smásteinaströnd, ekki sandur — taktu með stól eða ábreiðu","body":""}]'::jsonb
@@ -98,7 +98,7 @@ WITH translations(spot_slug, locale, name, description, parking_info, terrain_no
     (
       'hellissandur-village', 'is',
       'Hellissandur',
-      'Vestasta þorpið á Snæfellsnesi, við rætur Snæfellsjökuls. Opnar útsýnisleiðir til norðurs og vesturs frá útjöðrum þorpsins. Gamla útvarpsstöðin nálægt er kennileiti á svæðinu.',
+      'Vestasta þorpið á Snæfellsnesi, við rætur Snæfellsjökuls. Opnar útsýnisleiðir til norðurs og vesturs frá útjöðrum þorpsins.',
       'Frí bílastæði í þorpsmiðju og nálægt gömlu útvarpsstönginni.',
       'Sléttur jarðvegur með opnu útsýni. Skjólstýrður frá sunnanvindum af Snæfellsjökli.',
       '[{"level":"warn","title":"Lítið þorp (~380 íbúar) — takmarkað matvöruúrval og gisting","body":""},{"level":"warn","title":"Bókaðu gistingu með góðum fyrirvara — gistirými verða uppseld vikuna fyrir sólmyrkvann","body":""}]'::jsonb
@@ -106,7 +106,7 @@ WITH translations(spot_slug, locale, name, description, parking_info, terrain_no
     (
       'hellnar-viewpoint', 'is',
       'Hellnar — strandútsýni',
-      'Sögulegt útgerðarþorp á suðurströnd Snæfellsness, tengt Arnarstapa með frægri 2,5 km strandgönguleið. Hellnar bjóða dramatískar bergmyndanir, þar á meðal Gatkletti og strandhellinn Baðstofuna. Aðeins minna fjölmennt en Arnarstapi en með takmörkuð bílastæði.',
+      'Sögulegt útgerðarþorp á suðurströnd Snæfellsness, tengt Arnarstapa með frægri 2,5 km strandgönguleið (Gatklettur er meðfram stígnum nær Arnarstapamegin). Hellnar bjóða dramatískar bergmyndanir, þar á meðal strandhellinn Baðstofuna og fuglavarp. Aðeins minna fjölmennt en Arnarstapi en með takmörkuð bílastæði.',
       'Lítið bílastæði við endann á veginum að Hellnum. Um 15 bílar. Auka bílastæði á Arnarstapa (2,5 km ganga eftir strandstígnum).',
       'Strandþorp í sjávarmáli. Suðlæg strönd með útsýni til SV/V yfir Atlantshaf. Gönguleiðir í gegnum hraun að sjávarhellum og boga.',
       '[{"level":"info","title":"Minna og rólegra en Arnarstapi — en líka með minni bílastæði","body":""},{"level":"info","title":"Fjöruhúsið kaffihús hefur takmarkaða gestamóttöku — gæti lokað snemma á sólmyrkvadegi","body":""}]'::jsonb
@@ -114,7 +114,7 @@ WITH translations(spot_slug, locale, name, description, parking_info, terrain_no
     (
       'hvalsneskirkja', 'is',
       'Hvalsneskirkja',
-      'Söguleg steinkirkja frá 1887 á opinni suðurströnd Reykjanesskagans, í dramatískum sandöldum og hrauni með algjörlega óhindruðu útsýni til suðurs og vesturs. Skáldið Hallgrímur Pétursson þjónaði hér sem prestur. Kirkjan veitir táknræna umgjörð fyrir sólmyrkvann.',
+      'Söguleg steinkirkja frá 1887 á opinni suðurströnd Reykjanesskagans, í dramatískum sandöldum og hrauni með algjörlega óhindruðu útsýni til suðurs og vesturs. Skáldið Hallgrímur Pétursson þjónaði hér sem prestur á 1640-áratugnum — legsteinn dóttur hans Steinunnar er innandyra. Kirkjan veitir táknræna umgjörð fyrir sólmyrkvann. Um 5 km sunnan við Sandgerði og 15–20 mínútur frá Keflavíkurflugvelli.',
       'Lítið frítt bílastæði við kirkjuna. Malbikaður aðkeyrsluvegur um Þjóðveg 44 frá Sandgerði.',
       'Grasi vaxinn kirkjugarður með malarstígum. Opin strandhraunbreiða með sandöldum og hraun til suðurs og vesturs — algjörlega óhindraður vestursjóndeildarhringur.',
       '[{"level":"warn","title":"Mjög vindasamur strandstaður — festu búnað og klæddu þig í vindheldar flíkur","body":""},{"level":"warn","title":"Lítið frítt bílastæði við sveitarkirkju — komdu snemma á sólmyrkvadegi, sérstaklega vegna nálægðar við Keflavíkurflugvöll","body":""},{"level":"warn","title":"Reykjanesskagi er enn virkur eldfjallasvæði — athugaðu vegaaðstæður á safetravel.is áður en þú keyrir","body":""}]'::jsonb
@@ -218,7 +218,7 @@ WITH translations(spot_slug, locale, name, description, parking_info, terrain_no
     (
       'sky-lagoon', 'is',
       'Sky Lagoon',
-      'Nýtísku jarðhitaspaa með óendalegri laug á vestjaðri höfuðborgarsvæðisins, sérstaklega hannað með hafsnúandi óendalegri brún sem snýr að Faxaflóa í vestur. Hönnunin liggur vel að sólmyrkvann — gestir geta upplifað hann úr lauginni með óhindruðu vestursjóndeildarhring. Aðgengilegra en Bláa lónið frá miðborg Reykjavíkur.',
+      'Nýtísku jarðhitaspaa með óendalegri laug á suðurjaðri höfuðborgarsvæðisins (Kársnes, Kópavogur), sérstaklega hannað með hafsnúandi óendalegri brún sem snýr að Faxaflóa í suðvestur. Hönnunin rammar bókstaflega inn stefnu sólarinnar við sólmyrkva — gestir geta upplifað hann úr lauginni með óhindruðu sjóndeildarhringi í þeirri átt. Aðgengilegra en Bláa lónið frá miðborg Reykjavíkur.',
       'Vandað bílastæði við Sky Lagoon. Nóg pláss. Einnig aðgengilegt með almenningsstrætó frá miðborg Reykjavíkur.',
       'Hafsnúandi aðstaða í sjávarmáli. Brún óendalegrar laugar snýr beint í vestur yfir Faxaflóa. Algjörlega óhindraður vestursjóndeildarhringur.',
       '[{"level":"info","title":"MIÐAR NAUÐSYNLEGIR — Sky Lagoon krefst fyrirframbókaðrar aðgöngu","body":""},{"level":"info","title":"Líklega selur sérstaka sólmyrkvaviðburðamiða — athugaðu á skylagoon.com","body":""},{"level":"info","title":"Mjög takmörkuð gestamóttöku — bókaðu mjög snemma","body":""},{"level":"info","title":"Stysti heilmyrkvi á listanum okkar (~58s) — þú skiptir lengd fyrir einstaka upplifun","body":""},{"level":"info","title":"Búast má við hærra verðlagi á sólmyrkvaviðburðinum","body":""}]'::jsonb
@@ -242,7 +242,7 @@ WITH translations(spot_slug, locale, name, description, parking_info, terrain_no
     (
       'svodufoss-waterfall', 'is',
       'Svöðufoss',
-      'Myndrænn 10 metra foss sem fellur yfir stórbrotna stuðlabergsbjargi á norðurhlið Snæfellsness. Sérstaklega mælt með af eclipse2026.is sem tilvalinn forgrunn fyrir sólmyrkvaljósmyndun. Stór steypuverk + ægileg jarðfræði + stutt heilmyrkva = einstök sólmyrkvasamsetning.',
+      'Myndrænn 10 metra foss sem fellur yfir stórbrotna stuðlabergsbjargi á norðurhlið Snæfellsness. Staðsettur milli Ólafsvíkur og Grundarfjarðar með um tveggja mínútna heilmyrkva. Fossinn snýr í suður, en sólmyrkvasólin er í vestri — sem þýðir að stuðlabergið og fossfallið geta þjónað sem dramatískur forgrunnur án þess að hindra sólina sjálfa.',
       'Lítið hliðarstæði meðfram veginum. Um 10 bílar. Auðvelt að missa af — leitaðu að litlu skilti.',
       'Stutt ganga frá veginum að útsýnisstaðnum við fossinn. Slétt til lítillega hallandi. Útsýnissvæðið er með opnu útsýni til vesturs yfir akrana og að ströndinni.',
       '[{"level":"info","title":"Mjög takmörkuð bílastæði — mættu snemma eða gakktu frá Ólafsvík","body":""},{"level":"info","title":"Engin þjónusta við fossinn","body":""},{"level":"info","title":"Fossinn sjálfur er lítill (10 m) — aðdráttaraflið er stuðlabergsbjargi á bak við hann","body":""}]'::jsonb
