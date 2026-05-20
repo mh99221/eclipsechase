@@ -169,7 +169,7 @@
       "horizon_eyebrow": "How we measure",
       "horizon_title": "This is the check behind every recommendation.",
       "horizon_body": "Every viewing location runs through the same routine: a 91-ray sweep across the sun's bearing, sampled against ÍslandsDEM 30 m elevation data and corrected for Earth curvature plus atmospheric refraction. The dashed arc plots the sun's path across August 12 — the marker is totality.",
-      "horizon_blocked_name": "Roadside in Ísafjörður",
+      "horizon_blocked_name": "Inside Álftafjörður",
       "horizon_blocked_caption": "Red overlay marks every azimuth where the terrain rises above the sun's altitude. Here it covers most of the sky on the sun's bearing.",
       "horizon_clear_name": "Búðir Black Church",
       "horizon_clear_caption": "Open Atlantic horizon to the west-southwest. The sun's path stays clear of the silhouette for hours either side of totality.",
