@@ -113,36 +113,36 @@ WHERE slug = 'perlan-reykjavik';
 
 UPDATE viewing_spot_translations
 SET description = 'Svört hraunmöl með völuströnd á vesturoddi Snæfellsness, innan Þjóðgarðsins Snæfellsjökuls. Stutt ganga frá bílastæði í gegnum hraunmyndanir niður á dramatíska ströndina. Strandlínan liggur austur–vestur og fjaran opnast til suðurs út í Atlantshafið — vel staðsett miðað við stefnu sólarinnar í vest-suðvestri við sólmyrkva. Salerni við bílastæði.'
-WHERE slug = 'djupalonssandur-beach' AND locale = 'is';
+WHERE spot_slug = 'djupalonssandur-beach' AND locale = 'is';
 
 UPDATE viewing_spot_translations
 SET description = 'Vestasta þorpið á Snæfellsnesi, við rætur Snæfellsjökuls. Opið útsýni til norðurs og vesturs frá útjaðri þorpsins.'
-WHERE slug = 'hellissandur-village' AND locale = 'is';
+WHERE spot_slug = 'hellissandur-village' AND locale = 'is';
 
 UPDATE viewing_spot_translations
 SET description = 'Sögulegt útgerðarþorp á suðurströnd Snæfellsness, tengt Arnarstapa með frægum 2,5 km strandgöngustíg (Gatklettur, þekkti steinbogi, er meðfram stígnum nær Arnarstapamegin). Hellnar hefur dramatískar hraunhellumyndanir og fuglavarp í björgum. Kaffihúsið Fjöruhúsið, í endurnýjuðu fiskhúsi við litla vík, þykir eitt sjarmerandi kaffihúsa Íslands. Suðurstrandlínan veitir hreina sjónlínu í vest-suðvestur fyrir sólmyrkvaeftirlit.'
-WHERE slug = 'hellnar-viewpoint' AND locale = 'is';
+WHERE spot_slug = 'hellnar-viewpoint' AND locale = 'is';
 
 UPDATE viewing_spot_translations
 SET description = 'Hin táknræna svarta timburkirkja á Búðum stendur á opinni hraunbreiðu á suðurströnd Snæfellsness, með víðu útsýni til suðurs og suðvesturs yfir Faxaflóa — beint í stefnu eclipse-sólarinnar. Andstæða svörtu kirkjunnar við myrkan sólmyrkvahimininn gerir þennan stað að einum mest myndræna sólmyrkvasjónarhornanna á Íslandi. Hótel Búðir veitir hágæðaþjónustu nálægt.'
-WHERE slug = 'budir-black-church' AND locale = 'is';
+WHERE spot_slug = 'budir-black-church' AND locale = 'is';
 
 UPDATE viewing_spot_translations
 SET description = 'Nútíma jarðhita-óendanleikalaug á suðurjaðri höfuðborgarsvæðisins (Kársnes, Kópavogur), sérstaklega hönnuð með óendanleikabrún sem horfir yfir Faxaflóa til suðvesturs. Hönnunin rammar bókstaflega inn stefnu sólarinnar — nákvæmlega þá átt sem hún er í við sólmyrkva. Að horfa á himininn dökkna og sjá kórónuna á meðan þú liggur í jarðhitalaug með Atlantshafið út við sjóndeildarhring væri einstök íslensk sólmyrkvaupplifun.'
-WHERE slug = 'sky-lagoon' AND locale = 'is';
+WHERE spot_slug = 'sky-lagoon' AND locale = 'is';
 
 UPDATE viewing_spot_translations
 SET description = 'Söguleg steinkirkja frá 1887 á opinni suðurströnd Reykjanesskagans, í dramatískum sandöldum og hraunbreiðum með algjörlega óhindruðu útsýni til suðurs og vesturs. Skáldið Hallgrímur Pétursson þjónaði hér sem prestur á 1640-áratugnum — legsteinn dóttur hans Steinunnar er innandyra. Útsetta strandlandslagið býður upp á hreina vestlæga hafsjóndeildarhring — nákvæmlega stefna sólarinnar við sólmyrkva. Um 5 km sunnan við Sandgerði og 15–20 mínútur frá Keflavíkurflugvelli.'
-WHERE slug = 'hvalsneskirkja' AND locale = 'is';
+WHERE spot_slug = 'hvalsneskirkja' AND locale = 'is';
 
 UPDATE viewing_spot_translations
 SET description = 'Myndrænn 10 metra foss sem fellur yfir stórbrotna stuðlabergsbjargi á norðurhlið Snæfellsness. Staðsettur milli Ólafsvíkur og Grundarfjarðar með um tveggja mínútna heilmyrkva. Fossinn snýr í suður, en sólmyrkvasólin er í vestri — sem þýðir að stuðlabergið og fossfallið geta þjónað sem dramatískur forgrunnur án þess að hindra sólina sjálfa.'
-WHERE slug = 'svodufoss-waterfall' AND locale = 'is';
+WHERE spot_slug = 'svodufoss-waterfall' AND locale = 'is';
 
 UPDATE viewing_spot_translations
 SET description = 'Frægasta ferðamannaaðdráttarafl Íslands — jarðhitabaðstaður í svartri hraunbreiðu á Reykjanesskaga. Í fyrsta sinn frá opnun fellur Bláa lónið beint á leið heilmyrkvans. Að horfa á himininn dökkna í heilmyrkva á meðan þú liggur í mjólkurbláu 38°C vatninu með jarðhitagufu sem rís í kringum þig væri einstök sólmyrkvaupplifun. Flata eldfjallalandslagið veitir hreina sjónlínu í allar áttir. Skoðaðu vefsíðu Bláa lónsins varðandi opnunartíma á sólmyrkvadegi og hugsanlega sérpakka nær því.'
-WHERE slug = 'blue-lagoon' AND locale = 'is';
+WHERE spot_slug = 'blue-lagoon' AND locale = 'is';
 
 UPDATE viewing_spot_translations
 SET description = 'Perlan, kennileiti Reykjavíkur með glerkúpli, situr á Öskjuhlíð yfir borginni. 360° útsýnispallurinn býður upp á óhindrað víðsýni — vestur yfir Faxaflóa í átt að sólmyrkvasólinni, norður að Esju og yfir alla borgina. Hæðin (um 25 m yfir umhverfinu) tryggir hreinar sjónlínur jafnvel í borgarumhverfi. Sýning Wonders of Iceland inni í Perlunni bætir fræðslugildi við sólmyrkvaheimsóknina. Fyrir gesti sem dvelja í Reykjavík og vilja ekki keyra er þetta besta sólmyrkvaeftirlitsstaðurinn í borginni.'
-WHERE slug = 'perlan-reykjavik' AND locale = 'is';
+WHERE spot_slug = 'perlan-reykjavik' AND locale = 'is';
