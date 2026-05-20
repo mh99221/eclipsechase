@@ -371,6 +371,10 @@ function goToRestore() {
    gradient, so it doesn't follow into the light theme. This CTA uses
    the semantic --accent / --accent-ink pair like every other v0 CTA
    (see SelectedLightbox `.lb-cta`). */
+/* Mirrors .btn-corona (Inter Tight uppercase tracking-wide, 2 px radius)
+   so the checkout CTA matches the landing's "Get Eclipse Pro" and the
+   spot page's upgrade button. Keeps the full-width 320 px constraint
+   because the price card lays out vertically. */
 .price-cta {
   display: inline-flex;
   align-items: center;
@@ -382,11 +386,11 @@ function goToRestore() {
   background: rgb(var(--accent));
   color: rgb(var(--accent-ink));
   border: 0;
-  border-radius: 8px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 12px;
+  border-radius: 2px;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.025em;
   text-transform: uppercase;
   cursor: pointer;
   transition: background 0.2s, transform 0.2s;

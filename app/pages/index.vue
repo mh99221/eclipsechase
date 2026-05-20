@@ -592,17 +592,23 @@ const faqItems = computed(() => [
   margin-top: 4px;
 }
 
+/* Teaser price card on the landing. Mirrors the .price-card surface on
+   /pro (surface/0.04 bg, accent/0.22 border, 12 px radius) so the two
+   pricing surfaces feel like the same product family. */
 .compare-cta {
   margin-top: 18px;
-  padding: 22px 18px;
-  border: 1px solid rgb(var(--accent) / 0.4);
-  background: rgb(var(--accent) / 0.06);
-  border-radius: 4px;
+  padding: 24px 18px;
+  border: 1px solid rgb(var(--accent) / 0.22);
+  background: rgb(var(--surface) / 0.04);
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
   text-align: center;
+}
+@media (min-width: 768px) {
+  .compare-cta { padding: 32px; }
 }
 .compare-price {
   font-family: 'Inter Tight', system-ui, sans-serif;
