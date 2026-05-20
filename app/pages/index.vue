@@ -139,13 +139,13 @@ const faqItems = computed(() => [
 
         <div class="tricky-grid">
           <NuxtLinkLocale
-            to="/spots/latrabjarg-cliffs"
+            to="/spots/ondverdarnes-svortuloft"
             class="tricky-card tricky-card-warn"
           >
             <div class="tricky-photo">
               <img
-                src="/images/spots/latrabjarg-cliffs-hero-thumb.webp"
-                alt="Atlantic puffin on the cliff edge at Látrabjarg, Westfjords"
+                src="/images/spots/ondverdarnes-svortuloft-hero-thumb.webp"
+                alt="Svörtuloft lighthouse on black basalt cliffs at Öndverðarnes, Snæfellsnes"
                 loading="lazy"
                 width="600"
                 height="400"
