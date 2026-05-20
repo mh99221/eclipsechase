@@ -180,6 +180,7 @@ const faqItems = computed(() => [
             </div>
           </NuxtLinkLocale>
         </div>
+        <p class="tricky-caveat">{{ t('v0.home.tricky_caveat') }}</p>
       </section>
 
       <!-- Horizon check, visualised. Sits AFTER the tricky-spot photos so
@@ -501,6 +502,14 @@ const faqItems = computed(() => [
 }
 @media (min-width: 640px) {
   .tricky-grid { grid-template-columns: 1fr 1fr; gap: 18px; }
+}
+.tricky-caveat {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: rgb(var(--ink-3));
+  margin: 14px 0 0;
 }
 .tricky-card {
   display: flex;
