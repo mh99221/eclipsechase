@@ -274,7 +274,7 @@ const faqItems = computed(() => [
         <div class="compare-cta">
           <p class="compare-price">{{ t('v0.home.pro_compare_price') }}</p>
           <p class="compare-price-note">{{ t('v0.home.pro_compare_price_note') }}</p>
-          <NuxtLinkLocale to="/pro" class="compare-cta-button">
+          <NuxtLinkLocale to="/pro" class="btn-corona mt-2">
             {{ t('v0.home.pro_compare_cta') }}
           </NuxtLinkLocale>
           <p class="compare-restore">
@@ -703,26 +703,6 @@ const faqItems = computed(() => [
   color: rgb(var(--ink-2));
   margin: 0;
   max-width: 380px;
-}
-.compare-cta-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 8px;
-  padding: 12px 22px;
-  background: rgb(var(--accent));
-  color: rgb(var(--accent-ink));
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  text-decoration: none;
-  border-radius: 3px;
-  transition: background 0.2s ease;
-}
-.compare-cta-button:hover {
-  background: rgb(var(--accent-strong));
 }
 .compare-restore {
   font-family: 'Inter Tight', system-ui, sans-serif;
