@@ -235,41 +235,9 @@ const faqItems = computed(() => [
         <h2 id="compare-heading" class="home-h2">{{ t('v0.home.pro_compare_title') }}</h2>
         <p class="home-body">{{ t('v0.home.pro_compare_body') }}</p>
 
-        <div class="compare-table" role="table" aria-label="Free vs Pro features">
-          <div class="compare-row compare-row-head" role="row">
-            <span class="compare-cell compare-cell-feature" role="columnheader">{{ t('v0.home.pro_compare_col_feature') }}</span>
-            <span class="compare-cell compare-cell-tier" role="columnheader">{{ t('v0.home.pro_compare_col_free') }}</span>
-            <span class="compare-cell compare-cell-tier" role="columnheader">{{ t('v0.home.pro_compare_col_pro') }}</span>
-          </div>
-          <div
-            v-for="row in [
-              { key: 'row_map', free: true, pro: true },
-              { key: 'row_spots', free: true, pro: true },
-              { key: 'row_horizon', free: true, pro: true },
-              { key: 'row_countdown', free: true, pro: true },
-              { key: 'row_weather', free: true, pro: true },
-              { key: 'row_advisories', free: true, pro: true },
-              { key: 'row_live_cloud', free: false, pro: true },
-              { key: 'row_recommend', free: false, pro: true },
-              { key: 'row_tap_horizon', free: false, pro: true },
-              { key: 'row_offline', free: false, pro: true },
-              { key: 'row_roads', free: false, pro: true },
-            ]"
-            :key="row.key"
-            class="compare-row"
-            role="row"
-          >
-            <span class="compare-cell compare-cell-feature" role="cell">{{ t(`v0.home.pro_compare_${row.key}`) }}</span>
-            <span class="compare-cell compare-cell-tier" role="cell">
-              <span v-if="row.free" class="compare-check" aria-label="Included">✓</span>
-              <span v-else class="compare-dash" aria-label="Not included">—</span>
-            </span>
-            <span class="compare-cell compare-cell-tier" role="cell">
-              <span v-if="row.pro" class="compare-check compare-check-pro" aria-label="Included">✓</span>
-              <span v-else class="compare-dash" aria-label="Not included">—</span>
-            </span>
-          </div>
-        </div>
+        <Card class="compare-card-landing">
+          <ProCompareTable />
+        </Card>
 
         <div class="compare-cta">
           <p class="compare-price">{{ t('v0.home.pro_compare_price') }}</p>
@@ -616,65 +584,12 @@ const faqItems = computed(() => [
   margin-top: 2px;
 }
 
-/* ── Free vs Pro table — mirrors the guide-content table style
-   (soft surface, 8px corner, ink-1/0.62 mono-caps header, hairline
-   row dividers). Grid stays because ✓/— needs fixed tier columns. */
-.compare-table {
-  display: flex;
-  flex-direction: column;
-  background: rgb(var(--surface) / 0.04);
-  border: 1px solid rgb(var(--border-subtle) / 0.08);
-  border-radius: 8px;
-  overflow: hidden;
+/* ── Free vs Pro table — body shared with /pro via <ProCompareTable>.
+   The landing wraps it in a Card so the soft surface/border matches
+   the other landing cards. Slight top-margin gives breathing room
+   under the section body copy. */
+.compare-card-landing {
   margin-top: 4px;
-}
-.compare-row {
-  display: grid;
-  grid-template-columns: 1fr 60px 60px;
-  align-items: center;
-  border-bottom: 1px solid rgb(var(--border-subtle) / 0.06);
-}
-@media (min-width: 640px) {
-  .compare-row { grid-template-columns: 1fr 90px 90px; }
-}
-.compare-row:last-child { border-bottom: none; }
-.compare-row-head .compare-cell {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  color: rgb(var(--ink-1) / 0.62);
-  text-transform: uppercase;
-  font-weight: 500;
-  padding: 10px 14px;
-}
-.compare-row-head { border-bottom: 1px solid rgb(var(--border-subtle) / 0.08); }
-.compare-cell {
-  padding: 9px 14px;
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 13px;
-  line-height: 1.4;
-  font-variant-numeric: tabular-nums;
-}
-@media (min-width: 640px) {
-  .compare-cell { font-size: 14px; }
-}
-.compare-cell-feature {
-  color: rgb(var(--ink-1));
-}
-.compare-cell-tier {
-  text-align: center;
-  font-weight: 600;
-}
-.compare-check {
-  color: rgb(var(--good));
-  font-size: 16px;
-  line-height: 1;
-}
-.compare-check-pro {
-  color: rgb(var(--accent));
-}
-.compare-dash {
-  color: rgb(var(--ink-3));
 }
 
 .compare-cta {
