@@ -148,8 +148,10 @@ const faqItems = computed(() => {
         <HomeTileGrid />
       </section>
 
-      <!-- Iceland-tricky section: non-Pro only -->
-      <section v-if="!isPro" class="home-section home-tricky" aria-labelledby="tricky-heading">
+      <!-- The cloud-vs-totality tradeoff — planning content, not a
+           conversion section. Useful to Pro users on eclipse day too, so
+           it stays visible regardless of tier. -->
+      <section class="home-section home-tricky" aria-labelledby="tricky-heading">
         <p class="home-eyebrow">{{ t('v0.home.tricky_eyebrow') }}</p>
         <h2 id="tricky-heading" class="home-h2">{{ t('v0.home.tricky_title') }}</h2>
         <p class="home-body">{{ t('v0.home.tricky_body') }}</p>
