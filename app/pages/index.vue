@@ -230,6 +230,66 @@ const faqItems = computed(() => [
         <p class="horizon-note">{{ t('v0.home.horizon_note') }}</p>
       </section>
 
+      <!-- Dashboard preview — three phone screenshots of the live map
+           (scoring / horizon / road cam). Sits between methodology (how
+           we check) and the Free vs Pro offer so the page goes:
+           tradeoff → methodology → product in action → offer. -->
+      <section class="home-section home-dashboard" aria-labelledby="dashboard-heading">
+        <p class="home-eyebrow">{{ t('v0.home.dashboard_eyebrow') }}</p>
+        <h2 id="dashboard-heading" class="home-h2">{{ t('v0.home.dashboard_title') }}</h2>
+        <p class="home-body">{{ t('v0.home.dashboard_body') }}</p>
+
+        <div class="dashboard-grid">
+          <figure class="dashboard-card">
+            <div class="dashboard-shot">
+              <img
+                :src="'/landing/dashboard-1-scoring.webp'"
+                :alt="t('v0.home.dashboard_scoring_alt')"
+                loading="lazy"
+                width="1048"
+                height="2340"
+              >
+            </div>
+            <figcaption class="dashboard-meta">
+              <h3 class="dashboard-name">{{ t('v0.home.dashboard_scoring_title') }}</h3>
+              <p class="dashboard-caption">{{ t('v0.home.dashboard_scoring_caption') }}</p>
+            </figcaption>
+          </figure>
+
+          <figure class="dashboard-card">
+            <div class="dashboard-shot">
+              <img
+                :src="'/landing/dashboard-2-horizon.webp'"
+                :alt="t('v0.home.dashboard_horizon_alt')"
+                loading="lazy"
+                width="1048"
+                height="2340"
+              >
+            </div>
+            <figcaption class="dashboard-meta">
+              <h3 class="dashboard-name">{{ t('v0.home.dashboard_horizon_title') }}</h3>
+              <p class="dashboard-caption">{{ t('v0.home.dashboard_horizon_caption') }}</p>
+            </figcaption>
+          </figure>
+
+          <figure class="dashboard-card">
+            <div class="dashboard-shot">
+              <img
+                :src="'/landing/dashboard-3-roadcam.webp'"
+                :alt="t('v0.home.dashboard_roadcam_alt')"
+                loading="lazy"
+                width="1048"
+                height="2340"
+              >
+            </div>
+            <figcaption class="dashboard-meta">
+              <h3 class="dashboard-name">{{ t('v0.home.dashboard_roadcam_title') }}</h3>
+              <p class="dashboard-caption">{{ t('v0.home.dashboard_roadcam_caption') }}</p>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
       <!-- Free vs Pro comparison: non-Pro only -->
       <section v-if="!isPro" class="home-section home-compare" aria-labelledby="compare-heading">
         <p class="home-eyebrow">{{ t('v0.home.pro_compare_eyebrow') }}</p>
@@ -491,6 +551,68 @@ const faqItems = computed(() => [
   color: rgb(var(--ink-3));
   margin: 6px 0 0;
   text-transform: uppercase;
+}
+
+/* ── Dashboard preview — three portrait phone screenshots.
+   Mirrors .horizon-grid / .tricky-grid card chrome (surface/0.04 bg,
+   border/0.08, 8 px radius) so the section reads as one design
+   language with the rest of the landing. 1-col on mobile, 3-col on
+   tablet+. Shots keep their portrait aspect ratio inside a darker
+   inset so the phone UI breathes against the section. */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 8px;
+}
+@media (min-width: 640px) {
+  .dashboard-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+}
+@media (min-width: 768px) {
+  .dashboard-grid { gap: 18px; }
+}
+.dashboard-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 14px 14px 12px;
+  background: rgb(var(--surface) / 0.04);
+  border: 1px solid rgb(var(--border-subtle) / 0.08);
+  border-radius: 8px;
+}
+.dashboard-shot {
+  background: rgb(var(--surface-raised) / 0.4);
+  border-radius: 6px;
+  overflow: hidden;
+  aspect-ratio: 1048 / 2340;
+}
+.dashboard-shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.dashboard-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 2px;
+}
+.dashboard-name {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgb(var(--ink-1));
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+.dashboard-caption {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgb(var(--ink-2));
+  margin: 0;
 }
 
 /* ── Tricky comparison ──────────────────────────────────── */
