@@ -181,24 +181,30 @@ After steps 1–2 ship to production, re-run
 existing entries unchanged barring API drift). The numbers above are
 the expected values.
 
-### 6. Hero photo
+### 6. Hero photo (already present)
 
-The spot detail page renders a placeholder if no photo is seeded, but
-launching without a real image is a poor product experience for the
-single landmark we're highlighting in the region.
+The full + thumb WebP pair already exists in `public/images/spots/` as
+`dynjandi-arnarfjordur-hero.webp` and `dynjandi-arnarfjordur-hero-thumb.webp`
+— left over from the dropped `dynjandi-arnarfjordur` seed. The image is
+of Fjallfoss (the main 100 m waterfall), which is the recognizable
+landmark on the same trail; it reads as a hero for the
+Hæstahjallafoss spot.
 
-Out of scope for this change set:
+Three small clean-ups in this change set:
 
-* Sourcing the actual image (deferred — a free-licensed Wikimedia or
-  Unsplash image of the falls with proper attribution is fine; or my
-  own photo if I have one from a previous trip).
-* Running it through `scripts/process-spot-photos.mjs` to produce the
-  full + thumb WebP pair.
-* Seeding the `spot_photos` row via the established pattern in
-  `seed-spot-photos.sql`.
-
-The implementation plan will include "photo deferred — track separately"
-as an explicit non-blocking item so the rest of the spot can ship.
+* Rename both files to match the new slug:
+  `haestahjallafoss-dynjandi-hero.webp` and
+  `haestahjallafoss-dynjandi-hero-thumb.webp`. Use `git mv` so blame
+  history follows.
+* Update `scripts/seed-spot-photos.sql`: replace the stale UPDATE
+  targeting `slug = 'dynjandi-arnarfjordur'` with a fresh one targeting
+  `slug = 'haestahjallafoss-dynjandi'`, updated `filename` and a
+  rewritten `alt` ("Fjallfoss, the main waterfall in the Dynjandi
+  cascade, with autumn vegetation in the foreground"). Keep
+  `credit: Unsplash`, `license: unsplash`, `is_hero: true`,
+  `horizon_view: false` as on the existing row.
+* Apply the SQL in the same Supabase session as steps 1, 2, and 4 so
+  the spot ships with its photo on the first deploy.
 
 ### 7. i18n
 
@@ -257,8 +263,12 @@ not from the i18n bundle.
   correct 100 m.
 * **Hiker safety at no-signal site.** Addressed by the second advisory
   (cell coverage) — same pattern as existing hike spots.
-* **Photo deferred.** Captured in step 6 as explicit non-blocking
-  follow-up. The spot can ship with placeholder if needed.
+* **Photo is of Fjallfoss, not Hæstahjallafoss.** The existing image
+  shows the main 100 m drop, not the upper-trail ledge itself.
+  Acceptable for launch — it's the recognizable landmark on the same
+  trail and visitors will see it from the parking — but worth swapping
+  in a true Hæstahjallafoss frame later if one becomes available.
+  Captured by the `alt` text rewrite in step 6.
 
 ## Acceptance
 
@@ -276,5 +286,6 @@ The change is done when:
 * Trailhead pin appears on `/spots/haestahjallafoss-dynjandi`'s
   `SpotLocationMap` and on `/spots/index` filter map (existing pattern).
 * Icelandic translation renders when locale is switched to `is`.
-* Photo placeholder is acceptable for ship; real photo tracked as
-  separate follow-up.
+* Hero photo loads from the renamed
+  `haestahjallafoss-dynjandi-hero.webp` (and thumb), with the rewritten
+  Fjallfoss-accurate alt text.
