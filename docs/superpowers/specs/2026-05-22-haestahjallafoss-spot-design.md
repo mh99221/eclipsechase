@@ -3,6 +3,7 @@
 **Date:** 2026-05-22
 **Status:** Draft, awaiting review
 **Author:** Martin
+**Sibling spec:** [2026-05-22-sandafell-spot-design.md](2026-05-22-sandafell-spot-design.md) — the two new Westfjords spots ship independently but share the same `guide.md` link-list update.
 
 ## Goal
 
@@ -220,6 +221,19 @@ For the English-base content under `i18n/en.json` and the v0 keys: no
 new keys needed — the spot detail page reads spot copy from the API,
 not from the i18n bundle.
 
+### 8. Guide page link
+
+Update `content/guide.md` line 39 — the Westfjords "Top spots" link
+list — to append Hæstahjallafoss. After this change:
+
+```markdown
+Top spots: [Látrabjarg Cliffs](/spots/latrabjarg-cliffs) · [Breiðavík Beach](/spots/breidavik-beach) · [Patreksfjörður Beach](/spots/patreksfjordur-beach) · [Ísafjörður Harbour](/spots/isafjordur-harbour) · [Hæstahjallafoss (Dynjandi)](/spots/haestahjallafoss-dynjandi)
+```
+
+The sibling [Sandafell spec](2026-05-22-sandafell-spot-design.md) also
+appends to this same line. The two specs are order-independent —
+whichever lands second appends its link to the existing list.
+
 ## Copy (English, draft)
 
 **Description**
@@ -289,3 +303,5 @@ The change is done when:
 * Hero photo loads from the renamed
   `haestahjallafoss-dynjandi-hero.webp` (and thumb), with the rewritten
   Fjallfoss-accurate alt text.
+* `content/guide.md` Westfjords link list includes a
+  `[Hæstahjallafoss (Dynjandi)](/spots/haestahjallafoss-dynjandi)` entry.
