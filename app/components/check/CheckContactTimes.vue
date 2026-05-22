@@ -1,10 +1,12 @@
 <script setup lang="ts">
 /**
- * Eclipse contact times for the checked location. Reuses the ContactList
- * formatting idea from spot-detail but standalone, since /check isn't
- * tied to a curated spot. Handles two cases:
- *   - inside path: C1 → C2 → C3 → C4 with totality bracketed
- *   - outside path: C1 → C4 only (partial eclipse)
+ * Eclipse contact times for the checked location. Mirrors the
+ * spot-detail/ContactList row layout (40px contact key + label + UTC
+ * time, divider between rows) so /check feels consistent with the
+ * curated-spot pages.
+ *
+ * Inside the path: full C1 → C2 → MAX → C3 → C4 timetable.
+ * Outside the path: just C1 + C4 (the partial-eclipse bracket).
  */
 import type { CheckResult } from '~/types/check'
 
@@ -14,45 +16,92 @@ function fmtTime(iso: string | null): string {
   if (!iso) return '—'
   const d = new Date(iso)
   if (isNaN(d.getTime())) return '—'
-  const hh = String(d.getUTCHours()).padStart(2, '0')
-  const mm = String(d.getUTCMinutes()).padStart(2, '0')
-  const ss = String(d.getUTCSeconds()).padStart(2, '0')
-  return `${hh}:${mm}:${ss}`
+  return d.toISOString().slice(11, 19)
+}
+
+function midpoint(c2: string | null, c3: string | null): string {
+  if (!c2 || !c3) return '—'
+  const a = new Date(c2).getTime()
+  const b = new Date(c3).getTime()
+  if (isNaN(a) || isNaN(b)) return '—'
+  return new Date((a + b) / 2).toISOString().slice(11, 19)
 }
 
 const rows = computed(() => {
   const ct = props.result.totality.contactTimes
   const inside = props.result.totality.insidePath
-  const list: { label: string; time: string; accent?: boolean }[] = [
-    { label: 'Partial begins (C1)', time: fmtTime(ct.c1) },
-  ]
   if (inside) {
-    list.push({ label: 'Totality begins (C2)', time: fmtTime(ct.c2), accent: true })
-    list.push({ label: 'Totality ends (C3)', time: fmtTime(ct.c3), accent: true })
+    return [
+      { k: 'C1',  l: 'Partial begins',  t: fmtTime(ct.c1), big: false, faint: true  },
+      { k: 'C2',  l: 'Totality begins', t: fmtTime(ct.c2), big: true,  faint: false },
+      { k: 'MAX', l: 'Maximum',         t: midpoint(ct.c2, ct.c3), big: false, faint: false },
+      { k: 'C3',  l: 'Totality ends',   t: fmtTime(ct.c3), big: true,  faint: false },
+      { k: 'C4',  l: 'Partial ends',    t: fmtTime(ct.c4), big: false, faint: true  },
+    ]
   }
-  list.push({ label: 'Partial ends (C4)', time: fmtTime(ct.c4) })
-  return list
+  return [
+    { k: 'C1', l: 'Partial begins', t: fmtTime(ct.c1), big: false, faint: false },
+    { k: 'C4', l: 'Partial ends',   t: fmtTime(ct.c4), big: false, faint: false },
+  ]
 })
 </script>
 
 <template>
-  <section>
-    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-3">
-      Contact times (UTC)
-    </p>
-    <div class="bg-surface border border-border-subtle/40 rounded divide-y divide-border-subtle/40">
-      <div
-        v-for="row in rows"
-        :key="row.label"
-        class="flex items-center justify-between px-4 py-3"
-      >
-        <span class="text-sm text-ink-2" :class="{ 'text-ink-1 font-semibold': row.accent }">
-          {{ row.label }}
-        </span>
-        <span class="font-mono text-sm tabular-nums" :class="row.accent ? 'text-accent' : 'text-ink-2'">
-          {{ row.time }}
-        </span>
-      </div>
+  <div class="contact-list">
+    <div
+      v-for="r in rows"
+      :key="r.k"
+      class="row"
+      :data-big="r.big"
+      :data-faint="r.faint"
+    >
+      <span class="k">{{ r.k }}</span>
+      <span class="l">{{ r.l }}</span>
+      <span class="t">{{ r.t }}</span>
     </div>
-  </section>
+  </div>
 </template>
+
+<style scoped>
+.contact-list { display: flex; flex-direction: column; }
+.row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  gap: 12px;
+  padding: 10px 0;
+  align-items: center;
+}
+.row + .row { border-top: 1px solid rgb(var(--border-subtle) / 0.08); }
+.k {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  color: rgb(var(--ink-1) / 0.62);
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+.l {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13px;
+  color: rgb(var(--ink-1));
+}
+.t {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  color: rgb(var(--ink-1));
+}
+.row[data-big='true'] .l,
+.row[data-big='true'] .t {
+  font-size: 15px;
+  font-weight: 500;
+  color: rgb(var(--totality));
+}
+.row[data-big='true'] .k {
+  color: rgb(var(--accent));
+}
+.row[data-faint='true'] .l,
+.row[data-faint='true'] .t {
+  color: rgb(var(--ink-1) / 0.62);
+}
+</style>

@@ -6,8 +6,10 @@
  *   - no lat/lng query: empty form for paste-and-go
  *   - lat/lng present : result page (shareable URL)
  *
- * The form submit redirects to the canonical `?lat=…&lng=…` URL so the
- * result is shareable. URL coords are rounded to 5 decimals (~1 m).
+ * Form is intentionally a bare <div> (not <form>) so the browser
+ * never falls back to a native GET submit that would strip the
+ * canonical ?lat=&lng= query — submission goes via @click on the
+ * button and @keyup.enter on the input.
  */
 import type { CheckResult } from '~/types/check'
 import type { HorizonProfileData } from '~/types/horizon'
@@ -21,8 +23,6 @@ const siteUrl = (config.public.siteUrl as string) || 'https://eclipsechase.is'
 const input = ref('')
 const error = ref('')
 
-// Parse query into reactive lat/lng. When either is missing the API
-// call is skipped (immediate: !!latParam) and `data` stays null.
 const latParam = computed(() => {
   const v = route.query.lat
   return typeof v === 'string' ? v : ''
@@ -33,9 +33,7 @@ const lngParam = computed(() => {
 })
 const hasQueryCoords = computed(() => latParam.value !== '' && lngParam.value !== '')
 
-// useFetch handles SSR + client hydration + reactivity to query changes.
-// We disable when no lat/lng so the empty form doesn't trigger a request.
-const { data: result, pending, error: fetchError, refresh } = await useFetch<CheckResult>(
+const { data: result, pending, error: fetchError } = await useFetch<CheckResult>(
   '/api/check',
   {
     query: { lat: latParam, lng: lngParam },
@@ -46,7 +44,6 @@ const { data: result, pending, error: fetchError, refresh } = await useFetch<Che
   },
 )
 
-// Surface API errors to the user as the friendly banner.
 watchEffect(() => {
   if (fetchError.value) {
     const e = fetchError.value as any
@@ -55,7 +52,6 @@ watchEffect(() => {
   }
 })
 
-// Pre-fill the input box from the URL so the user can edit and re-check.
 watchEffect(() => {
   if (!input.value && hasQueryCoords.value) {
     const lat = parseFloat(latParam.value)
@@ -88,8 +84,6 @@ async function handleSubmit() {
   })
 }
 
-// Build HorizonProfile view-model — only render when we have a real
-// in-grid horizon match.
 const horizonProfileData = computed<HorizonProfileData | null>(() => {
   if (!result.value) return null
   const h = result.value.horizon
@@ -127,8 +121,6 @@ useHead({
     { property: 'og:type', content: 'website' },
   ],
   link: [
-    // Strip query params from canonical so search doesn't index every
-    // unique lat/lng URL as a separate page.
     { rel: 'canonical', href: `${siteUrl}/check` },
   ],
 })
@@ -136,81 +128,68 @@ useHead({
 
 <template>
   <PageShell screen="check" width="reading">
-    <header class="mb-8">
-      <p class="font-mono text-xs tracking-[0.3em] text-accent/80 uppercase mb-3">
-        The check
-      </p>
-      <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-ink-1 mb-3">
+    <!-- Page header: only shown without a result so the result hero
+         can take the visual lead once we have data. -->
+    <header v-if="!result" class="page-header">
+      <Eyebrow tone="accent" class="page-eyebrow">The check</Eyebrow>
+      <h1 class="page-h1">
         Check any spot for the August 12 eclipse.
       </h1>
-      <p v-if="!result" class="text-base text-ink-2 leading-relaxed max-w-2xl">
+      <p class="page-subhead">
         Paste coordinates or a Google Maps link. We'll check terrain
         horizon, 10-year cloud history, and your position in the path of
         totality — all from the same data we use for our curated spots.
       </p>
     </header>
 
-    <!-- Input row: visible on both empty and result states so user can re-check.
-         Intentionally not wrapped in <form> — submission goes via the button's
-         @click (and Enter via @keyup.enter on the input) so we never trigger
-         the browser's native form GET, which would otherwise navigate to
-         /check? on hydration glitches. -->
-    <div class="mb-6">
-      <div class="flex flex-col sm:flex-row gap-2">
+    <!-- Input row: bare <div>, not <form>, so the browser cannot
+         fall back to a native GET submit on hydration glitches. -->
+    <div class="input-row">
+      <div class="input-row-inner">
         <input
           v-model="input"
           type="text"
           autocomplete="off"
           spellcheck="false"
           placeholder="65.86182, -23.48019"
-          class="flex-1 px-4 py-3 bg-surface border border-border-subtle/60 rounded text-ink-1 placeholder:text-ink-3 font-mono text-sm focus:outline-none focus:border-accent/60 transition-colors"
+          class="coord-input"
           aria-label="Paste coordinates or a Google Maps link"
           @keyup.enter="handleSubmit"
         >
         <button
           type="button"
+          class="coord-submit"
           :disabled="pending"
-          class="px-5 py-3 bg-accent text-accent-ink font-mono text-xs tracking-wider uppercase rounded hover:bg-accent-strong transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           @click="handleSubmit"
         >
           {{ pending ? 'Checking…' : 'Check spot →' }}
         </button>
       </div>
-      <p v-if="error" class="mt-3 px-3 py-2.5 ec-banner-warn text-xs font-mono">
-        {{ error }}
-      </p>
+      <p v-if="error" class="input-error ec-banner-warn">{{ error }}</p>
     </div>
 
-    <!-- Hints (only when no result yet) -->
-    <div v-if="!result && !hasQueryCoords" class="mb-12 text-sm text-ink-3">
-      <p class="font-mono text-[10px] uppercase tracking-[0.2em] mb-2">
-        Accepted formats
-      </p>
-      <ul class="space-y-1.5 list-none pl-0">
-        <li>Decimal pair: <code class="text-ink-2">65.86182, -23.48019</code></li>
-        <li>With hemisphere: <code class="text-ink-2">65.86°N, 23.48°W</code></li>
+    <!-- Format hints — only on empty state. -->
+    <section v-if="!result && !hasQueryCoords" class="hints">
+      <Eyebrow tone="dim" class="hints-eyebrow">Accepted formats</Eyebrow>
+      <ul class="hints-list">
+        <li>Decimal pair <code>65.86182, -23.48019</code></li>
+        <li>With hemisphere <code>65.86°N, 23.48°W</code></li>
         <li>Google Maps link</li>
         <li>Apple Maps link</li>
       </ul>
-    </div>
+    </section>
 
     <!-- Loading -->
-    <div
-      v-if="pending && !result"
-      class="py-12 text-center font-mono text-xs text-ink-3 tracking-wider"
-    >
-      Computing…
-    </div>
+    <div v-if="pending && !result" class="loading-row">Computing…</div>
 
     <!-- Result -->
-    <div v-if="result && !pending" class="space-y-10">
+    <div v-if="result && !pending" class="result-stack">
       <CheckResultCard :result="result" />
+      <CheckStatStrip :result="result" />
 
-      <!-- Horizon profile — only if we actually have grid coverage -->
-      <section v-if="horizonProfileData">
-        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-3">
-          Horizon profile
-        </p>
+      <!-- Horizon profile — only when we have grid coverage. -->
+      <section v-if="horizonProfileData" class="result-section">
+        <Eyebrow tone="dim">Horizon profile</Eyebrow>
         <HorizonProfile
           :data="horizonProfileData"
           :lat="result.input.lat"
@@ -218,27 +197,189 @@ useHead({
         />
         <p
           v-if="result.horizon.nearestGridPoint && result.horizon.nearestGridPoint.distanceMeters > 50"
-          class="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3"
+          class="snap-note"
         >
           Sampled {{ Math.round(result.horizon.nearestGridPoint.distanceMeters) }} m
           from your input point
         </p>
       </section>
 
-      <CheckContactTimes :result="result" />
+      <section class="result-section">
+        <Eyebrow tone="dim">Contact times (UTC)</Eyebrow>
+        <Card>
+          <CheckContactTimes :result="result" />
+        </Card>
+      </section>
 
-      <CheckCloudHistory :result="result" />
+      <section v-if="result.cloudHistory" class="result-section">
+        <CheckCloudHistory :result="result" />
+      </section>
 
-      <CheckSoftCTA :inside-path="result.totality.insidePath" />
+      <section class="result-section">
+        <Eyebrow tone="dim">What next</Eyebrow>
+        <CheckSoftCTA :inside-path="result.totality.insidePath" />
+      </section>
 
-      <CheckShareButtons :result="result" />
+      <section class="result-section">
+        <Eyebrow tone="dim">Share this check</Eyebrow>
+        <CheckShareButtons :result="result" />
+      </section>
     </div>
   </PageShell>
 </template>
 
 <style scoped>
-code {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.85em;
+.page-header {
+  margin-bottom: 24px;
+}
+.page-eyebrow {
+  margin-bottom: 12px;
+}
+.page-h1 {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: rgb(var(--ink-1));
+  line-height: 1.1;
+  margin: 0 0 12px;
+}
+@media (min-width: 640px) {
+  .page-h1 { font-size: 40px; }
+}
+@media (min-width: 1024px) {
+  .page-h1 { font-size: 48px; }
+}
+.page-subhead {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgb(var(--ink-1) / 0.78);
+  max-width: 38rem;
+}
+
+.input-row {
+  margin-bottom: 20px;
+}
+.input-row-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+@media (min-width: 640px) {
+  .input-row-inner { flex-direction: row; }
+}
+.coord-input {
+  flex: 1;
+  min-width: 0;
+  padding: 13px 16px;
+  background: rgb(var(--surface) / 0.04);
+  border: 1px solid rgb(var(--border-subtle) / 0.18);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  color: rgb(var(--ink-1));
+  transition: border-color 0.15s, background 0.15s;
+}
+.coord-input::placeholder {
+  color: rgb(var(--ink-1) / 0.32);
+}
+.coord-input:focus {
+  outline: none;
+  border-color: rgb(var(--accent) / 0.62);
+  background: rgb(var(--surface) / 0.06);
+}
+.coord-submit {
+  padding: 13px 22px;
+  background: rgb(var(--accent));
+  color: rgb(var(--accent-ink));
+  border: 1px solid rgb(var(--accent));
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+.coord-submit:hover:not(:disabled) {
+  background: rgb(var(--accent-strong));
+  border-color: rgb(var(--accent-strong));
+}
+.coord-submit:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 2px;
+}
+.coord-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.input-error {
+  margin-top: 10px;
+  padding: 10px 12px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11.5px;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  border-radius: 8px;
+}
+
+.hints {
+  margin-top: 8px;
+  margin-bottom: 28px;
+}
+.hints-eyebrow {
+  margin-bottom: 10px;
+}
+.hints-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13.5px;
+  color: rgb(var(--ink-1) / 0.78);
+}
+.hints-list code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  background: rgb(var(--surface) / 0.04);
+  border: 1px solid rgb(var(--border-subtle) / 0.08);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-left: 6px;
+  color: rgb(var(--ink-1));
+}
+
+.loading-row {
+  padding: 48px 0;
+  text-align: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-1) / 0.42);
+}
+
+.result-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.result-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.snap-note {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-1) / 0.42);
 }
 </style>

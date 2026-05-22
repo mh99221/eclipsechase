@@ -1,119 +1,144 @@
 <script setup lang="ts">
 /**
- * Big verdict card at the top of /check results. Three shapes:
- *   - Inside totality + horizon known: "CLEAR / MARGINAL / RISKY / BLOCKED"
- *   - Inside totality + horizon unknown: "INSIDE PATH" + caveat
- *   - Outside totality: "OUTSIDE PATH" + how far from path
+ * Result hero for /check — mirrors the SpotHeroBlock pattern (eyebrow,
+ * big display heading, coords readout, secondary meta line) so a
+ * coordinate check feels like the same family as a curated-spot page.
+ *
+ * Three states:
+ *   - inside-path + known horizon: HorizonBadge + duration line
+ *   - inside-path + unknown horizon: amber "inside path" pill
+ *   - outside-path: dim "outside path" pill + nearest-path note
  */
 import type { CheckResult } from '~/types/check'
-import { HORIZON_VERDICT_STYLES, formatDuration, compassDirection } from '~/utils/eclipse'
+import { formatDuration, compassDirection } from '~/utils/eclipse'
 
 const props = defineProps<{ result: CheckResult }>()
 
-const verdictStyle = computed(() => {
-  const v = props.result.horizon.verdict
-  if (v === 'unknown') return null
-  return HORIZON_VERDICT_STYLES[v] ?? null
+const verdict = computed(() => props.result.horizon.verdict)
+const insidePath = computed(() => props.result.totality.insidePath)
+
+const coordLine = computed(() => {
+  const { lat, lng } = props.result.input
+  const ns = lat >= 0 ? 'N' : 'S'
+  const ew = lng >= 0 ? 'E' : 'W'
+  return `${Math.abs(lat).toFixed(4)}° ${ns} · ${Math.abs(lng).toFixed(4)}° ${ew}`
 })
 
-function fmtCoord(lat: number, lng: number): string {
-  const latStr = `${Math.abs(lat).toFixed(5)}°${lat >= 0 ? 'N' : 'S'}`
-  const lngStr = `${Math.abs(lng).toFixed(5)}°${lng >= 0 ? 'E' : 'W'}`
-  return `${latStr}, ${lngStr}`
-}
+const distanceToPath = computed(() => {
+  const m = props.result.totality.distanceFromNearestPointMeters
+  if (m == null) return null
+  return Math.round(m / 1000)
+})
+
+const bearingToPath = computed(() => {
+  const r = props.result
+  if (r.totality.nearestGridLat == null || r.totality.nearestGridLng == null) return null
+  // bearing from input → nearest in-path grid point
+  const dLat = r.totality.nearestGridLat - r.input.lat
+  const dLng = r.totality.nearestGridLng - r.input.lng
+  // atan2 in lat/lng space is rough but plenty for "south-ish" copy
+  const az = (Math.atan2(dLng, dLat) * 180) / Math.PI
+  return compassDirection((az + 360) % 360)
+})
 </script>
 
 <template>
-  <section class="space-y-3">
-    <!-- Inside path: show horizon verdict if known -->
-    <div
-      v-if="result.totality.insidePath && verdictStyle"
-      class="rounded border-2 p-5 sm:p-6"
-      :class="[verdictStyle.bg, verdictStyle.border]"
-    >
-      <div class="flex items-center gap-3 mb-2">
-        <span
-          class="w-3.5 h-3.5 rounded-full flex-shrink-0"
-          :style="{ backgroundColor: verdictStyle.color }"
-        />
-        <h2
-          class="font-display text-3xl sm:text-4xl font-bold uppercase tracking-tight"
-          :style="{ color: verdictStyle.color }"
-        >
-          {{ result.horizon.verdict }}
-        </h2>
-        <span
-          v-if="result.horizon.clearanceDegrees != null"
-          class="font-mono text-sm text-ink-2 ml-auto"
-        >
-          {{ Math.abs(result.horizon.clearanceDegrees).toFixed(1) }}° clearance
-        </span>
-      </div>
-      <p class="font-mono text-xs text-ink-3 tracking-wider mb-3">
-        {{ fmtCoord(result.input.lat, result.input.lng) }}
-      </p>
-      <p class="text-ink-2">
-        Inside the path of totality.
-        <span v-if="result.totality.durationSeconds != null" class="text-ink-1 font-semibold">
-          {{ formatDuration(result.totality.durationSeconds) }} of totality
-        </span>
-        at this location.
-      </p>
+  <header class="check-hero">
+    <div class="check-hero-kicker-row">
+      <span class="check-hero-kicker">● COORDINATE CHECK</span>
+      <!-- Right-aligned verdict pill. The HorizonBadge already encodes
+           the four verdicts; we render a neutral pill for the
+           outside-path and unknown-horizon cases. -->
+      <HorizonBadge
+        v-if="insidePath && verdict !== 'unknown' && result.horizon.clearanceDegrees != null"
+        :verdict="verdict as Exclude<typeof verdict, 'unknown'>"
+        :clearance="result.horizon.clearanceDegrees"
+        compact
+      />
+      <span v-else-if="insidePath" class="check-hero-pill" data-tone="warn">In path · no horizon data</span>
+      <span v-else class="check-hero-pill" data-tone="dim">Outside path</span>
     </div>
 
-    <!-- Inside path but no horizon coverage -->
-    <div
-      v-else-if="result.totality.insidePath && !verdictStyle"
-      class="rounded border-2 border-accent/40 bg-accent-soft/30 p-5 sm:p-6"
-    >
-      <div class="flex items-baseline gap-3 mb-2">
-        <h2 class="font-display text-2xl sm:text-3xl font-bold uppercase text-ink-1">
-          Inside path
-        </h2>
-        <span class="font-mono text-xs text-ink-3 ml-auto">No horizon data</span>
-      </div>
-      <p class="font-mono text-xs text-ink-3 tracking-wider mb-3">
-        {{ fmtCoord(result.input.lat, result.input.lng) }}
-      </p>
-      <p class="text-ink-2">
-        This point is inside the totality path
-        <span v-if="result.totality.durationSeconds != null" class="text-ink-1">
-          ({{ formatDuration(result.totality.durationSeconds) }})
-        </span>
-        but it's outside the pre-computed horizon grid (mostly western Iceland).
-        We can't tell whether terrain blocks the low sun here.
-      </p>
-    </div>
+    <h1 class="check-hero-coords">{{ coordLine }}</h1>
 
-    <!-- Outside path -->
-    <div
-      v-else
-      class="rounded border-2 border-border-subtle/60 bg-surface p-5 sm:p-6"
-    >
-      <div class="flex items-baseline gap-3 mb-2">
-        <h2 class="font-display text-2xl sm:text-3xl font-bold uppercase text-ink-1">
-          Outside path
-        </h2>
-      </div>
-      <p class="font-mono text-xs text-ink-3 tracking-wider mb-3">
-        {{ fmtCoord(result.input.lat, result.input.lng) }}
-      </p>
-      <p class="text-ink-2">
-        These coordinates fall outside the path of totality.
-        <span v-if="result.totality.distanceFromNearestPointMeters != null && result.totality.nearestGridLat != null">
-          The nearest grid point inside the path is
-          <span class="text-ink-1 font-semibold">
-            {{ Math.round(result.totality.distanceFromNearestPointMeters / 1000) }} km
-            {{ compassDirection(
-              Math.atan2(
-                (result.totality.nearestGridLng ?? 0) - result.input.lng,
-                (result.totality.nearestGridLat ?? 0) - result.input.lat,
-              ) * 180 / Math.PI,
-            ) }}.
-          </span>
+    <p class="check-hero-meta">
+      <template v-if="insidePath && result.totality.durationSeconds != null">
+        <span class="check-hero-meta-strong">{{ formatDuration(result.totality.durationSeconds) }}</span>
+        of totality at this location
+      </template>
+      <template v-else-if="insidePath">
+        Inside the path of totality on August 12, 2026
+      </template>
+      <template v-else>
+        Partial eclipse only —
+        <span v-if="distanceToPath != null && bearingToPath" class="check-hero-meta-strong">
+          {{ distanceToPath }} km {{ bearingToPath }}
         </span>
-        You'll see a deep partial eclipse here — interesting, but not totality.
-      </p>
-    </div>
-  </section>
+        <span v-else>this location is outside the path</span>
+        from the totality path
+      </template>
+    </p>
+  </header>
 </template>
+
+<style scoped>
+.check-hero {
+  padding: 4px 0 8px;
+}
+.check-hero-kicker-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  min-height: 22px;
+}
+.check-hero-kicker {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  color: rgb(var(--accent));
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.check-hero-pill {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 99px;
+  border: 1px solid rgb(var(--border-subtle) / 0.18);
+}
+.check-hero-pill[data-tone='warn'] {
+  color: rgb(var(--warn));
+  border-color: rgb(var(--warn) / 0.32);
+  background: rgb(var(--warn) / 0.08);
+}
+.check-hero-pill[data-tone='dim'] {
+  color: rgb(var(--ink-1) / 0.62);
+}
+.check-hero-coords {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: rgb(var(--ink-1));
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 640px) {
+  .check-hero-coords { font-size: 34px; }
+}
+.check-hero-meta {
+  margin-top: 10px;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgb(var(--ink-1) / 0.78);
+}
+.check-hero-meta-strong {
+  color: rgb(var(--ink-1));
+  font-weight: 600;
+}
+</style>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /**
  * Three share affordances for /check results: copy link, share to
- * Reddit, share to Twitter/X. Each builds a pre-populated URL so the
- * shared destination already knows what was checked.
+ * Reddit, share to Twitter/X. Styled as pills matching the rest of
+ * the site (mono caps, rounded-99, subtle border).
  */
 import type { CheckResult } from '~/types/check'
 
@@ -38,7 +38,6 @@ async function copyLink() {
     if (copyTimer) clearTimeout(copyTimer)
     copyTimer = setTimeout(() => { copied.value = false }, 2000)
   } catch {
-    // clipboard blocked — surface the URL inline as a fallback
     window.prompt('Copy this link:', shareUrl.value)
   }
 }
@@ -47,41 +46,53 @@ const redditUrl = computed(() =>
   `https://www.reddit.com/submit?url=${encodeURIComponent(shareUrl.value)}`
   + `&title=${encodeURIComponent(shareText.value)}`,
 )
-
 const twitterUrl = computed(() =>
   `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText.value + ' ' + shareUrl.value)}`,
 )
 </script>
 
 <template>
-  <section>
-    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-3">
-      Share this check
-    </p>
-    <div class="flex flex-wrap gap-2">
-      <button
-        type="button"
-        class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-border-subtle/60 text-ink-2 hover:text-ink-1 hover:border-accent/40 transition-colors"
-        @click="copyLink"
-      >
-        {{ copied ? '✓ Copied' : 'Copy link' }}
-      </button>
-      <a
-        :href="redditUrl"
-        target="_blank"
-        rel="noopener"
-        class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-border-subtle/60 text-ink-2 hover:text-ink-1 hover:border-accent/40 transition-colors"
-      >
-        Reddit
-      </a>
-      <a
-        :href="twitterUrl"
-        target="_blank"
-        rel="noopener"
-        class="font-mono text-xs tracking-wider px-3 py-2 rounded border border-border-subtle/60 text-ink-2 hover:text-ink-1 hover:border-accent/40 transition-colors"
-      >
-        Twitter / X
-      </a>
-    </div>
-  </section>
+  <div class="share">
+    <button type="button" class="share-pill" @click="copyLink">
+      {{ copied ? '✓ Copied' : 'Copy link' }}
+    </button>
+    <a :href="redditUrl" target="_blank" rel="noopener" class="share-pill">Reddit</a>
+    <a :href="twitterUrl" target="_blank" rel="noopener" class="share-pill">Twitter / X</a>
+  </div>
 </template>
+
+<style scoped>
+.share {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.share-pill {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  padding: 7px 14px;
+  border-radius: 99px;
+  background: transparent;
+  color: rgb(var(--ink-1) / 0.78);
+  border: 1px solid rgb(var(--border-subtle) / 0.18);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+.share-pill:hover {
+  color: rgb(var(--accent));
+  border-color: rgb(var(--accent) / 0.42);
+  background: rgb(var(--accent) / 0.06);
+}
+.share-pill:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 2px;
+}
+html.light .share-pill {
+  color: rgb(var(--ink-1) / 0.85);
+  border-color: rgb(var(--border-subtle) / 0.32);
+  background: rgb(var(--ink-1) / 0.04);
+}
+</style>
