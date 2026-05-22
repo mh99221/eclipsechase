@@ -150,11 +150,12 @@ useHead({
       </p>
     </header>
 
-    <!-- Input form: always visible so user can re-check from result page -->
-    <form
-      class="mb-6"
-      @submit.prevent="handleSubmit"
-    >
+    <!-- Input row: visible on both empty and result states so user can re-check.
+         Intentionally not wrapped in <form> — submission goes via the button's
+         @click (and Enter via @keyup.enter on the input) so we never trigger
+         the browser's native form GET, which would otherwise navigate to
+         /check? on hydration glitches. -->
+    <div class="mb-6">
       <div class="flex flex-col sm:flex-row gap-2">
         <input
           v-model="input"
@@ -164,11 +165,13 @@ useHead({
           placeholder="65.86182, -23.48019"
           class="flex-1 px-4 py-3 bg-surface border border-border-subtle/60 rounded text-ink-1 placeholder:text-ink-3 font-mono text-sm focus:outline-none focus:border-accent/60 transition-colors"
           aria-label="Paste coordinates or a Google Maps link"
+          @keyup.enter="handleSubmit"
         >
         <button
-          type="submit"
+          type="button"
           :disabled="pending"
           class="px-5 py-3 bg-accent text-accent-ink font-mono text-xs tracking-wider uppercase rounded hover:bg-accent-strong transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          @click="handleSubmit"
         >
           {{ pending ? 'Checking…' : 'Check spot →' }}
         </button>
@@ -176,7 +179,7 @@ useHead({
       <p v-if="error" class="mt-3 px-3 py-2.5 ec-banner-warn text-xs font-mono">
         {{ error }}
       </p>
-    </form>
+    </div>
 
     <!-- Hints (only when no result yet) -->
     <div v-if="!result && !hasQueryCoords" class="mb-12 text-sm text-ink-3">
