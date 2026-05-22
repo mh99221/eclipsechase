@@ -187,6 +187,20 @@ useHead({
       <CheckResultCard :result="result" />
       <CheckStatStrip :result="result" />
 
+      <!-- Mini map — totality path band + user pin. Client-only because
+           Mapbox doesn't SSR. Imported lazily so the JS only ships when
+           a result is shown, not on the empty form. The placeholder
+           keeps the page from reflowing once Mapbox lands. -->
+      <section class="result-section">
+        <Eyebrow tone="dim">Location</Eyebrow>
+        <ClientOnly>
+          <LazyCheckMiniMap :result="result" />
+          <template #fallback>
+            <div class="map-skeleton" aria-hidden="true" />
+          </template>
+        </ClientOnly>
+      </section>
+
       <!-- Horizon profile — only when we have grid coverage. -->
       <section v-if="horizonProfileData" class="result-section">
         <Eyebrow tone="dim">Horizon profile</Eyebrow>
@@ -381,5 +395,15 @@ useHead({
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgb(var(--ink-1) / 0.42);
+}
+.map-skeleton {
+  width: 100%;
+  height: 260px;
+  border-radius: 12px;
+  border: 1px solid rgb(var(--border-subtle) / 0.08);
+  background:
+    linear-gradient(180deg,
+      rgb(var(--surface) / 0.06) 0%,
+      rgb(var(--surface) / 0.02) 100%);
 }
 </style>
