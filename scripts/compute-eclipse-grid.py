@@ -43,37 +43,53 @@ def angular_separation_deg(ra1, dec1, ra2, dec2):
     return math.degrees(math.acos(cos_sep))
 
 
+def _separation_and_radii(t, location, sun, moon):
+    apparent_sun = location.at(t).observe(sun).apparent()
+    apparent_moon = location.at(t).observe(moon).apparent()
+    sun_ra, sun_dec, _ = apparent_sun.radec()
+    moon_ra, moon_dec, _ = apparent_moon.radec()
+    sun_radius_deg = 0.2666 / apparent_sun.distance().au
+    moon_radius_deg = math.degrees(math.atan(1737.4 / apparent_moon.distance().km))
+    sep = angular_separation_deg(
+        sun_ra._degrees, sun_dec.degrees,
+        moon_ra._degrees, moon_dec.degrees,
+    )
+    return sep, sun_radius_deg, moon_radius_deg
+
+
 def sep_minus_outer_threshold(t, location, sun, moon):
     """
     f(t) = angular_sep(moon, sun) − (R_sun + R_moon)
     f > 0 outside partial phase, f <= 0 during partial phase.
     Roots of f are C1 (entering) and C4 (exiting).
     """
-    apparent_sun = location.at(t).observe(sun).apparent()
-    apparent_moon = location.at(t).observe(moon).apparent()
-    sun_ra, sun_dec, _ = apparent_sun.radec()
-    moon_ra, moon_dec, _ = apparent_moon.radec()
-    sun_dist_au = apparent_sun.distance().au
-    moon_dist_km = apparent_moon.distance().km
-    sun_radius_deg = 0.2666 / sun_dist_au
-    moon_radius_deg = math.degrees(math.atan(1737.4 / moon_dist_km))
-    sep = angular_separation_deg(
-        sun_ra._degrees, sun_dec.degrees,
-        moon_ra._degrees, moon_dec.degrees,
-    )
-    return sep - (sun_radius_deg + moon_radius_deg)
+    sep, sr, mr = _separation_and_radii(t, location, sun, moon)
+    return sep - (sr + mr)
 
 
-def bisect_contact(ts, t_outside, t_inside, location, sun, moon):
+def sep_minus_inner_threshold(t, location, sun, moon):
     """
-    Find the contact time between t_outside (f > 0, no partial) and
-    t_inside (f < 0, in partial) by bisection. Returns a Skyfield Time.
+    f(t) = angular_sep(moon, sun) − (R_moon − R_sun)
+    f > 0 outside totality (partial or none), f <= 0 during totality.
+    Roots of f are C2 (entering totality) and C3 (exiting totality).
+    """
+    sep, sr, mr = _separation_and_radii(t, location, sun, moon)
+    return sep - (mr - sr)
+
+
+def bisect_contact(ts, t_outside, t_inside, location, sun, moon, threshold_fn=sep_minus_outer_threshold):
+    """
+    Find the contact time between t_outside (f > 0) and t_inside (f < 0)
+    by bisection. Returns a Skyfield Time.
+
+    threshold_fn = sep_minus_outer_threshold → C1 / C4 (partial bounds)
+    threshold_fn = sep_minus_inner_threshold → C2 / C3 (totality bounds)
     """
     lo, hi = t_outside, t_inside
     for _ in range(20):  # 75 min window ≈ 12 iterations to reach 1s
         mid_jd = (lo.tt + hi.tt) / 2.0
         mid = ts.tt_jd(mid_jd)
-        f_mid = sep_minus_outer_threshold(mid, location, sun, moon)
+        f_mid = threshold_fn(mid, location, sun, moon)
         if f_mid > 0:
             lo = mid
         else:
@@ -110,8 +126,15 @@ def compute_grid():
         for lng in lngs:
             location = earth + wgs84.latlon(float(lat), float(lng))
 
-            totality_start_t = None
-            totality_end_t = None
+            # Track the first/last samples INSIDE totality, plus the samples
+            # immediately bracketing them on the OUTSIDE — needed to bisect
+            # C2/C3 to 1s precision (5s sampling alone undercounts duration
+            # by up to ~10s).
+            first_inside_t = None
+            last_inside_t = None
+            sample_before_first_inside_t = None
+            sample_after_last_inside_t = None
+            prev_t = None
             mid_sun_alt = 0.0
             mid_sun_az = 0.0
             min_sep = 999.0
@@ -140,10 +163,16 @@ def compute_grid():
                     mid_sun_alt = alt.degrees
                     mid_sun_az = az.degrees
 
-                if sep < (moon_radius_deg - sun_radius_deg):
-                    if totality_start_t is None:
-                        totality_start_t = t
-                    totality_end_t = t
+                in_totality = sep < (moon_radius_deg - sun_radius_deg)
+                if in_totality:
+                    if first_inside_t is None:
+                        first_inside_t = t
+                        sample_before_first_inside_t = prev_t
+                    last_inside_t = t
+                else:
+                    if last_inside_t is not None and sample_after_last_inside_t is None:
+                        sample_after_last_inside_t = t
+                prev_t = t
 
             point = {
                 "lat": round(float(lat), 4),
@@ -152,21 +181,38 @@ def compute_grid():
                 "sun_azimuth": round(mid_sun_az, 1),
             }
 
-            if totality_start_t is not None and totality_end_t is not None:
-                duration = (totality_end_t.tt - totality_start_t.tt) * 86400.0
-                point["totality_start"] = totality_start_t.utc_iso()
-                point["totality_end"] = totality_end_t.utc_iso()
+            if (
+                first_inside_t is not None
+                and last_inside_t is not None
+                and sample_before_first_inside_t is not None
+                and sample_after_last_inside_t is not None
+            ):
+                # C2 — bisect between the sample just before totality (f>0)
+                # and the first sample inside totality (f<0).
+                c2_t = bisect_contact(
+                    ts, sample_before_first_inside_t, first_inside_t,
+                    location, sun, moon, threshold_fn=sep_minus_inner_threshold,
+                )
+                # C3 — bisect between the first sample after totality (f>0)
+                # and the last sample inside totality (f<0).
+                c3_t = bisect_contact(
+                    ts, sample_after_last_inside_t, last_inside_t,
+                    location, sun, moon, threshold_fn=sep_minus_inner_threshold,
+                )
+                duration = (c3_t.tt - c2_t.tt) * 86400.0
+                point["totality_start"] = c2_t.utc_iso()
+                point["totality_end"] = c3_t.utc_iso()
                 point["duration_seconds"] = round(duration, 1)
 
                 # C1 — bisect between (C2 - 75 min) and (C2 - small) so the
                 # bracket spans the f > 0 → f <= 0 transition.
-                c2_jd = totality_start_t.tt
+                c2_jd = c2_t.tt
                 c1_outside = ts.tt_jd(c2_jd - PARTIAL_WINDOW_BEFORE_C2_MIN / 1440.0)
                 c1_inside = ts.tt_jd(c2_jd - 30.0 / 86400.0)  # C2 - 30s, safely inside
                 c1_t = bisect_contact(ts, c1_outside, c1_inside, location, sun, moon)
 
                 # C4 — bisect between (C3 + small) and (C3 + 75 min).
-                c3_jd = totality_end_t.tt
+                c3_jd = c3_t.tt
                 c4_inside = ts.tt_jd(c3_jd + 30.0 / 86400.0)
                 c4_outside = ts.tt_jd(c3_jd + PARTIAL_WINDOW_AFTER_C3_MIN / 1440.0)
                 c4_t = bisect_contact(ts, c4_outside, c4_inside, location, sun, moon)
