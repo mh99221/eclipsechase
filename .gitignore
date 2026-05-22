@@ -9,6 +9,14 @@ dist
 # Script caches (raw API dumps, regenerable)
 scripts/output/discovery-cache.json
 
+# Raw Supabase row exports — regenerable from production, will go stale.
+# Used as a local snapshot for audit/verify scripts in scripts/internal/.
+scripts/*_rows.sql
+
+# Intermediate JSON produced by scripts/internal/extract-spots-for-skyfield.mjs
+# from the latest viewing_spots_rows.sql export. Regenerable.
+scripts/internal/spots-for-skyfield.json
+
 # Node dependencies
 node_modules
 
