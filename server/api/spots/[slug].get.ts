@@ -50,24 +50,21 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Enrich with C1 (partial begins) and C4 (partial ends) from the
-  // pre-computed eclipse grid. These aren't stored on viewing_spots
-  // because the grid is the source of truth for eclipse geometry — the
-  // grid script (scripts/compute-eclipse-grid.py) computes them via
-  // bisection with sub-second precision.
-  //
-  // If the grid hasn't been regenerated since the C1/C4 fields were
-  // added, the lookup returns objects without those keys; in that case
-  // the client falls back to the calibrated approximation in
-  // ContactList.vue, so the page still works during the rollout.
-  let c1: string | null = null
-  let c4: string | null = null
-  try {
-    const point = await nearestGridPoint(data.lat, data.lng, { onlyInTotality: true })
-    c1 = point?.c1 ?? null
-    c4 = point?.c4 ?? null
-  } catch (e: any) {
-    console.warn(`[spots/${slug}] Eclipse grid lookup failed:`, e.message)
+  // C1 (partial begins) and C4 (partial ends) are stored per-spot since
+  // migration 017 — populated from Skyfield at each spot's exact
+  // coordinates with 1s precision. If those columns are NULL (e.g. a
+  // new spot before the next regeneration of skyfield-contacts.json),
+  // fall back to the nearest grid point so the page still renders.
+  let c1: string | null = (data as Record<string, unknown>).c1 as string | null ?? null
+  let c4: string | null = (data as Record<string, unknown>).c4 as string | null ?? null
+  if (!c1 || !c4) {
+    try {
+      const point = await nearestGridPoint(data.lat, data.lng, { onlyInTotality: true })
+      c1 = c1 ?? point?.c1 ?? null
+      c4 = c4 ?? point?.c4 ?? null
+    } catch (e: any) {
+      console.warn(`[spots/${slug}] Eclipse grid fallback failed:`, e.message)
+    }
   }
 
   return { spot: { ...data, c1, c4 } }

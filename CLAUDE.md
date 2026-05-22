@@ -286,15 +286,21 @@ CREATE TABLE eclipse_grid (
   sun_azimuth DOUBLE PRECISION
 );
 
--- Curated viewing spots with human-written descriptions
+-- Curated viewing spots with human-written descriptions. 30 spots in production
+-- (6 Westfjords, 15 Snæfellsnes, 1 Borgarfjörður, 3 Reykjavík, 5 Reykjanes) —
+-- source of truth is the live table; scripts/viewing_spots_rows.sql is the
+-- last Supabase export.
 -- Additional columns added via migrations: spot_type, difficulty, elevation_gain_m,
 -- trail_distance_km, trail_time_minutes, trailhead_lat/lng, photos (JSONB),
 -- horizon_check (JSONB), warnings (JSONB — see below).
 --
--- C1 (partial begins) and C4 (partial ends) are NOT stored on viewing_spots.
--- They're enriched at request time by server/api/spots/[slug].get.ts via
--- nearestGridPoint() against public/eclipse-data/grid.json — the grid is the
--- source of truth for eclipse geometry (Skyfield bisection, ~1s precision).
+-- C1 (partial begins) and C4 (partial ends) are stored per-spot since
+-- migration 017 — populated from Skyfield at each spot's exact coords
+-- with 1s precision (see scripts/internal/skyfield-contacts-all-spots.py).
+-- server/api/spots/[slug].get.ts prefers the stored values and falls back
+-- to nearestGridPoint() against public/eclipse-data/grid.json if NULL.
+-- The grid (Skyfield bisection, 1s precision) remains the source of truth
+-- for arbitrary lat/lng (dynamic horizon check, recommendation engine).
 --
 -- warnings is JSONB with two historical shapes: legacy string[] (raw labels)
 -- and migrated {level: 'info'|'warn'|'bad', title, body}[]. Migration 004
