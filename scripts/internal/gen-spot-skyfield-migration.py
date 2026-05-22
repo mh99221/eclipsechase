@@ -1,0 +1,168 @@
+#!/usr/bin/env python3
+"""Generate migration 016 from per-spot Skyfield bisection.
+
+Reuses the algorithm from verify-all-spots-skyfield.py but emits SQL
+UPDATE statements for spots whose stored duration or start time drifts
+from Skyfield by more than a threshold. Sun alt/az are NOT touched —
+migrations 013/014/015 already handle those and the prior audit showed
+<0.07 deg agreement everywhere.
+"""
+import json
+import math
+import os
+from datetime import datetime
+
+from skyfield.api import load, wgs84
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+SPOTS_JSON = os.path.join(HERE, "spots-for-skyfield.json")
+OUT_SQL = os.path.join(HERE, "..", "migrations", "016-spot-duration-and-start-skyfield.sql")
+
+CONTACT_PRECISION_SECONDS = 1.0
+DUR_THRESHOLD_S = 2  # only emit UPDATE when delta > this
+START_THRESHOLD_S = 10
+
+ts = load.timescale()
+eph = load("de421.bsp")
+sun, moon, earth = eph["sun"], eph["moon"], eph["earth"]
+
+
+def angsep(ra1, dec1, ra2, dec2):
+    a, b, c, d = map(math.radians, [ra1, dec1, ra2, dec2])
+    cs = math.sin(b) * math.sin(d) + math.cos(b) * math.cos(d) * math.cos(a - c)
+    return math.degrees(math.acos(max(-1.0, min(1.0, cs))))
+
+
+def f_inner(t, location):
+    s = location.at(t).observe(sun).apparent()
+    m = location.at(t).observe(moon).apparent()
+    sra, sdec, _ = s.radec()
+    mra, mdec, _ = m.radec()
+    sr = 0.2666 / s.distance().au
+    mr = math.degrees(math.atan(1737.4 / m.distance().km))
+    sep = angsep(sra._degrees, sdec.degrees, mra._degrees, mdec.degrees)
+    return sep - (mr - sr)
+
+
+def bisect(t_out, t_in, location):
+    lo, hi = t_out, t_in
+    for _ in range(20):
+        mid = ts.tt_jd((lo.tt + hi.tt) / 2.0)
+        if f_inner(mid, location) > 0:
+            lo = mid
+        else:
+            hi = mid
+        if (hi.tt - lo.tt) * 86400.0 < CONTACT_PRECISION_SECONDS:
+            break
+    return ts.tt_jd((lo.tt + hi.tt) / 2.0)
+
+
+def compute(lat, lng):
+    location = earth + wgs84.latlon(lat, lng)
+    t0 = ts.utc(2026, 8, 12, 17, 30, 0)
+    t1 = ts.utc(2026, 8, 12, 18, 0, 0)
+    times = ts.linspace(t0, t1, 361)
+    samples = [(t, f_inner(t, location)) for t in times]
+    first = None
+    last = None
+    for i, (t, f) in enumerate(samples):
+        if f < 0:
+            if first is None:
+                first = i
+            last = i
+    if first is None:
+        return None
+    c2 = bisect(samples[first - 1][0], samples[first][0], location)
+    c3 = bisect(samples[last + 1][0], samples[last][0], location)
+    return c2, c3
+
+
+def parse_stored_start(s):
+    return datetime.fromisoformat(s.replace(" ", "T").replace("+00", "+00:00"))
+
+
+def main():
+    with open(SPOTS_JSON, encoding="utf-8") as f:
+        spots = json.load(f)
+
+    updates = []
+    for s in spots:
+        result = compute(s["lat"], s["lng"])
+        if result is None:
+            print(f"  {s['slug']}: no totality?? — skipping")
+            continue
+        c2, c3 = result
+        sky_dur = (c3.tt - c2.tt) * 86400.0
+        sky_c2_iso = c2.utc_iso(places=0)  # second precision, ends in Z
+
+        stored_dur = s["stored_duration"]
+        stored_c2 = parse_stored_start(s["stored_start"])
+        sky_c2_dt = datetime.fromisoformat(sky_c2_iso.replace("Z", "+00:00"))
+
+        d_dur = stored_dur - sky_dur
+        d_start = (stored_c2 - sky_c2_dt).total_seconds()
+
+        change_dur = abs(d_dur) >= DUR_THRESHOLD_S
+        change_start = abs(d_start) >= START_THRESHOLD_S
+
+        if not (change_dur or change_start):
+            print(f"  {s['slug']}: within tolerance, skip")
+            continue
+
+        # Round duration to int seconds, like other migrations
+        new_dur = round(sky_dur)
+        updates.append({
+            "slug": s["slug"],
+            "old_dur": stored_dur,
+            "new_dur": new_dur,
+            "old_start": s["stored_start"],
+            "new_start": sky_c2_iso,
+            "d_dur": d_dur,
+            "d_start": d_start,
+            "change_dur": change_dur,
+            "change_start": change_start,
+        })
+
+    lines = [
+        "-- Skyfield-derived totality_duration_seconds + totality_start for every",
+        "-- spot where the stored value drifts more than 2s (duration) or 10s (start)",
+        "-- from the Skyfield truth at the spot's exact coordinates.",
+        "--",
+        "-- Why this migration exists: prior duration values were bilinear-interpolated",
+        "-- from public/eclipse-data/grid.json, which until now snapped totality bounds",
+        "-- to 5s sample boundaries (compute-eclipse-grid.py undersamples C2/C3). The",
+        "-- script has been fixed to bisect C2/C3 to 1s like C1/C4; grid.json will be",
+        "-- regenerated separately. This migration patches the spots table directly so",
+        "-- the /spots/[slug] Sky and Plan tabs reflect reality.",
+        "--",
+        "-- Start times were also adjusted: many were hand-set during the initial seed",
+        "-- and drifted up to ~60s from Skyfield C2 at the exact coords.",
+        "--",
+        "-- Generated by scripts/internal/gen-spot-skyfield-migration.py.",
+        "-- Sun alt/az NOT modified — migrations 013/014/015 set them within 0.07 deg",
+        "-- of Skyfield already.",
+        "",
+    ]
+
+    for u in updates:
+        bits = []
+        if u["change_dur"]:
+            bits.append(f"totality_duration_seconds = {u['new_dur']}")
+        if u["change_start"]:
+            bits.append(f"totality_start = '{u['new_start']}'")
+        comment = []
+        if u["change_dur"]:
+            comment.append(f"dur {u['old_dur']}->{u['new_dur']} ({u['d_dur']:+.1f}s)")
+        if u["change_start"]:
+            comment.append(f"start drift {u['d_start']:+.0f}s")
+        lines.append(f"-- {u['slug']}: " + "; ".join(comment))
+        lines.append(f"UPDATE viewing_spots SET {', '.join(bits)} WHERE slug = '{u['slug']}';")
+        lines.append("")
+
+    with open(OUT_SQL, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+    print(f"\nWrote {len(updates)} UPDATEs to {OUT_SQL}")
+
+
+if __name__ == "__main__":
+    main()
