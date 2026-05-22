@@ -69,3 +69,6 @@ UPDATE viewing_spots SET photos = '[{"filename":"ytri-tunga-beach-hero.webp","al
 
 -- Spot added 2026-05-03. Fill in `credit` + `license` before running.
 UPDATE viewing_spots SET photos = '[{"filename":"sky-lagoon-hero.webp","alt":"Sky Lagoon geothermal infinity pool overlooking Faxaflói bay west of Reykjavík","credit":"TODO_CREDIT","license":"TODO_LICENSE","is_hero":true,"horizon_view":true}]' WHERE slug = 'sky-lagoon';
+
+-- Spot added 2026-05-22. Fill in `credit` + `license` before running.
+UPDATE viewing_spots SET photos = '[{"filename":"sandafell-thingeyri-hero.webp","alt":"Aerial view of Sandafell mountain above Þingeyri, with the village airstrip and Dýrafjörður in the foreground","credit":"TODO_CREDIT","license":"TODO_LICENSE","is_hero":true,"horizon_view":false}]' WHERE slug = 'sandafell-thingeyri';
