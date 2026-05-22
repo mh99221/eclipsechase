@@ -12,7 +12,7 @@ UPDATE viewing_spots SET photos = '[{"filename":"djupalonssandur-beach-hero.webp
 
 UPDATE viewing_spots SET photos = '[{"filename":"latrabjarg-cliffs-hero.webp","alt":"Latrabjarg sea cliffs in the Westfjords, westernmost point of Iceland","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":true}]' WHERE slug = 'latrabjarg-cliffs';
 
-UPDATE viewing_spots SET photos = '[{"filename":"dynjandi-arnarfjordur-hero.webp","alt":"Dynjandi waterfall cascading down the mountainside in Arnarfjordur","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":false}]' WHERE slug = 'dynjandi-arnarfjordur';
+UPDATE viewing_spots SET photos = '[{"filename":"haestahjallafoss-dynjandi-hero.webp","alt":"Fjallfoss, the main waterfall in the Dynjandi cascade, with autumn vegetation in the foreground","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":false}]' WHERE slug = 'haestahjallafoss-dynjandi';
 
 UPDATE viewing_spots SET photos = '[{"filename":"grotta-lighthouse-reykjavik-hero.webp","alt":"Grotta lighthouse at sunset in Seltjarnarnes, Reykjavik","credit":"Unsplash","license":"unsplash","is_hero":true,"horizon_view":true}]' WHERE slug = 'grotta-lighthouse-reykjavik';
 

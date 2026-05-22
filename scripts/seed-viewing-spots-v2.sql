@@ -15,14 +15,15 @@ INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parkin
   true, 'good', 91, '2026-08-12T17:44:30Z', 24, 249, 'drive-up')
 ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLUDED.lat, lng=EXCLUDED.lng, region=EXCLUDED.region, description=EXCLUDED.description, parking_info=EXCLUDED.parking_info, terrain_notes=EXCLUDED.terrain_notes, has_services=EXCLUDED.has_services, cell_coverage=EXCLUDED.cell_coverage, totality_duration_seconds=EXCLUDED.totality_duration_seconds, totality_start=EXCLUDED.totality_start, sun_altitude=EXCLUDED.sun_altitude, sun_azimuth=EXCLUDED.sun_azimuth, spot_type=EXCLUDED.spot_type;
 
-INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parking_info, terrain_notes, has_services, cell_coverage, totality_duration_seconds, totality_start, sun_altitude, sun_azimuth, spot_type) VALUES
-('dynjandi', 'Dynjandi Viewpoint', 'dynjandi-arnarfjordur',
-  65.7328, -23.1793, 'westfjords',
-  'The parking area at the base of iconic Dynjandi waterfall sits at the head of Arnarfjörður, one of the widest fjords in the Westfjords. The fjord opens directly to the west, providing a clear low horizon toward the ocean. Close to the central line where duration approaches the maximum for Iceland.',
-  'Dedicated gravel car park at end of Route 60 spur road, ~50 vehicles. Free.',
-  'Flat gravel parking area and grassy meadow at fjord head. Waterfall backdrop.',
-  false, 'limited', 138, '2026-08-12T17:45:10Z', 24, 249, 'drive-up')
-ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLUDED.lat, lng=EXCLUDED.lng, region=EXCLUDED.region, description=EXCLUDED.description, parking_info=EXCLUDED.parking_info, terrain_notes=EXCLUDED.terrain_notes, has_services=EXCLUDED.has_services, cell_coverage=EXCLUDED.cell_coverage, totality_duration_seconds=EXCLUDED.totality_duration_seconds, totality_start=EXCLUDED.totality_start, sun_altitude=EXCLUDED.sun_altitude, sun_azimuth=EXCLUDED.sun_azimuth, spot_type=EXCLUDED.spot_type;
+INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parking_info, terrain_notes, has_services, cell_coverage, totality_duration_seconds, totality_start, sun_altitude, sun_azimuth, spot_type, trail_distance_km, trail_time_minutes, difficulty, elevation_gain_m, trailhead_lat, trailhead_lng) VALUES
+('haestahjallafoss', 'Hæstahjallafoss (Dynjandi Trail)', 'haestahjallafoss-dynjandi',
+  65.73334571021223, -23.201396166460484, 'westfjords',
+  'One of the named cascades on the Dynjandi waterfall trail, halfway up the cliff at the head of Arnarfjörður. A short walk from the parking brings you to a small ledge where the river drops past you toward the fjord — directly into the sun''s position at totality. The fjord opens west-northwest to open ocean, giving a clear horizon despite the surrounding south wall. ~95 seconds of totality.',
+  'Marked Dynjandi parking at the end of the Route 60 spur road. Gravel, ~50 spaces, free. Pit toilet, no other services. The trail begins at the south end of the lot.',
+  'Stepped trail climbs the slope past the waterfall cascades, switchbacks over rocks and boulders. ~670 m, ~95 m vertical, 20 minutes one way. The ledge at Hæstahjallafoss is grassy with a low natural rock guard — comfortable footing but exposed to wind. Tripod-friendly footprint for one or two photographers; bring a buddy if shooting in the dark after totality.',
+  false, 'none', 95, '2026-08-12T17:44:42Z', 24, 249,
+  'hike', 0.67, 20, 'easy', 95, 65.7367007572071, -23.209297687333873)
+ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, slug=EXCLUDED.slug, lat=EXCLUDED.lat, lng=EXCLUDED.lng, region=EXCLUDED.region, description=EXCLUDED.description, parking_info=EXCLUDED.parking_info, terrain_notes=EXCLUDED.terrain_notes, has_services=EXCLUDED.has_services, cell_coverage=EXCLUDED.cell_coverage, totality_duration_seconds=EXCLUDED.totality_duration_seconds, totality_start=EXCLUDED.totality_start, sun_altitude=EXCLUDED.sun_altitude, sun_azimuth=EXCLUDED.sun_azimuth, spot_type=EXCLUDED.spot_type, trail_distance_km=EXCLUDED.trail_distance_km, trail_time_minutes=EXCLUDED.trail_time_minutes, difficulty=EXCLUDED.difficulty, elevation_gain_m=EXCLUDED.elevation_gain_m, trailhead_lat=EXCLUDED.trailhead_lat, trailhead_lng=EXCLUDED.trailhead_lng;
 
 INSERT INTO viewing_spots (id, name, slug, lat, lng, region, description, parking_info, terrain_notes, has_services, cell_coverage, totality_duration_seconds, totality_start, sun_altitude, sun_azimuth, spot_type) VALUES
 ('thingeyri', 'Þingeyri Village Shore', 'thingeyri-shore',

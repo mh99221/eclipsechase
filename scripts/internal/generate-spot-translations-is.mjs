@@ -141,6 +141,21 @@ const is = {
     ],
   },
 
+  'haestahjallafoss-dynjandi': {
+    name: 'Hæstahjallafoss (Dynjandagönguleið)',
+    description:
+      'Einn af nafngreindu fossunum í fosshlíðinni við Dynjanda, hálfa leið upp klettavegginn í botni Arnarfjarðar. Stutt ganga frá bílastæðinu leiðir þig á litla syllu þar sem áin steypist fram hjá þér út í fjörðinn — beint í átt að sólinni á heilmyrkva. Fjörðurinn opnast til vest-norðvesturs út á opið haf og gefur skýran sjóndeildarhring þrátt fyrir suðurvegginn í kring. ~95 sekúndur af heilmyrkva.',
+    parking_info:
+      'Merkt Dynjandabílastæði við enda vegslóðans af Vegi 60. Möl, ~50 bílar, frítt. Kamar, engin önnur þjónusta. Gönguleiðin byrjar sunnan á planinu.',
+    terrain_notes:
+      'Þrepasett gönguleið liggur upp brekkuna meðfram fossunum, sneiðingar yfir grjót og steina. ~670 m, ~95 m hækkun, 20 mínútur aðra leið. Syllan við Hæstahjallafoss er grasi vaxin með lágum náttúrulegum klettavarnargarði — gott fótfesti en úti í vindi. Pláss fyrir einn til tvo ljósmyndara með þrífæti; hafðu félaga með ef þú myndar í myrkri eftir heilmyrkvann.',
+    warnings_titles: [
+      'Skýjaríkasta svæðið fyrir sólmyrkvann',
+      '20-mínútna ganga frá bílastæðinu',
+      'Ekkert farsímasamband',
+    ],
+  },
+
   'hellissandur-village': {
     name: 'Hellissandur',
     description:

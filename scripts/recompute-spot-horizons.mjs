@@ -40,6 +40,7 @@ const SUN_AZIMUTH = 250
 // or when the observer is at a specific known point (summit, etc.).
 const KNOWN_ELEVATION = {
   'snaefellsjokull-summit': 1446,
+  'haestahjallafoss-dynjandi': 99,
 }
 
 // Coordinate overrides (used when the live API hasn't been updated yet).
