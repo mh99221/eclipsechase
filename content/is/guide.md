@@ -24,11 +24,11 @@ Leið heilmyrkvans kemur inn í Ísland úr norðvestri, fer yfir **Vestfirði**
 
 | Svæði | Lengd heilmyrkva | Heilmyrkvi byrjar (UTC) |
 |--------|------------------|-----------------------|
-| Vestfirðir | ~1m 30s – 2m 13s | ~17:45 |
-| Snæfellsnes | ~1m 25s – 2m 10s | ~17:46 |
-| Borgarfjörður (aðeins Akranes) | ~1m 02s | ~17:47 |
-| Reykjanes | ~1m 35s – 1m 47s | ~17:47 |
-| Reykjavík | ~0–1m 06s (jaðar) | ~17:47 |
+| Vestfirðir | ~1m 33s – 2m 13s | ~17:44 |
+| Snæfellsnes | ~1m 28s – 2m 10s | ~17:46 |
+| Borgarfjörður (aðeins Akranes) | ~1m 08s | ~17:48 |
+| Reykjanes | ~1m 39s – 1m 48s | ~17:48 |
+| Reykjavík | ~1m 00s – 1m 07s (jaðar) | ~17:48 |
 
 ## Bestu áhorfsstaðirnir
 
@@ -50,7 +50,7 @@ Borgarfjarðardalurinn (Reykholt, Borgarnes, Glymur) liggur **rétt utan** leið
 
 ### Reykjanes
 
-Næst Keflavíkurflugvelli — aðeins 45 mínútur frá Reykjavík. Heilmyrkvinn varir um **1m 35s til 1m 47s** yfir skagann, sem er gulli staðurinn fyrir „stutt akstur + marktækan heilmyrkva". Eldfjallalandslagið bætir sérstöðu.
+Næst Keflavíkurflugvelli — aðeins 45 mínútur frá Reykjavík. Heilmyrkvinn varir um **1m 39s til 1m 48s** yfir skagann, sem er gulli staðurinn fyrir „stutt akstur + marktækan heilmyrkva". Eldfjallalandslagið bætir sérstöðu.
 
 Helstu staðir: [Reykjanestáviti](/spots/reykjanesta-lighthouse) · [Garðsviti](/spots/gardur-lighthouse) · [Hvalsneskirkja](/spots/hvalsneskirkja) · [Keflavík (Ásbrú)](/spots/keflavik-asbru-viewpoint) · [Bláa lónið](/spots/blue-lagoon)
 
@@ -58,7 +58,7 @@ Helstu staðir: [Reykjanestáviti](/spots/reykjanesta-lighthouse) · [Garðsviti
 
 Höfuðborgin er aðeins á **ystu jaðri** myrkvaleiðarinnar. Heilmyrkvi varir um eina mínútu á best staðsettu stöðunum og fellur niður í sekúndur — eða ekki neitt — annars staðar í borginni. Treystu ekki á Reykjavík ef þú getur keyrt.
 
-Ef þú getur ekki keyrt: [Gróttuviti](/spots/grotta-lighthouse-reykjavik) á vesturoddanum gefur lengsta heilmyrkva í borginni (~1m 06s). [Perlan](/spots/perlan-reykjavik) og [Sky Lagoon](/spots/sky-lagoon) bjóða styttri heilmyrkva með kostum þróaðs innviða.
+Ef þú getur ekki keyrt: [Gróttuviti](/spots/grotta-lighthouse-reykjavik) á vesturoddanum gefur lengsta heilmyrkva í borginni (~1m 07s). [Perlan](/spots/perlan-reykjavik) og [Sky Lagoon](/spots/sky-lagoon) bjóða styttri heilmyrkva með kostum þróaðs innviða.
 
 ### Sólarhæð og sjóndeildarhringur
 
@@ -127,10 +127,10 @@ Hér er hvað gerist og hvenær (allir tímar áætlaðir, UTC):
 | Tími (UTC) | Fasi | Hvað á að gera |
 |------------|-------|-----------|
 | ~16:43–16:48 | **Fyrsti snertingarpunktur** — deildarmyrkvi byrjar | Settu á þig sólmyrkvagleraugun. Tunglið byrjar að fara yfir sólskífuna. Vestfirðir sjá C1 fyrst, Reykjavík síðast. |
-| ~17:45–17:47 | **Annar snertingarpunktur** — heilmyrkvi byrjar | **Gleraugun AF.** Horfðu með berum augum. Þú sérð kórónuna, hugsanlega Baily-perlur og demantshringinn. |
+| ~17:44–17:48 | **Annar snertingarpunktur** — heilmyrkvi byrjar | **Gleraugun AF.** Horfðu með berum augum. Þú sérð kórónuna, hugsanlega Baily-perlur og demantshringinn. |
 | Á meðan heilmyrkvi varir | **Miðmyrkvi** | Líttu í kring — taktu eftir 360° sólarlaginu á sjóndeildarhring, hitafalli, stjörnum sem birtast. Þetta eru þínar 1–2 mínútur. |
-| ~17:47–17:48 | **Þriðji snertingarpunktur** — heilmyrkva lýkur | **Gleraugun aftur Á strax.** Demantshringurinn birtist aftur. |
-| ~18:43–18:46 | **Fjórði snertingarpunktur** — deildarmyrkva lýkur | Tunglið yfirgefur sólskífuna alveg. Myrkvanum er lokið. |
+| ~17:45–17:50 | **Þriðji snertingarpunktur** — heilmyrkva lýkur | **Gleraugun aftur Á strax.** Demantshringurinn birtist aftur. |
+| ~18:42–18:47 | **Fjórði snertingarpunktur** — deildarmyrkva lýkur | Tunglið yfirgefur sólskífuna alveg. Myrkvanum er lokið. |
 
 **Ráð fyrir heilmyrkvann:**
 - Ekki eyða öllum tímanum í myndatöku — upplifðu hann fyrst með augunum

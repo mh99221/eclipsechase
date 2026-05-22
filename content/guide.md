@@ -24,11 +24,11 @@ The further northwest you go, the longer totality lasts — but the harder it is
 
 | Region | Totality Duration | Totality Starts (UTC) |
 |--------|------------------|-----------------------|
-| Westfjords | ~1m 30s – 2m 13s | ~17:45 |
-| Snæfellsnes | ~1m 25s – 2m 10s | ~17:46 |
-| Borgarfjörður (Akranes only) | ~1m 02s | ~17:47 |
-| Reykjanes | ~1m 35s – 1m 47s | ~17:47 |
-| Reykjavík | ~0–1m 06s (edge) | ~17:47 |
+| Westfjords | ~1m 33s – 2m 13s | ~17:44 |
+| Snæfellsnes | ~1m 28s – 2m 10s | ~17:46 |
+| Borgarfjörður (Akranes only) | ~1m 08s | ~17:48 |
+| Reykjanes | ~1m 39s – 1m 48s | ~17:48 |
+| Reykjavík | ~1m 00s – 1m 07s (edge) | ~17:48 |
 
 ## Best Viewing Spots
 
@@ -50,7 +50,7 @@ The inland Borgarfjörður valley (Reykholt, Borgarnes, Glymur) sits **just outs
 
 ### Reykjanes
 
-Closest to Keflavík Airport — only 45 minutes from Reykjavík. Totality runs about **1m 35s to 1m 47s** across the peninsula, which is the sweet spot of "short drive + meaningful totality." Volcanic landscape adds character.
+Closest to Keflavík Airport — only 45 minutes from Reykjavík. Totality runs about **1m 39s to 1m 48s** across the peninsula, which is the sweet spot of "short drive + meaningful totality." Volcanic landscape adds character.
 
 Top spots: [Reykjanestá Lighthouse](/spots/reykjanesta-lighthouse) · [Garður Lighthouse](/spots/gardur-lighthouse) · [Hvalsneskirkja](/spots/hvalsneskirkja) · [Keflavík (Ásbrú)](/spots/keflavik-asbru-viewpoint) · [Blue Lagoon](/spots/blue-lagoon)
 
@@ -58,7 +58,7 @@ Top spots: [Reykjanestá Lighthouse](/spots/reykjanesta-lighthouse) · [Garður 
 
 The capital only catches the **very edge** of the path. Totality lasts about a minute at the best-positioned points and drops to seconds — or zero — elsewhere in the city. Don't rely on Reykjavík if you can drive.
 
-If you can't: [Grótta Lighthouse](/spots/grotta-lighthouse-reykjavik) on the west tip gives the longest totality in the city (~1m 06s). [Perlan Observation Deck](/spots/perlan-reykjavik) and [Sky Lagoon](/spots/sky-lagoon) offer shorter totality with the benefit of established infrastructure.
+If you can't: [Grótta Lighthouse](/spots/grotta-lighthouse-reykjavik) on the west tip gives the longest totality in the city (~1m 07s). [Perlan Observation Deck](/spots/perlan-reykjavik) and [Sky Lagoon](/spots/sky-lagoon) offer shorter totality with the benefit of established infrastructure.
 
 ### Sun geometry & horizon
 
@@ -127,10 +127,10 @@ Here's what happens and when (all times approximate, UTC):
 | Time (UTC) | Phase | What to Do |
 |------------|-------|-----------|
 | ~16:43–16:48 | **First contact** — partial eclipse begins | Put on eclipse glasses. The moon starts crossing the sun's disk. Westfjords spots see C1 first, Reykjavík last. |
-| ~17:45–17:47 | **Second contact** — totality begins | **Glasses OFF.** Look with naked eyes. You'll see the corona, possibly Baily's beads and the diamond ring effect. |
+| ~17:44–17:48 | **Second contact** — totality begins | **Glasses OFF.** Look with naked eyes. You'll see the corona, possibly Baily's beads and the diamond ring effect. |
 | During totality | **Mid-eclipse** | Look around — notice the 360° sunset on the horizon, temperature drop, stars appearing. This is your 1–2 minutes. |
-| ~17:47–17:48 | **Third contact** — totality ends | **Glasses back ON immediately.** The diamond ring reappears. |
-| ~18:43–18:46 | **Fourth contact** — partial eclipse ends | The moon fully leaves the sun's disk. Eclipse is over. |
+| ~17:45–17:50 | **Third contact** — totality ends | **Glasses back ON immediately.** The diamond ring reappears. |
+| ~18:42–18:47 | **Fourth contact** — partial eclipse ends | The moon fully leaves the sun's disk. Eclipse is over. |
 
 **Tips for totality:**
 - Don't spend the whole time photographing — experience it with your eyes first
