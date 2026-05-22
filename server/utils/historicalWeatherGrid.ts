@@ -65,6 +65,7 @@ export async function loadHistoricalWeatherGrid(): Promise<RawHistoricalGrid | n
   loadPromise = (async () => {
     const fromFS = loadFromFilesystem()
     if (fromFS) {
+      console.log(`[CloudHistory] Loaded grid from filesystem (${Object.keys(fromFS.cells || {}).length} cells)`)
       cache = fromFS
       return fromFS
     }
@@ -72,10 +73,14 @@ export async function loadHistoricalWeatherGrid(): Promise<RawHistoricalGrid | n
       const data = await useStorage('assets:server:eclipse-data').getItem('historical-weather-grid.json')
       if (data) {
         const grid = (typeof data === 'string' ? JSON.parse(data) : data) as RawHistoricalGrid
+        console.log(`[CloudHistory] Loaded grid via Nitro storage (${Object.keys(grid.cells || {}).length} cells)`)
         cache = grid
         return grid
       }
-    } catch { /* ignore */ }
+    } catch (e: any) {
+      console.warn('[CloudHistory] Nitro storage fallback failed:', e?.message)
+    }
+    console.warn('[CloudHistory] grid file not found via filesystem or storage')
     cache = null
     return null
   })()
@@ -107,6 +112,16 @@ function haversineMeters(lat1: number, lng1: number, lat2: number, lng2: number)
   return 2 * R * Math.asin(Math.sqrt(a))
 }
 
+/**
+ * "Usable" means the cell exists AND has at least one non-null year.
+ * Cells with `total_years === 0` are skipped because they're either
+ * an ocean square Open-Meteo didn't return data for, or a square the
+ * pre-compute script couldn't fetch (e.g. mid-run rate-limit).
+ */
+function isUsable(cell: HistoricalWeatherCell | undefined): cell is HistoricalWeatherCell {
+  return !!cell && cell.total_years > 0
+}
+
 export async function findNearestHistoricalWeather(
   lat: number,
   lng: number,
@@ -117,21 +132,35 @@ export async function findNearestHistoricalWeather(
   const step = grid.step ?? 0.25
   const cellLat = Math.round(lat / step) * step
   const cellLng = Math.round(lng / step) * step
-  const key = gridKey(lat, lng, step)
-  const cell = grid.cells[key]
-  if (!cell) {
-    // Fallback: scan neighbours (3×3 ring of cells) in case the exact
-    // bucket is empty (e.g. ocean point with no ERA5 sample). Closest
-    // cell wins.
+
+  // First try the exact bucket.
+  const exactKey = gridKey(lat, lng, step)
+  const exact = grid.cells[exactKey]
+  if (isUsable(exact)) {
+    return {
+      cell: exact,
+      cellLat,
+      cellLng,
+      distanceMeters: haversineMeters(lat, lng, cellLat, cellLng),
+    }
+  }
+
+  // Spiral outward in growing rings until we find a usable cell.
+  // ring=1 → 3×3, ring=2 → 5×5, etc. Capped at 4 (~125 km radius)
+  // so a single unfilled patch doesn't bleed all the way across the
+  // country.
+  for (let ring = 1; ring <= 4; ring++) {
     let best: HistoricalGridMatch | null = null
     let bestDist = Infinity
-    for (let dy = -1; dy <= 1; dy++) {
-      for (let dx = -1; dx <= 1; dx++) {
+    for (let dy = -ring; dy <= ring; dy++) {
+      for (let dx = -ring; dx <= ring; dx++) {
+        // Only the ring's outer edge — skip the interior we already searched.
+        if (Math.max(Math.abs(dy), Math.abs(dx)) !== ring) continue
         const tryLat = cellLat + dy * step
         const tryLng = cellLng + dx * step
         const tryKey = `${tryLat.toFixed(2)},${tryLng.toFixed(2)}`
         const tryCell = grid.cells[tryKey]
-        if (!tryCell) continue
+        if (!isUsable(tryCell)) continue
         const d = haversineMeters(lat, lng, tryLat, tryLng)
         if (d < bestDist) {
           bestDist = d
@@ -139,13 +168,7 @@ export async function findNearestHistoricalWeather(
         }
       }
     }
-    return best
+    if (best) return best
   }
-
-  return {
-    cell,
-    cellLat,
-    cellLng,
-    distanceMeters: haversineMeters(lat, lng, cellLat, cellLng),
-  }
+  return null
 }

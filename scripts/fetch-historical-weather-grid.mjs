@@ -70,30 +70,42 @@ function summarise(years) {
   }
 }
 
+async function fetchYear(lat, lng, year, attempt = 0) {
+  const url = `${OPEN_METEO}?latitude=${lat}&longitude=${lng}`
+    + `&start_date=${year}-08-12&end_date=${year}-08-12`
+    + `&hourly=cloud_cover&timezone=UTC`
+  try {
+    const res = await fetch(url)
+    if (res.status === 429 || res.status >= 500) {
+      // Rate-limited / upstream error — back off and retry up to 3 times.
+      if (attempt < 3) {
+        const wait = 2000 * (attempt + 1) // 2s → 4s → 6s
+        process.stdout.write(`(429, backoff ${wait}ms) `)
+        await new Promise(r => setTimeout(r, wait))
+        return fetchYear(lat, lng, year, attempt + 1)
+      }
+      return null
+    }
+    if (!res.ok) return null
+    const data = await res.json()
+    const times = data.hourly?.time || []
+    const clouds = data.hourly?.cloud_cover || []
+    const idx17 = times.findIndex(t => t.endsWith('T17:00'))
+    const idx18 = times.findIndex(t => t.endsWith('T18:00'))
+    const c17 = idx17 >= 0 ? clouds[idx17] : null
+    const c18 = idx18 >= 0 ? clouds[idx18] : null
+    return interp(c17, c18)
+  } catch {
+    return null
+  }
+}
+
 async function fetchCellHistory(lat, lng) {
   const results = []
   for (const year of YEARS) {
-    const url = `${OPEN_METEO}?latitude=${lat}&longitude=${lng}`
-      + `&start_date=${year}-08-12&end_date=${year}-08-12`
-      + `&hourly=cloud_cover&timezone=UTC`
-    try {
-      const res = await fetch(url)
-      if (!res.ok) {
-        results.push({ year, cloud_cover: null })
-        continue
-      }
-      const data = await res.json()
-      const times = data.hourly?.time || []
-      const clouds = data.hourly?.cloud_cover || []
-      const idx17 = times.findIndex(t => t.endsWith('T17:00'))
-      const idx18 = times.findIndex(t => t.endsWith('T18:00'))
-      const c17 = idx17 >= 0 ? clouds[idx17] : null
-      const c18 = idx18 >= 0 ? clouds[idx18] : null
-      results.push({ year, cloud_cover: interp(c17, c18) })
-    } catch {
-      results.push({ year, cloud_cover: null })
-    }
-    await new Promise(r => setTimeout(r, 80))
+    const cloud_cover = await fetchYear(lat, lng, year)
+    results.push({ year, cloud_cover })
+    await new Promise(r => setTimeout(r, 120))
   }
   return results
 }
@@ -135,7 +147,11 @@ async function main() {
     for (const lng of lngs) {
       done++
       const key = `${lat.toFixed(2)},${lng.toFixed(2)}`
-      if (output.cells[key]) continue  // resume skip
+      // Resume-skip only cells that already have real data. Cells whose
+      // years all came back null (typically because Open-Meteo's free
+      // tier rate-limited the previous run mid-way through) get refetched.
+      const existing = output.cells[key]
+      if (existing && existing.total_years > 0) continue
       process.stdout.write(`  [${String(done).padStart(4)}/${totalCells}] ${key.padEnd(15)} ... `)
       const years = await fetchCellHistory(lat, lng)
       const stats = summarise(years)

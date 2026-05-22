@@ -10,7 +10,13 @@ import type { CheckResult, CheckResultCloudCell } from '~/types/check'
 const props = defineProps<{ result: CheckResult }>()
 
 const history = computed<CheckResultCloudCell | null>(() => {
-  return props.result.cloudHistory?.cell ?? null
+  const cell = props.result.cloudHistory?.cell
+  if (!cell) return null
+  // Hide the chart entirely when the ERA5 fetch produced no usable
+  // samples for this grid cell — drawing 10 empty bars is worse than
+  // not surfacing the section at all.
+  if (cell.total_years === 0) return null
+  return cell
 })
 
 const sample = computed(() => {

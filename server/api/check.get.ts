@@ -163,13 +163,17 @@ export default defineEventHandler(async (event): Promise<CheckResult> => {
     ?? (insidePath ? (eclipsePoint?.duration_seconds ?? null) : null)
 
   const gridHistory = await findNearestHistoricalWeather(latNum, lngNum)
-  const cloudHistory = gridHistory
+  // Treat cells where every year came back null (e.g. the pre-compute
+  // script hit Open-Meteo's rate limit) as missing rather than surfacing
+  // an empty 10-bar chart to the user.
+  const hasUsableCloudData = !!gridHistory && gridHistory.cell.total_years > 0
+  const cloudHistory = hasUsableCloudData
     ? {
-        cell: gridHistory.cell,
+        cell: gridHistory!.cell,
         sampledAt: {
-          lat: gridHistory.cellLat,
-          lng: gridHistory.cellLng,
-          distanceMeters: gridHistory.distanceMeters,
+          lat: gridHistory!.cellLat,
+          lng: gridHistory!.cellLng,
+          distanceMeters: gridHistory!.distanceMeters,
         },
       }
     : null
