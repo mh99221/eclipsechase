@@ -341,6 +341,22 @@ const is = {
     ],
   },
 
+  'sandafell-thingeyri': {
+    name: 'Sandafell (Þingeyri)',
+    description:
+      'Fjallstindur í 367 m hæð á suðurströnd Dýrafjarðar, beint fyrir ofan sjávarþorpið Þingeyri. Uppgangan vinnur fyrir besta sjóndeildarhring síðunnar — yfir 22° af frí útsýni til vest-suðvesturs, með opið Atlantshaf sýnilegt út fyrir fjarðarmynnið og næsta hindrandi landslag meira en 8 km í burtu yfir hafið. 60 mínútna ganga — panóraman er málið. Hentar best þeim sem vilja heldur vinna sér inn hreinan sjóndeildarhring en gera málamiðlanir með stað við veginn.',
+    parking_info:
+      'Bílastæði við gönguleiðina í suðausturhluta Þingeyrarþorps, út frá efri þorpsgötunni. Lítið malarsvæði, frítt. Þingeyri sjálft er með matvöruverslun og bensínstöð; nýttu þau áður en gangan hefst.',
+    terrain_notes:
+      '2 km af gönguleið sem sneiðir upp grýtta hlíð frá þorpinu (117 m) að breiðri tindahásléttu (367 m). 60 mínútur upp fyrir göngumann í eðlilegu formi, styttra niður. Ekkert skjól á tindinum — gönguskór, vindheld skel, lögskipt klæðnaður og vatn eru nauðsynleg. Tindahásléttan er nógu breið og slétt fyrir nokkra þrífæti með góðu rými á milli.',
+    warnings_titles: [
+      'Tindurinn getur verið í þoku þótt fjörðurinn sé heiður',
+      'Alvöru ganga, ekki rölt',
+      'Skýjaríkasta svæðið fyrir sólmyrkvann',
+      'Ekkert farsímasamband',
+    ],
+  },
+
   'saxholl-crater': {
     name: 'Saxhóll',
     description:

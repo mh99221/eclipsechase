@@ -41,6 +41,7 @@ const SUN_AZIMUTH = 250
 const KNOWN_ELEVATION = {
   'snaefellsjokull-summit': 1446,
   'haestahjallafoss-dynjandi': 99,
+  'sandafell-thingeyri': 367,
 }
 
 // Coordinate overrides (used when the live API hasn't been updated yet).

@@ -36,7 +36,7 @@ The further northwest you go, the longer totality lasts — but the harder it is
 
 The longest totality in Iceland — over 2 minutes at the outer cape. Remote, dramatic fjord landscapes, but requires a 4–5 hour drive from Reykjavík. Weather can be variable. Best for dedicated eclipse chasers willing to commit to the journey.
 
-Top spots: [Látrabjarg Cliffs](/spots/latrabjarg-cliffs) · [Breiðavík Beach](/spots/breidavik-beach) · [Patreksfjörður Beach](/spots/patreksfjordur-beach) · [Ísafjörður Harbour](/spots/isafjordur-harbour) · [Hæstahjallafoss (Dynjandi)](/spots/haestahjallafoss-dynjandi)
+Top spots: [Látrabjarg Cliffs](/spots/latrabjarg-cliffs) · [Breiðavík Beach](/spots/breidavik-beach) · [Patreksfjörður Beach](/spots/patreksfjordur-beach) · [Ísafjörður Harbour](/spots/isafjordur-harbour) · [Hæstahjallafoss (Dynjandi)](/spots/haestahjallafoss-dynjandi) · [Sandafell Summit](/spots/sandafell-thingeyri)
 
 ### Snæfellsnes
 
