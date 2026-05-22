@@ -65,9 +65,66 @@ onMounted(async () => {
       if (ngp && ngp.distanceMeters > 50) {
         const gridEl = document.createElement('div')
         gridEl.className = 'check-map-marker check-map-marker--grid'
-        gridEl.setAttribute('aria-label', 'Nearest pre-computed grid point')
+        gridEl.setAttribute('aria-label', 'Nearest pre-computed horizon grid point')
+        gridEl.title = `Horizon grid sample · ${Math.round(ngp.distanceMeters)} m away`
         new mapboxgl.Marker({ element: gridEl, anchor: 'center' })
           .setLngLat([ngp.lng, ngp.lat])
+          .addTo(map)
+      }
+
+      // ERA5 cloud-history cell — outlined 0.25° square + centre dot so
+      // it reads as a region the cloud average covers, not a point. The
+      // user can see how coarse the cloud climatology grid is compared
+      // to their input.
+      const cloud = props.result.cloudHistory
+      if (cloud) {
+        const cLat = cloud.sampledAt.lat
+        const cLng = cloud.sampledAt.lng
+        const half = 0.125  // half of 0.25° ERA5 cell
+        const polygon = {
+          type: 'FeatureCollection' as const,
+          features: [{
+            type: 'Feature' as const,
+            properties: {},
+            geometry: {
+              type: 'Polygon' as const,
+              coordinates: [[
+                [cLng - half, cLat - half],
+                [cLng + half, cLat - half],
+                [cLng + half, cLat + half],
+                [cLng - half, cLat + half],
+                [cLng - half, cLat - half],
+              ]],
+            },
+          }],
+        }
+        map.addSource('check-era5-cell', { type: 'geojson', data: polygon })
+        map.addLayer({
+          id: 'check-era5-cell-fill',
+          type: 'fill',
+          source: 'check-era5-cell',
+          paint: { 'fill-color': '#38bdf8', 'fill-opacity': 0.06 },
+        })
+        map.addLayer({
+          id: 'check-era5-cell-outline',
+          type: 'line',
+          source: 'check-era5-cell',
+          paint: {
+            'line-color': '#38bdf8',
+            'line-opacity': 0.55,
+            'line-width': 1.25,
+            'line-dasharray': [3, 2],
+          },
+        })
+
+        const cloudEl = document.createElement('div')
+        cloudEl.className = 'check-map-marker check-map-marker--era5'
+        cloudEl.setAttribute('aria-label', 'ERA5 cloud-history sample cell')
+        cloudEl.title = `ERA5 cloud sample · 0.25° cell centred ${
+          Math.round(cloud.sampledAt.distanceMeters / 100) / 10
+        } km away`
+        new mapboxgl.Marker({ element: cloudEl, anchor: 'center' })
+          .setLngLat([cLng, cLat])
           .addTo(map)
       }
     })
@@ -95,6 +152,24 @@ onBeforeUnmount(() => {
   <div class="check-map-wrap">
     <div ref="mapContainer" class="check-map" />
     <p v-if="mapError" class="check-map-error">{{ mapError }}</p>
+  </div>
+  <div class="check-map-legend">
+    <span class="legend-item">
+      <span class="legend-dot legend-dot--user" />
+      <span>Your input</span>
+    </span>
+    <span v-if="result.horizon.nearestGridPoint && result.horizon.nearestGridPoint.distanceMeters > 50" class="legend-item">
+      <span class="legend-dot legend-dot--grid" />
+      <span>Horizon sample</span>
+    </span>
+    <span v-if="result.cloudHistory" class="legend-item">
+      <span class="legend-dot legend-dot--era5" />
+      <span>ERA5 cloud cell (0.25°)</span>
+    </span>
+    <span class="legend-item">
+      <span class="legend-bar legend-bar--path" />
+      <span>Totality path</span>
+    </span>
   </div>
 </template>
 
@@ -126,6 +201,58 @@ onBeforeUnmount(() => {
   background: rgb(var(--surface) / 0.04);
 }
 
+.check-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 10px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-1) / 0.62);
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend-dot {
+  display: inline-block;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend-dot--user {
+  width: 10px;
+  height: 10px;
+  background: #ef4444;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgb(239 68 68 / 0.45);
+}
+.legend-dot--grid {
+  width: 8px;
+  height: 8px;
+  background: rgb(var(--accent));
+  border: 1.5px solid #0a0a0a;
+}
+.legend-dot--era5 {
+  width: 8px;
+  height: 8px;
+  background: #38bdf8;
+  border: 1.5px solid #0a0a0a;
+}
+.legend-bar {
+  display: inline-block;
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.legend-bar--path {
+  background: #fbbf24;
+  opacity: 0.7;
+}
+
 /* Markers are styled via :global so Mapbox can inject them outside
    the scoped component tree. */
 :global(.check-map-marker--user) {
@@ -141,6 +268,14 @@ onBeforeUnmount(() => {
   height: 9px;
   border-radius: 50%;
   background: rgb(var(--accent));
+  border: 2px solid #0a0a0a;
+  opacity: 0.85;
+}
+:global(.check-map-marker--era5) {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #38bdf8;
   border: 2px solid #0a0a0a;
   opacity: 0.85;
 }

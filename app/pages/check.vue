@@ -127,7 +127,7 @@ useHead({
 </script>
 
 <template>
-  <PageShell screen="check" width="reading">
+  <PageShell screen="check" width="wide">
     <!-- Page header: only shown without a result so the result hero
          can take the visual lead once we have data. -->
     <header v-if="!result" class="page-header">
