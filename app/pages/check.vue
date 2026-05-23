@@ -245,13 +245,19 @@ useHead({
 </template>
 
 <style scoped>
-/* Tighter content cap than PageShell's default 768 reading width.
-   Mobile inherits PageShell's full-bleed; only the tablet+ desktop
-   layout actually constrains to 720. */
+/* Match the spots-list gutter pattern: PageShell already caps content
+   at the default 768 px reading width; we just add 16 px horizontal
+   padding on mobile and 24 px on tablet+. */
 .check-content {
   width: 100%;
-  max-width: 720px;
-  margin: 0 auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+@media (min-width: 640px) {
+  .check-content {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
 }
 
 .page-header {
