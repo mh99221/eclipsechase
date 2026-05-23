@@ -51,11 +51,16 @@ onMounted(async () => {
         console.warn('[CheckMiniMap] failed to add path layers:', e?.message)
       }
 
-      // Bullseye matching the selected-spot pin on /map. Inner dot
-      // is rendered via ::after, no extra DOM node.
+      // Bullseye matching /map's selected pin. Mapbox wraps the
+      // marker in its own div and overrides positioning, so the
+      // inner dot needs to be a real child element — a pseudo
+      // ::after gets stripped/repositioned.
       const userEl = document.createElement('div')
       userEl.className = 'check-map-marker check-map-marker--user'
       userEl.setAttribute('aria-label', 'Your input location')
+      const userInner = document.createElement('div')
+      userInner.className = 'check-map-marker--user-dot'
+      userEl.appendChild(userInner)
       new mapboxgl.Marker({ element: userEl, anchor: 'center' })
         .setLngLat([props.result.input.lng, props.result.input.lat])
         .addTo(map)
@@ -266,7 +271,6 @@ onBeforeUnmount(() => {
    need :global. User pin mirrors the selected-spot pin on /map
    exactly (26 px outer, --map-marker-bg fill, 11 px red inner). */
 :global(.check-map-marker--user) {
-  position: relative;
   width: 26px;
   height: 26px;
   border-radius: 50%;
@@ -274,17 +278,15 @@ onBeforeUnmount(() => {
   border: 2px solid #D85848;
   box-shadow: 0 0 14px rgba(216, 88, 72, 0.5);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-:global(.check-map-marker--user)::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
+:global(.check-map-marker--user-dot) {
   width: 11px;
   height: 11px;
   border-radius: 50%;
   background: #D85848;
-  transform: translate(-50%, -50%);
 }
 :global(.check-map-marker--grid) {
   /* Horizon-grid sample point — green to read as a positive "this
