@@ -177,7 +177,7 @@ onBeforeUnmount(() => {
 .check-map-wrap {
   position: relative;
   width: 100%;
-  height: 260px;
+  height: 520px;
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid rgb(var(--border-subtle) / 0.08);

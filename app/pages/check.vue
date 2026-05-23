@@ -127,7 +127,7 @@ useHead({
 </script>
 
 <template>
-  <PageShell screen="check" width="wide">
+  <PageShell screen="check">
     <!-- Page header: only shown without a result so the result hero
          can take the visual lead once we have data. -->
     <header v-if="!result" class="page-header">
@@ -398,7 +398,7 @@ useHead({
 }
 .map-skeleton {
   width: 100%;
-  height: 260px;
+  height: 520px;
   border-radius: 12px;
   border: 1px solid rgb(var(--border-subtle) / 0.08);
   background:
