@@ -13,7 +13,7 @@ defineProps<{
 
 <template>
   <div class="cta-grid">
-    <NuxtLink to="/spots" class="cta-link">
+    <NuxtLinkLocale to="/spots" class="cta-link">
       <Card>
         <div class="cta-eyebrow">CURATED SPOTS</div>
         <div class="cta-title">See 30 viewing spots</div>
@@ -23,8 +23,8 @@ defineProps<{
         </div>
         <div class="cta-arrow">→</div>
       </Card>
-    </NuxtLink>
-    <NuxtLink to="/pro" class="cta-link">
+    </NuxtLinkLocale>
+    <NuxtLinkLocale to="/pro" class="cta-link">
       <Card>
         <div class="cta-eyebrow">ECLIPSE PRO</div>
         <div class="cta-title">Tap-anywhere checks</div>
@@ -33,7 +33,7 @@ defineProps<{
         </div>
         <div class="cta-arrow">→</div>
       </Card>
-    </NuxtLink>
+    </NuxtLinkLocale>
   </div>
 </template>
 
