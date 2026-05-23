@@ -128,6 +128,7 @@ useHead({
 
 <template>
   <PageShell screen="check">
+    <div class="check-content">
     <!-- Page header: only shown without a result so the result hero
          can take the visual lead once we have data. -->
     <header v-if="!result" class="page-header">
@@ -239,10 +240,20 @@ useHead({
         <CheckShareButtons :result="result" />
       </section>
     </div>
+    </div>
   </PageShell>
 </template>
 
 <style scoped>
+/* Tighter content cap than PageShell's default 768 reading width.
+   Mobile inherits PageShell's full-bleed; only the tablet+ desktop
+   layout actually constrains to 720. */
+.check-content {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
 .page-header {
   margin-bottom: 24px;
 }
