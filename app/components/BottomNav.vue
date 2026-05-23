@@ -81,7 +81,7 @@ function onTap(item: NavItem, e: MouseEvent) {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid rgb(var(--border-subtle) / 0.08);
-  padding: 14px 0 28px;
+  padding: 9px 0 28px;
   padding-bottom: max(28px, env(safe-area-inset-bottom));
 }
 @media (min-width: 768px) {
