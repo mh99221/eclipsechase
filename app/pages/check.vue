@@ -397,7 +397,7 @@ useHead({
 }
 .map-skeleton {
   width: 100%;
-  height: 520px;
+  aspect-ratio: 1 / 1;
   border-radius: 12px;
   border: 1px solid rgb(var(--border-subtle) / 0.08);
   background:
