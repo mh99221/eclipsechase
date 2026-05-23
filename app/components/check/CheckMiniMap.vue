@@ -226,7 +226,7 @@ onBeforeUnmount(() => {
 .legend-dot--user {
   width: 12px;
   height: 12px;
-  background: rgb(var(--bg-elevated));
+  background: rgb(var(--map-marker-bg));
   border: 2px solid #D85848;
   box-shadow: 0 0 0 1px rgba(216, 88, 72, 0.35);
   position: relative;
@@ -241,7 +241,7 @@ onBeforeUnmount(() => {
 .legend-dot--grid {
   width: 8px;
   height: 8px;
-  background: #D85848;
+  background: #78D888;
   border: 1.5px solid #0a0a0a;
 }
 .legend-dot--era5 {
@@ -263,13 +263,14 @@ onBeforeUnmount(() => {
 }
 
 /* Mapbox injects these outside the scoped component tree, so they
-   need :global. Pin colour matches the selected-spot pin on /map. */
+   need :global. User pin mirrors the selected-spot pin on /map
+   exactly (26 px outer, --map-marker-bg fill, 11 px red inner). */
 :global(.check-map-marker--user) {
   position: relative;
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  background: rgb(var(--bg-elevated));
+  background: rgb(var(--map-marker-bg));
   border: 2px solid #D85848;
   box-shadow: 0 0 14px rgba(216, 88, 72, 0.5);
   cursor: pointer;
@@ -277,15 +278,22 @@ onBeforeUnmount(() => {
 :global(.check-map-marker--user)::after {
   content: '';
   position: absolute;
-  inset: 4px;
+  left: 50%;
+  top: 50%;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   background: #D85848;
+  transform: translate(-50%, -50%);
 }
 :global(.check-map-marker--grid) {
+  /* Horizon-grid sample point — green to read as a positive "this
+     is the spot we actually evaluated" anchor distinct from the
+     red user pin. */
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #D85848;
+  background: #78D888;
   border: 2px solid #0a0a0a;
   opacity: 0.9;
 }
