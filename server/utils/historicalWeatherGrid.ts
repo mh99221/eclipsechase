@@ -80,7 +80,26 @@ export async function loadHistoricalWeatherGrid(): Promise<RawHistoricalGrid | n
     } catch (e: any) {
       console.warn('[CloudHistory] Nitro storage fallback failed:', e?.message)
     }
-    console.warn('[CloudHistory] grid file not found via filesystem or storage')
+    // HTTP fallback — matches the pattern used by horizonGrid.ts +
+    // eclipseGrid.ts so the endpoint stays available even when the
+    // serverless bundler dropped the file.
+    try {
+      const config = useRuntimeConfig()
+      const baseUrl = (config.public.siteUrl as string)
+        || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '')
+        || 'http://localhost:3000'
+      const res = await fetch(`${baseUrl}/eclipse-data/historical-weather-grid.json`)
+      if (res.ok) {
+        const grid = await res.json() as RawHistoricalGrid
+        console.log(`[CloudHistory] Loaded grid via HTTP (${Object.keys(grid.cells || {}).length} cells)`)
+        cache = grid
+        return grid
+      }
+      console.warn(`[CloudHistory] HTTP fallback returned ${res.status}`)
+    } catch (e: any) {
+      console.warn('[CloudHistory] HTTP fallback failed:', e?.message)
+    }
+    console.warn('[CloudHistory] grid file not found via filesystem, storage, or HTTP')
     cache = null
     return null
   })()

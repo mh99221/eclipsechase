@@ -56,7 +56,25 @@ async function loadRings(): Promise<number[][][]> {
     try {
       const data = await useStorage('assets:server:eclipse-data').getItem('path.geojson')
       if (data) fc = (typeof data === 'string' ? JSON.parse(data) : data) as GeoJsonFeatureCollection
-    } catch { /* fall through to error */ }
+    } catch (e: any) {
+      console.warn('[TotalityPath] Nitro storage fallback failed:', e?.message)
+    }
+  }
+  if (!fc) {
+    // Last resort: fetch our own static asset over HTTP. Necessary on
+    // Vercel when neither the filesystem candidates nor server-assets
+    // storage resolve (e.g. cold start in a fresh function instance
+    // where the bundler stripped the file).
+    try {
+      const config = useRuntimeConfig()
+      const baseUrl = (config.public.siteUrl as string)
+        || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '')
+        || 'http://localhost:3000'
+      const res = await fetch(`${baseUrl}/eclipse-data/path.geojson`)
+      if (res.ok) fc = await res.json() as GeoJsonFeatureCollection
+    } catch (e: any) {
+      console.error('[TotalityPath] HTTP fallback failed:', e?.message)
+    }
   }
   if (!fc) throw new Error('[TotalityPath] path.geojson not found')
 

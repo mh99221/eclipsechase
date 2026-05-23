@@ -149,20 +149,45 @@ export default defineEventHandler(async (event): Promise<CheckResult> => {
     })
   }
 
+  // Each data source is wrapped independently so one missing file
+  // (e.g. a bundler dropping path.geojson on a serverless cold start)
+  // can't take the whole endpoint down — the user still gets the
+  // sources we did manage to load.
   let horizonPoint: GridPoint | null = null
   try {
     const grid = await loadHorizonGrid()
     horizonPoint = findNearestGridPoint(grid, latNum, lngNum)?.point ?? null
-  } catch (e) {
-    console.error('[check] horizon grid load failed:', e)
+  } catch (e: any) {
+    console.error('[check] horizon grid load failed:', e?.message || e)
   }
 
-  const eclipsePoint = await nearestEclipseGridPoint(latNum, lngNum)
-  const insidePath = await isInTotalityPath(latNum, lngNum)
+  let eclipsePoint: Awaited<ReturnType<typeof nearestEclipseGridPoint>> = null
+  try {
+    eclipsePoint = await nearestEclipseGridPoint(latNum, lngNum)
+  } catch (e: any) {
+    console.error('[check] eclipse grid load failed:', e?.message || e)
+  }
+
+  let insidePath = false
+  try {
+    insidePath = await isInTotalityPath(latNum, lngNum)
+  } catch (e: any) {
+    console.error('[check] totality polygon load failed:', e?.message || e)
+    // Best-effort fallback: if we have a horizon grid point and it's
+    // in the path band, the `td` field will be non-null. Use that as
+    // a proxy until the polygon loads.
+    insidePath = !!(horizonPoint?.td && horizonPoint.td > 0)
+  }
+
   const totalityDuration = horizonPoint?.td
     ?? (insidePath ? (eclipsePoint?.duration_seconds ?? null) : null)
 
-  const gridHistory = await findNearestHistoricalWeather(latNum, lngNum)
+  let gridHistory: Awaited<ReturnType<typeof findNearestHistoricalWeather>> = null
+  try {
+    gridHistory = await findNearestHistoricalWeather(latNum, lngNum)
+  } catch (e: any) {
+    console.error('[check] cloud history load failed:', e?.message || e)
+  }
   // Treat cells where every year came back null (e.g. the pre-compute
   // script hit Open-Meteo's rate limit) as missing rather than surfacing
   // an empty 10-bar chart to the user.
