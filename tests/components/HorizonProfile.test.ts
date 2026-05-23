@@ -36,7 +36,10 @@ describe('HorizonProfile', () => {
     const wrapper = await mountSuspended(HorizonProfile, {
       props: { data: mockData },
     })
-    expect(wrapper.find('p').exists()).toBe(true)
+    // Attribution moved from an external <p> into the SVG itself
+    // (rendered as <text class="horizon-attribution">) so the credit
+    // lives in the same frame as the chart.
+    expect(wrapper.find('text.horizon-attribution').exists()).toBe(true)
   })
 
   it('renders terrain path', async () => {

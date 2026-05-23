@@ -1,6 +1,11 @@
 export function formatDuration(seconds: number): string {
-  const m = Math.floor(seconds / 60)
-  const s = seconds % 60
+  // Round to whole seconds — pre-computed grid points carry up to
+  // ~6 decimals of floating-point noise (1m 30.299999999999997s),
+  // which has no real-world meaning at this precision and looks
+  // broken in the UI.
+  const total = Math.round(seconds)
+  const m = Math.floor(total / 60)
+  const s = total % 60
   return m > 0 ? `${m}m ${s}s` : `${s}s`
 }
 

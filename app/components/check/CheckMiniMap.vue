@@ -51,10 +51,17 @@ onMounted(async () => {
         console.warn('[CheckMiniMap] failed to add path layers:', e?.message)
       }
 
-      // User input marker — red dot with the "you" label
+      // User input marker — bullseye style matching the selected
+      // spot pin on /map (dark ring background + red outer border +
+      // red glow halo + red inner dot). The visual identity for
+      // "this is the location you're looking at" should be the same
+      // across both surfaces.
       const userEl = document.createElement('div')
       userEl.className = 'check-map-marker check-map-marker--user'
       userEl.setAttribute('aria-label', 'Your input location')
+      const userInner = document.createElement('div')
+      userInner.className = 'check-map-marker--user-dot'
+      userEl.appendChild(userInner)
       new mapboxgl.Marker({ element: userEl, anchor: 'center' })
         .setLngLat([props.result.input.lng, props.result.input.lat])
         .addTo(map)
@@ -223,16 +230,24 @@ onBeforeUnmount(() => {
   flex-shrink: 0;
 }
 .legend-dot--user {
-  width: 10px;
-  height: 10px;
-  background: #ef4444;
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 1px rgb(239 68 68 / 0.45);
+  width: 12px;
+  height: 12px;
+  background: rgb(var(--bg-elevated));
+  border: 2px solid #D85848;
+  box-shadow: 0 0 0 1px rgba(216, 88, 72, 0.35);
+  position: relative;
+}
+.legend-dot--user::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: #D85848;
 }
 .legend-dot--grid {
   width: 8px;
   height: 8px;
-  background: rgb(var(--accent));
+  background: #D85848;
   border: 1.5px solid #0a0a0a;
 }
 .legend-dot--era5 {
@@ -254,22 +269,36 @@ onBeforeUnmount(() => {
 }
 
 /* Markers are styled via :global so Mapbox can inject them outside
-   the scoped component tree. */
+   the scoped component tree. The user pin mirrors the selected-spot
+   marker on /map: 22 px dark ring with a 2 px red border, soft red
+   halo, and an 11 px red dot inset. */
 :global(.check-map-marker--user) {
-  width: 16px;
-  height: 16px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background: #ef4444;
-  border: 3px solid #fff;
-  box-shadow: 0 0 0 2px rgb(239 68 68 / 0.45), 0 2px 8px rgba(0, 0, 0, 0.6);
+  background: rgb(var(--bg-elevated));
+  border: 2px solid #D85848;
+  box-shadow: 0 0 14px rgba(216, 88, 72, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+:global(.check-map-marker--user-dot) {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #D85848;
 }
 :global(.check-map-marker--grid) {
+  /* Horizon-grid sample point — small red dot so it groups visually
+     with the user pin's "this is what I checked" colour family. */
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: rgb(var(--accent));
+  background: #D85848;
   border: 2px solid #0a0a0a;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 :global(.check-map-marker--era5) {
   width: 8px;

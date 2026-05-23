@@ -365,6 +365,19 @@ const ariaLabel = computed(() => {
         text-anchor="middle"
         font-family="'IBM Plex Mono', monospace"
       >{{ data.verdict.toUpperCase() }}</text>
+
+      <!-- Attribution: rendered as SVG text inside the chart frame so
+           the credit lives in the same "box" as the data (matches the
+           Card-footer pattern used by the cloud climatology chart on
+           /spots/[slug] and /check). Mono small caps, ink-3 tone. -->
+      <text
+        :x="width - 12"
+        :y="height - 8"
+        class="horizon-attribution"
+        font-family="'JetBrains Mono', ui-monospace, monospace"
+        font-size="9.5"
+        text-anchor="end"
+      >{{ t('horizon.attribution') }}</text>
     </svg>
 
     <!-- Tooltip -->
@@ -375,11 +388,6 @@ const ariaLabel = computed(() => {
     >
       {{ tooltip.text }}
     </div>
-
-    <!-- Attribution -->
-    <p class="mt-2 text-[10px] font-mono text-ink-3/70 text-right">
-      {{ t('horizon.attribution') }}
-    </p>
   </div>
 </template>
 
@@ -394,6 +402,10 @@ const ariaLabel = computed(() => {
   stroke: rgb(var(--horizon-terrain-stroke));
 }
 .compass-label-active { fill: rgb(var(--horizon-accent)); }
+.horizon-attribution {
+  fill: rgb(var(--ink-1) / 0.42);
+  letter-spacing: 0.05em;
+}
 
 /* HorizonProfile-specific: this chart is large (700×360 default) so the
    labels and grid use slightly darker slate than DockHorizon's smaller

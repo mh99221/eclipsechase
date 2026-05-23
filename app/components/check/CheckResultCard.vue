@@ -10,7 +10,7 @@
  *   - outside-path: dim "outside path" pill + nearest-path note
  */
 import type { CheckResult } from '~/types/check'
-import { formatDuration, compassDirection } from '~/utils/eclipse'
+import { compassDirection } from '~/utils/eclipse'
 
 const props = defineProps<{ result: CheckResult }>()
 
@@ -46,37 +46,21 @@ const bearingToPath = computed(() => {
   <header class="check-hero">
     <div class="check-hero-kicker-row">
       <span class="check-hero-kicker">● COORDINATE CHECK</span>
-      <!-- Right-aligned verdict pill. The HorizonBadge already encodes
-           the four verdicts; we render a neutral pill for the
-           outside-path and unknown-horizon cases. -->
-      <HorizonBadge
-        v-if="insidePath && verdict !== 'unknown' && result.horizon.clearanceDegrees != null"
-        :verdict="verdict as Exclude<typeof verdict, 'unknown'>"
-        :clearance="result.horizon.clearanceDegrees"
-        compact
-      />
-      <span v-else-if="insidePath" class="check-hero-pill" data-tone="warn">In path · no horizon data</span>
-      <span v-else class="check-hero-pill" data-tone="dim">Outside path</span>
+      <!-- Outside-path stays as a small neutral pill so the user
+           still sees the in/out-of-path call without the previous
+           green Clear badge that duplicated the stat-strip below. -->
+      <span v-if="!insidePath" class="check-hero-pill" data-tone="dim">Outside path</span>
     </div>
 
     <h1 class="check-hero-coords">{{ coordLine }}</h1>
 
-    <p class="check-hero-meta">
-      <template v-if="insidePath && result.totality.durationSeconds != null">
-        <span class="check-hero-meta-strong">{{ formatDuration(result.totality.durationSeconds) }}</span>
-        of totality at this location
-      </template>
-      <template v-else-if="insidePath">
-        Inside the path of totality on August 12, 2026
-      </template>
-      <template v-else>
-        Partial eclipse only —
-        <span v-if="distanceToPath != null && bearingToPath" class="check-hero-meta-strong">
-          {{ distanceToPath }} km {{ bearingToPath }}
-        </span>
-        <span v-else>this location is outside the path</span>
-        from the totality path
-      </template>
+    <!-- Outside-path locations get a one-line context note about
+         distance/direction to the path. In-path locations don't need
+         a hero subhead — the duration + verdict already appear in
+         the stat strip right below. -->
+    <p v-if="!insidePath && distanceToPath != null && bearingToPath" class="check-hero-meta">
+      <span class="check-hero-meta-strong">{{ distanceToPath }} km {{ bearingToPath }}</span>
+      from the totality path
     </p>
   </header>
 </template>
