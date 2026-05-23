@@ -13,6 +13,7 @@
  */
 import type { CheckResult } from '~/types/check'
 import type { HorizonProfileData } from '~/types/horizon'
+import { formatLatLng } from '~/utils/eclipse'
 import { parseCoordinates } from '~/utils/parseCoordinates'
 
 const route = useRoute()
@@ -216,10 +217,7 @@ useHead({
         >
           Sampled {{ Math.round(result.horizon.nearestGridPoint.distanceMeters) }} m
           from your input point
-          ({{ Math.abs(result.horizon.nearestGridPoint.lat).toFixed(4) }}°
-          {{ result.horizon.nearestGridPoint.lat >= 0 ? 'N' : 'S' }} ·
-          {{ Math.abs(result.horizon.nearestGridPoint.lng).toFixed(4) }}°
-          {{ result.horizon.nearestGridPoint.lng >= 0 ? 'E' : 'W' }})
+          ({{ formatLatLng(result.horizon.nearestGridPoint.lat, result.horizon.nearestGridPoint.lng) }})
         </p>
       </section>
 
@@ -324,17 +322,12 @@ useHead({
   border-color: rgb(var(--accent) / 0.62);
   background: rgb(var(--surface) / 0.06);
 }
-/* .btn-corona handles base styling (Inter Tight 14, accent bg, 2 px
-   radius, hover glow). We just keep the disabled / no-wrap rules
-   that the global class doesn't cover. */
 .coord-submit {
   white-space: nowrap;
 }
 .coord-submit:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
 }
 .input-error {
   margin-top: 10px;

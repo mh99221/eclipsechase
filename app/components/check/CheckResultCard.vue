@@ -1,28 +1,16 @@
 <script setup lang="ts">
 /**
- * Result hero for /check — mirrors the SpotHeroBlock pattern (eyebrow,
- * big display heading, coords readout, secondary meta line) so a
- * coordinate check feels like the same family as a curated-spot page.
- *
- * Three states:
- *   - inside-path + known horizon: HorizonBadge + duration line
- *   - inside-path + unknown horizon: amber "inside path" pill
- *   - outside-path: dim "outside path" pill + nearest-path note
+ * Result hero for /check — eyebrow + big coord heading. In-path
+ * locations get just the coords; outside-path adds a "X km Y from
+ * the totality path" one-liner and a neutral pill.
  */
 import type { CheckResult } from '~/types/check'
-import { compassDirection } from '~/utils/eclipse'
+import { compassDirection, formatLatLng } from '~/utils/eclipse'
 
 const props = defineProps<{ result: CheckResult }>()
 
-const verdict = computed(() => props.result.horizon.verdict)
 const insidePath = computed(() => props.result.totality.insidePath)
-
-const coordLine = computed(() => {
-  const { lat, lng } = props.result.input
-  const ns = lat >= 0 ? 'N' : 'S'
-  const ew = lng >= 0 ? 'E' : 'W'
-  return `${Math.abs(lat).toFixed(4)}° ${ns} · ${Math.abs(lng).toFixed(4)}° ${ew}`
-})
+const coordLine = computed(() => formatLatLng(props.result.input.lat, props.result.input.lng))
 
 const distanceToPath = computed(() => {
   const m = props.result.totality.distanceFromNearestPointMeters
@@ -33,10 +21,9 @@ const distanceToPath = computed(() => {
 const bearingToPath = computed(() => {
   const r = props.result
   if (r.totality.nearestGridLat == null || r.totality.nearestGridLng == null) return null
-  // bearing from input → nearest in-path grid point
+  // atan2 in lat/lng space is rough but plenty for "south-ish" copy.
   const dLat = r.totality.nearestGridLat - r.input.lat
   const dLng = r.totality.nearestGridLng - r.input.lng
-  // atan2 in lat/lng space is rough but plenty for "south-ish" copy
   const az = (Math.atan2(dLng, dLat) * 180) / Math.PI
   return compassDirection((az + 360) % 360)
 })
@@ -46,18 +33,11 @@ const bearingToPath = computed(() => {
   <header class="check-hero">
     <div class="check-hero-kicker-row">
       <span class="check-hero-kicker">● COORDINATE CHECK</span>
-      <!-- Outside-path stays as a small neutral pill so the user
-           still sees the in/out-of-path call without the previous
-           green Clear badge that duplicated the stat-strip below. -->
       <span v-if="!insidePath" class="check-hero-pill" data-tone="dim">Outside path</span>
     </div>
 
     <h1 class="check-hero-coords">{{ coordLine }}</h1>
 
-    <!-- Outside-path locations get a one-line context note about
-         distance/direction to the path. In-path locations don't need
-         a hero subhead — the duration + verdict already appear in
-         the stat strip right below. -->
     <p v-if="!insidePath && distanceToPath != null && bearingToPath" class="check-hero-meta">
       <span class="check-hero-meta-strong">{{ distanceToPath }} km {{ bearingToPath }}</span>
       from the totality path

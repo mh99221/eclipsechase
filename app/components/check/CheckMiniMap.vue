@@ -51,17 +51,11 @@ onMounted(async () => {
         console.warn('[CheckMiniMap] failed to add path layers:', e?.message)
       }
 
-      // User input marker — bullseye style matching the selected
-      // spot pin on /map (dark ring background + red outer border +
-      // red glow halo + red inner dot). The visual identity for
-      // "this is the location you're looking at" should be the same
-      // across both surfaces.
+      // Bullseye matching the selected-spot pin on /map. Inner dot
+      // is rendered via ::after, no extra DOM node.
       const userEl = document.createElement('div')
       userEl.className = 'check-map-marker check-map-marker--user'
       userEl.setAttribute('aria-label', 'Your input location')
-      const userInner = document.createElement('div')
-      userInner.className = 'check-map-marker--user-dot'
-      userEl.appendChild(userInner)
       new mapboxgl.Marker({ element: userEl, anchor: 'center' })
         .setLngLat([props.result.input.lng, props.result.input.lat])
         .addTo(map)
@@ -268,31 +262,26 @@ onBeforeUnmount(() => {
   opacity: 0.7;
 }
 
-/* Markers are styled via :global so Mapbox can inject them outside
-   the scoped component tree. The user pin mirrors the selected-spot
-   marker on /map: 22 px dark ring with a 2 px red border, soft red
-   halo, and an 11 px red dot inset. */
+/* Mapbox injects these outside the scoped component tree, so they
+   need :global. Pin colour matches the selected-spot pin on /map. */
 :global(.check-map-marker--user) {
+  position: relative;
   width: 22px;
   height: 22px;
   border-radius: 50%;
   background: rgb(var(--bg-elevated));
   border: 2px solid #D85848;
   box-shadow: 0 0 14px rgba(216, 88, 72, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
 }
-:global(.check-map-marker--user-dot) {
-  width: 11px;
-  height: 11px;
+:global(.check-map-marker--user)::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
   border-radius: 50%;
   background: #D85848;
 }
 :global(.check-map-marker--grid) {
-  /* Horizon-grid sample point — small red dot so it groups visually
-     with the user pin's "this is what I checked" colour family. */
   width: 9px;
   height: 9px;
   border-radius: 50%;

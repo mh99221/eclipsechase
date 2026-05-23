@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { spotThumbUrl } from '~/utils/eclipse'
+import { formatLatLng, spotThumbUrl } from '~/utils/eclipse'
 import type { SpotPhoto } from '~/types/spots'
 
 const props = defineProps<{
@@ -19,14 +19,10 @@ const heroSrcset = computed(() => {
   return `${spotThumbUrl(props.hero.filename)} 600w, /images/spots/${props.hero.filename} 1200w`
 })
 
-// Format like "63.8121° N · 22.7068° W". Iceland is always N+/W-.
 // 4 decimals ≈ 11 m precision — plenty for a copy-paste-into-Maps readout.
-const formattedCoordinates = computed(() => {
-  if (props.lat == null || props.lng == null) return null
-  const ns = props.lat >= 0 ? 'N' : 'S'
-  const ew = props.lng >= 0 ? 'E' : 'W'
-  return `${Math.abs(props.lat).toFixed(4)}° ${ns} · ${Math.abs(props.lng).toFixed(4)}° ${ew}`
-})
+const formattedCoordinates = computed(() =>
+  props.lat == null || props.lng == null ? null : formatLatLng(props.lat, props.lng),
+)
 </script>
 
 <template>

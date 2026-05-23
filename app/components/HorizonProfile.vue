@@ -366,10 +366,8 @@ const ariaLabel = computed(() => {
         font-family="'IBM Plex Mono', monospace"
       >{{ data.verdict.toUpperCase() }}</text>
 
-      <!-- Attribution: rendered as SVG text inside the chart frame so
-           the credit lives in the same "box" as the data (matches the
-           Card-footer pattern used by the cloud climatology chart on
-           /spots/[slug] and /check). Mono small caps, ink-3 tone. -->
+      <!-- Credit inside the chart frame, mirroring the Card-footer
+           pattern used by the cloud climatology card. -->
       <text
         :x="width - 12"
         :y="height - 8"

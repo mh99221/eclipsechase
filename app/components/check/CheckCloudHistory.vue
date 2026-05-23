@@ -11,6 +11,7 @@
  */
 import ForecastClimatology from '~/components/spot-detail/forecast/ForecastClimatology.vue'
 import type { CheckResult } from '~/types/check'
+import { formatLatLng } from '~/utils/eclipse'
 
 const props = defineProps<{ result: CheckResult }>()
 
@@ -44,9 +45,7 @@ const sample = computed(() => {
   <section v-if="history">
     <ForecastClimatology :history="history" />
     <p v-if="sample" class="check-sample-note">
-      Sampled from ERA5 grid cell
-      {{ Math.abs(sample.lat).toFixed(2) }}° {{ sample.lat >= 0 ? 'N' : 'S' }} ·
-      {{ Math.abs(sample.lng).toFixed(2) }}° {{ sample.lng >= 0 ? 'E' : 'W' }}
+      Sampled from ERA5 grid cell {{ formatLatLng(sample.lat, sample.lng, 2) }}
       <span class="check-sample-divider">·</span>
       {{ sample.distanceKm.toFixed(1) }} km from your input
     </p>

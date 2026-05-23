@@ -1,3 +1,15 @@
+/**
+ * Format a latitude/longitude pair as the project's canonical readout:
+ * `65.6855° N · 23.5950° W`. Hemispheres are picked from the signs;
+ * negative values automatically swap to S/W. `decimals` controls the
+ * fractional precision (default 4 ≈ 11 m).
+ */
+export function formatLatLng(lat: number, lng: number, decimals = 4): string {
+  const ns = lat >= 0 ? 'N' : 'S'
+  const ew = lng >= 0 ? 'E' : 'W'
+  return `${Math.abs(lat).toFixed(decimals)}° ${ns} · ${Math.abs(lng).toFixed(decimals)}° ${ew}`
+}
+
 export function formatDuration(seconds: number): string {
   // Round to whole seconds — pre-computed grid points carry up to
   // ~6 decimals of floating-point noise (1m 30.299999999999997s),
