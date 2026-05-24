@@ -130,17 +130,22 @@ useHead({
 <template>
   <PageShell screen="check">
     <div class="check-content">
-    <!-- Page header: only shown without a result so the result hero
-         can take the visual lead once we have data. -->
-    <header v-if="!result" class="page-header">
+    <!-- Page header is always visible. The result hero below takes
+         a different visual register (coords as h1, no eyebrow), so
+         showing both side-by-side stays uncluttered while keeping
+         the page's purpose clear for shared-link visitors who land
+         straight on a result. -->
+    <header class="page-header">
       <Eyebrow tone="accent" class="page-eyebrow">The check</Eyebrow>
       <h1 class="page-h1">
         Check any spot for the August 12 eclipse.
       </h1>
       <p class="page-subhead">
-        Paste coordinates or a Google Maps link. We'll check terrain
-        horizon, 10-year cloud history, and your position in the path of
-        totality — all from the same data we use for our curated spots.
+        Paste coordinates or a Google Maps link and we'll check the
+        terrain horizon at sunset, ten years of historical cloud cover,
+        and whether the point sits inside the path of totality — using
+        the same ÍslandsDEM + ERA5 data we use for our curated spots.
+        Free, no signup. Share the result URL.
       </p>
     </header>
 
