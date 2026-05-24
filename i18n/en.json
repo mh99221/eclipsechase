@@ -463,6 +463,7 @@
     "hint_hemisphere": "With hemisphere",
     "hint_google_maps": "Google Maps link",
     "hint_apple_maps": "Apple Maps link",
+    "hint_short_link_note": "Short links like maps.app.goo.gl/… aren't supported — click them first to expand to the full URL, then paste.",
     "loading": "Computing…",
     "hero_kicker": "● COORDINATE CHECK",
     "hero_outside_path_pill": "Outside path",

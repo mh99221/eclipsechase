@@ -172,9 +172,10 @@ useHead({
       <ul class="hints-list">
         <li>{{ t('check.hint_decimal') }} <code>65.86182, -23.48019</code></li>
         <li>{{ t('check.hint_hemisphere') }} <code>65.86°N, 23.48°W</code></li>
-        <li>{{ t('check.hint_google_maps') }}</li>
-        <li>{{ t('check.hint_apple_maps') }}</li>
+        <li>{{ t('check.hint_google_maps') }} <code>https://www.google.com/maps/place/…/@65.86182,-23.48019,15z</code></li>
+        <li>{{ t('check.hint_apple_maps') }} <code>https://maps.apple.com/?ll=65.86182,-23.48019</code></li>
       </ul>
+      <p class="hints-tip">{{ t('check.hint_short_link_note') }}</p>
     </section>
 
     <!-- Loading -->
@@ -360,6 +361,18 @@ useHead({
   padding: 1px 6px;
   margin-left: 6px;
   color: rgb(var(--ink-1));
+  /* Long URL hints (Google / Apple Maps) can overflow the 720 px
+     reading column on mobile — let them break at the natural / and ? */
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+.hints-tip {
+  margin-top: 12px;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 12.5px;
+  font-style: italic;
+  color: rgb(var(--ink-1) / 0.62);
+  line-height: 1.5;
 }
 
 .loading-row {

@@ -463,6 +463,7 @@
     "hint_hemisphere": "Með áttarmerki",
     "hint_google_maps": "Google Maps tengill",
     "hint_apple_maps": "Apple Maps tengill",
+    "hint_short_link_note": "Stuttir tenglar eins og maps.app.goo.gl/… eru ekki studdir — smelltu fyrst á þá til að opna fulla vefslóð, og límdu hana inn.",
     "loading": "Reikna…",
     "hero_kicker": "● HNIT-ATHUGUN",
     "hero_outside_path_pill": "Utan slóðar",
