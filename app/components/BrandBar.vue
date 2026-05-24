@@ -18,6 +18,11 @@ const baseName = computed(() => String(getRouteBaseName(route) ?? ''))
 const isLanding = computed(() => baseName.value === 'index')
 const isMap = computed(() => baseName.value === 'map')
 const isProRoute = computed(() => baseName.value === 'pro' || baseName.value.startsWith('pro-'))
+// /check is a free-tier tool surface that intentionally drops the
+// page-level nav: shared visitors (Reddit, link previews) should
+// focus on the result. Brand-mark + right-slot (RESTORE / GET PRO
+// / locale) remain so they can still find their way around.
+const isCheck = computed(() => baseName.value === 'check')
 
 // Free users see a small Get-Pro pill in the right slot on every page
 // except / (where the in-page tile already serves that purpose) and
@@ -91,7 +96,7 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
            server), so the SSR pass paints the free-user view; if the
            visitor is actually Pro, hydration just swaps Home's href
            and removes the Map lock — no layout shift. -->
-      <nav class="masthead" aria-label="Primary">
+      <nav v-if="!isCheck" class="masthead" aria-label="Primary">
         <NuxtLinkLocale
           v-for="item in navItems"
           :key="item.to + item.icon"

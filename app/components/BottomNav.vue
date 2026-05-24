@@ -9,6 +9,13 @@ import type { NavIcon, NavItem } from '~/composables/useNavItems'
 const { items, isActive } = useNavItems()
 const { openUpsell } = useUpsell()
 
+// /check is a free-tier tool surface that drops site nav to keep
+// shared-link visitors focused on the result. Hide the entire bar
+// (mobile only — BottomNav doesn't render at md+ anyway).
+const route = useRoute()
+const getRouteBaseName = useRouteBaseName()
+const isHidden = computed(() => String(getRouteBaseName(route) ?? '') === 'check')
+
 // BottomNav stays opaque on every route. The earlier scroll-aware
 // transparency on `/` left the icons + labels visible without their
 // surface whenever the cinematic hero + content fit the viewport
@@ -42,6 +49,7 @@ function onTap(item: NavItem, e: MouseEvent) {
 <template>
   <!-- Bottom nav renders for all users; CSS hides it at md+ where the masthead takes over. -->
   <nav
+    v-if="!isHidden"
     class="bottom-nav"
     aria-label="Primary"
   >
