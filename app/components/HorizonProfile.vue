@@ -29,6 +29,9 @@ const gradientId = `horizon-sky-${uid}`
 // above the verdict pill + sun label so nothing collides at mobile sizes.
 const PADDING = { top: 28, bottom: 48, left: 58, right: 24 }
 const MAX_ALT = 35 // degrees shown on chart
+// Extra strip below the chart for the data-source credit, so it
+// doesn't overlap the active-compass "SUN" label at y = height - 8.
+const ATTRIBUTION_BAND = 18
 
 const plotWidth = computed(() => props.width - PADDING.left - PADDING.right)
 const plotHeight = computed(() => props.height - PADDING.top - PADDING.bottom)
@@ -218,7 +221,7 @@ const ariaLabel = computed(() => {
 <template>
   <div class="relative w-full">
     <svg
-      :viewBox="`0 0 ${width} ${height}`"
+      :viewBox="`0 0 ${width} ${height + ATTRIBUTION_BAND}`"
       class="w-full h-auto"
       :aria-label="ariaLabel"
       role="img"
@@ -232,7 +235,7 @@ const ariaLabel = computed(() => {
           <stop offset="100%" class="sky-bottom" />
         </linearGradient>
       </defs>
-      <rect :width="width" :height="height" :fill="`url(#${gradientId})`" rx="4" />
+      <rect :width="width" :height="height + ATTRIBUTION_BAND" :fill="`url(#${gradientId})`" rx="4" />
 
       <!-- Grid lines -->
       <line
@@ -366,11 +369,11 @@ const ariaLabel = computed(() => {
         font-family="'IBM Plex Mono', monospace"
       >{{ data.verdict.toUpperCase() }}</text>
 
-      <!-- Credit inside the chart frame, mirroring the Card-footer
-           pattern used by the cloud climatology card. -->
+      <!-- Credit lives in its own bottom band so it doesn't collide
+           with the active-compass "SUN" label at y = height - 8. -->
       <text
         :x="width - 12"
-        :y="height - 8"
+        :y="height + ATTRIBUTION_BAND - 6"
         class="horizon-attribution"
         font-family="'JetBrains Mono', ui-monospace, monospace"
         font-size="9.5"

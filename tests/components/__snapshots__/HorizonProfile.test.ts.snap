@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`HorizonProfile > matches snapshot 1`] = `
-"<div data-v-c6bc2854="" class="relative w-full"><svg data-v-c6bc2854="" viewBox="0 0 700 360" class="w-full h-auto" aria-label="Horizon profile: clear view, sun is 8.5 degrees above terrain" role="img">
+"<div data-v-c6bc2854="" class="relative w-full"><svg data-v-c6bc2854="" viewBox="0 0 700 378" class="w-full h-auto" aria-label="Horizon profile: clear view, sun is 8.5 degrees above terrain" role="img">
     <!-- Sky gradient — recolored per theme via .sky-* classes -->
     <defs data-v-c6bc2854="">
       <linearGradient data-v-c6bc2854="" id="horizon-sky-v-0-0" x1="0" y1="0" x2="0" y2="1">
@@ -9,7 +9,7 @@ exports[`HorizonProfile > matches snapshot 1`] = `
         <stop data-v-c6bc2854="" offset="100%" class="sky-bottom"></stop>
       </linearGradient>
     </defs>
-    <rect data-v-c6bc2854="" width="700" height="360" fill="url(#horizon-sky-v-0-0)" rx="4"></rect><!-- Grid lines -->
+    <rect data-v-c6bc2854="" width="700" height="378" fill="url(#horizon-sky-v-0-0)" rx="4"></rect><!-- Grid lines -->
     <line data-v-c6bc2854="" x1="58" y1="230.85714285714286" x2="676" y2="230.85714285714286" class="grid-line" stroke-width="0.5"></line>
     <line data-v-c6bc2854="" x1="58" y1="149.71428571428572" x2="676" y2="149.71428571428572" class="grid-line" stroke-width="0.5"></line>
     <line data-v-c6bc2854="" x1="58" y1="68.57142857142858" x2="676" y2="68.57142857142858" class="grid-line" stroke-width="0.5"></line><!-- Altitude labels --><text data-v-c6bc2854="" x="50" y="235.85714285714286" class="altitude-label" font-size="14" font-weight="500" text-anchor="end" font-family="'IBM Plex Mono', monospace">10°</text><text data-v-c6bc2854="" x="50" y="154.71428571428572" class="altitude-label" font-size="14" font-weight="500" text-anchor="end" font-family="'IBM Plex Mono', monospace">20°</text><text data-v-c6bc2854="" x="50" y="73.57142857142858" class="altitude-label" font-size="14" font-weight="500" text-anchor="end" font-family="'IBM Plex Mono', monospace">30°</text><!-- Sun trajectory arc (eclipse day) -->
@@ -38,8 +38,8 @@ exports[`HorizonProfile > matches snapshot 1`] = `
       <!--v-if-->
     </g><!-- Verdict badge -->
     <rect data-v-c6bc2854="" x="550" y="10" width="136" height="32" rx="16" fill="#22c55e22" stroke="#22c55e" stroke-width="1.25"></rect><text data-v-c6bc2854="" x="618" y="31" fill="#22c55e" font-size="15" font-weight="700" letter-spacing="1.5" text-anchor="middle" font-family="'IBM Plex Mono', monospace">CLEAR</text>
-    <!-- Credit inside the chart frame, mirroring the Card-footer
-           pattern used by the cloud climatology card. --><text data-v-c6bc2854="" x="688" y="352" class="horizon-attribution" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="9.5" text-anchor="end">Elevation data: ÍslandsDEM v1.0 © National Land Survey of Iceland (CC BY 4.0)</text>
+    <!-- Credit lives in its own bottom band so it doesn't collide
+           with the active-compass "SUN" label at y = height - 8. --><text data-v-c6bc2854="" x="688" y="372" class="horizon-attribution" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="9.5" text-anchor="end">Elevation data: ÍslandsDEM v1.0 © National Land Survey of Iceland (CC BY 4.0)</text>
   </svg><!-- Tooltip -->
   <!--v-if-->
 </div>"
