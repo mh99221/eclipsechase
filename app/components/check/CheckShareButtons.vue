@@ -6,6 +6,7 @@
  */
 import type { CheckResult } from '~/types/check'
 
+const { t } = useI18n()
 const props = defineProps<{ result: CheckResult }>()
 const config = useRuntimeConfig()
 const siteUrl = (config.public.siteUrl as string) || 'https://eclipsechase.is'
@@ -20,12 +21,10 @@ const shareText = computed(() => {
   const v = props.result.horizon.verdict
   const inPath = props.result.totality.insidePath
   if (inPath && v !== 'unknown') {
-    return `I checked my Iceland eclipse spot — ${v.toUpperCase()} sky verdict.`
+    return t('check.share_text_in_path_verdict', { verdict: v.toUpperCase() })
   }
-  if (inPath) {
-    return `I checked my Iceland eclipse spot — inside the path of totality on Aug 12, 2026.`
-  }
-  return `I checked an Iceland eclipse spot for Aug 12, 2026.`
+  if (inPath) return t('check.share_text_in_path')
+  return t('check.share_text_outside')
 })
 
 const copied = ref(false)
@@ -54,10 +53,10 @@ const twitterUrl = computed(() =>
 <template>
   <div class="share">
     <button type="button" class="share-pill" @click="copyLink">
-      {{ copied ? '✓ Copied' : 'Copy link' }}
+      {{ copied ? t('check.share_copied') : t('check.share_copy') }}
     </button>
-    <a :href="redditUrl" target="_blank" rel="noopener" class="share-pill">Reddit</a>
-    <a :href="twitterUrl" target="_blank" rel="noopener" class="share-pill">Twitter / X</a>
+    <a :href="redditUrl" target="_blank" rel="noopener" class="share-pill">{{ t('check.share_reddit') }}</a>
+    <a :href="twitterUrl" target="_blank" rel="noopener" class="share-pill">{{ t('check.share_twitter') }}</a>
   </div>
 </template>
 

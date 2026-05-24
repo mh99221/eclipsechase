@@ -16,6 +16,7 @@ import type { HorizonProfileData } from '~/types/horizon'
 import { formatLatLng } from '~/utils/eclipse'
 import { parseCoordinates } from '~/utils/parseCoordinates'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const config = useRuntimeConfig()
@@ -49,7 +50,7 @@ watchEffect(() => {
   if (fetchError.value) {
     const e = fetchError.value as any
     error.value = e?.data?.statusMessage || e?.statusMessage || e?.message
-      || 'Something went wrong. Please try again.'
+      || t('check.error_generic')
   }
 })
 
@@ -75,8 +76,8 @@ async function handleSubmit() {
   const parsed = parseCoordinates(input.value)
   if ('error' in parsed) {
     error.value = parsed.error === 'outside_iceland'
-      ? 'These coordinates are outside Iceland. Iceland is roughly 63°N–67°N and 13°W–25°W. Did you mix up lat and lng?'
-      : 'Could not parse coordinates. Try a Google Maps link, or a decimal pair like 65.86182, -23.48019.'
+      ? t('check.error_outside_iceland')
+      : t('check.error_unparseable')
     return
   }
   await router.push({
@@ -102,22 +103,25 @@ const horizonProfileData = computed<HorizonProfileData | null>(() => {
 
 useHead({
   title: () => result.value
-    ? `Eclipse check — ${result.value.input.lat.toFixed(4)}°N, ${Math.abs(result.value.input.lng).toFixed(4)}°W`
-    : 'Check any spot for the August 12, 2026 Iceland eclipse',
+    ? t('check.page_title_result', {
+        lat: result.value.input.lat.toFixed(4),
+        lng: Math.abs(result.value.input.lng).toFixed(4),
+      })
+    : t('check.page_title'),
   meta: [
     {
       name: 'description',
-      content: () => result.value
-        ? (result.value.totality.insidePath
-          ? `Inside the path of totality. ${
-            result.value.cloudHistory?.cell.avg_cloud_cover != null
-              ? `${result.value.cloudHistory.cell.avg_cloud_cover}% historical cloud cover.`
-              : ''
-          }`.trim()
-          : 'Outside the path of totality at this location.')
-        : 'Paste GPS coordinates or a Google Maps link and get a horizon verdict, 10-year cloud history, and totality info for any point in Iceland. Free, no signup.',
+      content: () => {
+        if (!result.value) return t('check.meta_description_empty')
+        if (result.value.totality.insidePath) {
+          return t('check.meta_description_in_path', {
+            cloud: result.value.cloudHistory?.cell.avg_cloud_cover ?? '—',
+          })
+        }
+        return t('check.meta_description_outside_path')
+      },
     },
-    { property: 'og:title', content: 'Eclipse coordinate check — EclipseChase.is' },
+    { property: 'og:title', content: () => t('check.og_title') },
     { property: 'og:url', content: () => canonicalUrl.value },
     { property: 'og:type', content: 'website' },
   ],
@@ -130,23 +134,10 @@ useHead({
 <template>
   <PageShell screen="check">
     <div class="check-content">
-    <!-- Page header is always visible. The result hero below takes
-         a different visual register (coords as h1, no eyebrow), so
-         showing both side-by-side stays uncluttered while keeping
-         the page's purpose clear for shared-link visitors who land
-         straight on a result. -->
     <header class="page-header">
-      <Eyebrow tone="accent" class="page-eyebrow">The check</Eyebrow>
-      <h1 class="page-h1">
-        Check any spot for the August 12 eclipse.
-      </h1>
-      <p class="page-subhead">
-        Paste coordinates or a Google Maps link and we'll check the
-        terrain horizon at sunset, ten years of historical cloud cover,
-        and whether the point sits inside the path of totality — using
-        the same ÍslandsDEM + ERA5 data we use for our curated spots.
-        Free, no signup. Share the result URL.
-      </p>
+      <Eyebrow tone="accent" class="page-eyebrow">{{ t('check.eyebrow') }}</Eyebrow>
+      <h1 class="page-h1">{{ t('check.h1') }}</h1>
+      <p class="page-subhead">{{ t('check.subhead') }}</p>
     </header>
 
     <!-- Input row: bare <div>, not <form>, so the browser cannot
@@ -158,9 +149,9 @@ useHead({
           type="text"
           autocomplete="off"
           spellcheck="false"
-          placeholder="65.86182, -23.48019"
+          :placeholder="t('check.input_placeholder')"
           class="coord-input"
-          aria-label="Paste coordinates or a Google Maps link"
+          :aria-label="t('check.input_aria')"
           @keyup.enter="handleSubmit"
         >
         <button
@@ -169,7 +160,7 @@ useHead({
           :disabled="pending"
           @click="handleSubmit"
         >
-          {{ pending ? 'Checking…' : 'Check spot →' }}
+          {{ pending ? t('check.submitting') : t('check.submit') }}
         </button>
       </div>
       <p v-if="error" class="input-error ec-banner-warn">{{ error }}</p>
@@ -177,29 +168,27 @@ useHead({
 
     <!-- Format hints — only on empty state. -->
     <section v-if="!result && !hasQueryCoords" class="hints">
-      <Eyebrow tone="dim" class="hints-eyebrow">Accepted formats</Eyebrow>
+      <Eyebrow tone="dim" class="hints-eyebrow">{{ t('check.hints_eyebrow') }}</Eyebrow>
       <ul class="hints-list">
-        <li>Decimal pair <code>65.86182, -23.48019</code></li>
-        <li>With hemisphere <code>65.86°N, 23.48°W</code></li>
-        <li>Google Maps link</li>
-        <li>Apple Maps link</li>
+        <li>{{ t('check.hint_decimal') }} <code>65.86182, -23.48019</code></li>
+        <li>{{ t('check.hint_hemisphere') }} <code>65.86°N, 23.48°W</code></li>
+        <li>{{ t('check.hint_google_maps') }}</li>
+        <li>{{ t('check.hint_apple_maps') }}</li>
       </ul>
     </section>
 
     <!-- Loading -->
-    <div v-if="pending && !result" class="loading-row">Computing…</div>
+    <div v-if="pending && !result" class="loading-row">{{ t('check.loading') }}</div>
 
     <!-- Result -->
     <div v-if="result && !pending" class="result-stack">
       <CheckResultCard :result="result" />
       <CheckStatStrip :result="result" />
 
-      <!-- Mini map — totality path band + user pin. Client-only because
-           Mapbox doesn't SSR. Imported lazily so the JS only ships when
-           a result is shown, not on the empty form. The placeholder
-           keeps the page from reflowing once Mapbox lands. -->
+      <!-- Mini map — client-only (Mapbox doesn't SSR). Lazy import +
+           skeleton placeholder so the page doesn't reflow on hydrate. -->
       <section class="result-section">
-        <Eyebrow tone="dim">Location</Eyebrow>
+        <Eyebrow tone="dim">{{ t('check.section_location') }}</Eyebrow>
         <ClientOnly>
           <LazyCheckMiniMap :result="result" />
           <template #fallback>
@@ -208,9 +197,8 @@ useHead({
         </ClientOnly>
       </section>
 
-      <!-- Horizon profile — only when we have grid coverage. -->
       <section v-if="horizonProfileData" class="result-section">
-        <Eyebrow tone="dim">Horizon profile</Eyebrow>
+        <Eyebrow tone="dim">{{ t('check.section_horizon') }}</Eyebrow>
         <HorizonProfile
           :data="horizonProfileData"
           :lat="result.input.lat"
@@ -220,14 +208,15 @@ useHead({
           v-if="result.horizon.nearestGridPoint && result.horizon.nearestGridPoint.distanceMeters > 50"
           class="snap-note"
         >
-          Sampled {{ Math.round(result.horizon.nearestGridPoint.distanceMeters) }} m
-          from your input point
-          ({{ formatLatLng(result.horizon.nearestGridPoint.lat, result.horizon.nearestGridPoint.lng) }})
+          {{ t('check.snap_note', {
+            distance: Math.round(result.horizon.nearestGridPoint.distanceMeters),
+            coords: formatLatLng(result.horizon.nearestGridPoint.lat, result.horizon.nearestGridPoint.lng),
+          }) }}
         </p>
       </section>
 
       <section class="result-section">
-        <Eyebrow tone="dim">Contact times (UTC)</Eyebrow>
+        <Eyebrow tone="dim">{{ t('check.section_contact') }}</Eyebrow>
         <Card>
           <CheckContactTimes :result="result" />
         </Card>
@@ -238,12 +227,12 @@ useHead({
       </section>
 
       <section class="result-section">
-        <Eyebrow tone="dim">What next</Eyebrow>
+        <Eyebrow tone="dim">{{ t('check.section_next') }}</Eyebrow>
         <CheckSoftCTA :inside-path="result.totality.insidePath" />
       </section>
 
       <section class="result-section">
-        <Eyebrow tone="dim">Share this check</Eyebrow>
+        <Eyebrow tone="dim">{{ t('check.section_share') }}</Eyebrow>
         <CheckShareButtons :result="result" />
       </section>
     </div>

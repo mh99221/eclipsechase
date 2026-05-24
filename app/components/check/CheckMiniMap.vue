@@ -14,6 +14,7 @@ import type { CheckResult } from '~/types/check'
 
 const props = defineProps<{ result: CheckResult }>()
 
+const { t } = useI18n()
 const config = useRuntimeConfig()
 const mapContainer = ref<HTMLElement | null>(null)
 const mapError = ref('')
@@ -23,7 +24,7 @@ onMounted(async () => {
   if (!mapContainer.value) return
   const token = (config.public.mapboxToken as string) || ''
   if (!token) {
-    mapError.value = 'Map token not configured.'
+    mapError.value = t('check.map_error_no_token')
     return
   }
   try {
@@ -137,12 +138,12 @@ onMounted(async () => {
 
     map.on('error', (e: any) => {
       if (e?.error?.message?.includes('token')) {
-        mapError.value = 'Map token invalid.'
+        mapError.value = t('check.map_error_invalid_token')
       }
     })
   } catch (e: any) {
     console.error('[CheckMiniMap] init failed:', e)
-    mapError.value = 'Failed to load map.'
+    mapError.value = t('check.map_error_failed')
   }
 })
 
@@ -162,19 +163,19 @@ onBeforeUnmount(() => {
   <div class="check-map-legend">
     <span class="legend-item">
       <span class="legend-dot legend-dot--user" />
-      <span>Your input</span>
+      <span>{{ t('check.map_legend_user') }}</span>
     </span>
     <span v-if="result.horizon.nearestGridPoint && result.horizon.nearestGridPoint.distanceMeters > 50" class="legend-item">
       <span class="legend-dot legend-dot--grid" />
-      <span>Horizon sample</span>
+      <span>{{ t('check.map_legend_horizon') }}</span>
     </span>
     <span v-if="result.cloudHistory" class="legend-item">
       <span class="legend-dot legend-dot--era5" />
-      <span>ERA5 cloud cell (0.25°)</span>
+      <span>{{ t('check.map_legend_era5') }}</span>
     </span>
     <span class="legend-item">
       <span class="legend-bar legend-bar--path" />
-      <span>Totality path</span>
+      <span>{{ t('check.map_legend_path') }}</span>
     </span>
   </div>
 </template>

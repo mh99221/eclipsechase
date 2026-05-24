@@ -15,6 +15,7 @@ import type { CheckResult } from '~/types/check'
 import { formatDuration } from '~/utils/eclipse'
 import { cloudToStatus } from '~/utils/v0'
 
+const { t } = useI18n()
 const props = defineProps<{ result: CheckResult }>()
 
 const totalityLabel = computed(() => {
@@ -44,18 +45,18 @@ const horizonTone = computed(() => {
 <template>
   <div class="strip">
     <Card>
-      <div class="lbl">Totality</div>
+      <div class="lbl">{{ t('check.stat_totality') }}</div>
       <div class="v" data-tone="totality">{{ totalityLabel }}</div>
     </Card>
     <Card>
-      <div class="lbl">10-yr cloud</div>
+      <div class="lbl">{{ t('check.stat_cloud') }}</div>
       <div class="v with-icon">
         <WeatherIcon :cloud-cover="cloudPct" :size="20" />
         <span :data-status="cloudStatus">{{ cloudLabel }}</span>
       </div>
     </Card>
     <Card>
-      <div class="lbl">Horizon clearance</div>
+      <div class="lbl">{{ t('check.stat_horizon') }}</div>
       <div class="v" :data-tone="horizonTone">{{ horizonValue }}</div>
     </Card>
   </div>

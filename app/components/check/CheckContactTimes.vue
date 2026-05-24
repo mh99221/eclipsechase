@@ -10,6 +10,7 @@
  */
 import type { CheckResult } from '~/types/check'
 
+const { t } = useI18n()
 const props = defineProps<{ result: CheckResult }>()
 
 function fmtTime(iso: string | null): string {
@@ -32,16 +33,16 @@ const rows = computed(() => {
   const inside = props.result.totality.insidePath
   if (inside) {
     return [
-      { k: 'C1',  l: 'Partial begins',  t: fmtTime(ct.c1), big: false, faint: true  },
-      { k: 'C2',  l: 'Totality begins', t: fmtTime(ct.c2), big: true,  faint: false },
-      { k: 'MAX', l: 'Maximum',         t: midpoint(ct.c2, ct.c3), big: false, faint: false },
-      { k: 'C3',  l: 'Totality ends',   t: fmtTime(ct.c3), big: true,  faint: false },
-      { k: 'C4',  l: 'Partial ends',    t: fmtTime(ct.c4), big: false, faint: true  },
+      { k: 'C1',  l: t('check.contact_partial_begins'),  v: fmtTime(ct.c1), big: false, faint: true  },
+      { k: 'C2',  l: t('check.contact_totality_begins'), v: fmtTime(ct.c2), big: true,  faint: false },
+      { k: 'MAX', l: t('check.contact_maximum'),         v: midpoint(ct.c2, ct.c3), big: false, faint: false },
+      { k: 'C3',  l: t('check.contact_totality_ends'),   v: fmtTime(ct.c3), big: true,  faint: false },
+      { k: 'C4',  l: t('check.contact_partial_ends'),    v: fmtTime(ct.c4), big: false, faint: true  },
     ]
   }
   return [
-    { k: 'C1', l: 'Partial begins', t: fmtTime(ct.c1), big: false, faint: false },
-    { k: 'C4', l: 'Partial ends',   t: fmtTime(ct.c4), big: false, faint: false },
+    { k: 'C1', l: t('check.contact_partial_begins'), v: fmtTime(ct.c1), big: false, faint: false },
+    { k: 'C4', l: t('check.contact_partial_ends'),   v: fmtTime(ct.c4), big: false, faint: false },
   ]
 })
 </script>
@@ -57,7 +58,7 @@ const rows = computed(() => {
     >
       <span class="k">{{ r.k }}</span>
       <span class="l">{{ r.l }}</span>
-      <span class="t">{{ r.t }}</span>
+      <span class="t">{{ r.v }}</span>
     </div>
   </div>
 </template>

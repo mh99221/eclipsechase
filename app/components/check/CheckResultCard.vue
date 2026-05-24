@@ -7,6 +7,7 @@
 import type { CheckResult } from '~/types/check'
 import { compassDirection, formatLatLng } from '~/utils/eclipse'
 
+const { t } = useI18n()
 const props = defineProps<{ result: CheckResult }>()
 
 const insidePath = computed(() => props.result.totality.insidePath)
@@ -32,15 +33,17 @@ const bearingToPath = computed(() => {
 <template>
   <header class="check-hero">
     <div class="check-hero-kicker-row">
-      <span class="check-hero-kicker">● COORDINATE CHECK</span>
-      <span v-if="!insidePath" class="check-hero-pill" data-tone="dim">Outside path</span>
+      <span class="check-hero-kicker">{{ t('check.hero_kicker') }}</span>
+      <span v-if="!insidePath" class="check-hero-pill" data-tone="dim">{{ t('check.hero_outside_path_pill') }}</span>
     </div>
 
     <h1 class="check-hero-coords">{{ coordLine }}</h1>
 
-    <p v-if="!insidePath && distanceToPath != null && bearingToPath" class="check-hero-meta">
-      <span class="check-hero-meta-strong">{{ distanceToPath }} km {{ bearingToPath }}</span>
-      from the totality path
+    <p
+      v-if="!insidePath && distanceToPath != null && bearingToPath"
+      class="check-hero-meta check-hero-meta-strong"
+    >
+      {{ t('check.hero_outside_meta', { distance: distanceToPath, bearing: bearingToPath }) }}
     </p>
   </header>
 </template>

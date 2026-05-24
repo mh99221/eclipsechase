@@ -13,6 +13,7 @@ import ForecastClimatology from '~/components/spot-detail/forecast/ForecastClima
 import type { CheckResult } from '~/types/check'
 import { formatLatLng } from '~/utils/eclipse'
 
+const { t } = useI18n()
 const props = defineProps<{ result: CheckResult }>()
 
 // Filter to non-null years and remap into the SpotHistory shape that
@@ -45,9 +46,10 @@ const sample = computed(() => {
   <section v-if="history">
     <ForecastClimatology :history="history" />
     <p v-if="sample" class="check-sample-note">
-      Sampled from ERA5 grid cell {{ formatLatLng(sample.lat, sample.lng, 2) }}
-      <span class="check-sample-divider">·</span>
-      {{ sample.distanceKm.toFixed(1) }} km from your input
+      {{ t('check.era5_sample_note', {
+        coords: formatLatLng(sample.lat, sample.lng, 2),
+        distance: sample.distanceKm.toFixed(1),
+      }) }}
     </p>
   </section>
 </template>

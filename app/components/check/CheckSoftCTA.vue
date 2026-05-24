@@ -6,6 +6,8 @@
  */
 import Card from '~/components/ui/Card.vue'
 
+const { t } = useI18n()
+
 defineProps<{
   insidePath: boolean
 }>()
@@ -15,22 +17,17 @@ defineProps<{
   <div class="cta-grid">
     <NuxtLinkLocale to="/spots" class="cta-link">
       <Card>
-        <div class="cta-eyebrow">CURATED SPOTS</div>
-        <div class="cta-title">See 30 viewing spots</div>
-        <div class="cta-body">
-          Hand-picked locations with verified clear horizons and historical
-          weather, ranked by score.
-        </div>
+        <div class="cta-eyebrow">{{ t('check.cta_spots_eyebrow') }}</div>
+        <div class="cta-title">{{ t('check.cta_spots_title') }}</div>
+        <div class="cta-body">{{ t('check.cta_spots_body') }}</div>
         <div class="cta-arrow">→</div>
       </Card>
     </NuxtLinkLocale>
     <NuxtLinkLocale to="/pro" class="cta-link">
       <Card>
-        <div class="cta-eyebrow">ECLIPSE PRO</div>
-        <div class="cta-title">Tap-anywhere checks</div>
-        <div class="cta-body">
-          Live cloud forecast, road conditions, road cameras, offline maps.
-        </div>
+        <div class="cta-eyebrow">{{ t('check.cta_pro_eyebrow') }}</div>
+        <div class="cta-title">{{ t('check.cta_pro_title') }}</div>
+        <div class="cta-body">{{ t('check.cta_pro_body') }}</div>
         <div class="cta-arrow">→</div>
       </Card>
     </NuxtLinkLocale>
