@@ -130,7 +130,11 @@ const faqItems = computed(() => {
             <p class="home-subhead">{{ t('v0.home.subhead') }}</p>
           </div>
           <CountdownBar />
+          <p class="home-rarity">{{ t('v0.home.hero_rarity') }}</p>
           <p class="home-tagline">{{ t('v0.home.tagline') }}</p>
+          <NuxtLinkLocale to="/spots" class="btn-corona home-hero-cta">
+            {{ t('v0.home.hero_cta') }}
+          </NuxtLinkLocale>
         </div>
       </section>
 
@@ -309,6 +313,25 @@ const faqItems = computed(() => {
         </div>
       </section>
 
+      <!-- Unique-opportunity band — fact-driven urgency. The 170-year
+           scarcity is genuinely true (next Iceland totality is 2196), so it
+           reinforces the data-led voice rather than reading as hype. Sits
+           between the dashboard preview and the offer as the emotional
+           bridge into conversion. Visible to everyone — rarity applies to
+           Pro users too — and the CTA points to the free /spots browse. -->
+      <section class="home-section home-opportunity" aria-labelledby="opportunity-heading">
+        <p class="home-eyebrow">{{ t('v0.home.opportunity_eyebrow') }}</p>
+        <h2 id="opportunity-heading" class="home-h2">{{ t('v0.home.opportunity_title') }}</h2>
+        <i18n-t keypath="v0.home.opportunity_body" tag="p" class="home-body">
+          <template #emphasis><strong>{{ t('v0.home.opportunity_emphasis') }}</strong></template>
+        </i18n-t>
+        <div>
+          <NuxtLinkLocale to="/spots" class="btn-corona home-opportunity-cta">
+            {{ t('v0.home.opportunity_cta') }}
+          </NuxtLinkLocale>
+        </div>
+      </section>
+
       <!-- Pro status card — Pro-only. Sits where the Free-vs-Pro CTA would
            render for free users, so the page rhythm stays the same once you
            upgrade: dashboard preview → confirmation that you have it →
@@ -340,6 +363,7 @@ const faqItems = computed(() => {
         </Card>
 
         <div class="compare-cta">
+          <p class="compare-urgency">{{ t('v0.home.pro_compare_urgency') }}</p>
           <p class="compare-price">{{ t('v0.home.pro_compare_price') }}</p>
           <p class="compare-price-note">{{ t('v0.home.pro_compare_price_note') }}</p>
           <NuxtLinkLocale to="/pro" class="btn-corona mt-2">
@@ -489,6 +513,18 @@ const faqItems = computed(() => {
   color: rgb(var(--ink-2));
   text-transform: uppercase;
   margin: 0;
+}
+/* Rarity microline — a plain sentence, not uppercase mono, so it reads as a
+   fact rather than another label. Sits between the countdown and tagline. */
+.home-rarity {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgb(var(--ink-3));
+  margin: 0;
+}
+.home-hero-cta {
+  margin-top: 6px;
 }
 
 /* ── Trust strip ────────────────────────────────────────── */
@@ -862,6 +898,14 @@ const faqItems = computed(() => {
 }
 @media (min-width: 768px) {
   .compare-cta { padding: 32px; }
+}
+.compare-urgency {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgb(var(--ink-2));
+  margin: 0 0 6px;
+  max-width: 420px;
 }
 .compare-price {
   font-family: 'Inter Tight', system-ui, sans-serif;
