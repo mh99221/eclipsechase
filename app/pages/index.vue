@@ -206,6 +206,21 @@ const faqItems = computed(() => {
         <p class="tricky-caveat">{{ t('v0.home.tricky_caveat') }}</p>
       </section>
 
+      <!-- Persona re-ranker — interactive teaser for the profile-based
+           recommendation engine (gated on /map + /spots). Sits between the
+           cloud tradeoff and the horizon proof so the page argues in three
+           beats: clouds change the best spot → YOU change the best spot →
+           terrain can veto any of them. Static by design (HomePersonaRanker
+           never hits live weather or the real scorer), so it stays SSR-safe
+           and doesn't leak Pro scoring; the CTA routes to the free /spots
+           browse. -->
+      <section class="home-section home-persona" aria-labelledby="persona-heading">
+        <p class="home-eyebrow">{{ t('v0.home.persona_eyebrow') }}</p>
+        <h2 id="persona-heading" class="home-h2">{{ t('v0.home.persona_title') }}</h2>
+        <p class="home-body">{{ t('v0.home.persona_body') }}</p>
+        <HomePersonaRanker />
+      </section>
+
       <!-- Horizon check, visualised. Sits AFTER the tricky-spot photos so
            the page goes: emotional hook (real places might fail you) →
            technical proof (here's the chart that decides). Visible to
