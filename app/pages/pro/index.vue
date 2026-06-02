@@ -33,6 +33,52 @@ function isValidEmailFormat(s: string): boolean {
 // user can retry with a different address.
 watch(email, () => { alreadyPro.value = false })
 
+// ── Voucher / referral discount ──────────────────────────────────
+const voucherCode = ref('')
+const voucherValid = ref(false)
+const voucherPercent = ref(0)
+const voucherKind = ref<'referral' | 'manual' | ''>('')
+const voucherError = ref('')
+const codeInput = ref('')
+
+async function validateVoucher(raw: string) {
+  voucherError.value = ''
+  voucherValid.value = false
+  const code = raw.trim().toUpperCase()
+  if (!code) return
+  try {
+    const res = await $fetch<{ valid: boolean; discount_percent?: number; kind?: 'referral' | 'manual' }>(
+      '/api/vouchers/validate', { method: 'POST', body: { code } },
+    )
+    if (res.valid) {
+      voucherValid.value = true
+      voucherCode.value = code
+      voucherPercent.value = res.discount_percent ?? 0
+      voucherKind.value = res.kind ?? ''
+    } else {
+      voucherError.value = t('pro_discount.code_invalid')
+    }
+  } catch {
+    voucherError.value = t('pro_discount.code_invalid')
+  }
+}
+
+function applyTypedCode() {
+  validateVoucher(codeInput.value)
+}
+
+const discountedPrice = computed(() =>
+  voucherValid.value ? (9.99 * (100 - voucherPercent.value) / 100).toFixed(2) : null,
+)
+
+onMounted(() => {
+  const refParam = route.query.ref
+  if (typeof refParam === 'string' && refParam) {
+    codeInput.value = refParam
+    validateVoucher(refParam)
+  }
+})
+
 async function handleCheckout() {
   checkoutError.value = ''
 
@@ -70,7 +116,7 @@ async function handleCheckout() {
 
     const { url } = await $fetch<{ url: string }>('/api/stripe/checkout', {
       method: 'POST',
-      body: { email: trimmed },
+      body: { email: trimmed, voucher_code: voucherValid.value ? voucherCode.value : undefined },
     })
 
     if (url) {
@@ -133,7 +179,40 @@ function goToRestore() {
            surface/border idiom as Card so it sits in the same v0 family. -->
       <div class="price-card">
         <Eyebrow tone="accent" align="center">{{ t('pro.price') }}</Eyebrow>
-        <div class="price-amount">&euro;9.99</div>
+        <div class="price-amount">
+          <template v-if="discountedPrice">
+            <span class="price-was">&euro;9.99</span>
+            <span>&euro;{{ discountedPrice }}</span>
+          </template>
+          <template v-else>&euro;9.99</template>
+        </div>
+
+        <!-- Discount banner -->
+        <p v-if="voucherValid && voucherKind === 'referral'" class="price-discount-note">
+          {{ t('pro_discount.friend_gift') }}
+        </p>
+        <p v-else-if="voucherValid" class="price-discount-note">
+          {{ t('pro_discount.code_applied', { percent: voucherPercent }) }}
+        </p>
+
+        <!-- Manual code entry -->
+        <div v-if="!voucherValid" class="price-code">
+          <label class="price-email-label" for="voucher-code">{{ t('pro_discount.have_code') }}</label>
+          <div class="price-code-row">
+            <input
+              id="voucher-code"
+              v-model="codeInput"
+              type="text"
+              :placeholder="t('pro_discount.code_placeholder')"
+              class="price-email-input"
+              @keyup.enter="applyTypedCode"
+            >
+            <button type="button" class="price-code-apply" @click="applyTypedCode">
+              {{ t('pro_discount.apply') }}
+            </button>
+          </div>
+          <p v-if="voucherError" class="price-error">{{ voucherError }}</p>
+        </div>
 
         <!-- Email input -->
         <div class="price-email">
@@ -415,5 +494,44 @@ function goToRestore() {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   margin-top: 16px;
+}
+
+.price-was {
+  text-decoration: line-through;
+  opacity: 0.4;
+  font-size: 0.5em;
+  margin-right: 12px;
+  vertical-align: middle;
+}
+.price-discount-note {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgb(var(--good));
+  margin: -12px 0 20px;
+}
+.price-code {
+  max-width: 320px;
+  margin: 0 auto 14px;
+  text-align: left;
+}
+.price-code-row {
+  display: flex;
+  gap: 8px;
+}
+.price-code-apply {
+  flex-shrink: 0;
+  background: rgb(var(--surface) / 0.1);
+  color: rgb(var(--ink-1));
+  border: 1px solid rgb(var(--border-subtle) / 0.4);
+  border-radius: 8px;
+  padding: 0 14px;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.price-code-apply:hover {
+  border-color: rgb(var(--accent) / 0.5);
 }
 </style>
