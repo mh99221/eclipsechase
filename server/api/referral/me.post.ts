@@ -10,7 +10,10 @@ export default defineEventHandler(async (event) => {
   }
 
   const config = useRuntimeConfig()
-  const supabase = await serverSupabaseServiceRole(event)
+  // Cast to any: the `referral_code` column and `voucher_redemptions` table
+  // (migration 018) aren't in the generated database.types.ts until types
+  // are regenerated post-migration. Matches the `any`-typed voucher helpers.
+  const supabase = await serverSupabaseServiceRole(event) as any
 
   // Resolve the purchase: prefer the pid claim, fall back to email_hash.
   const sel = 'id, referral_code, email'
