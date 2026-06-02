@@ -832,5 +832,28 @@
     "no_data": "No forecast data available",
     "eclipse_window": "Eclipse",
     "cloud_cover_at": "{cover}% cloud cover at {time}"
+  },
+  "referral": {
+    "card_title": "INVITE A FRIEND",
+    "explainer": "Share your link. Your friend gets 20% off, and you get €4 back when they join.",
+    "your_link": "Your link",
+    "copy": "Copy link",
+    "copied": "Copied!",
+    "share": "Share",
+    "tally_joined": "{count} friend joined",
+    "tally_joined_plural": "{count} friends joined",
+    "tally_earned": "€{amount} earned",
+    "reward_pending": "A reward is pending — we'll sort it out.",
+    "loading": "Loading your link…"
+  },
+  "pro_discount": {
+    "have_code": "Have a code?",
+    "code_placeholder": "Enter code",
+    "apply": "Apply",
+    "friend_gift": "Your friend gave you 20% off.",
+    "code_applied": "Code applied — {percent}% off.",
+    "code_invalid": "That code isn't valid or has expired.",
+    "original_price": "€9.99",
+    "was": "was"
   }
 }
