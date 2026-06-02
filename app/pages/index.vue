@@ -135,6 +135,9 @@ const faqItems = computed(() => {
           <NuxtLinkLocale to="/spots" class="btn-corona home-hero-cta">
             {{ t('v0.home.hero_cta') }}
           </NuxtLinkLocale>
+          <NuxtLinkLocale v-if="!isPro" to="/pro" class="home-hero-subcta">
+            {{ t('v0.home.hero_pro_cta') }}
+          </NuxtLinkLocale>
         </div>
       </section>
 
@@ -541,6 +544,19 @@ const faqItems = computed(() => {
 .home-hero-cta {
   margin-top: 6px;
 }
+/* Secondary Pro CTA under the primary hero button. A quiet text link, not a
+   second amber button, so the free-first /spots action stays dominant while
+   Pro is still announced in the first viewport. Hidden for Pro users. */
+.home-hero-subcta {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgb(var(--accent));
+  text-decoration: none;
+  margin-top: 2px;
+  transition: color 0.2s ease;
+}
+.home-hero-subcta:hover { color: rgb(var(--accent-strong)); }
 
 /* ── Trust strip ────────────────────────────────────────── */
 .home-trust {
