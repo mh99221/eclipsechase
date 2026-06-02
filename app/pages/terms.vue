@@ -33,11 +33,13 @@ useHead({
         <section>
           <h2 class="font-display text-xl font-semibold text-ink-1 mb-3">2.3 Pro tier</h2>
           <ul class="list-disc list-outside ml-5 space-y-2">
-            <li>One-time payment of €9.99 via Stripe for access to premium features (live weather map, recommendation engine)</li>
-            <li>Digital content — by completing purchase, you expressly consent to immediate access and acknowledge that you waive your right of withdrawal under EU Consumer Rights Directive (Article 16(m))</li>
-            <li>No refunds once access is granted</li>
-            <li>Pricing may change for future purchases; existing purchases are unaffected</li>
-            <li>Pro access is linked to your email address and is non-transferable</li>
+            <li><strong>One-time payment of €9.99</strong> via Stripe for access to premium features, including the live weather map, recommendation engine, and offline-ready map.</li>
+            <li><strong>Digital content / digital service.</strong> By completing the purchase and requesting immediate access to Pro, you expressly consent to the immediate supply and performance of the digital content and digital service before the end of the statutory withdrawal period.</li>
+            <li>You acknowledge that, once access to Pro has been granted, you <strong>lose your right of withdrawal</strong> under Article 16(m) of the EU Consumer Rights Directive, to the extent permitted by applicable consumer law.</li>
+            <li><strong>Refunds:</strong> Once access to Pro has been granted, refunds are not available except where required by applicable law, including in cases of defective performance, lack of conformity, or other mandatory statutory consumer rights.</li>
+            <li>If we are unable to provide access to Pro due to a technical issue on our side, we may provide a refund, restore access, or provide an equivalent remedy, as appropriate.</li>
+            <li><strong>Pricing:</strong> Prices may change for future purchases, but changes will not affect purchases already completed.</li>
+            <li><strong>License and access:</strong> Pro access is linked to the purchaser&rsquo;s email address, is personal and non-transferable, and is granted as a limited, non-exclusive, non-sublicensable right to use the Pro features for the period stated at the time of purchase.</li>
           </ul>
         </section>
 
