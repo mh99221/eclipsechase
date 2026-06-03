@@ -213,6 +213,7 @@ export default defineNuxtConfig({
     stripeSecretKey: '',
     stripeWebhookSecret: '',
     stripeProPriceId: '',
+    stripeReferralCouponId: '',
     resendApiKey: '',
     proJwtPrivateKey: '',
     adminSecret: '',

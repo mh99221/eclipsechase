@@ -18,6 +18,7 @@ const TEST_ENV_DEFAULTS: Record<string, string> = {
   NUXT_STRIPE_SECRET_KEY: 'sk_test_mock',
   NUXT_STRIPE_WEBHOOK_SECRET: 'whsec_test_mock',
   NUXT_STRIPE_PRO_PRICE_ID: 'price_test_mock',
+  NUXT_STRIPE_REFERRAL_COUPON_ID: 'coup_referral_mock',
   NUXT_RESEND_API_KEY: 'test_resend_key',
   NUXT_PRO_JWT_PRIVATE_KEY: 'test_private_key',
   NUXT_ADMIN_SECRET: 'test-admin-secret',
@@ -77,6 +78,7 @@ const originalUseRuntimeConfig = (globalThis as any).useRuntimeConfig as
     stripeSecretKey: 'sk_test_mock',
     stripeWebhookSecret: 'whsec_test_mock',
     stripeProPriceId: 'price_test_mock',
+    stripeReferralCouponId: 'coup_referral_mock',
     resendApiKey: 'test_resend_key',
     proJwtPrivateKey: 'test_private_key',
     adminSecret: 'test-admin-secret',
@@ -120,6 +122,7 @@ Object.assign(globalThis, {
   sendWelcomeEmail: vi.fn().mockResolvedValue(undefined),
   sendRestoreCode: vi.fn().mockResolvedValue(undefined),
   sendPurchaseEmail: vi.fn().mockResolvedValue(undefined),
+  sendReferralRewardEmail: vi.fn().mockResolvedValue(undefined),
   // requirePro is the Pro-paywall gate on cameras / traffic / horizon
   // endpoints. Tests in this directory exercise the business logic, so
   // we mock it as a pass-through. Auth-gate behaviour is covered in

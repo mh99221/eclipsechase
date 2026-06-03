@@ -804,5 +804,28 @@
     "no_data": "Engin spágögn tiltæk",
     "eclipse_window": "Myrkvi",
     "cloud_cover_at": "{cover}% skýjahula kl. {time}"
+  },
+  "referral": {
+    "card_title": "BJÓÐA VINI",
+    "explainer": "Deildu hlekknum þínum. Vinur þinn fær 20% afslátt og þú færð €4 til baka þegar hann skráir sig.",
+    "your_link": "Hlekkurinn þinn",
+    "copy": "Afrita hlekk",
+    "copied": "Afritað!",
+    "share": "Deila",
+    "tally_joined": "{count} vinur skráði sig",
+    "tally_joined_plural": "{count} vinir skráðu sig",
+    "tally_earned": "€{amount} áunnið",
+    "reward_pending": "Verðlaun eru í bið — við reddum því.",
+    "loading": "Hleð hlekkinn þinn…"
+  },
+  "pro_discount": {
+    "have_code": "Ertu með kóða?",
+    "code_placeholder": "Sláðu inn kóða",
+    "apply": "Virkja",
+    "friend_gift": "Vinur þinn gaf þér 20% afslátt.",
+    "code_applied": "Kóði virkjaður — {percent}% afsláttur.",
+    "code_invalid": "Þessi kóði er ógildur eða útrunninn.",
+    "original_price": "€9.99",
+    "was": "var"
   }
 }

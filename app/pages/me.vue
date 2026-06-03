@@ -28,6 +28,10 @@ const { isPro } = useProStatus()
       </Card>
 
       <ClientOnly>
+        <ReferralCard v-if="isPro" />
+      </ClientOnly>
+
+      <ClientOnly>
         <RestorePurchase v-if="!isPro" />
       </ClientOnly>
     </div>

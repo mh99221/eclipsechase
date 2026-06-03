@@ -83,6 +83,8 @@ const PURCHASE_STRINGS: Record<EmailLocale, {
   saveLabel: string
   saveBody: string
   saveFooter: string
+  inviteLabel: string
+  inviteBody: string
   eclipseLabel: string
   eclipseStats: string
 }> = {
@@ -96,6 +98,8 @@ const PURCHASE_STRINGS: Record<EmailLocale, {
     saveBody:
       'To use Pro on another device (or if you clear your browser data), open <a href="https://eclipsechase.is/pro" style="color:#f59e0b;text-decoration:none;border-bottom:1px solid rgba(245,158,11,0.3);">eclipsechase.is/pro</a>, click <strong style="color:#f1f5f9;">Restore here</strong>, and enter the address this email was sent to. We\'ll email you a 6-digit code to unlock Pro again.',
     saveFooter: 'Stripe sent a separate payment receipt for your records.',
+    inviteLabel: 'INVITE A FRIEND',
+    inviteBody: 'Give a friend 20% off and get €4 back when they join. Your link:',
     eclipseLabel: 'TOTAL SOLAR ECLIPSE',
     eclipseStats: 'August 12, 2026 &middot; ~17:45 UTC &middot; Western Iceland',
   },
@@ -109,6 +113,8 @@ const PURCHASE_STRINGS: Record<EmailLocale, {
     saveBody:
       'Til að nota Pro á öðru tæki (eða ef þú hreinsar vafragögnin þín), opnaðu <a href="https://eclipsechase.is/is/pro" style="color:#f59e0b;text-decoration:none;border-bottom:1px solid rgba(245,158,11,0.3);">eclipsechase.is/is/pro</a>, smelltu á <strong style="color:#f1f5f9;">Endurheimta hér</strong> og settu inn netfangið sem þessi tölvupóstur var sendur á. Við sendum þér 6 stafa kóða til að opna Pro aftur.',
     saveFooter: 'Stripe sendi sérstaka greiðslukvittun til þín.',
+    inviteLabel: 'BJÓÐA VINI',
+    inviteBody: 'Gefðu vini 20% afslátt og fáðu €4 til baka þegar hann skráir sig. Hlekkurinn þinn:',
     eclipseLabel: 'ALMYRKVI SÓLAR',
     eclipseStats: '12. ágúst 2026 &middot; ~17:45 UTC &middot; Vestur-Ísland',
   },
@@ -130,6 +136,21 @@ const RESTORE_STRINGS: Record<EmailLocale, {
     intro: 'Endurheimtukóði þinn er:',
     expiry:
       'Sláðu þennan kóða inn í appið innan 15 mínútna. Ef þú baðst ekki um þetta, geturðu hunsað þennan tölvupóst.',
+  },
+}
+
+const REFERRAL_REWARD_STRINGS: Record<EmailLocale, { subject: string; heading: string; body: (amt: string) => string; footer: string }> = {
+  en: {
+    subject: 'A friend joined — your reward is on the way',
+    heading: 'A friend joined EclipseChase Pro',
+    body: (amt) => `Thanks for spreading the word. We've issued a <strong style="color:#f1f5f9;">${amt}</strong> refund to the card you paid with — it should appear within a few business days.`,
+    footer: 'Keep sharing your link — each friend who joins earns you another €4, up to the price you paid.',
+  },
+  is: {
+    subject: 'Vinur skráði sig — verðlaunin þín eru á leiðinni',
+    heading: 'Vinur gekk í EclipseChase Pro',
+    body: (amt) => `Takk fyrir að dreifa boðskapnum. Við höfum endurgreitt <strong style="color:#f1f5f9;">${amt}</strong> á kortið sem þú greiddir með — það ætti að birtast innan fárra virkra daga.`,
+    footer: 'Haltu áfram að deila hlekknum þínum — hver vinur sem skráir sig gefur þér €4 til viðbótar, allt að því verði sem þú greiddir.',
   },
 }
 
@@ -162,7 +183,7 @@ export async function sendWelcomeEmail(to: string, locale?: string | null) {
   }
 }
 
-export async function sendPurchaseEmail(to: string, locale?: string | null) {
+export async function sendPurchaseEmail(to: string, locale?: string | null, referralLink?: string) {
   const resend = getResend()
   if (!resend) {
     console.log('[email] Resend not configured, skipping purchase email to', maskEmail(to))
@@ -177,11 +198,60 @@ export async function sendPurchaseEmail(to: string, locale?: string | null) {
       from: FROM_EMAIL,
       to,
       subject: s.subject,
-      html: purchaseHtml(lang),
+      html: purchaseHtml(lang, referralLink),
     })
     console.log(`[email] Purchase email (${lang}) sent to`, maskEmail(to))
   } catch (err: any) {
     console.error('[email] Failed to send purchase email to', maskEmail(to), ':', err.message || err)
+  }
+}
+
+/**
+ * Pure builder for the referrer-reward email (subject + HTML). Exported so
+ * it can be unit-tested without Resend/runtime config. `sendReferralRewardEmail`
+ * wraps it with delivery.
+ */
+export function referralRewardContent(
+  locale: string | null | undefined,
+  amountEur: number,
+): { subject: string; html: string } {
+  const lang = resolveLocale(locale)
+  const s = REFERRAL_REWARD_STRINGS[lang]
+  const amt = `€${amountEur}`
+  return {
+    subject: s.subject,
+    html: `
+<!DOCTYPE html><html lang="${htmlLangAttr(lang)}"><head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#050810;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+    ${brandHeaderHtml()}
+    <div style="background:#0a1020;border:1px solid #1a2540;border-radius:6px;padding:32px 24px;">
+      <h1 style="margin:0 0 16px;font-size:20px;font-weight:600;color:#f1f5f9;">${s.heading}</h1>
+      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#94a3b8;">${s.body(amt)}</p>
+      <p style="margin:0;font-size:13px;line-height:1.6;color:#64748b;">${s.footer}</p>
+    </div>
+  </div>
+</body></html>`,
+  }
+}
+
+export async function sendReferralRewardEmail(
+  to: string,
+  locale: string | null | undefined,
+  opts: { amountEur: number },
+): Promise<void> {
+  const resend = getResend()
+  if (!resend) {
+    console.log('[email] Resend not configured, skipping referral reward to', maskEmail(to))
+    return
+  }
+  const lang = resolveLocale(locale)
+  const { subject, html } = referralRewardContent(locale, opts.amountEur)
+  try {
+    await resend.emails.send({ from: FROM_EMAIL, to, subject, html })
+    console.log(`[email] Referral reward (${lang}) sent to`, maskEmail(to))
+  } catch (err: any) {
+    console.error('[email] Failed to send referral reward to', maskEmail(to), ':', err.message || err)
   }
 }
 
@@ -236,7 +306,7 @@ function htmlLangAttr(locale: EmailLocale): string {
   return locale === 'is' ? 'is' : 'en'
 }
 
-function purchaseHtml(locale: EmailLocale): string {
+export function purchaseHtml(locale: EmailLocale, referralLink?: string): string {
   const s = PURCHASE_STRINGS[locale]
   const dashboardUrl = locale === 'is'
     ? 'https://eclipsechase.is/is/dashboard'
@@ -284,6 +354,13 @@ function purchaseHtml(locale: EmailLocale): string {
         ${s.saveFooter}
       </p>
     </div>
+    ${referralLink ? `
+    <!-- Invite a friend -->
+    <div style="margin-top:24px;background:#0a1020;border:1px solid #1a2540;border-radius:6px;padding:24px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.2em;color:#f59e0b;margin-bottom:12px;">${s.inviteLabel}</div>
+      <p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:#94a3b8;">${s.inviteBody}</p>
+      <p style="margin:0;font-size:13px;word-break:break-all;"><a href="${referralLink}" style="color:#f59e0b;text-decoration:none;">${referralLink}</a></p>
+    </div>` : ''}
 
     <!-- Eclipse stats -->
     <div style="margin-top:24px;padding:16px;text-align:center;">

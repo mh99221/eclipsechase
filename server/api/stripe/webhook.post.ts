@@ -1,5 +1,7 @@
 import Stripe from 'stripe'
 import { serverSupabaseServiceRole } from '#supabase/server'
+import { assignReferralCode } from '../../utils/vouchers'
+import { processReferralRedemption } from '../../utils/referralPayout'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
@@ -51,6 +53,7 @@ export default defineEventHandler(async (event) => {
           email: normalizedEmail,
           email_hash: emailHash,
           stripe_session_id: session.id,
+          payment_intent_id: typeof session.payment_intent === 'string' ? session.payment_intent : null,
           activation_token: null,
           purchased_at: new Date().toISOString(),
           is_active: true,
@@ -67,6 +70,28 @@ export default defineEventHandler(async (event) => {
     if (selectError || !existing) {
       console.error('Failed to read pro purchase after upsert:', selectError)
       throw createError({ statusCode: 500, statusMessage: 'Failed to save purchase' })
+    }
+
+    // If THIS purchase used a referral/manual voucher, record the
+    // redemption and (for referral codes) refund the referrer. Runs before
+    // the activation_token retry short-circuit so a retry after a partial
+    // first delivery still completes the payout. Idempotent via
+    // UNIQUE(referee_session_id) — a true repeat returns 'duplicate'.
+    if (session.metadata?.voucher_code) {
+      const outcome = await processReferralRedemption(stripe, supabase, {
+        sessionId: session.id,
+        refereePurchaseId: existing.id,
+        refereeEmail: normalizedEmail,
+        voucherCode: session.metadata.voucher_code,
+      })
+      if (outcome === 'paid') {
+        const { data: referrer } = await supabase
+          .from('pro_purchases').select('email, id')
+          .eq('referral_code', session.metadata.voucher_code).maybeSingle()
+        if (referrer?.email) {
+          await sendReferralRewardEmail(referrer.email, null, { amountEur: 4 })
+        }
+      }
     }
 
     if (existing.activation_token) {
@@ -102,7 +127,18 @@ export default defineEventHandler(async (event) => {
         .eq('email', normalizedEmail)
         .maybeSingle()
       const locale = signup?.locale || session.locale || 'en'
-      await sendPurchaseEmail(normalizedEmail, locale)
+
+      // Give this buyer their own shareable referral code + voucher row.
+      // Reuse the handler-level `config` (line 5) — do NOT redeclare it.
+      let referralLink: string | undefined
+      try {
+        const code = await assignReferralCode(supabase, existing.id, config.stripeReferralCouponId)
+        referralLink = `${config.public.siteUrl}/pro?ref=${code}`
+      } catch (err) {
+        console.error('[referral] failed to assign code for purchase', existing.id, err)
+      }
+
+      await sendPurchaseEmail(normalizedEmail, locale, referralLink)
     }
   }
 
