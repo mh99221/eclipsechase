@@ -83,8 +83,12 @@ describe('POST /api/stripe/checkout', () => {
       kind: 'referral', referrer_id: 7, max_redemptions: null, redeemed_count: 0,
       active: true, expires_at: null,
     })
+    // Stripe-shaped coupon rejection (missing/expired/maxed coupon).
+    const couponErr = Object.assign(new Error('No such coupon'), {
+      type: 'StripeInvalidRequestError', code: 'resource_missing', param: 'discounts[0][coupon]',
+    })
     mockCreate
-      .mockRejectedValueOnce(new Error('No such coupon'))
+      .mockRejectedValueOnce(couponErr)
       .mockResolvedValueOnce({ url: 'https://stripe.test/full' })
     const event = createTestEvent({ supabase: mockSupabase, body: { email: 'a@b.com', voucher_code: 'ABCD2345' } })
     const result = await handler(event)
@@ -93,5 +97,21 @@ describe('POST /api/stripe/checkout', () => {
     expect(mockCreate.mock.calls[0][0].discounts).toEqual([{ coupon: 'coup_dead' }])
     expect(mockCreate.mock.calls[1][0].discounts).toBeUndefined()
     expect(mockCreate.mock.calls[1][0].metadata).toEqual({ product: 'eclipse_pro_2026' })
+  })
+
+  it('does NOT retry at full price when the failure is unrelated to the coupon', async () => {
+    setResult({
+      code: 'ABCD2345', stripe_coupon_id: 'coup_x', discount_percent: 20,
+      kind: 'referral', referrer_id: 7, max_redemptions: null, redeemed_count: 0,
+      active: true, expires_at: null,
+    })
+    // A transient/non-coupon error must propagate, not silently overcharge.
+    const netErr = Object.assign(new Error('Stripe API connection error'), {
+      type: 'StripeConnectionError',
+    })
+    mockCreate.mockRejectedValueOnce(netErr)
+    const event = createTestEvent({ supabase: mockSupabase, body: { email: 'a@b.com', voucher_code: 'ABCD2345' } })
+    await expect(handler(event)).rejects.toThrow('Stripe API connection error')
+    expect(mockCreate).toHaveBeenCalledTimes(1) // no full-price retry
   })
 })

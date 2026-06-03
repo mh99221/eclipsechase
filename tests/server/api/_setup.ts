@@ -109,7 +109,7 @@ if (typeof (globalThis as any).useStorage === 'undefined') {
 // Server util auto-imports (Nitro auto-imports everything from server/utils/)
 // ---------------------------------------------------------------------------
 import { checkRateLimit, checkDbRateLimit } from '../../../server/utils/rateLimit'
-import { hashEmail, isValidEmail, maskEmail, normalizeEmail } from '../../../server/utils/email'
+import { hashEmail, isValidEmail, maskEmail, normalizeEmail, lookupSignupLocale } from '../../../server/utils/email'
 
 Object.assign(globalThis, {
   checkRateLimit,
@@ -118,6 +118,7 @@ Object.assign(globalThis, {
   isValidEmail,
   maskEmail,
   normalizeEmail,
+  lookupSignupLocale,
   generateProToken: vi.fn().mockResolvedValue('mock_jwt_token'),
   sendWelcomeEmail: vi.fn().mockResolvedValue(undefined),
   sendRestoreCode: vi.fn().mockResolvedValue(undefined),

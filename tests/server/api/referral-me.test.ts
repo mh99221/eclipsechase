@@ -24,7 +24,7 @@ describe('POST /api/referral/me', () => {
     requirePro.mockResolvedValueOnce({ sub: 'hash', pid: 7 })
     const { client, queueResults } = createMockSupabase()
     queueResults(
-      { data: { id: 7, referral_code: 'ABCD2345', email: 'm@x.com' } }, // purchase by pid
+      { data: { id: 7, referral_code: 'ABCD2345', email: 'm@x.com', is_active: true } }, // purchase by pid
       { data: [                                                          // redemptions
         { reward_status: 'paid', reward_cents: 400 },
         { reward_status: 'failed', reward_cents: 0 },
@@ -52,6 +52,18 @@ describe('POST /api/referral/me', () => {
     const result = await handler(event)
     expect(result.code).toBe('FALLBK01')
     expect(result.joined_count).toBe(0)
+  })
+
+  it('404s (no email_hash fallthrough) when the pid resolves to an inactive row', async () => {
+    requirePro.mockResolvedValueOnce({ sub: 'hashX', pid: 5 })
+    const { client, queueResults } = createMockSupabase()
+    queueResults(
+      // pid resolves to a real but revoked/refunded purchase. Must NOT fall
+      // through to email_hash (which could surface a re-purchased active row).
+      { data: { id: 5, referral_code: 'OLD12345', email: 'm@x.com', is_active: false } },
+    )
+    const event = createTestEvent({ supabase: client, body: {} })
+    await expect(handler(event)).rejects.toMatchObject({ statusCode: 404 })
   })
 
   it('throws 401 when there are no Pro claims (sub missing)', async () => {

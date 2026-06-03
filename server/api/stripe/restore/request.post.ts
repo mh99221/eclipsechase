@@ -58,12 +58,7 @@ export default defineEventHandler(async (event) => {
     // Locale precedence: client-supplied (the current page the user is
     // restoring from) wins, falling back to whatever locale they
     // signed up for the newsletter in, then 'en'.
-    const { data: signup } = await supabase
-      .from('email_signups')
-      .select('locale')
-      .eq('email', normalizedEmail)
-      .maybeSingle()
-    const locale = bodyLocale || signup?.locale || 'en'
+    const locale = bodyLocale || (await lookupSignupLocale(supabase, normalizedEmail)) || 'en'
 
     try {
       // Vercel kills the function after response, so await before returning.

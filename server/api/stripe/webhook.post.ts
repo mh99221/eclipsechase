@@ -86,9 +86,8 @@ export default defineEventHandler(async (event) => {
       })
       if (outcome === 'paid' && referrerEmail) {
         // Send the reward mail in the referrer's own language when known.
-        const { data: refSignup } = await supabase
-          .from('email_signups').select('locale').eq('email', referrerEmail).maybeSingle()
-        await sendReferralRewardEmail(referrerEmail, refSignup?.locale ?? null, { amountEur: REFERRAL_REWARD_CENTS / 100 })
+        const refLocale = await lookupSignupLocale(supabase, referrerEmail)
+        await sendReferralRewardEmail(referrerEmail, refLocale, { amountEur: REFERRAL_REWARD_CENTS / 100 })
       }
     }
 
@@ -119,12 +118,7 @@ export default defineEventHandler(async (event) => {
       // for the newsletter from the IS landing first) gets the IS
       // template. Fall back to Stripe's session.locale, then 'en'.
       // Both lookups are best-effort: missing rows just default to EN.
-      const { data: signup } = await supabase
-        .from('email_signups')
-        .select('locale')
-        .eq('email', normalizedEmail)
-        .maybeSingle()
-      const locale = signup?.locale || session.locale || 'en'
+      const locale = (await lookupSignupLocale(supabase, normalizedEmail)) || session.locale || 'en'
 
       // Give this buyer their own shareable referral code + voucher row.
       // Reuse the handler-level `config` (line 5) — do NOT redeclare it.

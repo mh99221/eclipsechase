@@ -34,13 +34,20 @@ if (arg('max')) {
 let expires = null
 let redeemBy = null
 if (arg('expires')) {
-  const d = new Date(arg('expires'))
+  const raw = arg('expires').trim()
+  const d = new Date(raw)
   if (Number.isNaN(d.getTime())) {
-    console.error('--expires must be a valid date (e.g. 2026-08-13)')
+    console.error('--expires must be a valid date (e.g. 2026-08-12)')
     process.exit(1)
   }
-  expires = d.toISOString()
-  redeemBy = Math.floor(d.getTime() / 1000)
+  // A bare YYYY-MM-DD parses as UTC midnight (start of day). Treat it as valid
+  // THROUGH that whole day (23:59:59 UTC) so a voucher minted --expires
+  // 2026-08-12 still works during Aug 12 totality (~17:45 UTC). A full
+  // datetime is used verbatim.
+  const bareDate = /^\d{4}-\d{2}-\d{2}$/.test(raw)
+  const effective = bareDate ? new Date(d.getTime() + 24 * 60 * 60 * 1000 - 1000) : d
+  expires = effective.toISOString()
+  redeemBy = Math.floor(effective.getTime() / 1000)
 }
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)

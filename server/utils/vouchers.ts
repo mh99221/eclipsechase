@@ -49,6 +49,12 @@ export async function lookupUsableVoucher(supabase: any, rawCode: string): Promi
  * writer sets it; losers read back the winner's code.
  */
 export async function assignReferralCode(supabase: any, purchaseId: number, couponId: string): Promise<string> {
+  // Fail fast on a misconfigured coupon id rather than baking `''` into the
+  // vouchers table (which would silently drop every referred friend's discount
+  // and force every reader to guard against the empty value).
+  if (!couponId) {
+    throw new Error('assignReferralCode: empty couponId (NUXT_STRIPE_REFERRAL_COUPON_ID unset)')
+  }
   for (let i = 0; i < 5; i++) {
     const code = generateReferralCode()
     const { data: claimed } = await supabase

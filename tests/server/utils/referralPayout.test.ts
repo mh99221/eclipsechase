@@ -3,8 +3,13 @@ import { createMockSupabase } from '../api/_helpers'
 import { hashEmail } from '../../../server/utils/email'
 import { processReferralRedemption } from '../../../server/utils/referralPayout'
 
-function makeStripe(refundImpl: any) {
-  return { refunds: { create: vi.fn().mockImplementation(refundImpl) } } as any
+function makeStripe(refundImpl: any, listImpl: any = async () => ({ data: [] })) {
+  return {
+    refunds: {
+      create: vi.fn().mockImplementation(refundImpl),
+      list: vi.fn().mockImplementation(listImpl),
+    },
+  } as any
 }
 
 describe('processReferralRedemption', () => {
@@ -27,7 +32,7 @@ describe('processReferralRedemption', () => {
     expect(result.outcome).toBe('paid')
     expect(result.referrerEmail).toBe('referrer@x.com')
     expect(stripe.refunds.create).toHaveBeenCalledWith(
-      { payment_intent: 'pi_123', amount: 400 },
+      { payment_intent: 'pi_123', amount: 400, metadata: { referral_session: 'cs_friend' } },
       { idempotencyKey: 'referral-refund-cs_friend' },
     )
     expect(client.from).toHaveBeenCalledWith('voucher_redemptions')
@@ -67,8 +72,54 @@ describe('processReferralRedemption', () => {
     expect(result.outcome).toBe('paid')
     expect(result.referrerEmail).toBe('referrer@x.com')
     expect(stripe.refunds.create).toHaveBeenCalledWith(
-      { payment_intent: 'pi_123', amount: 400 },
+      { payment_intent: 'pi_123', amount: 400, metadata: { referral_session: 'cs_redrive' } },
       { idempotencyKey: 'referral-refund-cs_redrive' },
+    )
+  })
+
+  it('skips a second refund on re-drive when one already exists at Stripe (idempotency-key expired)', async () => {
+    const { client, queueResults } = createMockSupabase()
+    queueResults(
+      { data: null, error: { code: '23505' } },                          // insert conflict
+      { data: { id: 5, reward_status: 'failed' } },                       // existing row, not yet paid
+      { data: { code: 'ABCD2345', kind: 'referral', referrer_id: 7 } },   // voucher lookup
+      { data: { payment_intent_id: 'pi_123', email_hash: hashEmail('referrer@x.com'), email: 'referrer@x.com' } }, // referrer
+      { data: { id: 5 } },                                               // redemption update -> paid
+    )
+    // Prior referral refund already exists on the PI, tagged with this session.
+    const stripe = makeStripe(
+      async () => ({ id: 're_should_not_be_called' }),
+      async () => ({ data: [{ id: 're_prior', metadata: { referral_session: 'cs_redrive2' } }] }),
+    )
+
+    const result = await processReferralRedemption(stripe, client, {
+      sessionId: 'cs_redrive2', refereePurchaseId: 12, refereeEmail: 'friend@x.com', voucherCode: 'ABCD2345',
+    })
+
+    expect(result.outcome).toBe('paid')
+    expect(stripe.refunds.create).not.toHaveBeenCalled() // no double refund
+  })
+
+  it('resets a stale failed row to none when a re-drive resolves to no payout', async () => {
+    const { client, queueResults } = createMockSupabase()
+    queueResults(
+      { data: null, error: { code: '23505' } },                          // insert conflict
+      { data: { id: 5, reward_status: 'failed' } },                       // existing row, not yet paid
+      { data: { code: 'ABCD2345', kind: 'referral', referrer_id: 7 } },   // voucher lookup
+      { data: null },                                                    // referrer now missing/inactive
+      { data: { id: 5 } },                                               // markRedemption('none') update
+    )
+    const stripe = makeStripe(async () => ({ id: 're_x' }))
+
+    const result = await processReferralRedemption(stripe, client, {
+      sessionId: 'cs_stale', refereePurchaseId: 12, refereeEmail: 'friend@x.com', voucherCode: 'ABCD2345',
+    })
+
+    expect(result.outcome).toBe('none')
+    expect(stripe.refunds.create).not.toHaveBeenCalled()
+    // The previously-'failed' row is reset to 'none' so it stops showing as pending.
+    expect(client.update).toHaveBeenCalledWith(
+      expect.objectContaining({ reward_status: 'none' }),
     )
   })
 

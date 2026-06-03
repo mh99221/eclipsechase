@@ -123,6 +123,12 @@ describe('assignReferralCode', () => {
     expect(client.update).toHaveBeenCalledWith({ referral_code: null }) // released
   })
 
+  it('throws on an empty coupon id (misconfigured env) before touching the DB', async () => {
+    const { client } = createMockSupabase()
+    await expect(assignReferralCode(client, 42, '')).rejects.toThrow(/couponId/)
+    expect(client.from).not.toHaveBeenCalled()
+  })
+
   it('releases the claim and rethrows on a transient voucher insert error', async () => {
     const { client, queueResults } = createMockSupabase()
     queueResults(

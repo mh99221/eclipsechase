@@ -30,6 +30,22 @@ export function hashEmail(email: string): string {
   return createHash('sha256').update(normalizeEmail(email)).digest('hex')
 }
 
+/**
+ * Best-effort newsletter-signup locale for an email. Returns the stored
+ * locale or null when unknown. Single source of truth for the
+ * `email_signups.locale` lookup that the webhook (buyer + referrer) and the
+ * restore flow all need — keep callers using this so the query, column, and
+ * any future normalisation stay in one place.
+ */
+export async function lookupSignupLocale(supabase: any, email: string): Promise<string | null> {
+  const { data } = await supabase
+    .from('email_signups')
+    .select('locale')
+    .eq('email', email)
+    .maybeSingle()
+  return data?.locale ?? null
+}
+
 function getResend(): Resend | null {
   const config = useRuntimeConfig()
   if (!config.resendApiKey) return null

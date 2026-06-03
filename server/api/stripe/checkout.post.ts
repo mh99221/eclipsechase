@@ -2,6 +2,27 @@ import Stripe from 'stripe'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { lookupUsableVoucher } from '../../utils/vouchers'
 
+/**
+ * True only when Stripe rejected the request BECAUSE of the coupon/discount
+ * (missing, expired, or maxed) — i.e. a StripeInvalidRequestError pointing at
+ * the discounts/coupon param, or a resource_missing on the coupon. Any other
+ * failure (network, rate-limit, bad price id, outage) must NOT be retried at
+ * full price: that would silently overcharge a referred friend and mask the
+ * real error behind a successful-looking session.
+ */
+// Product tag written to session metadata; the webhook gates fulfilment on it
+// (server/api/stripe/webhook.post.ts). Single source of truth on this side.
+const PRO_PRODUCT = 'eclipse_pro_2026'
+
+function isCouponRejection(err: any): boolean {
+  if (!err) return false
+  const type = err.type ?? err.raw?.type
+  if (type !== 'StripeInvalidRequestError') return false
+  const param = String(err.param ?? err.raw?.param ?? '')
+  const code = err.code ?? err.raw?.code
+  return param.includes('coupon') || param.includes('discount') || code === 'resource_missing'
+}
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const stripe = new Stripe(config.stripeSecretKey)
@@ -14,7 +35,7 @@ export default defineEventHandler(async (event) => {
     .catch(() => ({} as { email?: string; voucher_code?: string }))
   const customerEmail = body?.email && isValidEmail(body.email) ? normalizeEmail(body.email) : undefined
 
-  const metadata: Record<string, string> = { product: 'eclipse_pro_2026' }
+  const metadata: Record<string, string> = { product: PRO_PRODUCT }
   let discounts: Stripe.Checkout.SessionCreateParams.Discount[] | undefined
 
   // Re-validate the voucher server-side — never trust the client's claim
@@ -47,14 +68,17 @@ export default defineEventHandler(async (event) => {
       discounts ? { ...baseParams, discounts } : baseParams,
     )
   } catch (err) {
-    if (!discounts) throw err
-    // The coupon is missing / expired / maxed on Stripe's side. Don't block
-    // the sale — retry at full price, dropping the voucher attribution so no
-    // referrer payout fires for a discount that never applied.
-    console.error('[checkout] discount rejected, retrying at full price:', err)
+    // Only fall back to full price when the COUPON itself was rejected
+    // (missing / expired / maxed). For any other error — including transient
+    // network failures that may have already created a session — rethrow so
+    // we never silently overcharge the friend or double-create a session.
+    if (!discounts || !isCouponRejection(err)) throw err
+    console.error('[checkout] coupon rejected, retrying at full price:', err)
+    // Drop the voucher attribution (voucher_code / referrer_id) so no referrer
+    // payout fires for a discount that never applied; keep only the product tag.
     session = await stripe.checkout.sessions.create({
       ...baseParams,
-      metadata: { product: 'eclipse_pro_2026' },
+      metadata: { product: PRO_PRODUCT },
     })
   }
 

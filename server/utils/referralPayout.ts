@@ -48,6 +48,10 @@ export async function processReferralRedemption(
     .maybeSingle()
 
   let redemptionId: number | undefined
+  // Status the row already had when we re-drive an existing (non-paid) row.
+  // Lets the 'none' branches below reset a stale 'failed'/'none' row instead
+  // of leaving it stranded; null means this was a fresh insert.
+  let priorStatus: string | null = null
   if (insertError) {
     if ((insertError as any).code !== '23505') {
       console.error('[referral] redemption insert failed:', insertError)
@@ -63,25 +67,37 @@ export async function processReferralRedemption(
       return { outcome: 'duplicate', referrerEmail: null }
     }
     redemptionId = existing.id
+    priorStatus = existing.reward_status
   } else {
     redemptionId = inserted?.id
+  }
+
+  // Resolve to a 'none' outcome, resetting a re-driven row's stale status so a
+  // prior 'failed' doesn't linger as a phantom pending payout forever.
+  const resolveNone = async (): Promise<ReferralResult> => {
+    if (priorStatus && priorStatus !== 'none') {
+      await markRedemption(supabase, redemptionId, 'none', 0, null)
+    }
+    return { outcome: 'none', referrerEmail: null }
   }
 
   // 2. Resolve the voucher. Only referral vouchers with a referrer pay out.
   const { data: voucher } = await supabase
     .from('vouchers').select('code, kind, referrer_id').eq('code', input.voucherCode).maybeSingle()
   if (!voucher || voucher.kind !== 'referral' || voucher.referrer_id == null) {
-    return { outcome: 'none', referrerEmail: null }
+    return resolveNone()
   }
 
   // 3. Load the referrer; guard self-referral and missing PaymentIntent.
-  // Selecting `email` here lets the caller send the reward mail without a
-  // second round-trip for the same row.
+  // Requires is_active so a refunded referrer no longer earns payouts (matches
+  // the is_active gate on /api/referral/me). Selecting `email` here lets the
+  // caller send the reward mail without a second round-trip for the same row.
   const { data: referrer } = await supabase
-    .from('pro_purchases').select('payment_intent_id, email_hash, email').eq('id', voucher.referrer_id).maybeSingle()
-  if (!referrer) return { outcome: 'none', referrerEmail: null }
+    .from('pro_purchases').select('payment_intent_id, email_hash, email')
+    .eq('id', voucher.referrer_id).eq('is_active', true).maybeSingle()
+  if (!referrer) return resolveNone()
   if (referrer.email_hash === hashEmail(input.refereeEmail)) {
-    return { outcome: 'none', referrerEmail: null } // self-referral
+    return resolveNone() // self-referral
   }
 
   if (!referrer.payment_intent_id) {
@@ -91,11 +107,32 @@ export async function processReferralRedemption(
 
   // 4. Issue the partial refund (idempotent on the friend's session id).
   try {
+    // On a re-drive, a prior delivery may have already issued the refund but
+    // failed to persist 'paid'. Stripe's idempotency key expires after ~24h,
+    // so a late re-delivery would refund again. Guard with a durable check:
+    // look for an existing referral refund tagged with this session id.
+    if (priorStatus) {
+      const prior = await findReferralRefund(stripe, referrer.payment_intent_id, input.sessionId)
+      if (prior) {
+        await markRedemption(supabase, redemptionId, 'paid', REFERRAL_REWARD_CENTS, prior.id)
+        return { outcome: 'paid', referrerEmail: referrer.email ?? null }
+      }
+    }
     const refund = await stripe.refunds.create(
-      { payment_intent: referrer.payment_intent_id, amount: REFERRAL_REWARD_CENTS },
+      {
+        payment_intent: referrer.payment_intent_id,
+        amount: REFERRAL_REWARD_CENTS,
+        metadata: { referral_session: input.sessionId },
+      },
       { idempotencyKey: `referral-refund-${input.sessionId}` },
     )
-    await markRedemption(supabase, redemptionId, 'paid', REFERRAL_REWARD_CENTS, refund.id)
+    const ok = await markRedemption(supabase, redemptionId, 'paid', REFERRAL_REWARD_CENTS, refund.id)
+    if (!ok) {
+      // Refund issued but status not persisted — a later re-drive could double
+      // refund once the 24h idempotency window closes (the metadata guard above
+      // is the backstop). Surface loudly for reconciliation.
+      console.error('[referral] CRITICAL: refund', refund.id, 'issued but reward_status not persisted for redemption', redemptionId)
+    }
     return { outcome: 'paid', referrerEmail: referrer.email ?? null }
   } catch (err: any) {
     console.error('[referral] refund failed for', input.voucherCode, ':', err?.message || err)
@@ -104,11 +141,26 @@ export async function processReferralRedemption(
   }
 }
 
+/** Find a prior referral refund on this PaymentIntent tagged with the friend's
+ *  session id. Used on re-drive to avoid a second refund after Stripe's 24h
+ *  idempotency key has expired. Best-effort: returns null on any list error. */
+async function findReferralRefund(
+  stripe: Stripe, paymentIntentId: string, sessionId: string,
+): Promise<{ id: string } | null> {
+  try {
+    const refunds = await stripe.refunds.list({ payment_intent: paymentIntentId, limit: 100 })
+    return refunds.data.find((r: any) => r.metadata?.referral_session === sessionId) ?? null
+  } catch {
+    return null
+  }
+}
+
 async function markRedemption(
-  supabase: any, id: number | undefined, status: 'paid' | 'failed', cents: number, refundId: string | null,
-): Promise<void> {
-  if (id == null) return
-  await supabase.from('voucher_redemptions')
+  supabase: any, id: number | undefined, status: 'paid' | 'failed' | 'none', cents: number, refundId: string | null,
+): Promise<boolean> {
+  if (id == null) return false
+  const { error } = await supabase.from('voucher_redemptions')
     .update({ reward_status: status, reward_cents: cents, stripe_refund_id: refundId })
     .eq('id', id)
+  return !error
 }

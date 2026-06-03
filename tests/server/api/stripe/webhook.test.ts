@@ -157,7 +157,7 @@ describe('POST /api/stripe/webhook', () => {
     const result = await handler(event)
     expect(result.received).toBe(true)
     expect(mockRefundCreate).toHaveBeenCalledWith(
-      { payment_intent: 'pi_ref', amount: 400 },
+      { payment_intent: 'pi_ref', amount: 400, metadata: { referral_session: 'cs_friend' } },
       { idempotencyKey: 'referral-refund-cs_friend' },
     )
   })
