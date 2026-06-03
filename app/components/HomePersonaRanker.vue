@@ -351,10 +351,11 @@ a.persona-card:hover {
 }
 
 /* ── Footer ── */
+/* CTA + note centered under the ranked grid. */
 .persona-footer {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
   margin-top: 4px;
 }

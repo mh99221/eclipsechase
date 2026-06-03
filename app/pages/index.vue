@@ -343,7 +343,7 @@ const faqItems = computed(() => {
         <i18n-t keypath="v0.home.opportunity_body" tag="p" class="home-body">
           <template #emphasis><strong>{{ t('v0.home.opportunity_emphasis') }}</strong></template>
         </i18n-t>
-        <div>
+        <div class="home-cta-center">
           <NuxtLinkLocale to="/spots" class="btn-corona home-opportunity-cta">
             {{ t('v0.home.opportunity_cta') }}
           </NuxtLinkLocale>
@@ -616,6 +616,9 @@ const faqItems = computed(() => {
   line-height: 1.6;
   color: rgb(var(--ink-2));
   margin: 0;
+}
+.home-cta-center {
+  text-align: center;
 }
 
 /* ── Horizon comparison ─────────────────────────────────
