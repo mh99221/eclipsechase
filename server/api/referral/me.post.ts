@@ -19,9 +19,14 @@ export default defineEventHandler(async (event) => {
   const sel = 'id, referral_code, email'
   let purchase: { id: number; referral_code: string | null } | null = null
   if (typeof claims.pid === 'number') {
-    const { data } = await supabase.from('pro_purchases').select(sel).eq('id', claims.pid).maybeSingle()
+    const { data } = await supabase.from('pro_purchases').select(sel)
+      .eq('id', claims.pid).eq('is_active', true).maybeSingle()
     purchase = data
-  } else {
+  }
+  // Fall back to email_hash when the pid claim didn't resolve to an active
+  // row (also covers legacy tokens that carry no pid). Both paths require
+  // is_active so a revoked/refunded purchase never gets referral data.
+  if (!purchase && claims.sub) {
     const { data } = await supabase.from('pro_purchases').select(sel)
       .eq('email_hash', claims.sub).eq('is_active', true).maybeSingle()
     purchase = data
@@ -35,7 +40,9 @@ export default defineEventHandler(async (event) => {
   const { data: redemptions } = await supabase
     .from('voucher_redemptions').select('reward_status, reward_cents').eq('voucher_code', code)
   const rows = Array.isArray(redemptions) ? redemptions : []
-  const joinedCount = rows.length
+  // 'none' rows are self-referrals / non-paying redemptions — not real
+  // friend conversions, so they don't count toward the "friends joined" tally.
+  const joinedCount = rows.filter(r => r.reward_status !== 'none').length
   const earnedCents = rows.filter(r => r.reward_status === 'paid').reduce((s, r) => s + (r.reward_cents || 0), 0)
   const pendingCount = rows.filter(r => r.reward_status === 'failed').length
 

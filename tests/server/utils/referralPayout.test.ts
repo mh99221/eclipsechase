@@ -33,9 +33,12 @@ describe('processReferralRedemption', () => {
     expect(client.from).toHaveBeenCalledWith('voucher_redemptions')
   })
 
-  it('is a no-op when the redemption already exists (unique violation)', async () => {
+  it('is a no-op when the redemption already exists and was already paid', async () => {
     const { client, queueResults } = createMockSupabase()
-    queueResults({ data: null, error: { code: '23505' } }) // insert hits unique constraint
+    queueResults(
+      { data: null, error: { code: '23505' } },     // insert hits unique constraint
+      { data: { id: 99, reward_status: 'paid' } },   // existing row already paid
+    )
     const stripe = makeStripe(async () => ({ id: 're_x' }))
 
     const result = await processReferralRedemption(stripe, client, {
@@ -44,6 +47,29 @@ describe('processReferralRedemption', () => {
 
     expect(result.outcome).toBe('duplicate')
     expect(stripe.refunds.create).not.toHaveBeenCalled()
+  })
+
+  it('re-drives the refund when a prior delivery left the redemption unpaid', async () => {
+    const { client, queueResults } = createMockSupabase()
+    queueResults(
+      { data: null, error: { code: '23505' } },                          // insert conflict
+      { data: { id: 5, reward_status: 'failed' } },                       // existing row, not yet paid
+      { data: { code: 'ABCD2345', kind: 'referral', referrer_id: 7 } },   // voucher lookup
+      { data: { payment_intent_id: 'pi_123', email_hash: hashEmail('referrer@x.com'), email: 'referrer@x.com' } }, // referrer
+      { data: { id: 5 } },                                               // redemption update -> paid
+    )
+    const stripe = makeStripe(async () => ({ id: 're_redrive' }))
+
+    const result = await processReferralRedemption(stripe, client, {
+      sessionId: 'cs_redrive', refereePurchaseId: 12, refereeEmail: 'friend@x.com', voucherCode: 'ABCD2345',
+    })
+
+    expect(result.outcome).toBe('paid')
+    expect(result.referrerEmail).toBe('referrer@x.com')
+    expect(stripe.refunds.create).toHaveBeenCalledWith(
+      { payment_intent: 'pi_123', amount: 400 },
+      { idempotencyKey: 'referral-refund-cs_redrive' },
+    )
   })
 
   it('does not refund a manual (non-referral) voucher', async () => {

@@ -63,4 +63,35 @@ describe('POST /api/stripe/checkout', () => {
     expect(arg.discounts).toBeUndefined()
     expect(arg.metadata).toEqual({ product: 'eclipse_pro_2026' })
   })
+
+  it('skips the discount when the coupon id is empty (unset env)', async () => {
+    setResult({
+      code: 'ABCD2345', stripe_coupon_id: '', discount_percent: 20,
+      kind: 'referral', referrer_id: 7, max_redemptions: null, redeemed_count: 0,
+      active: true, expires_at: null,
+    })
+    const event = createTestEvent({ supabase: mockSupabase, body: { email: 'a@b.com', voucher_code: 'ABCD2345' } })
+    await handler(event)
+    const arg = mockCreate.mock.calls[0][0]
+    expect(arg.discounts).toBeUndefined()
+    expect(arg.metadata).toEqual({ product: 'eclipse_pro_2026' })
+  })
+
+  it('retries at full price when Stripe rejects the coupon', async () => {
+    setResult({
+      code: 'ABCD2345', stripe_coupon_id: 'coup_dead', discount_percent: 20,
+      kind: 'referral', referrer_id: 7, max_redemptions: null, redeemed_count: 0,
+      active: true, expires_at: null,
+    })
+    mockCreate
+      .mockRejectedValueOnce(new Error('No such coupon'))
+      .mockResolvedValueOnce({ url: 'https://stripe.test/full' })
+    const event = createTestEvent({ supabase: mockSupabase, body: { email: 'a@b.com', voucher_code: 'ABCD2345' } })
+    const result = await handler(event)
+    expect(result.url).toBe('https://stripe.test/full')
+    expect(mockCreate).toHaveBeenCalledTimes(2)
+    expect(mockCreate.mock.calls[0][0].discounts).toEqual([{ coupon: 'coup_dead' }])
+    expect(mockCreate.mock.calls[1][0].discounts).toBeUndefined()
+    expect(mockCreate.mock.calls[1][0].metadata).toEqual({ product: 'eclipse_pro_2026' })
+  })
 })

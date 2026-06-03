@@ -28,15 +28,30 @@ describe('POST /api/referral/me', () => {
       { data: [                                                          // redemptions
         { reward_status: 'paid', reward_cents: 400 },
         { reward_status: 'failed', reward_cents: 0 },
+        { reward_status: 'none', reward_cents: 0 },                       // self-referral — excluded
       ] },
     )
     const event = createTestEvent({ supabase: client, body: {} })
     const result = await handler(event)
     expect(result.code).toBe('ABCD2345')
     expect(result.link).toContain('/pro?ref=ABCD2345')
-    expect(result.joined_count).toBe(2)
+    expect(result.joined_count).toBe(2) // paid + failed, not the 'none' self-referral
     expect(result.earned_eur).toBe(4)
     expect(result.pending_count).toBe(1)
+  })
+
+  it('falls back to email_hash when the pid lookup misses', async () => {
+    requirePro.mockResolvedValueOnce({ sub: 'hashX', pid: 999 })
+    const { client, queueResults } = createMockSupabase()
+    queueResults(
+      { data: null },                                                   // pid lookup misses
+      { data: { id: 3, referral_code: 'FALLBK01', email: 'f@x.com' } },  // email_hash fallback hit
+      { data: [] },                                                     // redemptions
+    )
+    const event = createTestEvent({ supabase: client, body: {} })
+    const result = await handler(event)
+    expect(result.code).toBe('FALLBK01')
+    expect(result.joined_count).toBe(0)
   })
 
   it('throws 401 when there are no Pro claims (sub missing)', async () => {

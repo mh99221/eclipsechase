@@ -30,7 +30,11 @@ export async function processReferralRedemption(
   supabase: any,
   input: RedemptionInput,
 ): Promise<ReferralResult> {
-  // 1. Record the redemption. Unique session id => retry is a no-op.
+  // 1. Record the redemption. UNIQUE(referee_session_id) makes a retry a
+  //    no-op for an already-PAID row, but a row left 'none'/'failed' by a
+  //    prior delivery (e.g. a transient refund error) is re-driven below so
+  //    the payout isn't permanently stranded. The refund's idempotency key
+  //    (keyed on the session id) prevents any double-charge on re-drive.
   const { data: inserted, error: insertError } = await supabase
     .from('voucher_redemptions')
     .insert({
@@ -43,13 +47,25 @@ export async function processReferralRedemption(
     .select('id')
     .maybeSingle()
 
+  let redemptionId: number | undefined
   if (insertError) {
-    // 23505 = unique_violation: already processed on a prior delivery.
-    if ((insertError as any).code === '23505') return { outcome: 'duplicate', referrerEmail: null }
-    console.error('[referral] redemption insert failed:', insertError)
-    return { outcome: 'failed', referrerEmail: null }
+    if ((insertError as any).code !== '23505') {
+      console.error('[referral] redemption insert failed:', insertError)
+      return { outcome: 'failed', referrerEmail: null }
+    }
+    // Already recorded on a prior delivery — re-drive only if not yet paid.
+    const { data: existing } = await supabase
+      .from('voucher_redemptions')
+      .select('id, reward_status')
+      .eq('referee_session_id', input.sessionId)
+      .maybeSingle()
+    if (!existing || existing.reward_status === 'paid') {
+      return { outcome: 'duplicate', referrerEmail: null }
+    }
+    redemptionId = existing.id
+  } else {
+    redemptionId = inserted?.id
   }
-  const redemptionId = inserted?.id
 
   // 2. Resolve the voucher. Only referral vouchers with a referrer pay out.
   const { data: voucher } = await supabase
