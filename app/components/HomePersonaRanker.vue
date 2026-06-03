@@ -15,7 +15,6 @@ type SpotSlug = 'kirkjufell' | 'gardur' | 'sandafell'
 const PROFILES: ProfileId[] = ['firsttimer', 'photographer', 'skychaser', 'hiker', 'family']
 
 interface SpotInfo {
-  slug: SpotSlug
   href: string
   thumb: string
   nameKey: string
@@ -29,7 +28,6 @@ interface SpotInfo {
 // not live data, so they can't contradict the live map.
 const SPOTS: Record<SpotSlug, SpotInfo> = {
   kirkjufell: {
-    slug: 'kirkjufell',
     href: '/spots/kirkjufell-viewpoint',
     thumb: '/images/spots/kirkjufell-viewpoint-hero-thumb.webp',
     nameKey: 'v0.home.persona_spot_kirkjufell_name',
@@ -38,7 +36,6 @@ const SPOTS: Record<SpotSlug, SpotInfo> = {
     totality: '1m 54s',
   },
   gardur: {
-    slug: 'gardur',
     href: '/spots/gardur-lighthouse',
     thumb: '/images/spots/gardur-lighthouse-hero-thumb.webp',
     nameKey: 'v0.home.persona_spot_gardur_name',
@@ -47,7 +44,6 @@ const SPOTS: Record<SpotSlug, SpotInfo> = {
     totality: '1m 44s',
   },
   sandafell: {
-    slug: 'sandafell',
     href: '/spots/sandafell-thingeyri',
     thumb: '/images/spots/sandafell-thingeyri-hero-thumb.webp',
     nameKey: 'v0.home.persona_spot_sandafell_name',
@@ -77,6 +73,7 @@ const RANKINGS: Record<ProfileId, Ranking> = {
 const active = ref<ProfileId>('firsttimer')
 
 interface DisplayCard extends SpotInfo {
+  slug: SpotSlug
   rank: number | null
   filtered: boolean
   reasonKey: string | null
@@ -85,15 +82,13 @@ interface DisplayCard extends SpotInfo {
 const cards = computed<DisplayCard[]>(() => {
   const r = RANKINGS[active.value]
   const ranked: DisplayCard[] = r.order.map((slug, i) => ({
-    ...SPOTS[slug], rank: i + 1, filtered: false, reasonKey: null,
+    slug, ...SPOTS[slug], rank: i + 1, filtered: false, reasonKey: null,
   }))
   const struck: DisplayCard[] = (Object.keys(r.filtered) as SpotSlug[]).map(slug => ({
-    ...SPOTS[slug], rank: null, filtered: true, reasonKey: r.filtered[slug] ?? null,
+    slug, ...SPOTS[slug], rank: null, filtered: true, reasonKey: r.filtered[slug] ?? null,
   }))
   return [...ranked, ...struck]
 })
-
-const activeBlurbKey = computed(() => `v0.home.persona_blurb_${active.value}`)
 </script>
 
 <template>
@@ -119,7 +114,7 @@ const activeBlurbKey = computed(() => `v0.home.persona_blurb_${active.value}`)
     </div>
 
     <!-- The engine's one-liner for the active profile. -->
-    <p class="persona-blurb">{{ t(activeBlurbKey) }}</p>
+    <p class="persona-blurb">{{ t(`v0.home.persona_blurb_${active}`) }}</p>
 
     <!-- Ranked cards. TransitionGroup FLIP-animates the reorder so the
          shuffle is legible; keyed by slug so each card keeps identity. -->
@@ -138,7 +133,6 @@ const activeBlurbKey = computed(() => `v0.home.persona_blurb_${active.value}`)
         :data-testid="`persona-card-${card.slug}`"
         :tabindex="card.filtered ? -1 : undefined"
         :aria-disabled="card.filtered ? 'true' : undefined"
-        @click="card.filtered && $event.preventDefault()"
       >
         <div class="persona-photo">
           <img
@@ -380,17 +374,5 @@ a.persona-card:hover {
 @media (prefers-reduced-motion: reduce) {
   .persona-rank-move { transition: none; }
   .persona-photo img { transition: none; }
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
 }
 </style>
