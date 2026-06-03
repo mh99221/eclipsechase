@@ -171,9 +171,18 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
   border-bottom: 1px solid rgb(var(--border-subtle) / 0.08);
   transition: background 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease;
 }
-/* Cinematic / on landing — fully transparent until scrolled past hero. */
+/* Cinematic / on landing — no solid bar or blur until scrolled past the
+   hero, but keep a soft top-down scrim so the nav stays legible over the
+   starfield. The scrim also guards readability if the scroll listener
+   never engages (slow hydration, stale SW bundle): the menu can't end up
+   floating fully transparent over bright content. */
 .brand-bar.is-landing:not(.is-scrolled) {
-  background: transparent;
+  background: linear-gradient(
+    180deg,
+    rgb(var(--bg-elevated) / 0.6) 0%,
+    rgb(var(--bg-elevated) / 0.28) 55%,
+    transparent 100%
+  );
   border-bottom-color: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
