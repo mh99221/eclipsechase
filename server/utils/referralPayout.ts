@@ -18,11 +18,18 @@ export interface RedemptionInput {
  * constraint makes a webhook retry a no-op ('duplicate'). Never throws —
  * refund errors are recorded as 'failed' for manual follow-up.
  */
+export interface ReferralResult {
+  outcome: ReferralOutcome
+  /** Referrer's email when a payout succeeded ('paid'), else null. Lets the
+   *  caller send the reward email without re-querying the referrer row. */
+  referrerEmail: string | null
+}
+
 export async function processReferralRedemption(
   stripe: Stripe,
   supabase: any,
   input: RedemptionInput,
-): Promise<ReferralOutcome> {
+): Promise<ReferralResult> {
   // 1. Record the redemption. Unique session id => retry is a no-op.
   const { data: inserted, error: insertError } = await supabase
     .from('voucher_redemptions')
@@ -38,26 +45,32 @@ export async function processReferralRedemption(
 
   if (insertError) {
     // 23505 = unique_violation: already processed on a prior delivery.
-    if ((insertError as any).code === '23505') return 'duplicate'
+    if ((insertError as any).code === '23505') return { outcome: 'duplicate', referrerEmail: null }
     console.error('[referral] redemption insert failed:', insertError)
-    return 'failed'
+    return { outcome: 'failed', referrerEmail: null }
   }
   const redemptionId = inserted?.id
 
   // 2. Resolve the voucher. Only referral vouchers with a referrer pay out.
   const { data: voucher } = await supabase
     .from('vouchers').select('code, kind, referrer_id').eq('code', input.voucherCode).maybeSingle()
-  if (!voucher || voucher.kind !== 'referral' || voucher.referrer_id == null) return 'none'
+  if (!voucher || voucher.kind !== 'referral' || voucher.referrer_id == null) {
+    return { outcome: 'none', referrerEmail: null }
+  }
 
   // 3. Load the referrer; guard self-referral and missing PaymentIntent.
+  // Selecting `email` here lets the caller send the reward mail without a
+  // second round-trip for the same row.
   const { data: referrer } = await supabase
-    .from('pro_purchases').select('payment_intent_id, email_hash').eq('id', voucher.referrer_id).maybeSingle()
-  if (!referrer) return 'none'
-  if (referrer.email_hash === hashEmail(input.refereeEmail)) return 'none' // self-referral
+    .from('pro_purchases').select('payment_intent_id, email_hash, email').eq('id', voucher.referrer_id).maybeSingle()
+  if (!referrer) return { outcome: 'none', referrerEmail: null }
+  if (referrer.email_hash === hashEmail(input.refereeEmail)) {
+    return { outcome: 'none', referrerEmail: null } // self-referral
+  }
 
   if (!referrer.payment_intent_id) {
     await markRedemption(supabase, redemptionId, 'failed', 0, null)
-    return 'failed'
+    return { outcome: 'failed', referrerEmail: null }
   }
 
   // 4. Issue the partial refund (idempotent on the friend's session id).
@@ -67,11 +80,11 @@ export async function processReferralRedemption(
       { idempotencyKey: `referral-refund-${input.sessionId}` },
     )
     await markRedemption(supabase, redemptionId, 'paid', REFERRAL_REWARD_CENTS, refund.id)
-    return 'paid'
+    return { outcome: 'paid', referrerEmail: referrer.email ?? null }
   } catch (err: any) {
     console.error('[referral] refund failed for', input.voucherCode, ':', err?.message || err)
     await markRedemption(supabase, redemptionId, 'failed', 0, null)
-    return 'failed'
+    return { outcome: 'failed', referrerEmail: null }
   }
 }
 

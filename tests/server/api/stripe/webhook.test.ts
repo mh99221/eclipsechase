@@ -137,9 +137,8 @@ describe('POST /api/stripe/webhook', () => {
       { data: { id: 50, token_version: 1, activation_token: null } }, // 2 select existing
       { data: { id: 1 } },                                            // 3 redemption insert
       { data: { code: 'ABCD2345', kind: 'referral', referrer_id: 7 } }, // 3 voucher lookup
-      { data: { payment_intent_id: 'pi_ref', email_hash: 'differenthash' } }, // 3 referrer select
+      { data: { payment_intent_id: 'pi_ref', email_hash: 'differenthash', email: 'ref@x.com' } }, // 3 referrer select (now incl. email)
       { data: { id: 1 } },                                            // 3 redemption update -> paid
-      { data: { email: 'ref@x.com', id: 7 } },                        // 3 referrer-email select (paid)
       { data: { id: 50 } },                                           // 5 conditional token update wins
       { data: { locale: 'en' } },                                     // 6 email_signups locale lookup
       { data: { referral_code: 'FRIENDCD' } },                        // 6 assignReferralCode claim

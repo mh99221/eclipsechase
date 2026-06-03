@@ -15,7 +15,7 @@ describe('processReferralRedemption', () => {
     queueResults(
       { data: { id: 99 } },                                              // redemption insert (no conflict)
       { data: { code: 'ABCD2345', kind: 'referral', referrer_id: 7 } },  // voucher lookup
-      { data: { payment_intent_id: 'pi_123', email_hash: hashEmail('referrer@x.com') } }, // referrer row
+      { data: { payment_intent_id: 'pi_123', email_hash: hashEmail('referrer@x.com'), email: 'referrer@x.com' } }, // referrer row
       { data: { id: 99 } },                                              // redemption update -> paid
     )
     const stripe = makeStripe(async () => ({ id: 're_1' }))
@@ -24,7 +24,8 @@ describe('processReferralRedemption', () => {
       sessionId: 'cs_friend', refereePurchaseId: 12, refereeEmail: 'friend@x.com', voucherCode: 'ABCD2345',
     })
 
-    expect(result).toBe('paid')
+    expect(result.outcome).toBe('paid')
+    expect(result.referrerEmail).toBe('referrer@x.com')
     expect(stripe.refunds.create).toHaveBeenCalledWith(
       { payment_intent: 'pi_123', amount: 400 },
       { idempotencyKey: 'referral-refund-cs_friend' },
@@ -41,7 +42,7 @@ describe('processReferralRedemption', () => {
       sessionId: 'cs_dupe', refereePurchaseId: 12, refereeEmail: 'friend@x.com', voucherCode: 'ABCD2345',
     })
 
-    expect(result).toBe('duplicate')
+    expect(result.outcome).toBe('duplicate')
     expect(stripe.refunds.create).not.toHaveBeenCalled()
   })
 
@@ -57,7 +58,7 @@ describe('processReferralRedemption', () => {
       sessionId: 'cs_manual', refereePurchaseId: 12, refereeEmail: 'friend@x.com', voucherCode: 'ICELAND26',
     })
 
-    expect(result).toBe('none')
+    expect(result.outcome).toBe('none')
     expect(stripe.refunds.create).not.toHaveBeenCalled()
   })
 
@@ -74,7 +75,7 @@ describe('processReferralRedemption', () => {
       sessionId: 'cs_self', refereePurchaseId: 12, refereeEmail: 'cheater@x.com', voucherCode: 'ABCD2345',
     })
 
-    expect(result).toBe('none')
+    expect(result.outcome).toBe('none')
     expect(stripe.refunds.create).not.toHaveBeenCalled()
   })
 
@@ -91,7 +92,7 @@ describe('processReferralRedemption', () => {
       sessionId: 'cs_fail', refereePurchaseId: 12, refereeEmail: 'friend@x.com', voucherCode: 'ABCD2345',
     })
 
-    expect(result).toBe('failed')
+    expect(result.outcome).toBe('failed')
   })
 
   it('marks failed when the referrer has no payment_intent_id', async () => {
@@ -107,7 +108,7 @@ describe('processReferralRedemption', () => {
       sessionId: 'cs_nopi', refereePurchaseId: 12, refereeEmail: 'friend@x.com', voucherCode: 'ABCD2345',
     })
 
-    expect(result).toBe('failed')
+    expect(result.outcome).toBe('failed')
     expect(stripe.refunds.create).not.toHaveBeenCalled()
   })
 })

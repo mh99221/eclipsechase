@@ -34,17 +34,22 @@ function isValidEmailFormat(s: string): boolean {
 watch(email, () => { alreadyPro.value = false })
 
 // ── Voucher / referral discount ──────────────────────────────────
-const voucherCode = ref('')
 const voucherValid = ref(false)
 const voucherPercent = ref(0)
 const voucherKind = ref<'referral' | 'manual' | ''>('')
 const voucherError = ref('')
 const codeInput = ref('')
 
-async function validateVoucher(raw: string) {
+// The normalized code is always `codeInput` (the input is hidden once a
+// code validates), so we don't keep a separate ref for it.
+function normalizedCode(): string {
+  return codeInput.value.trim().toUpperCase()
+}
+
+async function validateVoucher() {
   voucherError.value = ''
   voucherValid.value = false
-  const code = raw.trim().toUpperCase()
+  const code = normalizedCode()
   if (!code) return
   try {
     const res = await $fetch<{ valid: boolean; discount_percent?: number; kind?: 'referral' | 'manual' }>(
@@ -52,7 +57,6 @@ async function validateVoucher(raw: string) {
     )
     if (res.valid) {
       voucherValid.value = true
-      voucherCode.value = code
       voucherPercent.value = res.discount_percent ?? 0
       voucherKind.value = res.kind ?? ''
     } else {
@@ -63,10 +67,6 @@ async function validateVoucher(raw: string) {
   }
 }
 
-function applyTypedCode() {
-  validateVoucher(codeInput.value)
-}
-
 const discountedPrice = computed(() =>
   voucherValid.value ? (9.99 * (100 - voucherPercent.value) / 100).toFixed(2) : null,
 )
@@ -75,7 +75,7 @@ onMounted(() => {
   const refParam = route.query.ref
   if (typeof refParam === 'string' && refParam) {
     codeInput.value = refParam
-    validateVoucher(refParam)
+    validateVoucher()
   }
 })
 
@@ -116,7 +116,7 @@ async function handleCheckout() {
 
     const { url } = await $fetch<{ url: string }>('/api/stripe/checkout', {
       method: 'POST',
-      body: { email: trimmed, voucher_code: voucherValid.value ? voucherCode.value : undefined },
+      body: { email: trimmed, voucher_code: voucherValid.value ? normalizedCode() : undefined },
     })
 
     if (url) {
@@ -205,9 +205,9 @@ function goToRestore() {
               type="text"
               :placeholder="t('pro_discount.code_placeholder')"
               class="price-email-input"
-              @keyup.enter="applyTypedCode"
+              @keyup.enter="validateVoucher()"
             >
-            <button type="button" class="price-code-apply" @click="applyTypedCode">
+            <button type="button" class="price-code-apply" @click="validateVoucher()">
               {{ t('pro_discount.apply') }}
             </button>
           </div>

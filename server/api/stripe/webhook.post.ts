@@ -1,6 +1,6 @@
 import Stripe from 'stripe'
 import { serverSupabaseServiceRole } from '#supabase/server'
-import { assignReferralCode } from '../../utils/vouchers'
+import { assignReferralCode, REFERRAL_REWARD_CENTS } from '../../utils/vouchers'
 import { processReferralRedemption } from '../../utils/referralPayout'
 
 export default defineEventHandler(async (event) => {
@@ -78,19 +78,14 @@ export default defineEventHandler(async (event) => {
     // first delivery still completes the payout. Idempotent via
     // UNIQUE(referee_session_id) — a true repeat returns 'duplicate'.
     if (session.metadata?.voucher_code) {
-      const outcome = await processReferralRedemption(stripe, supabase, {
+      const { outcome, referrerEmail } = await processReferralRedemption(stripe, supabase, {
         sessionId: session.id,
         refereePurchaseId: existing.id,
         refereeEmail: normalizedEmail,
         voucherCode: session.metadata.voucher_code,
       })
-      if (outcome === 'paid') {
-        const { data: referrer } = await supabase
-          .from('pro_purchases').select('email, id')
-          .eq('referral_code', session.metadata.voucher_code).maybeSingle()
-        if (referrer?.email) {
-          await sendReferralRewardEmail(referrer.email, null, { amountEur: 4 })
-        }
+      if (outcome === 'paid' && referrerEmail) {
+        await sendReferralRewardEmail(referrerEmail, null, { amountEur: REFERRAL_REWARD_CENTS / 100 })
       }
     }
 
