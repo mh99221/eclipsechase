@@ -85,7 +85,10 @@ export default defineEventHandler(async (event) => {
         voucherCode: session.metadata.voucher_code,
       })
       if (outcome === 'paid' && referrerEmail) {
-        await sendReferralRewardEmail(referrerEmail, null, { amountEur: REFERRAL_REWARD_CENTS / 100 })
+        // Send the reward mail in the referrer's own language when known.
+        const { data: refSignup } = await supabase
+          .from('email_signups').select('locale').eq('email', referrerEmail).maybeSingle()
+        await sendReferralRewardEmail(referrerEmail, refSignup?.locale ?? null, { amountEur: REFERRAL_REWARD_CENTS / 100 })
       }
     }
 

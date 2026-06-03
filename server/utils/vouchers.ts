@@ -60,14 +60,21 @@ export async function assignReferralCode(supabase: any, purchaseId: number, coup
       .maybeSingle()
 
     if (claimed?.referral_code) {
-      await supabase.from('vouchers').insert({
+      const { error: voucherError } = await supabase.from('vouchers').insert({
         code,
         stripe_coupon_id: couponId,
         discount_percent: REFERRAL_DISCOUNT_PERCENT,
         kind: 'referral',
         referrer_id: purchaseId,
       })
-      return code
+      if (!voucherError) return code
+      // The voucher row couldn't be created — release the claim so we never
+      // leave a referral_code that points at no voucher (a silently dead
+      // share link). 23505 = code collision: regenerate; otherwise surface.
+      await supabase.from('pro_purchases')
+        .update({ referral_code: null }).eq('id', purchaseId)
+      if ((voucherError as any).code === '23505') continue
+      throw voucherError
     }
 
     // Either a concurrent writer already set a code, or our generated code

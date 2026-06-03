@@ -108,4 +108,29 @@ describe('assignReferralCode', () => {
     expect(code).toBe('EXISTING1')
     expect(client.insert).not.toHaveBeenCalled()
   })
+
+  it('releases the claim and retries when the voucher insert collides', async () => {
+    const { client, queueResults } = createMockSupabase()
+    queueResults(
+      { data: { referral_code: 'CODE0001' } },     // claim won (attempt 1)
+      { data: null, error: { code: '23505' } },    // voucher insert collides
+      { data: null },                              // release the claim
+      { data: { referral_code: 'CODE0002' } },     // claim won (attempt 2)
+      { data: null },                              // voucher insert ok
+    )
+    const code = await assignReferralCode(client, 42, 'coup_ref')
+    expect(code).toMatch(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{8}$/)
+    expect(client.update).toHaveBeenCalledWith({ referral_code: null }) // released
+  })
+
+  it('releases the claim and rethrows on a transient voucher insert error', async () => {
+    const { client, queueResults } = createMockSupabase()
+    queueResults(
+      { data: { referral_code: 'CODE0001' } },     // claim won
+      { data: null, error: { code: 'XX000' } },    // transient voucher insert error
+      { data: null },                              // release the claim
+    )
+    await expect(assignReferralCode(client, 42, 'coup_ref')).rejects.toThrow()
+    expect(client.update).toHaveBeenCalledWith({ referral_code: null })
+  })
 })
