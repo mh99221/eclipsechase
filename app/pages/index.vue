@@ -132,6 +132,11 @@ const faqItems = computed(() => {
           <CountdownBar />
           <p class="home-rarity">{{ t('v0.home.hero_rarity') }}</p>
           <p class="home-tagline">{{ t('v0.home.tagline') }}</p>
+          <ul class="home-support" aria-label="What you get">
+            <li>{{ t('v0.home.hero_support_1') }}</li>
+            <li>{{ t('v0.home.hero_support_2') }}</li>
+            <li>{{ t('v0.home.hero_support_3') }}</li>
+          </ul>
           <NuxtLinkLocale to="/spots" class="btn-corona home-hero-cta">
             {{ t('v0.home.hero_cta') }}
           </NuxtLinkLocale>
@@ -141,18 +146,70 @@ const faqItems = computed(() => {
         </div>
       </section>
 
-      <!-- Trust strip -->
-      <p class="home-trust" aria-label="Data sources">
-        <i18n-t keypath="v0.home.trust_strip" tag="span">
-          <template #dem><strong>{{ t('v0.home.trust_strip_dem') }}</strong></template>
-          <template #weather><strong>{{ t('v0.home.trust_strip_weather') }}</strong></template>
-          <template #eclipse><strong>{{ t('v0.home.trust_strip_eclipse') }}</strong></template>
-        </i18n-t>
-      </p>
-
       <!-- Utility tile grid -->
       <section class="home-section" aria-label="Quick links">
         <HomeTileGrid />
+      </section>
+
+      <!-- Dashboard preview — three phone screenshots of the live map
+           (scoring / horizon / road cam). Moved high (right after the quick-
+           links grid) so proof-of-value — the tool actually working — lands
+           before the page argues why eclipse day is hard. Page now goes:
+           hero → utility → product in action → tradeoff → methodology → offer. -->
+      <section class="home-section home-dashboard" aria-labelledby="dashboard-heading">
+        <p class="home-eyebrow">{{ t('v0.home.dashboard_eyebrow') }}</p>
+        <h2 id="dashboard-heading" class="home-h2">{{ t('v0.home.dashboard_title') }}</h2>
+        <p class="home-body">{{ t('v0.home.dashboard_body') }}</p>
+
+        <div class="dashboard-grid">
+          <figure class="dashboard-card">
+            <div class="dashboard-shot">
+              <img
+                :src="'/landing/dashboard-1-scoring.webp'"
+                :alt="t('v0.home.dashboard_scoring_alt')"
+                loading="lazy"
+                width="1048"
+                height="2340"
+              >
+            </div>
+            <figcaption class="dashboard-meta">
+              <h3 class="dashboard-name">{{ t('v0.home.dashboard_scoring_title') }}</h3>
+              <p class="dashboard-caption">{{ t('v0.home.dashboard_scoring_caption') }}</p>
+            </figcaption>
+          </figure>
+
+          <figure class="dashboard-card">
+            <div class="dashboard-shot">
+              <img
+                :src="'/landing/dashboard-2-horizon.webp'"
+                :alt="t('v0.home.dashboard_horizon_alt')"
+                loading="lazy"
+                width="1048"
+                height="2340"
+              >
+            </div>
+            <figcaption class="dashboard-meta">
+              <h3 class="dashboard-name">{{ t('v0.home.dashboard_horizon_title') }}</h3>
+              <p class="dashboard-caption">{{ t('v0.home.dashboard_horizon_caption') }}</p>
+            </figcaption>
+          </figure>
+
+          <figure class="dashboard-card">
+            <div class="dashboard-shot">
+              <img
+                :src="'/landing/dashboard-3-roadcam.webp'"
+                :alt="t('v0.home.dashboard_roadcam_alt')"
+                loading="lazy"
+                width="1048"
+                height="2340"
+              >
+            </div>
+            <figcaption class="dashboard-meta">
+              <h3 class="dashboard-name">{{ t('v0.home.dashboard_roadcam_title') }}</h3>
+              <p class="dashboard-caption">{{ t('v0.home.dashboard_roadcam_caption') }}</p>
+            </figcaption>
+          </figure>
+        </div>
       </section>
 
       <!-- The cloud-vs-totality tradeoff — planning content, not a
@@ -271,72 +328,12 @@ const faqItems = computed(() => {
         <p class="horizon-note">{{ t('v0.home.horizon_note') }}</p>
       </section>
 
-      <!-- Dashboard preview — three phone screenshots of the live map
-           (scoring / horizon / road cam). Sits between methodology (how
-           we check) and the Free vs Pro offer so the page goes:
-           tradeoff → methodology → product in action → offer. -->
-      <section class="home-section home-dashboard" aria-labelledby="dashboard-heading">
-        <p class="home-eyebrow">{{ t('v0.home.dashboard_eyebrow') }}</p>
-        <h2 id="dashboard-heading" class="home-h2">{{ t('v0.home.dashboard_title') }}</h2>
-        <p class="home-body">{{ t('v0.home.dashboard_body') }}</p>
-
-        <div class="dashboard-grid">
-          <figure class="dashboard-card">
-            <div class="dashboard-shot">
-              <img
-                :src="'/landing/dashboard-1-scoring.webp'"
-                :alt="t('v0.home.dashboard_scoring_alt')"
-                loading="lazy"
-                width="1048"
-                height="2340"
-              >
-            </div>
-            <figcaption class="dashboard-meta">
-              <h3 class="dashboard-name">{{ t('v0.home.dashboard_scoring_title') }}</h3>
-              <p class="dashboard-caption">{{ t('v0.home.dashboard_scoring_caption') }}</p>
-            </figcaption>
-          </figure>
-
-          <figure class="dashboard-card">
-            <div class="dashboard-shot">
-              <img
-                :src="'/landing/dashboard-2-horizon.webp'"
-                :alt="t('v0.home.dashboard_horizon_alt')"
-                loading="lazy"
-                width="1048"
-                height="2340"
-              >
-            </div>
-            <figcaption class="dashboard-meta">
-              <h3 class="dashboard-name">{{ t('v0.home.dashboard_horizon_title') }}</h3>
-              <p class="dashboard-caption">{{ t('v0.home.dashboard_horizon_caption') }}</p>
-            </figcaption>
-          </figure>
-
-          <figure class="dashboard-card">
-            <div class="dashboard-shot">
-              <img
-                :src="'/landing/dashboard-3-roadcam.webp'"
-                :alt="t('v0.home.dashboard_roadcam_alt')"
-                loading="lazy"
-                width="1048"
-                height="2340"
-              >
-            </div>
-            <figcaption class="dashboard-meta">
-              <h3 class="dashboard-name">{{ t('v0.home.dashboard_roadcam_title') }}</h3>
-              <p class="dashboard-caption">{{ t('v0.home.dashboard_roadcam_caption') }}</p>
-            </figcaption>
-          </figure>
-        </div>
-      </section>
-
       <!-- Unique-opportunity band — fact-driven urgency. The 170-year
            scarcity is genuinely true (next Iceland totality is 2196), so it
            reinforces the data-led voice rather than reading as hype. Sits
-           between the dashboard preview and the offer as the emotional
-           bridge into conversion. Visible to everyone — rarity applies to
-           Pro users too — and the CTA points to the free /spots browse. -->
+           after the horizon proof as the emotional bridge into the offer.
+           Visible to everyone — rarity applies to Pro users too — and the
+           CTA points to the free /spots browse. -->
       <section class="home-section home-opportunity" aria-labelledby="opportunity-heading">
         <p class="home-eyebrow">{{ t('v0.home.opportunity_eyebrow') }}</p>
         <h2 id="opportunity-heading" class="home-h2">{{ t('v0.home.opportunity_title') }}</h2>
@@ -426,6 +423,17 @@ const faqItems = computed(() => {
           :submit-label="isPro ? t('v0.home.email_cta_pro') : undefined"
         />
       </section>
+
+      <!-- Trust strip — relocated from under the hero so methodology doesn't
+           compete with the conversion message in the first screenful. Now
+           sits as a lead-in to the full Data sources breakdown. -->
+      <p class="home-trust" aria-label="Data sources">
+        <i18n-t keypath="v0.home.trust_strip" tag="span">
+          <template #dem><strong>{{ t('v0.home.trust_strip_dem') }}</strong></template>
+          <template #weather><strong>{{ t('v0.home.trust_strip_weather') }}</strong></template>
+          <template #eclipse><strong>{{ t('v0.home.trust_strip_eclipse') }}</strong></template>
+        </i18n-t>
+      </p>
 
       <!-- Data sources -->
       <section class="home-section home-sources" aria-labelledby="sources-heading">
@@ -540,6 +548,41 @@ const faqItems = computed(() => {
   line-height: 1.5;
   color: rgb(var(--ink-3));
   margin: 0;
+}
+/* Hero value bullets — three concrete outcomes that justify the primary
+   CTA. Left-aligned inside a centered, capped column so the lines stay
+   scannable rather than centre-justified mush; a small accent dot marks
+   each. */
+.home-support {
+  list-style: none;
+  margin: 2px auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  text-align: left;
+  max-width: 400px;
+}
+.home-support li {
+  position: relative;
+  padding-left: 20px;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgb(var(--ink-2));
+}
+.home-support li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.55em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgb(var(--accent));
+}
+@media (min-width: 768px) {
+  .home-support li { font-size: 14px; }
 }
 .home-hero-cta {
   margin-top: 6px;
