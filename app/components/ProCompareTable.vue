@@ -75,8 +75,14 @@ const compareSections: Array<{ titleKey: string; rows: CompareRow[] }> = [
                "every <th> must have an id" rule doesn't trip on a
                cell no <td> ever needs to reference. -->
           <td aria-hidden="true" />
-          <th id="cmp-col-free" scope="col">{{ t('v0.pro_compare.free_col') }}</th>
-          <th id="cmp-col-pro" scope="col">{{ t('v0.pro_compare.pro_col') }}</th>
+          <th id="cmp-col-free" scope="col">
+            <span class="cmp-tier">{{ t('v0.pro_compare.free_col') }}</span>
+            <span class="cmp-frame">{{ t('v0.pro_compare.free_frame') }}</span>
+          </th>
+          <th id="cmp-col-pro" scope="col">
+            <span class="cmp-tier">{{ t('v0.pro_compare.pro_col') }}</span>
+            <span class="cmp-frame">{{ t('v0.pro_compare.pro_frame') }}</span>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -130,9 +136,24 @@ const compareSections: Array<{ titleKey: string; rows: CompareRow[] }> = [
   font-weight: 500;
   text-align: center;
   padding-bottom: 10px;
-  width: 64px;
+  width: 76px;
 }
 .compare-table thead th:first-child { width: auto; }
+
+/* Two-line column header: the tier identity (FREE / PRO €9.99) on top,
+   a directional plan/decide frame below in accent so the columns echo the
+   same split as the section rowgroups without losing the price. */
+.compare-table thead th .cmp-tier { display: block; }
+.compare-table thead th .cmp-frame {
+  display: block;
+  margin-top: 3px;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 500;
+  color: rgb(var(--accent));
+}
 
 /* Section header row spans all three columns and provides the visual
    group break. The :first-child guard kills the top border so the first
