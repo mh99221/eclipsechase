@@ -135,7 +135,6 @@ export default defineNuxtConfig({
     // the "flash of dashboard content" bug.
     '/dashboard': { ssr: false },
     '/map': { ssr: false },
-    '/me': { ssr: false },
     '/spots': {
       ssr: true,
       headers: {

@@ -5,8 +5,8 @@
  * is not Pro so consumers can intercept the click and open the upsell
  * sheet instead of routing.
  *
- * `Me` stays in NAV_ITEMS_HIDDEN — its features (theme, sign out, restore)
- * already live in BrandBar's right slot or on /pro.
+ * There is no `Me` tab — Pro status + the referral card live on /dashboard,
+ * and purchase restore lives on /pro.
  *
  * Labels resolve through useI18n() so they follow the active locale.
  */
@@ -45,10 +45,9 @@ export function useNavItems() {
     // queries the active tab inside Vue's render scope.
     const getRouteBaseName = useRouteBaseName()
     const base = String(getRouteBaseName(route) ?? '')
-    // /spots and /me are parents — match their child routes too
+    // /spots is a parent — match its child routes too
     // (e.g. /spots/[slug] has base name `spots-slug`).
     if (to === '/spots') return base === 'spots' || base.startsWith('spots-')
-    if (to === '/me') return base === 'me' || base.startsWith('me-')
     if (to === '/') return base === 'index'
     // Strip the leading slash to get the canonical base name for the
     // remaining flat routes (`/dashboard` → `dashboard`, etc.).

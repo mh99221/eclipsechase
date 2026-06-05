@@ -14,7 +14,7 @@ const siteUrl = useRuntimeConfig().public.siteUrl as string
 // Pro status drives whether this landing shows the conversion track
 // (tricky/compare/free-FAQ) or the Pro track (status card + Pro email
 // copy + filtered FAQ). The composable only runs `checkStatus` from
-// pro-gate middleware on /dashboard, /map, /me — without this onMounted
+// pro-gate middleware on /dashboard and /map — without this onMounted
 // call, a returning Pro user hard-loading `/` would see the Free variant
 // until they navigated to a gated route. Client-only; SSR keeps the
 // Free shell so SEO crawls stay marketing-flavoured.

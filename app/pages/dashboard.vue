@@ -73,6 +73,21 @@ const { t } = useI18n()
 
       <Checklist />
 
+      <section class="account">
+        <Eyebrow>{{ t('me_page.section_title') }}</Eyebrow>
+        <Card>
+          <div class="account-row">
+            <div class="account-label">{{ t('me_page.pro_status') }}</div>
+            <div class="account-value" :data-pro="isPro">
+              {{ isPro ? t('me_page.status_active') : t('me_page.status_free') }}
+            </div>
+          </div>
+        </Card>
+        <ClientOnly>
+          <ReferralCard />
+        </ClientOnly>
+      </section>
+
       <ClientOnly><OfflineBanner /></ClientOnly>
 
       <AppFooter />
@@ -136,6 +151,36 @@ const { t } = useI18n()
 }
 .conditions-cta:hover { color: rgb(var(--accent-strong)); }
 
+/* Account section — Pro status + referral card (moved from /me). */
+.account {
+  padding: 0 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.account-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.account-label {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-1) / 0.42);
+}
+.account-value {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(var(--ink-1) / 0.62);
+}
+.account-value[data-pro='true'] {
+  color: rgb(var(--good));
+}
+
 .skeleton-line {
   height: 12px;
   background: rgb(var(--border-subtle) / 0.16);
@@ -164,6 +209,7 @@ const { t } = useI18n()
     letter-spacing: 0.48em;
   }
   .conditions { padding: 0 24px 32px; }
+  .account { padding: 0 24px 32px; }
   .conditions-card { padding: 20px 24px; min-height: 80px; }
   .conditions-name { font-size: 26px; }
   .conditions-cta { font-size: 13px; }
