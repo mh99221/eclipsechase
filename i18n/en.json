@@ -673,6 +673,7 @@
     "head_title_generic": "Error"
   },
   "me_page": {
+    "section_title": "Account",
     "pro_status": "Pro status",
     "status_active": "Active",
     "status_free": "Free tier"
