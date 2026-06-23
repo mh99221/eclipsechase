@@ -12,7 +12,10 @@ const router = useRouter()
 
 const { t, locale } = useI18n()
 const { data } = await useFetch('/api/spots', {
-  query: { locale: locale.value },
+  // view=list trims the payload to hero-thumb + horizon verdict (the only
+  // fields this grid uses), cutting ~240 KB of unused photo metadata off
+  // the route's critical path. See server/api/spots/index.get.ts.
+  query: { locale: locale.value, view: 'list' },
   key: `spots-list-${locale.value}`,
 })
 

@@ -30,4 +30,46 @@ describe('GET /api/spots', () => {
     setResult(null, { message: 'DB error' })
     await expect(handler(createTestEvent({ supabase: mockSupabase }))).rejects.toMatchObject({ statusCode: 500 })
   })
+
+  it('returns the full photos array and horizon_check by default', async () => {
+    setResult(viewingSpots)
+    const result = await handler(createTestEvent({ supabase: mockSupabase }))
+
+    // No ?view=list → callers like /credits and /map get everything.
+    expect(result.spots[0].photos[0]).toHaveProperty('credit')
+    expect(result.spots[0].horizon_check).toHaveProperty('sweep')
+  })
+
+  it('view=list trims photos to the hero thumb and horizon_check to its verdict', async () => {
+    setResult(viewingSpots)
+    const result = await handler(createTestEvent({ supabase: mockSupabase, query: { view: 'list' } }))
+
+    expect(result.spots).toHaveLength(viewingSpots.length)
+    const spot = result.spots[0]
+
+    // photos → single hero entry, only the fields the grid renders
+    expect(spot.photos).toHaveLength(1)
+    expect(spot.photos[0]).toEqual({
+      filename: 'stykkisholmur-harbour-01.webp',
+      alt: 'Stykkishólmur harbour with colourful houses',
+      is_hero: true,
+    })
+    expect(spot.photos[0]).not.toHaveProperty('credit')
+
+    // horizon_check → verdict only (the 91-point sweep is dropped)
+    expect(spot.horizon_check).toEqual({ verdict: 'clear' })
+
+    // ranking + card fields the list still depends on survive
+    expect(spot).toHaveProperty('totality_duration_seconds')
+    expect(spot).toHaveProperty('spot_type')
+    expect(spot).toHaveProperty('lat')
+  })
+
+  it('view=list tolerates a spot with no photos', async () => {
+    setResult([{ ...viewingSpots[0], photos: [], horizon_check: null }])
+    const result = await handler(createTestEvent({ supabase: mockSupabase, query: { view: 'list' } }))
+
+    expect(result.spots[0].photos).toEqual([])
+    expect(result.spots[0].horizon_check).toBeNull()
+  })
 })
