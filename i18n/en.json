@@ -440,6 +440,7 @@
   },
   "spots_page": {
     "title": "Viewing Spots — EclipseChase",
+    "h1": "Eclipse Viewing Spots in Iceland",
     "description": "Browse curated eclipse viewing spots across western Iceland for the August 12, 2026 total solar eclipse.",
     "eyebrow": "Spots",
     "header_sub": "{profile} · sorted by {sort}",

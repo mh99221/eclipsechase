@@ -440,6 +440,7 @@
   },
   "spots_page": {
     "title": "Áhorfsstaðir — EclipseChase",
+    "h1": "Áhorfsstaðir fyrir heilsólmyrkvann á Íslandi",
     "description": "Skoðaðu valda áhorfsstaði fyrir heilsólmyrkvann 12. ágúst 2026 í Vestur-Íslandi.",
     "eyebrow": "Staðir",
     "header_sub": "{profile} · raðað eftir {sort}",

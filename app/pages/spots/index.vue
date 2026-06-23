@@ -232,6 +232,10 @@ const headerSub = computed(() => {
 <template>
   <PageShell screen="spots">
     <header class="spots-header">
+      <!-- Visually-hidden H1 for SEO + a11y: the v0 design uses the eyebrow
+           as the visual label and has no big title, but the page still needs
+           exactly one descriptive heading. -->
+      <h1 class="sr-only">{{ t('spots_page.h1') }}</h1>
       <Eyebrow variant="dot" tone="accent">{{ t('spots_page.eyebrow').toUpperCase() }} · {{ displayItems.length }}</Eyebrow>
       <p class="spots-sub">{{ headerSub }}</p>
     </header>

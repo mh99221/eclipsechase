@@ -3,8 +3,6 @@ title: 'Complete Guide to the 2026 Total Solar Eclipse in Iceland'
 description: 'Everything you need to plan your trip to see the August 12, 2026 total solar eclipse in Iceland.'
 ---
 
-# Complete Guide to the 2026 Total Solar Eclipse in Iceland
-
 Your practical planning reference for August 12, 2026 — the only total solar eclipse to cross Iceland for the next 170 years.
 
 ## What's Happening
