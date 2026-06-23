@@ -214,7 +214,15 @@ export default defineNuxtConfig({
   // The server plugin + server composables are left intact.
   hooks: {
     'app:resolve'(app) {
+      // Guard the count: if @nuxtjs/supabase ever renames this plugin file,
+      // the filter would silently match nothing and quietly ship supabase-js
+      // back into the client bundle. Warn loudly so the regression is caught
+      // at build time instead of in a Lighthouse audit months later.
+      const before = app.plugins.length
       app.plugins = app.plugins.filter(p => !p.src.includes('supabase.client'))
+      if (app.plugins.length === before) {
+        console.warn('[nuxt.config] @nuxtjs/supabase client plugin not found to strip — supabase-js may have returned to the client bundle (did the module rename supabase.client?).')
+      }
     },
   },
 
