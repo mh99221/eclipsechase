@@ -87,14 +87,16 @@ test.describe('Critical regressions', () => {
     await expect(getPro).toBeVisible()
 
     // Anchor target lives on /pro.
-    await expect(restore).toHaveAttribute('href', /\/pro#restore$/)
+    // trailingSlash:'append' (nuxt.config experimental.defaults.nuxtLink)
+    // slashes the path before the fragment: /pro#restore → /pro/#restore.
+    await expect(restore).toHaveAttribute('href', /\/pro\/#restore$/)
   })
 
   test('Restore link routes to /pro#restore and the form auto-expands', async ({ page, goto }) => {
     await goto('/spots', { waitUntil: 'hydration' })
 
     await page.getByTestId('brandbar-restore').click()
-    await expect(page).toHaveURL(/\/pro#restore$/)
+    await expect(page).toHaveURL(/\/pro\/#restore$/)
 
     // RestorePurchase auto-advances from `idle` to `email_input` when
     // the URL hash is #restore. The "Already purchased? Restore here"

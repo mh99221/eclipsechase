@@ -193,6 +193,18 @@ export default defineNuxtConfig({
     server: true,
   },
 
+  // Append a trailing slash to every internal <NuxtLink> href so links
+  // point straight at the canonical URL (trailingSlash:true) instead of
+  // 308-redirecting on every click/crawl. Matches site.trailingSlash +
+  // the canonicalize() canonical/og URLs.
+  experimental: {
+    defaults: {
+      nuxtLink: {
+        trailingSlash: 'append',
+      },
+    },
+  },
+
   $development: {
     nitro: {
       storage: {
