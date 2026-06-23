@@ -87,7 +87,9 @@ const rows = computed(() => {
 .k {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 10px;
-  color: rgb(var(--ink-1) / 0.42);
+  /* 0.6 (not 0.42) clears WCAG AA 4.5:1 — at 0.42 these mono caps rendered
+     #6b6c6c ≈ 3.49:1 on the dark bg and failed the contrast audit. */
+  color: rgb(var(--ink-1) / 0.6);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   padding-top: 1px;
