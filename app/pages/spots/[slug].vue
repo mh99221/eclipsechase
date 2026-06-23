@@ -118,7 +118,7 @@ useHead({
     { name: 'description', content: () => `${spot.value.name} — eclipse viewing spot in ${regionLabel(spot.value.region, t)}. ${formatDuration(spot.value.totality_duration_seconds ?? 0)} of totality.` },
     { property: 'og:title', content: () => `${spot.value.name} — Eclipse Viewing Spot` },
     { property: 'og:description', content: () => spot.value.description },
-    { property: 'og:url', content: () => `${siteUrl}/spots/${slug}` },
+    { property: 'og:url', content: () => canonicalize(`${siteUrl}/spots/${slug}`) },
     { property: 'og:type', content: 'place' },
     ...(heroPhoto.value ? [
       { property: 'og:image', content: `${siteUrl}/images/spots/${heroPhoto.value.filename}` },
@@ -128,7 +128,7 @@ useHead({
     ] : []),
   ],
   link: [
-    { rel: 'canonical', href: `${siteUrl}/spots/${slug}` },
+    { rel: 'canonical', href: canonicalize(`${siteUrl}/spots/${slug}`) },
   ],
   script: [
     {
@@ -146,7 +146,7 @@ useHead({
           'longitude': spot.value.lng,
         },
         'isAccessibleForFree': true,
-        'url': `${siteUrl}/spots/${slug}`,
+        'url': canonicalize(`${siteUrl}/spots/${slug}`),
         ...(heroPhoto.value ? { 'image': `${siteUrl}/images/spots/${heroPhoto.value.filename}` } : {}),
       }),
     },

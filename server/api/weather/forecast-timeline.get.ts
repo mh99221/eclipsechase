@@ -5,6 +5,11 @@ import { computeForecastStaleness } from '../../utils/vedur'
 let stationCache: Array<{ id: string; name: string; lat: number; lng: number; region: string | null }> | null = null
 
 export default defineEventHandler(async (event) => {
+  // Edge cache: set here (not via routeRules) because trailingSlash:true
+  // rewrites the request path, so the Vercel header-route keyed to the
+  // no-slash path never matches the served /api/weather/forecast-timeline/.
+  setResponseHeader(event, 'Cache-Control', 'public, s-maxage=120, stale-while-revalidate=300')
+
   const query = getQuery(event)
   const hours = Math.min(Number(query.hours) || 24, 48)
 

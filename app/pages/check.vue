@@ -65,10 +65,10 @@ watchEffect(() => {
 })
 
 const canonicalUrl = computed(() => {
-  if (!result.value) return `${siteUrl}/check`
+  if (!result.value) return canonicalize(`${siteUrl}/check`)
   const lat = result.value.input.lat.toFixed(5)
   const lng = result.value.input.lng.toFixed(5)
-  return `${siteUrl}/check?lat=${lat}&lng=${lng}`
+  return canonicalize(`${siteUrl}/check?lat=${lat}&lng=${lng}`)
 })
 
 async function handleSubmit() {
@@ -126,7 +126,7 @@ useHead({
     { property: 'og:type', content: 'website' },
   ],
   link: [
-    { rel: 'canonical', href: `${siteUrl}/check` },
+    { rel: 'canonical', href: canonicalize(`${siteUrl}/check`) },
   ],
 })
 </script>

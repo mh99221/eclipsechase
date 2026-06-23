@@ -13,6 +13,11 @@ import { computeForecastStaleness, STATION_IDS } from '../../utils/vedur'
  * when the cron has fallen behind.
  */
 export default defineEventHandler(async (event) => {
+  // Edge cache: set here (not via routeRules) because trailingSlash:true
+  // rewrites the request path, so the Vercel header-route keyed to the
+  // no-slash path never matches the served /api/weather/cloud-cover/.
+  setResponseHeader(event, 'Cache-Control', 'public, s-maxage=120, stale-while-revalidate=300')
+
   const supabase = await serverSupabaseServiceRole(event)
 
   const now = new Date()

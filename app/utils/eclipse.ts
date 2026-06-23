@@ -1,3 +1,15 @@
+import { withTrailingSlash } from 'ufo'
+
+/**
+ * Canonicalise an absolute URL to the site's trailing-slash convention
+ * (matches vercel.json trailingSlash:true + nuxt.config site.trailingSlash).
+ * Passing `true` keeps any query/fragment AFTER the inserted slash, so
+ * `/check?lat=1` → `/check/?lat=1` (not the broken `/check?lat=1/`).
+ */
+export function canonicalize(url: string): string {
+  return withTrailingSlash(url, true)
+}
+
 /**
  * Format a latitude/longitude pair as the project's canonical readout:
  * `65.6855° N · 23.5950° W`. Hemispheres are picked from the signs;

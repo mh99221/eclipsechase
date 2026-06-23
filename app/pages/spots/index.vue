@@ -153,9 +153,9 @@ const siteUrl = useRuntimeConfig().public.siteUrl as string
 // spot's detail URL. `prefix_except_default` strategy: EN lives at
 // /spots, IS at /is/spots.
 const localePrefix = computed(() => (locale.value === 'en' ? '' : `/${locale.value}`))
-const canonicalListUrl = computed(() => `${siteUrl}${localePrefix.value}/spots`)
+const canonicalListUrl = computed(() => canonicalize(`${siteUrl}${localePrefix.value}/spots`))
 function spotDetailUrl(slug: string) {
-  return `${siteUrl}${localePrefix.value}/spots/${slug}`
+  return canonicalize(`${siteUrl}${localePrefix.value}/spots/${slug}`)
 }
 
 // JSON-LD ItemList — uses the API's canonical order (totality duration

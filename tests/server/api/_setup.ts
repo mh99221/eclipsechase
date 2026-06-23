@@ -40,6 +40,7 @@ import {
   getRouterParam,
   getHeader,
   setResponseStatus,
+  setResponseHeader,
 } from 'h3'
 
 // ---------------------------------------------------------------------------
@@ -54,6 +55,7 @@ Object.assign(globalThis, {
   getRouterParam,
   getHeader,
   setResponseStatus,
+  setResponseHeader,
 })
 
 // ---------------------------------------------------------------------------

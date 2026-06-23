@@ -37,7 +37,7 @@ if (import.meta.client) {
 // Canonical + og:url + JSON-LD all need the locale-prefixed URL so search
 // engines don't treat the IS page as a duplicate of the EN canonical.
 const localizedGuideUrl = computed(() =>
-  locale.value === 'en' ? `${siteUrl}/guide` : `${siteUrl}/${locale.value}/guide`,
+  canonicalize(locale.value === 'en' ? `${siteUrl}/guide` : `${siteUrl}/${locale.value}/guide`),
 )
 
 // defineOgImageComponent emits the og:image / twitter:image meta tags.

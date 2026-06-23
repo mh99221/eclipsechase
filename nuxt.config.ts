@@ -45,6 +45,13 @@ export default defineNuxtConfig({
 
   site: {
     url: 'https://eclipsechase.is',
+    // Match Vercel's trailingSlash:true (vercel.json) so @nuxtjs/sitemap
+    // emits trailing-slash <loc> URLs that agree with the served pages,
+    // canonical tags, and hreflang alternates. Without this the sitemap
+    // lists /spots/x while Vercel serves /spots/x/, the mismatch that
+    // suppressed indexing. Page canonicals use canonicalize() (app/utils
+    // /eclipse.ts) to match.
+    trailingSlash: true,
   },
 
   app: {
