@@ -152,28 +152,14 @@ export default defineNuxtConfig({
     },
     '/spots/**': { isr: 3600 },
 
-    // API — cached at the Vercel edge so most map page loads don't hit
-    // our serverless functions or Supabase at all. stale-while-revalidate
-    // lets us serve instantly while a fresh copy is fetched in the
-    // background. Tune these if data freshness starts to matter.
-    '/api/weather/stations': {
-      // Essentially immutable — stations are seeded + rarely change.
-      headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' },
-    },
-    '/api/weather/cloud-cover': {
-      // Upstream cron refreshes every 15 min. 2-min edge cache with SWR
-      // keeps the map feeling live without hammering the function.
-      headers: { 'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=300' },
-    },
-    '/api/weather/forecast-timeline': {
-      // Same cadence as cloud-cover — hourly timeline used by the map.
-      headers: { 'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=300' },
-    },
-    '/api/spots': {
-      // Data changes rarely (manual SQL edits). Long SWR so re-renders
-      // feel instant but a fresh version eventually propagates.
-      headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600' },
-    },
+    // API edge-caching is set in the handlers themselves via
+    // setResponseHeader (server/api/spots/index.get.ts and
+    // server/api/weather/*.get.ts), NOT here. A routeRules `headers` rule
+    // keyed to the no-slash path silently no-ops under trailingSlash:true:
+    // Vercel rewrites the request to /api/*/, which never matches the
+    // exact `/api/*` Vercel header-route, so the header is dropped. Setting
+    // it on the response in-handler is slash-independent and actually
+    // reaches the edge.
   },
 
   nitro: {
