@@ -28,6 +28,8 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, statusMessage: 'Failed to fetch spots' })
   }
 
+  const view = typeof query.view === 'string' ? query.view : null
+
   // Overlay translations for this locale in a single query rather than
   // N+1 lookups. Only `name` and `warnings` are exposed on the list
   // view (description / parking_info / terrain_notes are spot-detail
@@ -49,6 +51,37 @@ export default defineEventHandler(async (event) => {
         if (tr.warnings != null) (spot as any).warnings = tr.warnings
       }
     }
+  }
+
+  // List-view projection (the /spots grid). That page renders only each
+  // spot's hero thumbnail and reads horizon_check.verdict for ranking — it
+  // never touches the full photos array or warnings. Shipping the complete
+  // photos JSONB (filename, alt, credit, photographer, license, url, caption,
+  // dimensions … for 150+ photos across 30 spots) made the list payload
+  // ~240 KB, the dominant critical-path cost on throttled mobile and the
+  // reason FCP/LCP scored poorly. Project down to just what the list needs.
+  // Other consumers (/credits attribution, /map lightbox, /spots/[slug]
+  // alternates) omit ?view=list and still receive the full response.
+  if (view === 'list') {
+    const asJson = (v: unknown) => {
+      if (typeof v !== 'string') return v
+      try { return JSON.parse(v) } catch { return null }
+    }
+    const projected = data.map((spot: any) => {
+      const photos = asJson(spot.photos)
+      const arr = Array.isArray(photos) ? photos : []
+      const hero = arr.find((p: any) => p?.is_hero) || arr[0] || null
+      const hc = asJson(spot.horizon_check) as { verdict?: string } | null
+      const { warnings: _warnings, ...rest } = spot
+      return {
+        ...rest,
+        horizon_check: hc?.verdict ? { verdict: hc.verdict } : null,
+        photos: hero
+          ? [{ filename: hero.filename ?? null, alt: hero.alt ?? null, is_hero: true }]
+          : [],
+      }
+    })
+    return { spots: projected }
   }
 
   return { spots: data }
