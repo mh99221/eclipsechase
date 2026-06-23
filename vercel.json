@@ -1,5 +1,5 @@
 {
-  "trailingSlash": false,
+  "trailingSlash": true,
   "crons": [
     {
       "path": "/api/tasks/ingest-weather",
