@@ -20,7 +20,9 @@ describe('GET /api/__sitemap__/urls', () => {
 
     const result = await handler(createTestEvent({ supabase: mockSupabase }))
     expect(result).toHaveLength(slugs.length)
-    expect(result[0]).toEqual({ loc: `/spots/${viewingSpots[0].slug}`, changefreq: 'weekly', priority: 0.7 })
+    // _i18nTransform expands each entry across all locales (en + is) so the
+    // Icelandic sitemap gets /is/spots/<slug> too — see the handler.
+    expect(result[0]).toEqual({ loc: `/spots/${viewingSpots[0].slug}`, changefreq: 'weekly', priority: 0.7, _i18nTransform: true })
   })
 
   it('returns empty array when no spots', async () => {

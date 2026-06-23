@@ -18,5 +18,11 @@ export default defineSitemapEventHandler(async (event) => {
     loc: `/spots/${spot.slug}`,
     changefreq: 'weekly',
     priority: 0.7,
+    // Expand each spot across every configured locale (en + is) so the
+    // Icelandic sitemap gets /is/spots/<slug> too, with hreflang
+    // alternates. Without this the dynamic source lands only in the
+    // default-locale (en) sitemap; static pages are already localized
+    // by the i18n↔sitemap integration.
+    _i18nTransform: true,
   }))
 })
