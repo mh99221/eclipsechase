@@ -81,7 +81,16 @@ export default defineNuxtConfig({
         { rel: 'manifest', href: '/manifest.json' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'preload', as: 'style', href: 'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap', onload: "this.onload=null;this.rel='stylesheet'" },
+        // display=optional (not swap): the browser blocks ~100ms for the
+        // font, then — if it hasn't arrived — renders the fallback and
+        // never swaps the webfont in for that pageview. No post-paint swap
+        // means no layout shift, which kills the ~0.145 CLS the Lighthouse
+        // trace pinned on Inter Tight reflowing the body text. The webfont
+        // still downloads + caches, so warm/repeat visits paint it from the
+        // start. Trade-off: a cold first visit may show the system fallback
+        // for that session. If brand font on first paint matters more than
+        // the CLS, self-host the fonts (or add @nuxt/fonts) and revert to swap.
+        { rel: 'preload', as: 'style', href: 'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=optional', onload: "this.onload=null;this.rel='stylesheet'" },
         // mapbox-gl.css is no longer preloaded globally — the upstream
         // fetch set Mapbox session cookies on every visit. Map-using
         // components import the stylesheet themselves so it ships only
@@ -202,6 +211,19 @@ export default defineNuxtConfig({
       nuxtLink: {
         trailingSlash: 'append',
       },
+    },
+  },
+
+  // @nuxtjs/supabase unconditionally registers a client plugin that pulls
+  // ~190 KB of @supabase/* (auth-js, realtime, storage, postgrest, phoenix)
+  // into the browser bundle on every page. Nothing client-side uses it —
+  // there are zero useSupabaseClient()/useSupabaseUser() calls; all DB
+  // access goes through server /api routes via serverSupabaseServiceRole.
+  // Drop just the client plugin so supabase-js never reaches the browser.
+  // The server plugin + server composables are left intact.
+  hooks: {
+    'app:resolve'(app) {
+      app.plugins = app.plugins.filter(p => !p.src.includes('supabase.client'))
     },
   },
 
