@@ -35,6 +35,7 @@ const formattedCoordinates = computed(() =>
         sizes="(max-width: 639px) 100vw, 720px"
         :alt="hero.alt"
         loading="eager"
+        fetchpriority="high"
         width="1200"
         height="800"
       />

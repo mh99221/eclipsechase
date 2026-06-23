@@ -56,8 +56,11 @@ const spot = computed(() => data.value!.spot)
 // Full spots list — used by the Plan tab's AlternatesList. Lazy + client-only
 // so it never blocks the detail-page critical path. The endpoint is cached
 // at the edge (s-maxage=300, SWR=3600 per nuxt.config), so this is cheap.
+// view=list trims the ~213 KB full payload (every spot's photos JSONB + 91-pt
+// horizon sweep) to ~18 KB; AlternatesList reads only slug/name/lat/lng/
+// totality, all of which the projection keeps. See server/api/spots/index.get.ts.
 const { data: allSpotsData } = useFetch('/api/spots', {
-  query: { locale: locale.value },
+  query: { locale: locale.value, view: 'list' },
   lazy: true,
   server: false,
   key: `all-spots-${locale.value}`,

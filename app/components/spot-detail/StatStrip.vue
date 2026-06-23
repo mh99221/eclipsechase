@@ -41,7 +41,9 @@ const cloudLabel = computed(() => props.cloudPct == null ? '—' : `${Math.round
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 9px;
   letter-spacing: 0.17em;
-  color: rgb(var(--ink-1) / 0.42);
+  /* 0.6 (not 0.42) keeps these 9px mono caps above WCAG AA 4.5:1 on the
+     dark bg — at 0.42 they rendered #6b6c6c ≈ 3.49:1 and failed the audit. */
+  color: rgb(var(--ink-1) / 0.6);
   text-transform: uppercase;
 }
 .v-totality, .v-cloud {

@@ -1,9 +1,16 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   active?: boolean
   size?: 'sm' | 'md'        // sm = 6×10/mono10, md = 6×12/mono11
   surface?: 'default' | 'glass'  // glass = map-overlay backdrop blur
 }>()
+
+// `aria-pressed` is a toggle-button state and is invalid on other roles
+// (e.g. role="tab", as DetailTabs uses). When a consumer overrides the role
+// via fallthrough attrs, drop aria-pressed and let them own the state
+// attribute (aria-selected for tabs). Otherwise expose the toggle state.
+const attrs = useAttrs()
+const ariaPressed = computed(() => (attrs.role ? undefined : (props.active ?? false)))
 </script>
 
 <template>
@@ -13,7 +20,7 @@ defineProps<{
     :data-active="active ?? false"
     :data-size="size ?? 'md'"
     :data-surface="surface ?? 'default'"
-    :aria-pressed="active ?? false"
+    :aria-pressed="ariaPressed"
   >
     <slot />
   </button>
