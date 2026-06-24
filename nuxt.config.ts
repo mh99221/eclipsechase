@@ -131,6 +131,14 @@ export default defineNuxtConfig({
 
   routeRules: {
     // Pages
+    // Landing is a static marketing shell — no per-request server data
+    // (horizon data is a build-time import, the Pro track hydrates
+    // client-side, JSON-LD is static). Prerendering it serves the audited
+    // entry page as static CDN HTML and, crucially, lets the build-time
+    // beasties pass (see nitro:init hook below) inline critical CSS and
+    // de-block the entry stylesheet — the render-blocking Lighthouse audit
+    // only goes green for routes that exist as HTML at build time.
+    '/': { prerender: true },
     '/guide': { prerender: true },
     '/pro': { ssr: true },
     '/privacy': { prerender: true },
@@ -213,6 +221,65 @@ export default defineNuxtConfig({
   // Drop just the client plugin so supabase-js never reaches the browser.
   // The server plugin + server composables are left intact.
   hooks: {
+    // Critical-CSS inlining for prerendered routes (/, /guide, /privacy,
+    // /terms). beasties rewrites each prerendered HTML file: above-the-fold
+    // rules are inlined into a <style> tag and the full entry stylesheet is
+    // converted from a render-blocking <link rel="stylesheet"> into a
+    // preload + onload swap (with a <noscript> fallback), which is what
+    // turns Lighthouse's render-blocking audit green. pruneSource:false
+    // keeps the full sheet intact and async-loaded, so even if critical
+    // extraction misses a selector the page still ends fully styled — worst
+    // case is a sub-frame flash, not broken layout. Build-time only: it
+    // never runs on Vercel's serverless request path. SSR/ISR routes
+    // (/spots, /pro) keep their blocking link by design — they have no
+    // build-time HTML to process, and per-request beasties on serverless
+    // isn't worth the file-resolution risk.
+    async 'nitro:init'(nitro) {
+      // Run AFTER the build is fully written to disk. During the
+      // prerender phase the client CSS isn't in output.publicDir yet
+      // (Nitro serves assets from memory and flushes them later), so a
+      // prerender:generate hook can't resolve the stylesheets. The
+      // `compiled` hook fires once everything — prerendered HTML and the
+      // hashed _nuxt/*.css — is on disk, so beasties can read both.
+      nitro.hooks.hook('compiled', async () => {
+        const { readdir, readFile, writeFile } = await import('node:fs/promises')
+        const { join } = await import('node:path')
+        const publicDir = nitro.options.output.publicDir
+
+        let htmlFiles: string[] = []
+        try {
+          const entries = await readdir(publicDir, { recursive: true, withFileTypes: true })
+          htmlFiles = entries
+            .filter(e => e.isFile() && e.name.endsWith('.html'))
+            .map(e => join((e as any).parentPath ?? (e as any).path, e.name))
+        } catch {
+          return // no public dir (e.g. dev) — nothing to inline
+        }
+        if (!htmlFiles.length) return
+
+        const { default: Beasties } = await import('beasties')
+        let processed = 0
+        for (const file of htmlFiles) {
+          const html = await readFile(file, 'utf8')
+          const beasties = new Beasties({
+            path: publicDir,
+            publicPath: '/',
+            pruneSource: false, // keep the full sheet, async-loaded — no broken styling if extraction misses a rule
+            preload: 'swap',    // blocking <link rel=stylesheet> → preload + onload swap + <noscript> fallback
+            fonts: false,       // Google Fonts already load async via the head preload swap
+            logLevel: 'warn',
+          })
+          try {
+            await writeFile(file, await beasties.process(html))
+            processed++
+          } catch (err) {
+            nitro.logger.warn(`[beasties] skipped ${file}:`, err)
+          }
+        }
+        nitro.logger.info(`[beasties] inlined critical CSS for ${processed} prerendered route(s)`)
+      })
+    },
+
     'app:resolve'(app) {
       // Guard the count: if @nuxtjs/supabase ever renames this plugin file,
       // the filter would silently match nothing and quietly ship supabase-js
