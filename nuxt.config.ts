@@ -209,6 +209,19 @@ export default defineNuxtConfig({
     defaults: {
       nuxtLink: {
         trailingSlash: 'append',
+        // Prefetch on hover/focus/tap intent instead of the default
+        // on-visibility trigger. The landing page's always-in-viewport
+        // links (BottomNav, BrandBar, home tiles) otherwise fire a burst
+        // of route-chunk + _payload.json prefetches during initial load
+        // — guide (37 kB MDC chunk), spots, pro, plus their payloads —
+        // which contend for bandwidth against the critical path on slow
+        // connections and inflate the simulated FCP/LCP. Intent-based
+        // prefetch keeps navigation feeling instant (hover/tap still
+        // warms the chunk) without taxing first paint. Tradeoff: list
+        // pages like /spots no longer pre-warm detail chunks purely on
+        // scroll — they warm on hover/tap, which is a wash on the fast
+        // connections those pages are browsed on.
+        prefetchOn: { visibility: false, interaction: true },
       },
     },
   },
