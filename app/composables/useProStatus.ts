@@ -1,9 +1,18 @@
-import { jwtVerify, importSPKI } from 'jose'
 import { getTokenFromIndexedDB, saveTokenToIndexedDB, removeTokenFromIndexedDB } from '~/utils/proStorage'
 
 // jose v6 dropped the `KeyLike` export; `importSPKI` returns `CryptoKey`
 // in the browser / modern Node which is all this composable consumes.
 type KeyLike = CryptoKey
+
+// jose (~21 KB) is only needed once a Pro token actually exists — free
+// visitors hitting any page run checkStatus(), find no token, and return
+// before touching it. Loading it dynamically keeps it out of the entry
+// bundle (BrandBar pulls this composable in globally) so the landing page
+// never ships RS256 crypto it won't use. One in-flight import is cached.
+let josePromise: Promise<typeof import('jose')> | null = null
+function loadJose() {
+  return (josePromise ??= import('jose'))
+}
 
 const PUBLIC_KEY_PEM = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv/rPri8Iy0lr22jC8rSP
@@ -19,6 +28,7 @@ let cachedPublicKey: KeyLike | null = null
 
 async function getPublicKey(): Promise<KeyLike> {
   if (cachedPublicKey) return cachedPublicKey
+  const { importSPKI } = await loadJose()
   cachedPublicKey = await importSPKI(PUBLIC_KEY_PEM, 'RS256') as KeyLike
   return cachedPublicKey
 }
@@ -52,6 +62,7 @@ export function useProStatus() {
 
       // Local signature check first so we work offline. If a stale/bad
       // token is in storage, this rejects it without any network call.
+      const { jwtVerify } = await loadJose()
       const publicKey = await getPublicKey()
       await jwtVerify(token, publicKey)
       isPro.value = true
@@ -87,6 +98,7 @@ export function useProStatus() {
 
   async function activate(token: string) {
     // Verify before saving — surface key mismatches immediately
+    const { jwtVerify } = await loadJose()
     const publicKey = await getPublicKey()
     await jwtVerify(token, publicKey)
     await saveTokenToIndexedDB(token)
