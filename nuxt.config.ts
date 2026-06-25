@@ -127,6 +127,14 @@ export default defineNuxtConfig({
   // itself lives at server/api/__sitemap__/urls.ts.
   sitemap: {
     sources: ['/api/__sitemap__/urls'],
+    // Stamp <lastmod> on every URL so Google can tell pages changed and
+    // prioritise a re-crawl (closes the gap where the sitemap shipped no
+    // lastmod at all). autoLastmod covers the static/discovered routes from
+    // their build-time file mtime (≈ deploy time on Vercel, which checks out
+    // fresh each build). The dynamic /spots/<slug> URLs have no page file for
+    // autoLastmod to read, so they carry an explicit lastmod set from
+    // runtimeConfig.buildDate in server/api/__sitemap__/urls.ts.
+    autoLastmod: true,
   },
 
   routeRules: {
@@ -322,6 +330,12 @@ export default defineNuxtConfig({
     resendApiKey: '',
     proJwtPrivateKey: '',
     adminSecret: '',
+    // Build/deploy timestamp, baked at build time (nuxt.config evaluates in
+    // Node during the build). Server-only. Used as the <lastmod> for dynamic
+    // sitemap URLs that have no source file for autoLastmod to read — stable
+    // within a deploy, refreshed on each redeploy. Overridable via
+    // NUXT_BUILD_DATE if a deploy pipeline wants to pin the commit date.
+    buildDate: new Date().toISOString(),
     public: {
       siteUrl: 'https://eclipsechase.is',
       mapboxToken: '',
