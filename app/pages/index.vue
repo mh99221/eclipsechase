@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { safeJsonLd } from '~/utils/jsonLd'
+import { canonicalize } from '~/utils/eclipse'
 import type { HorizonProfileData } from '~/types/horizon'
 // Bundled at build time — ~10 KB, two pre-computed horizon profiles
 // (Ísafjörður roadside vs Búðir Black Church). Importing it directly
@@ -11,6 +12,20 @@ import horizonComparisonRaw from '~/assets/eclipse/horizon-comparison.json'
 const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const siteUrl = useRuntimeConfig().public.siteUrl as string
+
+// Locale-aware canonical for the landing page. `prefix_except_default`:
+// EN lives at `/`, IS at `/is`. canonicalize() applies the trailing-slash
+// convention so the tag matches what Vercel serves (and the sitemap).
+// The home page was the one route that declared no canonical at all —
+// GSC's URL Inspection reported "User-declared canonical: None" for `/`.
+const homeUrl = computed(() =>
+  canonicalize(locale.value === 'en' ? siteUrl : `${siteUrl}/${locale.value}`),
+)
+// Absolute per-locale home URLs for the reciprocal hreflang set. Same on
+// both `/` and `/is/`, so each locale points at itself + its sibling, with
+// x-default → EN.
+const homeUrlEn = canonicalize(siteUrl)
+const homeUrlIs = canonicalize(`${siteUrl}/is`)
 // Pro status drives whether this landing shows the conversion track
 // (tricky/compare/free-FAQ) or the Pro track (status card + Pro email
 // copy + filtered FAQ). The composable only runs `checkStatus` from
@@ -49,6 +64,13 @@ useHead(() => ({
   titleTemplate: '%s',
   meta: [
     { name: 'description', content: t('meta.description') },
+    { property: 'og:url', content: homeUrl.value },
+  ],
+  link: [
+    { rel: 'canonical', href: homeUrl.value },
+    { rel: 'alternate', hreflang: 'en', href: homeUrlEn },
+    { rel: 'alternate', hreflang: 'is', href: homeUrlIs },
+    { rel: 'alternate', hreflang: 'x-default', href: homeUrlEn },
   ],
   script: [
     {
