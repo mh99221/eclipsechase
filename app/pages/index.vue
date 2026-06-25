@@ -84,6 +84,14 @@ useHead(() => ({
             'endDate': '2026-08-12T17:48:00+00:00',
             'eventAttendanceMode': 'https://schema.org/OfflineEventAttendanceMode',
             'eventStatus': 'https://schema.org/EventScheduled',
+            // 1200x630 OG card emitted by nuxt-og-image for the home
+            // route, mirroring the og:image meta. The hash in the URL
+            // is derived from the defineOgImageComponent props above
+            // (label/title/subtitle); if those copy strings change the
+            // hash rotates and this URL needs to follow. Closes the
+            // GSC "Missing field 'image'" Event rich-result hint
+            // without inventing eclipse photography we don't own.
+            'image': [`${siteUrl}/_og/s/o_pqal64.png`],
             'location': {
               '@type': 'Place',
               'name': 'Western Iceland',
@@ -92,6 +100,19 @@ useHead(() => ({
             },
             'description': 'Total solar eclipse visible from Western Iceland. Maximum totality duration 2m 18s. Path crosses Westfjords, Snæfellsnes, and Reykjanes.',
             'url': siteUrl,
+            // Google's Event rich-result spec requires an Offer to
+            // surface "free" in Search; price 0 honestly represents
+            // viewing a public celestial event. `performer` is omitted
+            // by design — a natural event has none, and faking one
+            // would be schema spam.
+            'offers': {
+              '@type': 'Offer',
+              'url': siteUrl,
+              'price': '0',
+              'priceCurrency': 'EUR',
+              'availability': 'https://schema.org/InStock',
+              'validFrom': '2026-01-01T00:00:00+00:00',
+            },
             'organizer': { '@type': 'Organization', 'name': 'EclipseChase.is', 'url': siteUrl },
           },
         ],
