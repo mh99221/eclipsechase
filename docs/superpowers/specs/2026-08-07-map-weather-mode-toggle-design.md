@@ -260,3 +260,55 @@ next-48 h live conditions (labelled as not-eclipse-day).
 Phase boundaries in `useForecastPhase.ts` describe *forecast confidence*,
 not *data availability*. Do not infer availability from `daysUntil`; query
 the rows. Both bugs in this session came from conflating the two.
+
+## Follow-up changes (same session)
+
+Four issues raised at review, all resolved.
+
+### 1. Service worker registered against the dev server
+
+`app/plugins/sw.client.ts` registered `sw.js` unconditionally. `sw.js`
+treats everything under `/_nuxt/` as cache-first because in a production
+build it is content-hashed and immutable — but Vite's dev server serves
+*mutable* modules from that same prefix. The worker pinned a dev module
+and then served it forever, which presented as the app refusing to boot
+("expected a JavaScript module but got text/css"). It cost most of a
+debugging session and would have hit any developer on the project.
+
+- Registration is now production-only, and in dev the plugin actively
+  **unregisters** leftover workers and clears their caches, so an already
+  poisoned machine self-heals on next load rather than staying broken.
+- `cacheFirstDefault()` now looks in `CACHE_NAME` instead of calling the
+  global `caches.match()`, which searches every cache — a latent
+  cross-strategy bug independent of the dev issue.
+- `CACHE_NAME` bumped v8 → v9 to evict anything the old rule poisoned.
+
+### 2. `MapEclipseUnavailable` had never been seen live
+
+`available` has been `true` since before the toggle shipped, so the empty
+state was unreachable in normal operation. Verified by temporarily
+pointing `ECLIPSE_INSTANT` at a past date (which makes the endpoint return
+`available: false` through its real code path) and exercising the UI:
+the card renders with `role="status"`, weather markers are suppressed
+(55 → 0) while spot markers are untouched (30), and "Show current
+weather" restores both the NOW chip and all 55 markers. Constant reverted.
+
+### 3. Profile ranking ignored the selected mode
+
+`useRecommendation` was always scored against the "now" cloud reading, so
+in ECLIPSE DAY mode the map showed eclipse-day cloud but ranked spots by
+today's weather. `cloudCoverData` now follows `activeCloudData`, falling
+back to the "now" set when the eclipse set is empty — degrading to the
+previous behaviour beats every spot scoring identically on no data.
+
+Verified by temporarily forcing a strong alternating cloud gradient into
+eclipse mode: 11 spots reordered (Akranes Lighthouse 24 → 16). With the
+real data only 3 of 51 stations differ between modes (Brattabrekka
+100→70, Akrafjall 100→80, Seltjarnarnes 100→90) and the ranking is
+legitimately unchanged — which is why this needed a forced gradient to
+distinguish "correctly unchanged" from "not wired up".
+
+### 4. This document
+
+Updated throughout, including the Findings section above, so it records
+what is actually true rather than the premise the work started from.

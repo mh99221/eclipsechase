@@ -167,7 +167,18 @@ onMounted(() => {
 
 const allSpots = computed(() => spotsData.value?.spots || [])
 const stationList = computed(() => stationsData.value?.stations || [])
-const cloudCoverData = computed(() => cloudData.value?.cloud_cover || null)
+// Spot ranking follows the selected forecast mode — in ECLIPSE DAY mode
+// "which spot has the best odds" should be scored against eclipse-day
+// cloud, not today's. Falls back to the "now" reading when the eclipse
+// set is empty (horizon hasn't reached Aug 12, or ingest is lagging), so
+// ranking degrades to the old behaviour rather than to no cloud data at
+// all — every spot scoring equally would be worse than scoring on
+// slightly-wrong data.
+const cloudCoverData = computed(() => {
+  const active = activeCloudData.value?.cloud_cover
+  if (active?.length) return active
+  return cloudData.value?.cloud_cover || null
+})
 
 const { ranked } = useRecommendation(
   allSpots,

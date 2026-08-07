@@ -1,8 +1,13 @@
+// v9: bumped to evict entries written while this worker was (wrongly)
+// allowed to run against a dev server, where /_nuxt/ is mutable — those
+// pinned modules could leave the app unbootable. Registration is now
+// production-only (app/plugins/sw.client.ts).
+//
 // v8: manifest.json now references PNG icons under /icons/ so PWA
 // install criteria are met (Chrome refuses to fire beforeinstallprompt
 // without 192 + 512 raster icons). Bump invalidates clients still
 // holding the old icon-less manifest.
-const CACHE_NAME = 'eclipsechase-v8'
+const CACHE_NAME = 'eclipsechase-v9'
 const API_CACHE = 'eclipsechase-api-v3'
 const TILE_CACHE = 'eclipsechase-tiles-v1'
 const MAX_TILE_CACHE = 5000
@@ -277,7 +282,10 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Hashed assets (_nuxt/*.js): cache-first (content-hashed, immutable)
+  // Hashed assets (_nuxt/*.js): cache-first (content-hashed, immutable).
+  // Only ever true for a production build — app/plugins/sw.client.ts
+  // refuses to register this worker against a dev server, where Vite
+  // serves mutable modules from this same prefix.
   if (url.pathname.startsWith('/_nuxt/')) {
     event.respondWith(cacheFirstDefault(event.request))
     return
@@ -328,9 +336,16 @@ async function cacheFirstTiles(request) {
   }
 }
 
-// Cache-first strategy for default GET requests
+// Cache-first strategy for default GET requests.
+//
+// Scoped to CACHE_NAME rather than the global caches.match(): the global
+// form searches every cache (API + tiles too), so an entry stored under
+// one strategy could answer a request routed to another. Keys are full
+// URLs so collisions are unlikely, but "look only where this strategy
+// writes" is the behaviour we actually want.
 async function cacheFirstDefault(request) {
-  const cached = await caches.match(request)
+  const cache = await caches.open(CACHE_NAME)
+  const cached = await cache.match(request)
   if (cached && cached.ok) {
     return cached
   }
@@ -338,7 +353,6 @@ async function cacheFirstDefault(request) {
   try {
     const response = await fetch(request)
     if (response.ok) {
-      const cache = await caches.open(CACHE_NAME)
       cache.put(request, response.clone())
     }
     return response
