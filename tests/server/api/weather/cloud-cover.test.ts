@@ -59,3 +59,89 @@ describe('GET /api/weather/cloud-cover', () => {
     expect(result.stale).toBe(true)
   })
 })
+
+describe('GET /api/weather/cloud-cover?mode=eclipse', () => {
+  // Fixed "now" comfortably before the eclipse so the ±3 h window is
+  // entirely in the future and never clamped by the not-in-the-past rule.
+  const NOW = new Date('2026-08-11T12:00:00Z')
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.useFakeTimers()
+    vi.setSystemTime(NOW)
+  })
+
+  it('picks the slot closest to the eclipse instant per station', async () => {
+    const recent = NOW.toISOString()
+    setResult([
+      // Station 1: 18:00 is 17 min after C2 (17:43) — the closest slot.
+      { station_id: '1', cloud_cover: 10, valid_time: '2026-08-12T15:00:00Z', forecast_time: recent, fetched_at: recent },
+      { station_id: '1', cloud_cover: 20, valid_time: '2026-08-12T18:00:00Z', forecast_time: recent, fetched_at: recent },
+      { station_id: '990', cloud_cover: 55, valid_time: '2026-08-12T18:00:00Z', forecast_time: recent, fetched_at: recent },
+    ])
+
+    const result = await handler(createTestEvent({ supabase: mockSupabase, query: { mode: 'eclipse' } }))
+
+    expect(result.available).toBe(true)
+    expect(result.cloud_cover).toHaveLength(2)
+    const s1 = result.cloud_cover.find((c: any) => c.station_id === '1')
+    expect(s1).toEqual({ station_id: '1', cloud_cover: 20, forecast_valid_at: '2026-08-12T18:00:00Z' })
+  })
+
+  it('reports available=false when no slot reaches the eclipse window', async () => {
+    // Typical T-5 state: the model horizon only extends ~48 h, so every
+    // ingested row sits far short of Aug 12 17:43.
+    const recent = NOW.toISOString()
+    setResult([
+      { station_id: '1', cloud_cover: 100, valid_time: '2026-08-11T15:00:00Z', forecast_time: recent, fetched_at: recent },
+      { station_id: '990', cloud_cover: 90, valid_time: '2026-08-11T18:00:00Z', forecast_time: recent, fetched_at: recent },
+    ])
+
+    const result = await handler(createTestEvent({ supabase: mockSupabase, query: { mode: 'eclipse' } }))
+
+    expect(result.available).toBe(false)
+    expect(result.cloud_cover).toEqual([])
+  })
+
+  it('omits only the stations that lack an in-window slot', async () => {
+    const recent = NOW.toISOString()
+    setResult([
+      { station_id: '1', cloud_cover: 20, valid_time: '2026-08-12T18:00:00Z', forecast_time: recent, fetched_at: recent },
+      // Station 990's only row is a day early — outside the ±3 h window.
+      { station_id: '990', cloud_cover: 90, valid_time: '2026-08-11T18:00:00Z', forecast_time: recent, fetched_at: recent },
+    ])
+
+    const result = await handler(createTestEvent({ supabase: mockSupabase, query: { mode: 'eclipse' } }))
+
+    expect(result.available).toBe(true)
+    expect(result.cloud_cover).toHaveLength(1)
+    expect(result.cloud_cover[0].station_id).toBe('1')
+  })
+
+  it('returns available=false once the eclipse window is fully in the past', async () => {
+    vi.setSystemTime(new Date('2026-08-13T00:00:00Z'))
+    setResult([])
+
+    const result = await handler(createTestEvent({ supabase: mockSupabase, query: { mode: 'eclipse' } }))
+
+    expect(result.available).toBe(false)
+    expect(result.cloud_cover).toEqual([])
+  })
+
+  it('defaults to now-mode (available=true) when mode is absent or unknown', async () => {
+    const recent = NOW.toISOString()
+    const rows = [
+      { station_id: '1', cloud_cover: 30, valid_time: '2026-08-11T15:00:00Z', forecast_time: recent, fetched_at: recent },
+    ]
+
+    setResult(rows)
+    const bare = await handler(createTestEvent({ supabase: mockSupabase }))
+    expect(bare.available).toBe(true)
+    expect(bare.cloud_cover).toHaveLength(1)
+
+    setResult(rows)
+    const bogus = await handler(createTestEvent({ supabase: mockSupabase, query: { mode: 'wat' } }))
+    expect(bogus.available).toBe(true)
+    expect(bogus.cloud_cover).toHaveLength(1)
+  })
+})

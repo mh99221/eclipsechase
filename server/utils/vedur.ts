@@ -31,6 +31,59 @@ export interface VedurForecast {
 export const FORECAST_STALE_THRESHOLD_MS = 90 * 60 * 1000
 
 /**
+ * The eclipse instant used when selecting an "eclipse day" forecast slot.
+ * Pinned to the earliest C2 across the Iceland path — the exact second
+ * varies a few seconds per spot (longitude), which is far below the
+ * 3-hourly resolution of the forecast slots we're matching against.
+ *
+ * Mirrors ECLIPSE_DATE in app/composables/useForecastPhase.ts. Duplicated
+ * rather than shared because server/ and app/ have no common import root
+ * in this project; keep the two in sync if the anchor ever moves.
+ */
+export const ECLIPSE_INSTANT = new Date('2026-08-12T17:43:00Z')
+
+/**
+ * How far from ECLIPSE_INSTANT a forecast slot may sit and still count as
+ * "the eclipse-day forecast". vedur's HARMONIE-AROME forecast steps are
+ * 3-hourly, so a ±3 h window always captures the nearest slot once the
+ * model horizon reaches Aug 12, and captures nothing before then — which
+ * is exactly the signal /map uses to decide between showing eclipse-day
+ * markers and showing its "not available yet" state.
+ */
+export const ECLIPSE_FORECAST_TOLERANCE_MS = 3 * 60 * 60 * 1000
+
+/**
+ * From a set of forecast rows for ONE station, return the row whose
+ * `valid_time` is closest to `targetMs`, or null when none falls within
+ * `toleranceMs`. Rows with an unparseable `valid_time` are skipped.
+ *
+ * Pure + exported so the selection rule is unit-testable without a
+ * Supabase mock (same rationale as computeForecastStaleness above).
+ */
+export function pickNearestForecastRow<T extends { valid_time: string | null }>(
+  rows: T[],
+  targetMs: number,
+  toleranceMs: number,
+): T | null {
+  let best: T | null = null
+  let bestDelta = Infinity
+
+  for (const row of rows) {
+    if (!row.valid_time) continue
+    const ts = Date.parse(row.valid_time)
+    if (Number.isNaN(ts)) continue
+    const delta = Math.abs(ts - targetMs)
+    if (delta > toleranceMs) continue
+    if (delta < bestDelta) {
+      bestDelta = delta
+      best = row
+    }
+  }
+
+  return best
+}
+
+/**
  * Given a set of forecast rows, return the newest `fetched_at` (when
  * our cron last upserted) and whether that makes the set stale. Shared
  * by the cloud-cover and forecast-timeline endpoints.

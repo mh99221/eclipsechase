@@ -11,15 +11,18 @@ each station's **nearest upcoming forecast slot** — effectively "right now,"
 never a forecast specifically for the eclipse instant (2026-08-12T17:43 UTC).
 There is no UI indication of this; the map just labels itself "Weather."
 
-This mirrors a bug just fixed (same session, ad hoc — not spec'd) on the
-spot-detail Weather tab's `PhaseNotice`/`ForecastReliable` components:
-copy/behavior there claimed an "Aug-12 forecast" was available well before
-the HARMONIE-AROME model's ~48-66h horizon could actually reach eclipse
-day. The map has no such claim today, but a user asked directly "is this
-current weather or the eclipse forecast?" — the honest answer is "always
-current." This spec adds an explicit, user-controlled **Now / Eclipse Day**
-toggle so both readings are available and clearly labeled, instead of only
-ever exposing the "now" reading.
+A user asked directly "is this current weather or the eclipse forecast?" —
+the honest answer is "always current." This spec adds an explicit,
+user-controlled **Now / Eclipse Day** toggle so both readings are
+available and clearly labeled, instead of only ever exposing the "now"
+reading.
+
+> **Correction (post-implementation).** An earlier draft of this section
+> claimed vedur's horizon was ~48-66 h and therefore couldn't reach Aug 12
+> yet. That was wrong — see "Findings" at the end of this document. The
+> design below is unaffected (it was already data-driven rather than
+> calendar-driven), but the related spot-detail copy that was written on
+> the same false premise had to be reverted.
 
 ## Goal
 
@@ -69,12 +72,12 @@ Response shape gains one field:
 }
 ```
 
-`available` is derived from real ingested rows, not a hardcoded day-count —
-if vedur's effective horizon ever changes, this self-corrects without a
-code change (unlike the spot-detail fix's `daysUntil > 2` heuristic, which
-was justified there by not having a clean data signal at the composable
-level; here the endpoint already touches the raw rows, so we use the real
-signal instead).
+`available` is derived from real ingested rows, not a hardcoded day-count.
+This turned out to matter a great deal: the calendar-based assumption this
+design was originally sketched against was simply false (see Findings), and
+because `available` reads the actual rows, the implementation was correct
+anyway. If vedur's effective horizon changes again, this self-corrects
+without a code change.
 
 ### `app/pages/map.vue` — two parallel fetches
 
@@ -203,3 +206,57 @@ existing bilingual pattern for this file.)
   correctly given today's real data (T-5, so `available` should currently
   be `false`), and the chip row renders correctly on both mobile and
   desktop breakpoints.
+
+## Findings (post-implementation, 2026-08-07)
+
+Verifying the new endpoint against the live database contradicted the
+premise this work started from.
+
+```
+GET /api/weather/cloud-cover            -> 51 stations, valid_time 2026-08-07T10:00, cloud 100–100%
+GET /api/weather/cloud-cover?mode=eclipse -> 51 stations, valid_time 2026-08-12T18:00, cloud  70–100%
+```
+
+At T-5, **every one of the 51 stations already has an Aug-12 18:00 slot**
+(17 min after C2), from a batch issued within the last 6 hours. vedur's
+forecast horizon reaches eclipse day far earlier than the "~48 h" figure
+this work was originally scoped against. `available` has therefore been
+`true` since before the toggle shipped, and `MapEclipseUnavailable` is
+currently unreachable in practice — kept as a correct defensive state for
+ingest lag or a shortened horizon, and covered by tests.
+
+### Consequence for the spot-detail Weather tab
+
+The same false premise had produced a copy change on `PhaseNotice`
+earlier the same session ("the hourly Aug-12 forecast becomes available in
+the 48 hours before totality"). That claim was wrong — the data existed
+the whole time. What was actually broken is narrower and more fixable:
+
+`ForecastReliable` fetches `/api/weather/forecast-timeline?hours=48`, a
+rolling `now → now+48 h` window. It structurally **cannot** show Aug 12
+until we are within 2 days of it, regardless of what vedur publishes. The
+widget was honest about itself; the page around it was not.
+
+Fixes applied:
+
+1. **Reverted** the `phase_notice_reliable_far` copy and the branching in
+   `PhaseNotice.vue`. The original `phase_notice_reliable` string
+   ("Hourly Aug-12 forecast is now in the reliable window") is accurate.
+2. **Kept** the `ForecastReliable` disclaimer generalisation (fire whenever
+   the 48 h window doesn't reach Aug 12, not only in climatology phase).
+   It is still true, and now does more work distinguishing the 48 h card
+   from the eclipse-day card sitting directly above it.
+3. **Added `ForecastEclipseDay.vue`** — reuses `?mode=eclipse` to show the
+   actual Aug-12 cloud cover at the spot's nearest station, with the slot
+   time and station attribution. Deliberately **not** phase-gated: it keys
+   off whether the data exists, not the calendar, which is the same
+   correction applied to the map. Self-hides when unavailable.
+
+The Weather tab now reads: 10-yr climatology → **actual Aug-12 forecast** →
+next-48 h live conditions (labelled as not-eclipse-day).
+
+### Lesson for future forecast work
+
+Phase boundaries in `useForecastPhase.ts` describe *forecast confidence*,
+not *data availability*. Do not infer availability from `daysUntil`; query
+the rows. Both bugs in this session came from conflating the two.

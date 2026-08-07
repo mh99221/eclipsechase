@@ -30,7 +30,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const { phase } = useForecastPhase()
+const { phase, daysUntil } = useForecastPhase()
 
 // Resolve nearest station for this spot (drives both attribution and the
 // filter into forecast-timeline's grouped response).
@@ -70,9 +70,14 @@ const hasData = computed(
 
 // In climatology phase, the 48 h timeline is for THIS WEEK, not Aug 12 —
 // label it that way so users don't conflate it with the eclipse forecast.
-// At T-7 onward, the timeline starts overlapping the eclipse window so
-// the disclaimer drops.
-const showClimatologyDisclaimer = computed(() => phase.value === 'climatology')
+// The same gap exists for the early part of the "reliable" phase (T-7
+// through T-2): the window fetched below is always now→now+48h, which
+// can't reach Aug 12 until we're within 2 days of it. Key the disclaimer
+// off that actual overlap, not off the phase label, so the copy stays
+// honest for the whole T-7..T-2 span instead of only in climatology.
+const showNotEclipseDayDisclaimer = computed(
+  () => phase.value === 'climatology' || daysUntil.value > 2,
+)
 </script>
 
 <template>
@@ -114,8 +119,8 @@ const showClimatologyDisclaimer = computed(() => phase.value === 'climatology')
       <div class="next-section">
         <div class="next-eyebrow">
           {{ t('v0.forecast.reliable_next_label') }}
-          <span v-if="showClimatologyDisclaimer" class="next-disclaimer">
-            · {{ t('v0.forecast.reliable_climatology_disclaimer') }}
+          <span v-if="showNotEclipseDayDisclaimer" class="next-disclaimer">
+            · {{ t('v0.forecast.reliable_not_eclipse_day_disclaimer') }}
           </span>
         </div>
         <ForecastTimeline :forecasts="stationForecasts!.forecasts" />

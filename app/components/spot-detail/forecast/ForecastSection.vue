@@ -5,10 +5,16 @@
  * (free for everyone — it's the SEO hook + free-tier teaser per spec §8).
  * The phase-specific live forecast is Pro-gated.
  *
- * In climatology phase (today, T-105) Pro users see the Reliable card too,
- * because vedur.is short-range forecast is the best available signal until
- * Open-Meteo paid kicks in July 1 — even though it's not the eclipse-day
+ * In climatology phase Pro users see the Reliable card too, because the
+ * vedur.is short-range forecast is the best available signal until
+ * Open-Meteo paid kicks in — even though it's not the eclipse-day
  * forecast, the Reliable card flags that explicitly via its disclaimer.
+ *
+ * ForecastEclipseDay sits above the phase-specific card and is the one
+ * that shows the actual Aug-12 number. It is deliberately NOT phase-gated:
+ * it keys off whether the data exists rather than off the calendar, since
+ * vedur's horizon reaches eclipse day earlier than the phase boundaries
+ * imply.
  */
 import { useForecastPhase } from '~/composables/useForecastPhase'
 import type { HorizonCheck } from '~/types/horizon'
@@ -85,6 +91,12 @@ const showHorizonAdvisory = computed(() => {
 
     <!-- Phase-specific card, Pro-gated. -->
     <template v-if="isPro">
+      <!-- The actual Aug-12 number, shown as soon as vedur's horizon
+           reaches eclipse day (which is well before the 48 h live card
+           below can see it). Self-hides when that data doesn't exist
+           yet, so it costs nothing in the earlier phases. -->
+      <ForecastEclipseDay :spot="spot" />
+
       <ForecastSubseasonal v-if="phase === 'subseasonal'" :spot="spot" />
       <ForecastExtended v-else-if="phase === 'extended'" :spot="spot" />
       <ForecastNowcast v-else-if="phase === 'nowcast'" :spot="spot" />

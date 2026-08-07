@@ -20,6 +20,7 @@ import MapStatusStack from '~/components/map/MapStatusStack.vue'
 import MapLegend from '~/components/map/MapLegend.vue'
 import MapOfflineCard from '~/components/map/MapOfflineCard.vue'
 import MapChipStack from '~/components/map/MapChipStack.vue'
+import MapEclipseUnavailable from '~/components/map/MapEclipseUnavailable.vue'
 import MapMobileStatusPill from '~/components/map/MapMobileStatusPill.vue'
 import MapStatusSheet from '~/components/map/MapStatusSheet.vue'
 
@@ -53,7 +54,7 @@ const { data: spotsData, error: spotsError } = useFetch('/api/spots', {
   server: false,
   key: `map-spots-${locale.value}`,
 })
-const { data: cloudData, refresh: refreshCloud } = useFetch<{
+interface CloudCoverResponse {
   cloud_cover: Array<{
     station_id: string
     cloud_cover: number | null
@@ -61,7 +62,47 @@ const { data: cloudData, refresh: refreshCloud } = useFetch<{
   }>
   stale: boolean
   fetched_at: string | null
-}>('/api/weather/cloud-cover', { lazy: true, server: false })
+  /** Eclipse mode only — false until vedur's horizon reaches Aug 12. */
+  available: boolean
+}
+
+const { data: cloudData, refresh: refreshCloud } = useFetch<CloudCoverResponse>(
+  '/api/weather/cloud-cover',
+  { lazy: true, server: false },
+)
+
+// Eclipse-day forecast, fetched in parallel with the "now" reading so
+// flipping the mode chip is instant. Both are cheap Supabase reads (no
+// upstream vedur.is call either way), so the doubled request costs
+// nothing meaningful.
+const {
+  data: cloudDataEclipse,
+  pending: cloudEclipsePending,
+  refresh: refreshCloudEclipse,
+} = useFetch<CloudCoverResponse>('/api/weather/cloud-cover', {
+  query: { mode: 'eclipse' },
+  lazy: true,
+  server: false,
+  key: 'map-cloud-cover-eclipse',
+})
+
+// Which forecast the weather layer paints. Session-only (not persisted),
+// matching showTraffic / showCameras.
+const weatherMode = ref<'now' | 'eclipse'>('now')
+
+const activeCloudData = computed(() =>
+  weatherMode.value === 'eclipse' ? cloudDataEclipse.value : cloudData.value,
+)
+
+// True only once the eclipse fetch has landed AND reported no in-window
+// slot — guarding on `pending` keeps the "not available" card from
+// flashing during the initial load.
+const eclipseUnavailable = computed(() =>
+  weatherMode.value === 'eclipse'
+  && !cloudEclipsePending.value
+  && cloudDataEclipse.value != null
+  && !cloudDataEclipse.value.available,
+)
 const { data: historicalWeatherData } = useFetch<{ spots: Record<string, { clear_years: number; total_years: number; avg_cloud_cover: number | null }> }>(
   '/eclipse-data/historical-weather.json',
   { lazy: true, server: false, key: 'historical-weather' },
@@ -75,7 +116,7 @@ watch(spotsError, (err) => { if (err) showSpotError.value = true })
 // future forecast slot, and `forecast_valid_at` is its valid time.
 const stations = computed(() => {
   const stationList = stationsData.value?.stations || []
-  const cloudCover = cloudData.value?.cloud_cover || []
+  const cloudCover = activeCloudData.value?.cloud_cover || []
 
   const byStation = new Map<string, { cloud_cover: number | null; forecast_valid_at: string | null }>()
   for (const cc of cloudCover) {
@@ -99,10 +140,15 @@ const stations = computed(() => {
   })
 })
 
-// Auto-refresh cloud cover every 15 minutes
+// Auto-refresh cloud cover every 15 minutes (both modes — the eclipse
+// reading flips from unavailable to available mid-session once vedur's
+// horizon reaches Aug 12, and only a refresh will notice).
 let refreshTimer: ReturnType<typeof setInterval>
 onMounted(() => {
-  refreshTimer = setInterval(() => refreshCloud(), 15 * 60 * 1000)
+  refreshTimer = setInterval(() => {
+    refreshCloud()
+    refreshCloudEclipse()
+  }, 15 * 60 * 1000)
 })
 onUnmounted(() => {
   clearInterval(refreshTimer)
@@ -943,7 +989,7 @@ const profileIcons: Record<ProfileId, string> = {
     <ClientOnly>
       <EclipseMap
         ref="eclipseMapRef"
-        :stations="showWeatherV0 ? stations : []"
+        :stations="showWeatherV0 && !eclipseUnavailable ? stations : []"
         :spots="spotsData?.spots || []"
         :ranked-spots="rankedForMap"
         :historical="historicalWeatherData?.spots || null"
@@ -980,12 +1026,22 @@ const profileIcons: Record<ProfileId, string> = {
         :show-weather="showWeatherV0"
         :show-traffic="showTraffic"
         :show-cameras="showCameras"
+        :weather-mode="weatherMode"
         @update:selected-profile="selectedProfile = $event"
         @update:show-weather="showWeatherV0 = $event"
         @update:show-traffic="showTraffic = $event"
         @update:show-cameras="showCameras = $event"
+        @update:weather-mode="weatherMode = $event"
       />
     </div>
+
+    <!-- Eclipse-day forecast selected but vedur's horizon hasn't reached
+         Aug 12 yet. Station markers are suppressed above so the card
+         isn't sitting on top of near-term data it doesn't describe. -->
+    <MapEclipseUnavailable
+      v-if="eclipseUnavailable"
+      @show-now="weatherMode = 'now'"
+    />
 
     <!-- Mobile-only status pill — combined weather freshness + tile cache,
          tappable to open the status sheet. Desktop has MapStatusStack +
@@ -1055,10 +1111,12 @@ const profileIcons: Record<ProfileId, string> = {
         :show-weather="showWeatherV0"
         :show-traffic="showTraffic"
         :show-cameras="showCameras"
+        :weather-mode="weatherMode"
         @update:selected-profile="selectedProfile = $event; if (selectedProfile) requestGps()"
         @update:show-weather="showWeatherV0 = $event"
         @update:show-traffic="showTraffic = $event"
         @update:show-cameras="showCameras = $event"
+        @update:weather-mode="weatherMode = $event"
       />
     </div>
 
@@ -1350,11 +1408,11 @@ const profileIcons: Record<ProfileId, string> = {
 @media (max-width: 767px) {
   .desktop-chip-anchor { display: none; }
 }
-/* Banner sits below both the mobile chip stack (top 72 + ~70 px) and
-   the desktop topright chip stack (top 84 + ~70 px). 160 clears both
-   with breathing room. */
+/* Banner sits below both the mobile chip stack (top 72) and the desktop
+   topright chip stack (top 84). Three rows at ~28 px + 8 px gaps ≈ 100 px,
+   so 195 clears the taller (desktop) case with breathing room. */
 .offline-banner-wrap {
-  top: 160px;
+  top: 195px;
 }
 .mobile-dock-anchor {
   position: fixed;

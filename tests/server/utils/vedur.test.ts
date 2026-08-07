@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { STATION_IDS, forecastsToRows, fetchForecasts, type VedurForecast } from '../../../server/utils/vedur'
+import {
+  STATION_IDS,
+  ECLIPSE_INSTANT,
+  forecastsToRows,
+  fetchForecasts,
+  pickNearestForecastRow,
+  type VedurForecast,
+} from '../../../server/utils/vedur'
 
 describe('STATION_IDS', () => {
   it('has exactly 55 entries', () => {
@@ -133,5 +140,66 @@ describe('fetchForecasts', () => {
     // fixture for 178 has cloudCover: null
     const nullCloud = forecasts.find(f => f.cloudCover === null)
     expect(nullCloud).toBeDefined()
+  })
+})
+
+describe('ECLIPSE_INSTANT', () => {
+  it('is pinned to 2026-08-12T17:43:00Z (earliest C2 across the path)', () => {
+    expect(ECLIPSE_INSTANT.toISOString()).toBe('2026-08-12T17:43:00.000Z')
+  })
+})
+
+describe('pickNearestForecastRow', () => {
+  const target = Date.parse('2026-08-12T17:43:00Z')
+  const TOL = 3 * 60 * 60 * 1000
+
+  const row = (validTime: string, cloud: number) => ({ valid_time: validTime, cloud_cover: cloud })
+
+  it('returns null for an empty row set', () => {
+    expect(pickNearestForecastRow([], target, TOL)).toBeNull()
+  })
+
+  it('picks the row closest to the target instant', () => {
+    const rows = [
+      row('2026-08-12T15:00:00Z', 10),
+      row('2026-08-12T18:00:00Z', 20), // 17 min after target — closest
+      row('2026-08-12T20:00:00Z', 30),
+    ]
+    expect(pickNearestForecastRow(rows, target, TOL)?.cloud_cover).toBe(20)
+  })
+
+  it('picks the closest row when the nearest slot is BEFORE the target', () => {
+    const rows = [
+      row('2026-08-12T17:00:00Z', 40), // 43 min before — closest
+      row('2026-08-12T21:00:00Z', 50),
+    ]
+    expect(pickNearestForecastRow(rows, target, TOL)?.cloud_cover).toBe(40)
+  })
+
+  it('returns null when every row falls outside the tolerance window', () => {
+    // Both are > 3 h from the eclipse instant.
+    const rows = [
+      row('2026-08-12T09:00:00Z', 10),
+      row('2026-08-13T06:00:00Z', 20),
+    ]
+    expect(pickNearestForecastRow(rows, target, TOL)).toBeNull()
+  })
+
+  it('includes a row sitting exactly on the tolerance boundary', () => {
+    const rows = [row('2026-08-12T20:43:00Z', 60)] // exactly +3 h
+    expect(pickNearestForecastRow(rows, target, TOL)?.cloud_cover).toBe(60)
+  })
+
+  it('ignores rows with an unparseable valid_time', () => {
+    const rows = [
+      { valid_time: 'not-a-date', cloud_cover: 99 },
+      row('2026-08-12T18:00:00Z', 20),
+    ]
+    expect(pickNearestForecastRow(rows, target, TOL)?.cloud_cover).toBe(20)
+  })
+
+  it('returns null when the only rows have unparseable timestamps', () => {
+    const rows = [{ valid_time: 'garbage', cloud_cover: 99 }]
+    expect(pickNearestForecastRow(rows, target, TOL)).toBeNull()
   })
 })

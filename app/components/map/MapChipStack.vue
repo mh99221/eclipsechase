@@ -9,6 +9,10 @@ withDefaults(defineProps<{
   showWeather: boolean
   showTraffic: boolean
   showCameras: boolean
+  /** Which forecast the weather layer renders.
+   *  `now`     — nearest upcoming slot (current-ish conditions).
+   *  `eclipse` — slot closest to the eclipse instant, when available. */
+  weatherMode: 'now' | 'eclipse'
   /** Layout variant.
    *  `mobile` (default) — absolutely positioned at the top of the map.
    *  `rail`           — flush inside the desktop left rail, no positioning.
@@ -25,6 +29,7 @@ const emit = defineEmits<{
   'update:showWeather':     [boolean]
   'update:showTraffic':     [boolean]
   'update:showCameras':     [boolean]
+  'update:weatherMode':     ['now' | 'eclipse']
 }>()
 </script>
 
@@ -67,6 +72,25 @@ const emit = defineEmits<{
         surface="glass"
         @click="emit('update:showCameras', !showCameras)"
       >{{ t('map.layer_cameras').toUpperCase() }}</Pill>
+    </div>
+    <!-- Forecast mode: which slot the weather layer paints. Rendered
+         alongside the other rows (not gated on `showWeather`) so the
+         distinction between "now" and "eclipse day" stays discoverable
+         even with the weather layer toggled off. -->
+    <div v-if="rows !== 'profiles'" class="row">
+      <span class="row-label">{{ t('map.forecast_mode') }}:</span>
+      <Pill
+        :active="weatherMode === 'now'"
+        size="sm"
+        surface="glass"
+        @click="emit('update:weatherMode', 'now')"
+      >{{ t('map.mode_now').toUpperCase() }}</Pill>
+      <Pill
+        :active="weatherMode === 'eclipse'"
+        size="sm"
+        surface="glass"
+        @click="emit('update:weatherMode', 'eclipse')"
+      >{{ t('map.mode_eclipse').toUpperCase() }}</Pill>
     </div>
   </div>
 </template>
