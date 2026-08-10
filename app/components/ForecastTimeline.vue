@@ -18,9 +18,14 @@ const props = defineProps<{
 const ECLIPSE_START_UTC = 17 * 60 + 30 // 17:30
 const ECLIPSE_END_UTC = 18 * 60 // 18:00
 
+// UTC, not the viewer's local zone. Iceland is UTC+0 year-round and every
+// other time on the page (contact times, eclipse-day slot, the hour ticks
+// below) is UTC — a local-time tooltip read 2 h off the tick label it sat
+// on for anyone outside Iceland.
 function formatHour(isoString: string): string {
   const d = new Date(isoString)
-  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
+  if (isNaN(d.getTime())) return '—'
+  return d.toISOString().slice(11, 16)
 }
 
 function isEclipseWindow(isoString: string): boolean {
@@ -105,7 +110,10 @@ const xAxisTicks = computed<TickPoint[]>(() => {
 
     <!-- X-axis: hour ticks every 6h. Falls back to first/last when the
          dataset is shorter than ~8 slots (xAxisTicks empty). -->
-    <div v-if="xAxisTicks.length" class="x-axis flex relative">
+    <!-- gap-0.5 must match .timeline-bars exactly: without it the axis
+         cells are wider than the bar cells and the tick labels drift
+         progressively out of line with the bars they label. -->
+    <div v-if="xAxisTicks.length" class="x-axis flex gap-0.5 relative">
       <div
         v-for="(_, i) in forecasts"
         :key="forecasts[i]!.valid_time + '-tick'"
