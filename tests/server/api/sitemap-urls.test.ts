@@ -1,8 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createMockSupabase, createTestEvent } from './_helpers'
-import viewingSpots from '../../mocks/fixtures/viewing-spots.json'
-
-const { client: mockSupabase, setResult } = createMockSupabase()
+import { describe, it, expect } from 'vitest'
+import { createTestEvent } from './_helpers'
+import { getSpotSlugs } from '../../../server/utils/spotsArchive'
 
 // `defineSitemapEventHandler` is auto-imported by Nitro at runtime
 // (and declared as a type-only global in the handler). Provide a
@@ -12,30 +10,27 @@ const { client: mockSupabase, setResult } = createMockSupabase()
 const { default: handler } = await import('../../../server/api/__sitemap__/urls')
 
 describe('GET /api/__sitemap__/urls', () => {
-  beforeEach(() => { vi.clearAllMocks() })
-
-  it('returns sitemap URLs for all spots', async () => {
-    const slugs = viewingSpots.map(s => ({ slug: s.slug }))
-    setResult(slugs)
-
-    const result = await handler(createTestEvent({ supabase: mockSupabase }))
-    expect(result).toHaveLength(slugs.length)
-    // _i18nTransform expands each entry across all locales (en + is) so the
-    // Icelandic sitemap gets /is/spots/<slug> too — see the handler.
-    // lastmod comes from runtimeConfig.buildDate (deploy timestamp).
-    expect(result[0]).toEqual({ loc: `/spots/${viewingSpots[0].slug}`, lastmod: expect.any(String), changefreq: 'weekly', priority: 0.7, _i18nTransform: true })
+  it('returns one entry per archived spot', async () => {
+    const result = await handler(createTestEvent({}))
+    expect(result).toHaveLength(getSpotSlugs().length)
   })
 
-  it('returns empty array when no spots', async () => {
-    setResult(null)
-    const result = await handler(createTestEvent({ supabase: mockSupabase }))
-    expect(result).toEqual([])
+  it('emits archive-appropriate metadata', async () => {
+    const result = await handler(createTestEvent({}))
+    expect(result[0]).toEqual({
+      loc: `/spots/${getSpotSlugs()[0]}`,
+      lastmod: expect.any(String),
+      changefreq: 'yearly',
+      priority: 0.7,
+      _i18nTransform: true,
+    })
   })
 
-  it('queries viewing_spots for slugs', async () => {
-    setResult([])
-    await handler(createTestEvent({ supabase: mockSupabase }))
-    expect(mockSupabase.from).toHaveBeenCalledWith('viewing_spots')
-    expect(mockSupabase.select).toHaveBeenCalledWith('slug')
+  it('needs no database', () => {
+    // No supabase mock is passed — if the handler still called
+    // serverSupabaseServiceRole this would throw. The handler is now
+    // synchronous (it reads the bundled archive), so it returns the
+    // array directly rather than a promise — hence no `.resolves`.
+    expect(handler(createTestEvent({}))).toBeDefined()
   })
 })
