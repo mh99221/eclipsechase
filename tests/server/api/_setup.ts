@@ -41,6 +41,7 @@ import {
   getHeader,
   setResponseStatus,
   setResponseHeader,
+  sendRedirect,
 } from 'h3'
 
 // ---------------------------------------------------------------------------
@@ -56,6 +57,7 @@ Object.assign(globalThis, {
   getHeader,
   setResponseStatus,
   setResponseHeader,
+  sendRedirect,
 })
 
 // ---------------------------------------------------------------------------

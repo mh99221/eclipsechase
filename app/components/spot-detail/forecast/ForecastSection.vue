@@ -53,7 +53,6 @@ const emit = defineEmits<{
 }>()
 
 const { phase, daysUntil, isPreview } = useForecastPhase()
-const { isPro } = useProStatus()
 
 // Only `risky` and `blocked` warrant interrupting with a banner. `clear`
 // and `marginal` verdicts are subtle enough that the StatStrip badge
@@ -89,23 +88,27 @@ const showHorizonAdvisory = computed(() => {
     <ForecastClimatology :history="history" />
     <div class="spacer-8" />
 
-    <!-- Phase-specific card, Pro-gated. -->
-    <template v-if="isPro">
-      <!-- The actual Aug-12 number, shown as soon as vedur's horizon
-           reaches eclipse day (which is well before the 48 h live card
-           below can see it). Self-hides when that data doesn't exist
-           yet, so it costs nothing in the earlier phases. -->
-      <ForecastEclipseDay :spot="spot" />
+    <!-- RETIRED 2026-08-13: this block used to be Pro-gated (v-if="isPro"),
+         with an UpgradeForecastCard shown to free users otherwise. Pro no
+         longer exists — isPro() is now permanently false for everyone, so
+         the gate was deleted rather than repointed. Without it this whole
+         section, including the frozen eclipse-day archive, never rendered
+         for any visitor. See docs/superpowers/plans/2026-08-13-eclipsechase-sunset.md. -->
 
-      <ForecastSubseasonal v-if="phase === 'subseasonal'" :spot="spot" />
-      <ForecastExtended v-else-if="phase === 'extended'" :spot="spot" />
-      <ForecastNowcast v-else-if="phase === 'nowcast'" :spot="spot" />
-      <!-- Reliable phase + climatology phase fall-through both render the
-           live short-range forecast. The component itself swaps in a
-           "this is local conditions, not the eclipse-day forecast" line
-           when the phase is climatology. -->
-      <ForecastReliable v-else :spot="spot" />
-    </template>
+    <!-- The actual Aug-12 number, shown as soon as vedur's horizon
+         reaches eclipse day (which is well before the 48 h live card
+         below can see it). Self-hides when that data doesn't exist
+         yet, so it costs nothing in the earlier phases. -->
+    <ForecastEclipseDay :spot="spot" />
+
+    <ForecastSubseasonal v-if="phase === 'subseasonal'" :spot="spot" />
+    <ForecastExtended v-else-if="phase === 'extended'" :spot="spot" />
+    <ForecastNowcast v-else-if="phase === 'nowcast'" :spot="spot" />
+    <!-- Reliable phase + climatology phase fall-through both render the
+         live short-range forecast. The component itself swaps in a
+         "this is local conditions, not the eclipse-day forecast" line
+         when the phase is climatology. -->
+    <ForecastReliable v-else :spot="spot" />
   </div>
 </template>
 

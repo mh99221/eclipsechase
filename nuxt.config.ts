@@ -133,7 +133,15 @@ export default defineNuxtConfig({
     // every page via PageShell, which would have shipped the raw key text
     // across the whole Icelandic site. English fallback is the documented
     // policy for untranslated keys (see CLAUDE.md); this makes it real.
-    vueI18n: './i18n/vue-i18n.options.ts',
+    //
+    // Path is relative to `langDir` above (../i18n), NOT to this config
+    // file — @nuxtjs/i18n resolves `vueI18n` with cwd already set to the
+    // i18n directory. `./i18n/vue-i18n.options.ts` silently resolved to
+    // the nonexistent i18n/i18n/vue-i18n.options.ts and was dropped with
+    // no error (the "not found" warning is dev-only), so this shipped as
+    // a complete no-op until caught by build verification. Confirmed
+    // fixed by checking the built bundle's `vueI18nConfigs` is non-empty.
+    vueI18n: './vue-i18n.options.ts',
   },
 
   supabase: {
@@ -156,6 +164,16 @@ export default defineNuxtConfig({
     // autoLastmod to read, so they carry an explicit lastmod set from
     // runtimeConfig.buildDate in server/api/__sitemap__/urls.ts.
     autoLastmod: true,
+    // /map and /dashboard 410 (server/middleware/retired-routes.ts) but
+    // the sitemap module still discovers them from their page files under
+    // app/pages/ and listed them as live, indexable URLs — confirmed in a
+    // built __sitemap__/en.xml and __sitemap__/is.xml. /pro and
+    // /pro/success need no entry here: the module already drops routes
+    // that carry a `redirect` routeRule, which no longer applies to them
+    // anyway since that redirect moved into middleware (see routeRules
+    // comment above) — exclude them explicitly too so the sitemap doesn't
+    // regress silently if the redirect implementation changes again.
+    exclude: ['/map', '/dashboard', '/pro', '/pro/success'],
   },
 
   routeRules: {
@@ -170,10 +188,12 @@ export default defineNuxtConfig({
     '/': { prerender: true },
     '/guide': { prerender: true },
     // RETIRED 2026-08-13. The eclipse has passed; Pro is no longer sold.
-    // 301 (not 410) because these URLs were public and indexed — the
-    // farewell page is the honest successor content.
-    '/pro': { redirect: { to: '/farewell', statusCode: 301 } },
-    '/pro/success': { redirect: { to: '/farewell', statusCode: 301 } },
+    // The /pro → /farewell redirect (301, not 410 — this URL was public
+    // and indexed) is NOT a routeRule: routeRules aren't localized by
+    // @nuxtjs/i18n's prefix_except_default strategy, so a routeRules-only
+    // redirect answered /pro but left /is/pro serving the live purchase
+    // page. It's handled in server/middleware/retired-routes.ts instead,
+    // alongside the 410s, with explicit locale-prefix stripping.
     '/privacy': { prerender: true },
     '/terms': { prerender: true },
     '/farewell': { prerender: true },
