@@ -137,6 +137,19 @@ risk, no database cost.
 This is the largest single work item in Part 1. It is technically optional, but
 without it the archive's lifespan is not under your control.
 
+**Amendment (2026-08-13, during implementation):** this section originally
+scoped only the two spots routes. That was incomplete — the weather endpoints
+(`/api/weather/cloud-cover`, `/api/weather/stations`,
+`/api/weather/forecast-timeline`) also read Supabase and are called from
+surviving pages: `/spots` (via `app/pages/spots/index.vue`) and the spot-detail
+Weather tab (via `ForecastEclipseDay`, `ForecastNowcast`, `ForecastReliable`).
+Leaving them would have meant the archive still depended on a live database,
+defeating the whole point of §3.3. They are migrated onto
+`server/data/archive/eclipse-day-weather.json` (55 stations, 11,118 rows) via a
+`server/utils/weatherArchive.ts` module following the same pattern as
+`spotsArchive.ts`. This also satisfies §3.6's intent directly: the weather
+panels now show what the sky actually did on eclipse day.
+
 ### 3.4 Retire the Pro surfaces
 
 Note: `app/pages/` contains no `me.vue`; CLAUDE.md is stale on this point.
@@ -277,7 +290,9 @@ combined.
 
 1. Stripe checkout returns 410 and the price is deactivated
 2. No scheduled job calls vedur.is or Vegagerðin
-3. `/spots` and `/spots/[slug]` render with Supabase unreachable
+3. Every surviving page renders with Supabase unreachable — `/`, `/guide`,
+   `/spots`, `/spots/[slug]`, `/check`, `/farewell` — including their weather
+   panels
 4. `/map` and `/dashboard` return 410; `/pro` and `/pro/success` return 301;
    `/check` still returns 200 and computes a horizon check
 5. A previously installed PWA no longer serves cached gated pages
