@@ -1,8 +1,14 @@
-// Eclipse totality mid-point: August 12, 2026 at 17:46 UTC
-const ECLIPSE_DATE = new Date('2026-08-12T17:46:00Z')
+// Eclipse instant + "has it happened yet" both live in ~/utils/eventStatus
+// so the archive copy on the landing page and this countdown can never
+// disagree about the boundary.
+import { ECLIPSE_DATE, hasEclipsePassed } from '~/utils/eventStatus'
 
 export function useCountdown() {
   const now = useState('countdown-now', () => Date.now())
+
+  /** True once the eclipse instant is behind us — components branch on this
+   *  to render a past-tense state instead of a ticking countdown. */
+  const passed = computed(() => hasEclipsePassed(new Date(now.value)))
 
   const remaining = computed(() => {
     const diff = ECLIPSE_DATE.getTime() - now.value
@@ -29,5 +35,5 @@ export function useCountdown() {
     if (interval) clearInterval(interval)
   })
 
-  return { remaining, eclipseDate: ECLIPSE_DATE }
+  return { remaining, passed, eclipseDate: ECLIPSE_DATE }
 }

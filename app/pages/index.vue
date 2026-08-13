@@ -383,12 +383,11 @@ const faqItems = computed(() => [
         </div>
       </section>
 
-      <!-- Eclipse updates email row. -->
-      <section class="home-section home-email" aria-labelledby="email-heading">
-        <h2 id="email-heading" class="home-h2-mono">{{ t('v0.home.email_title') }}</h2>
-        <p class="home-email-body">{{ t('v0.home.email_body') }}</p>
-        <EmailSignup compact />
-      </section>
+      <!-- The "Eclipse updates" email row was removed 2026-08-13. No further
+           emails will ever be sent, so collecting addresses was pointless —
+           and it was a live database write on the most public page of a site
+           whose database is being paused. EmailSignup.vue stays in the tree,
+           unrendered. -->
 
       <!-- Trust strip — relocated from under the hero so methodology doesn't
            compete with the conversion message in the first screenful. Now
@@ -596,14 +595,6 @@ const faqItems = computed(() => [
 }
 @media (min-width: 768px) {
   .home-h2 { font-size: 30px; }
-}
-.home-h2-mono {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  color: rgb(var(--ink-3));
-  text-transform: uppercase;
-  margin: 0;
 }
 .home-body {
   font-family: 'Inter Tight', system-ui, sans-serif;
@@ -886,18 +877,6 @@ const faqItems = computed(() => [
   font-size: 14px;
   line-height: 1.6;
   color: rgb(var(--ink-1) / 0.85);
-  margin: 0;
-}
-
-/* ── Email ──────────────────────────────────────────────── */
-.home-email {
-  gap: 10px;
-}
-.home-email-body {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 13px;
-  line-height: 1.55;
-  color: rgb(var(--ink-2));
   margin: 0;
 }
 

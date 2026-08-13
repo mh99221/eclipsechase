@@ -1,55 +1,18 @@
-import { serverSupabaseServiceRole } from '#supabase/server'
-import { isValidEmail, normalizeEmail, sendWelcomeEmail } from '../utils/email'
-
-export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
-
-  if (!body?.email || typeof body.email !== 'string') {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Email is required',
-    })
-  }
-
-  const email = normalizeEmail(body.email)
-
-  if (!isValidEmail(email)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Invalid email address',
-    })
-  }
-
-  const supabase = await serverSupabaseServiceRole(event)
-
-  // Check if already signed up (don't re-send welcome email)
-  const { data: existing } = await supabase
-    .from('email_signups')
-    .select('email')
-    .eq('email', email)
-    .maybeSingle()
-
-  const { error } = await supabase
-    .from('email_signups')
-    .upsert(
-      { email, source: 'landing_page', locale: body.locale || 'en' },
-      { onConflict: 'email' }
-    )
-
-  if (error) {
-    console.error('[signup] Supabase error:', JSON.stringify(error, null, 2))
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to save signup. Please try again.',
-    })
-  }
-
-  // Send welcome email only for new signups (not re-submissions).
-  // body.locale was already validated above; pass it so the welcome
-  // email matches the language the user signed up in.
-  if (!existing) {
-    sendWelcomeEmail(email, body.locale)
-  }
-
-  return { success: true }
+/**
+ * RETIRED 2026-08-13.
+ *
+ * The Aug 12 2026 eclipse has passed and no further mail will ever be sent
+ * from this list. The landing page no longer renders the signup form, but
+ * the handler is kept (rather than deleted) so any stale client still
+ * holding the old bundle gets an explicit, permanent 410 rather than a
+ * confusing 404 — and, more importantly, so nothing can write a new row to
+ * `email_signups` in a database that is about to be paused.
+ *
+ * See docs/superpowers/plans/2026-08-13-eclipsechase-sunset.md.
+ */
+export default defineEventHandler(() => {
+  throw createError({
+    statusCode: 410,
+    statusMessage: 'Eclipse updates are no longer sent',
+  })
 })

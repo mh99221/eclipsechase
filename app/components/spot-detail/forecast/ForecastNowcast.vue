@@ -3,12 +3,12 @@
  * Day-of nowcast (T-1 → T-0 in real life). Three deliverables per spec
  * §3.4 + §11 step 7:
  *
- * 1. Eclipse countdown — ticks every 30 s, switches between "TOTALITY IN
- *    Xm Ys", "TOTALITY ACTIVE Xs", and "TOTALITY ENDED Xm ago" based on
- *    the spot's per-longitude totality_start (enriched from grid.json) or
- *    the path's earliest C2 fallback.
+ * 1. Eclipse instant — since 2026-08-13 this is a fixed statement of when
+ *    totality happened rather than a live countdown. It used to tick every
+ *    30 s between "TOTALITY IN / ACTIVE / ENDED"; with the event behind us
+ *    and the data frozen there is nothing left to count.
  *
- * 2. Current cloud cover — pulls /api/weather/forecast-timeline at the
+ * 2. Cloud cover at totality — pulls /api/weather/forecast-timeline at the
  *    nearest station, refreshing every 5 min per spec §6 cadence. Same
  *    "now strip" treatment as ForecastReliable so the cards rhyme.
  *
@@ -127,17 +127,6 @@ const timer = computed(() => {
   return { state: 'after' as const, ms: now - end }
 })
 
-// h XXm XXs / m XXs / s
-function formatDuration(ms: number) {
-  const totalSec = Math.max(0, Math.floor(ms / 1000))
-  const h = Math.floor(totalSec / 3600)
-  const m = Math.floor((totalSec % 3600) / 60)
-  const s = totalSec % 60
-  if (h > 0) return `${h}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`
-  if (m > 0) return `${m}m ${String(s).padStart(2, '0')}s`
-  return `${s}s`
-}
-
 // ─── Current conditions ────────────────────────────────────────────────
 const stationForecasts = computed(() => {
   if (!forecastData.value || !nearest.value) return null
@@ -165,14 +154,13 @@ const eumetsatUrl = 'https://view.eumetsat.int/'
   <Card>
     <CardTitle>{{ t('v0.forecast.nowcast_title') }}</CardTitle>
 
-    <!-- Eclipse countdown. State drives the eyebrow copy + timer colour. -->
+    <!-- Was a live countdown through C2/C3. Now a fixed statement of when
+         totality happened here — the data below is frozen at that instant,
+         so a ticking "totality ended 3 weeks ago" would be noise. `timer`
+         still drives data-state so the dimmed after-styling applies. -->
     <div class="now-timer" :data-state="timer.state">
-      <div class="now-timer-eyebrow">
-        <template v-if="timer.state === 'before'">{{ t('v0.forecast.nowcast_timer_before') }}</template>
-        <template v-else-if="timer.state === 'during'">{{ t('v0.forecast.nowcast_timer_during') }}</template>
-        <template v-else>{{ t('v0.forecast.nowcast_timer_after') }}</template>
-      </div>
-      <div class="now-timer-value">{{ formatDuration(timer.ms) }}</div>
+      <div class="now-timer-eyebrow">{{ t('v0.forecast.nowcast_timer_archived_eyebrow') }}</div>
+      <div class="now-timer-value">{{ t('v0.forecast.nowcast_timer_archived_value') }}</div>
     </div>
 
     <!-- Current cloud cover at nearest station. -->
@@ -249,13 +237,17 @@ const eumetsatUrl = 'https://view.eumetsat.int/'
   color: rgb(var(--ink-1) / 0.62);
   flex-shrink: 0;
 }
+/* Now a date string rather than a ticking duration, so it sits at label
+   scale instead of stat scale — a 22px "12 AUG 2026 · 17:43 UTC" would
+   wrap on a narrow phone. */
 .now-timer-value {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 22px;
-  font-weight: 700;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 600;
   color: rgb(var(--ink-1));
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.06em;
+  text-align: right;
 }
 .now-timer[data-state='during'] .now-timer-eyebrow,
 .now-timer[data-state='during'] .now-timer-value {

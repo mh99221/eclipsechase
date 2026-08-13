@@ -16,6 +16,11 @@ defineProps<{
    */
   width?: 'reading' | 'wide' | 'full'
 }>()
+
+// Site-wide archive notice. Rendered here rather than per-page so every
+// route that uses the shared chrome states, above the fold, that what
+// follows is a record of a past event rather than live guidance.
+const { t } = useI18n()
 </script>
 
 <template>
@@ -27,7 +32,12 @@ defineProps<{
       { 'no-top': noTop, 'no-bottom': noBottom },
     ]"
   >
-    <div class="page-inner"><slot /></div>
+    <div class="page-inner">
+      <p class="archive-notice ec-banner-info" data-testid="archive-notice">
+        {{ t('archive.notice') }}
+      </p>
+      <slot />
+    </div>
   </main>
 </template>
 
@@ -55,6 +65,21 @@ defineProps<{
 
 .page-inner {
   width: 100%;
+}
+
+/* Deliberately quiet: one line of small mono set inside the reading column,
+   so it registers as a standing note rather than an alert competing with
+   the page it introduces. */
+.archive-notice {
+  margin: 0 16px 20px;
+  padding: 9px 12px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10.5px;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+}
+@media (min-width: 768px) {
+  .archive-notice { margin: 0 24px 24px; }
 }
 
 /* Width modes — only kick in on tablet+ so mobile stays full-bleed. */

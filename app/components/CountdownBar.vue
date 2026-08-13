@@ -1,6 +1,9 @@
 <script setup lang="ts">
 const { t } = useI18n()
-const { remaining } = useCountdown()
+// `passed` flips permanently once 2026-08-12T17:46Z is behind us. Rather
+// than let the clamped countdown sit at 00 · 00 · 00 · 00 — which reads as
+// a broken timer — the component swaps to a past-tense statement.
+const { remaining, passed } = useCountdown()
 
 function padZero(n: number): string {
   return n.toString().padStart(2, '0')
@@ -15,7 +18,15 @@ const units = computed(() => [
 </script>
 
 <template>
-  <div class="countdown-row my-8">
+  <div v-if="passed" class="countdown-passed my-8">
+    <p class="countdown-passed-label">{{ t('archive.hero_passed') }}</p>
+    <p class="countdown-passed-detail">{{ t('archive.hero_passed_detail') }}</p>
+    <NuxtLinkLocale to="/farewell" class="countdown-passed-link">
+      {{ t('archive.hero_link') }}
+    </NuxtLinkLocale>
+  </div>
+
+  <div v-else class="countdown-row my-8">
     <template v-for="(unit, idx) in units" :key="idx">
       <!-- Dot separator -->
       <span v-if="idx > 0" class="countdown-dot" />
@@ -36,6 +47,54 @@ const units = computed(() => [
 </template>
 
 <style scoped>
+/* Post-eclipse state. Occupies roughly the same vertical band as the
+   digits so the hero composition doesn't collapse, but reads as a
+   sentence rather than a timer. */
+.countdown-passed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+.countdown-passed-label {
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: rgb(var(--ink-1));
+  margin: 0;
+}
+@media (min-width: 640px) {
+  .countdown-passed-label { font-size: 40px; }
+}
+.countdown-passed-detail {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.6;
+  color: rgb(var(--ink-3));
+  margin: 0;
+  max-width: 30ch;
+}
+.countdown-passed-link {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(var(--accent));
+  text-decoration: none;
+  border-bottom: 1px solid rgb(var(--accent) / 0.35);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.countdown-passed-link:hover {
+  color: rgb(var(--accent-strong));
+  border-bottom-color: rgb(var(--accent-strong) / 0.6);
+}
+
 .countdown-row {
   display: flex;
   align-items: center;
