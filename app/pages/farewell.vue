@@ -50,7 +50,7 @@ useHead({
         </p>
       </div>
 
-      <div class="bg-surface border border-border-subtle/40 rounded px-4 py-4 mt-10">
+      <Card class="mt-10">
         <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 mb-1.5">
           Next total eclipse over Iceland
         </p>
@@ -61,13 +61,7 @@ useHead({
           Egypt &mdash; over six minutes of totality near Luxor, in some of the most reliably
           cloudless air on the planet. If yesterday caught you, start there.
         </p>
-      </div>
-
-      <p class="text-sm text-ink-3 leading-relaxed mt-10">
-        Thank you to everyone who wrote in with a corrected parking note, a better photograph, or
-        a spot we had missed. This was built on evenings and weekends, and it was worth every one
-        of them.
-      </p>
+      </Card>
     </article>
   </PageShell>
 </template>
