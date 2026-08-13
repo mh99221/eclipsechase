@@ -880,10 +880,13 @@ routeRules cannot emit a 410 body, so add a server middleware. Create `server/mi
  * /pro and /pro/success are handled by routeRules redirects instead: those
  * URLs were public, so they get a 301 to /farewell.
  */
+// NOTE: /check is deliberately NOT here. It is a public, ungated page that
+// runs entirely on static grids with no Supabase dependency, so it survives
+// the sunset intact. Only /api/horizon/check (the /map overlay endpoint) is
+// retired; /api/check, which powers the /check page, stays.
 const RETIRED_PREFIXES = [
   '/map',
   '/dashboard',
-  '/check',
   '/api/cameras',
   '/api/traffic',
   '/api/horizon',
@@ -918,7 +921,7 @@ function eventFor(path: string) {
 }
 
 describe('retired-routes middleware', () => {
-  for (const path of ['/map', '/map/', '/dashboard', '/check', '/api/cameras', '/api/traffic/conditions']) {
+  for (const path of ['/map', '/map/', '/dashboard', '/api/cameras', '/api/traffic/conditions', '/api/horizon/check']) {
     it(`410s ${path}`, () => {
       expect(() => handler(eventFor(path))).toThrowError(
         expect.objectContaining({ statusCode: 410 }),
@@ -926,7 +929,8 @@ describe('retired-routes middleware', () => {
     })
   }
 
-  for (const path of ['/', '/spots', '/spots/some-spot', '/guide', '/api/spots', '/farewell']) {
+  // /check and /api/check are public, static-data-only, and survive the sunset.
+  for (const path of ['/', '/spots', '/spots/some-spot', '/guide', '/check', '/api/check', '/api/spots', '/farewell']) {
     it(`allows ${path}`, () => {
       expect(() => handler(eventFor(path))).not.toThrow()
     })

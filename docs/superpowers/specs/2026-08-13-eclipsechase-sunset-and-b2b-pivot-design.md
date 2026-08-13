@@ -139,14 +139,21 @@ without it the archive's lifespan is not under your control.
 
 ### 3.4 Retire the Pro surfaces
 
-Note: `app/pages/` contains no `me.vue`; CLAUDE.md is stale on this point. The
-actual Pro surfaces are listed below.
+Note: `app/pages/` contains no `me.vue`; CLAUDE.md is stale on this point.
+
+**Correction (2026-08-13, during implementation):** this section originally
+listed `/check` as a Pro surface to be retired. That was wrong — `/check` has no
+`definePageMeta`, no `pro-gate` middleware, and `/api/check` has no Pro check.
+It is a public, indexable page, and it runs entirely on static grids
+(`horizonGrid`, `eclipseGrid`, `totalityPath`, `historicalWeatherGrid`) with no
+Supabase dependency, so it keeps working after §3.3. Retiring it would have
+contradicted D2. It is kept and frozen.
 
 | Route | Action |
 |---|---|
-| `/map`, `/dashboard`, `/check` | 410 Gone — gated, so no search equity to lose |
+| `/map`, `/dashboard` | 410 Gone — gated, so no search equity to lose |
 | `/pro`, `/pro/success` | 301 → `/farewell` |
-| `/`, `/guide`, `/spots`, `/spots/[slug]`, `/credits`, `/privacy`, `/terms` | Keep, prerendered |
+| `/`, `/guide`, `/spots`, `/spots/[slug]`, `/check`, `/credits`, `/privacy`, `/terms` | Keep, prerendered |
 
 Also required:
 
@@ -271,7 +278,8 @@ combined.
 1. Stripe checkout returns 410 and the price is deactivated
 2. No scheduled job calls vedur.is or Vegagerðin
 3. `/spots` and `/spots/[slug]` render with Supabase unreachable
-4. Retired routes return 410 or 301 as specified in §3.4
+4. `/map` and `/dashboard` return 410; `/pro` and `/pro/success` return 301;
+   `/check` still returns 200 and computes a horizon check
 5. A previously installed PWA no longer serves cached gated pages
 6. No page displays a live countdown, live forecast, or purchase CTA
 7. `restore_codes` is empty and `pro_purchases` is minimised
