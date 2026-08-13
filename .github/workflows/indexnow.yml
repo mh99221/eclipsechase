@@ -11,8 +11,9 @@ name: IndexNow submit
 #                    (set the same value in Vercel env vars)
 #   SITE_URL      — optional; defaults to https://eclipsechase.is
 
+# RETIRED 2026-08-13 — the archive's content is frozen, so there are no
+# updates to notify search engines about.
 on:
-  deployment_status:
   workflow_dispatch:
 
 concurrency:

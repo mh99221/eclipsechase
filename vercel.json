@@ -1,9 +1,3 @@
 {
-  "trailingSlash": true,
-  "crons": [
-    {
-      "path": "/api/tasks/ingest-weather",
-      "schedule": "0 0 * * *"
-    }
-  ]
+  "trailingSlash": true
 }

@@ -1,20 +1,19 @@
 name: Ingest weather
 
-# Vercel Hobby plan caps scheduled functions at daily, so we drive the
-# 15-minute weather-ingestion cadence from GitHub Actions instead.
-# The Vercel cron in vercel.json still runs once a day as a fallback.
+# Vercel Hobby plan caps scheduled functions at daily, so this workflow
+# used to drive the 15-minute weather-ingestion cadence from GitHub
+# Actions instead, with a daily Vercel cron fallback. Both schedules are
+# retired now — see the RETIRED note on the `on:` block below.
 #
 # Required repo secrets:
 #   CRON_SECRET   — bearer token accepted by /api/tasks/ingest-weather
 #                    (set the same value in Vercel env vars)
 #   SITE_URL      — optional; defaults to https://eclipsechase.is
 
+# RETIRED 2026-08-13 — the eclipse has passed and no further weather
+# ingestion is wanted. Kept as manual-dispatch-only rather than deleted
+# so the ingest path stays documented and reproducible.
 on:
-  schedule:
-    # Every 15 minutes. GitHub Actions scheduling can drift by several
-    # minutes under load; that's fine — the 90-min staleness threshold in
-    # the weather endpoints absorbs it.
-    - cron: '*/15 * * * *'
   workflow_dispatch:
 
 concurrency:
