@@ -23,16 +23,18 @@ test.describe('Responsive layouts', () => {
     await expect(article).toBeVisible()
   })
 
-  test('desktop viewport (1280px) — pro page renders', async ({ page, goto }) => {
+  // Was the /pro page; that route is retired and 301s to /farewell.
+  // Repointed at /farewell, which is a real surviving page — the case is
+  // about desktop rendering, not about the product.
+  test('desktop viewport (1280px) — farewell page renders', async ({ page, goto }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
-    await goto('/pro', { waitUntil: 'hydration' })
+    await goto('/farewell', { waitUntil: 'hydration' })
 
     const h1 = page.locator('h1')
     await expect(h1).toBeVisible()
 
-    // Price should be visible
-    const price = page.getByText('9.99')
-    await expect(price.first()).toBeVisible()
+    const brandBar = page.locator('header.brand-bar')
+    await expect(brandBar).toBeVisible()
   })
 
   test('mobile viewport — spot detail page renders without overflow', async ({ page, goto }) => {

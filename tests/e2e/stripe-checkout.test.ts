@@ -1,41 +1,45 @@
 import { expect, test } from './fixtures'
 
-test.describe('Stripe checkout / Pro page', () => {
-  test('/pro page displays pricing at 9.99', async ({ page, goto }) => {
-    await goto('/pro', { waitUntil: 'hydration' })
-
-    // Price card shows €9.99
-    const price = page.getByText('9.99')
-    await expect(price.first()).toBeVisible()
+/**
+ * RETIRED 2026-08-13. Eclipse Pro is no longer for sale.
+ *
+ * The old cases exercised the /pro pricing card, the waiver checkbox and
+ * the checkout button. All of that is gone; what remains worth pinning is
+ * the retirement contract itself, so a future change can't silently
+ * resurrect a payment surface on an archived site:
+ *
+ *   - POST /api/stripe/checkout → 410 Gone
+ *   - /pro and /pro/success     → permanent redirect to /farewell
+ *
+ * The redirect assertions check the permanent status and the final URL
+ * rather than a single Location header, because the preview server and
+ * Vercel differ on whether a trailing-slash hop sits in the chain.
+ *
+ * The browser-level "/pro lands on /farewell" navigation is covered in
+ * map.test.ts alongside the other retired-route checks.
+ */
+test.describe('Stripe checkout (retired)', () => {
+  test('POST /api/stripe/checkout returns 410 Gone', async ({ request }) => {
+    const response = await request.post('/api/stripe/checkout', {
+      data: { waiver: true },
+      failOnStatusCode: false,
+    })
+    expect(response.status()).toBe(410)
   })
 
-  test('/pro page lists feature benefits', async ({ page, goto }) => {
-    await goto('/pro', { waitUntil: 'hydration' })
+  test('/pro never answers 200 and lands on the farewell page', async ({ request }) => {
+    const noFollow = await request.get('/pro', { maxRedirects: 0, failOnStatusCode: false })
+    expect([301, 308]).toContain(noFollow.status())
 
-    // Feature cards — pull off the semantic bg-surface utility
-    const featureCards = page.locator('.bg-surface')
-    const count = await featureCards.count()
-    expect(count).toBeGreaterThanOrEqual(4)
+    const followed = await request.get('/pro', { failOnStatusCode: false })
+    expect(followed.url()).toContain('/farewell')
   })
 
-  test('/pro page has waiver checkbox and checkout button', async ({ page, goto }) => {
-    await goto('/pro', { waitUntil: 'hydration' })
+  test('/pro/success never answers 200 and lands on the farewell page', async ({ request }) => {
+    const noFollow = await request.get('/pro/success', { maxRedirects: 0, failOnStatusCode: false })
+    expect([301, 308]).toContain(noFollow.status())
 
-    // Waiver checkbox
-    const checkbox = page.locator('input[type="checkbox"]')
-    await expect(checkbox).toBeVisible()
-
-    // Checkout button
-    const checkoutButton = page.locator('button').filter({ hasText: /checkout|get|pro|pay/i })
-    await expect(checkoutButton.first()).toBeVisible()
-  })
-
-  test('/pro/success page handles missing session_id', async ({ page, goto }) => {
-    await goto('/pro/success', { waitUntil: 'hydration' })
-
-    // Without session_id, should show delayed/fallback state
-    // Page should still render (not crash)
-    const nav = page.locator('nav')
-    await expect(nav).toBeVisible()
+    const followed = await request.get('/pro/success', { failOnStatusCode: false })
+    expect(followed.url()).toContain('/farewell')
   })
 })

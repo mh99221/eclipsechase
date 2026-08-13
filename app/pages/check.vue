@@ -231,6 +231,30 @@ useHead({
         <Eyebrow tone="dim">{{ t('check.section_share') }}</Eyebrow>
         <CheckShareButtons :result="result" />
       </section>
+
+      <!-- Onward navigation into the archive. Informational only —
+           nothing is for sale here any more. -->
+      <section class="result-section">
+        <Eyebrow tone="dim">{{ t('check.section_next') }}</Eyebrow>
+        <div class="next-grid">
+          <NuxtLinkLocale to="/spots" class="next-link">
+            <Card>
+              <div class="next-eyebrow">{{ t('check.cta_spots_eyebrow') }}</div>
+              <div class="next-title">{{ t('check.cta_spots_title') }}</div>
+              <div class="next-body">{{ t('check.cta_spots_body') }}</div>
+              <div class="next-arrow" aria-hidden="true">→</div>
+            </Card>
+          </NuxtLinkLocale>
+          <NuxtLinkLocale to="/guide" class="next-link">
+            <Card>
+              <div class="next-eyebrow">{{ t('check.cta_guide_eyebrow') }}</div>
+              <div class="next-title">{{ t('check.cta_guide_title') }}</div>
+              <div class="next-body">{{ t('check.cta_guide_body') }}</div>
+              <div class="next-arrow" aria-hidden="true">→</div>
+            </Card>
+          </NuxtLinkLocale>
+        </div>
+      </section>
     </div>
     </div>
   </PageShell>
@@ -397,6 +421,67 @@ useHead({
   text-transform: uppercase;
   color: rgb(var(--ink-1) / 0.42);
 }
+/* Onward-navigation cards (end of a result page). Mirrors the card
+   vocabulary used elsewhere on the page — shared Card primitive plus
+   mono eyebrow / display title / dim body. */
+.next-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+@media (min-width: 640px) {
+  .next-grid { grid-template-columns: 1fr 1fr; }
+}
+.next-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+}
+.next-link :deep(.ui-card) {
+  position: relative;
+  padding-right: 36px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.next-link:hover :deep(.ui-card) {
+  border-color: rgb(var(--accent) / 0.32);
+  background: rgb(var(--surface) / 0.07);
+}
+.next-eyebrow {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(var(--accent));
+  margin-bottom: 6px;
+}
+.next-title {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgb(var(--ink-1));
+  margin-bottom: 4px;
+}
+.next-body {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: rgb(var(--ink-1) / 0.62);
+}
+.next-arrow {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 14px;
+  color: rgb(var(--ink-1) / 0.42);
+  transition: color 0.15s, transform 0.15s;
+}
+.next-link:hover .next-arrow {
+  color: rgb(var(--accent));
+  transform: translateX(2px);
+}
+
 .map-skeleton {
   width: 100%;
   aspect-ratio: 1 / 1;
