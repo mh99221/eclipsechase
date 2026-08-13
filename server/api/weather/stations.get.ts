@@ -1,21 +1,19 @@
-import { serverSupabaseServiceRole } from '#supabase/server'
+import { getAllStations } from '../../utils/weatherArchive'
 
-export default defineEventHandler(async (event) => {
+/**
+ * Weather stations, served from the frozen eclipse-day archive
+ * (see server/utils/weatherArchive.ts). Previously read Supabase per
+ * request; the eclipse has passed and the station list is immutable, so
+ * the runtime database dependency was removed 2026-08-13.
+ *
+ * Response shape is unchanged: { stations: [{ id, name, lat, lng, region }] }
+ * ordered by region — the consuming pages were not modified.
+ */
+export default defineEventHandler((event) => {
   // Edge cache: set here (not via routeRules) because trailingSlash:true
   // rewrites the request path, so the Vercel header-route keyed to the
   // no-slash path never matches the served /api/weather/stations/.
-  setResponseHeader(event, 'Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')
+  setResponseHeader(event, 'Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800')
 
-  const supabase = await serverSupabaseServiceRole(event)
-
-  const { data, error } = await supabase
-    .from('weather_stations')
-    .select('id, name, lat, lng, region')
-    .order('region')
-
-  if (error) {
-    throw createError({ statusCode: 500, statusMessage: 'Failed to fetch stations' })
-  }
-
-  return { stations: data }
+  return { stations: getAllStations() }
 })

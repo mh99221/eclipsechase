@@ -1,39 +1,31 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createMockSupabase, createTestEvent } from '../_helpers'
-
-const { client: mockSupabase, setResult } = createMockSupabase()
+import { describe, it, expect } from 'vitest'
+import { createTestEvent } from '../_helpers'
+import { getAllStations } from '../../../../server/utils/weatherArchive'
 
 const { default: handler } = await import('../../../../server/api/weather/stations.get')
 
 describe('GET /api/weather/stations', () => {
-  beforeEach(() => {
-    mockSupabase.from.mockClear()
-    mockSupabase.select.mockClear()
-    mockSupabase.order.mockClear()
+  it('returns every archived station', () => {
+    const res: any = handler(createTestEvent({}))
+    expect(res.stations).toHaveLength(getAllStations().length)
+    expect(res.stations[0]).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        name: expect.any(String),
+        lat: expect.any(Number),
+        lng: expect.any(Number),
+      }),
+    )
   })
 
-  it('returns stations from Supabase', async () => {
-    const stations = [
-      { id: '1', name: 'Reykjavík', lat: 64.13, lng: -21.9, region: 'reykjavik' },
-      { id: '990', name: 'Keflavík', lat: 64.0, lng: -22.6, region: 'reykjanes' },
-    ]
-    setResult(stations)
-
-    const event = createTestEvent({ supabase: mockSupabase })
-    const result = await handler(event)
-
-    expect(result).toEqual({ stations })
-    expect(mockSupabase.from).toHaveBeenCalledWith('weather_stations')
-    expect(mockSupabase.select).toHaveBeenCalledWith('id, name, lat, lng, region')
-    expect(mockSupabase.order).toHaveBeenCalledWith('region')
+  it('keeps the region ordering the client relies on', () => {
+    const res: any = handler(createTestEvent({}))
+    const regions = res.stations.map((s: any) => s.region ?? '')
+    expect(regions).toEqual([...regions].sort())
   })
 
-  it('throws 500 when Supabase returns an error', async () => {
-    setResult(null, { message: 'DB error' })
-
-    const event = createTestEvent({ supabase: mockSupabase })
-    await expect(handler(event)).rejects.toMatchObject({
-      statusCode: 500,
-    })
+  it('needs no database', () => {
+    // No supabase mock passed — a surviving Supabase call would throw.
+    expect(() => handler(createTestEvent({}))).not.toThrow()
   })
 })

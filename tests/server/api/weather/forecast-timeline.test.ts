@@ -1,147 +1,62 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { createTestEvent } from '../_helpers'
-
-// forecast-timeline.get.ts queries weather_forecasts and weather_stations.
-// It has a module-level stationCache. We test with a single module import.
-
-const mockForecastRows: any[] = []
-const mockStationRows: any[] = []
-const rangeCalls: Array<[number, number]> = []
-
-const mockSupabase = {
-  from: vi.fn().mockImplementation((table: string) => {
-    if (table === 'weather_stations') {
-      return {
-        select: vi.fn().mockReturnValue({
-          then: (resolve: any, reject?: any) => {
-            // Properly chain: call resolve with the result, and return
-            // a promise that resolves with resolve's return value
-            const result = { data: mockStationRows }
-            try {
-              const mapped = resolve(result)
-              return Promise.resolve(mapped)
-            } catch (e) {
-              if (reject) return Promise.resolve(reject(e))
-              return Promise.reject(e)
-            }
-          },
-        }),
-      }
-    }
-    // weather_forecasts — the handler pages with .range(from, to) because
-    // PostgREST clamps any single response to db.max_rows (1000). Slice the
-    // fixture the same way so the paging loop is exercised for real.
-    return {
-      select: vi.fn().mockReturnThis(),
-      gte: vi.fn().mockReturnThis(),
-      lte: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      range: vi.fn().mockImplementation((from: number, to: number) => {
-        rangeCalls.push([from, to])
-        return { data: mockForecastRows.slice(from, to + 1), error: null }
-      }),
-    }
-  }),
-}
+import { CAPTURED_AT, getAllTimelines } from '../../../../server/utils/weatherArchive'
 
 const { default: handler } = await import('../../../../server/api/weather/forecast-timeline.get')
 
 describe('GET /api/weather/forecast-timeline', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-    mockForecastRows.length = 0
-    mockStationRows.length = 0
-    rangeCalls.length = 0
+  it('returns every archived station with an eclipse-day timeline', () => {
+    const res: any = handler(createTestEvent({}))
+
+    expect(res.stations).toHaveLength(getAllTimelines().length)
+    const station = res.stations[0]
+    expect(Object.keys(station).sort()).toEqual(['forecasts', 'id', 'lat', 'lng', 'name', 'region'])
+    expect(station.forecasts.length).toBeGreaterThan(0)
+    expect(Object.keys(station.forecasts[0]).sort()).toEqual(['cloud_cover', 'precip_prob', 'valid_time'])
   })
 
-  it('returns stations with forecast timelines', async () => {
-    mockStationRows.push({ id: '1', name: 'Reykjavík', lat: 64.13, lng: -21.9, region: 'reykjavik' })
-    mockForecastRows.push({
-      station_id: '1', cloud_cover: 30, precipitation_prob: 0,
-      valid_time: '2026-08-12T18:00:00Z', forecast_time: '2026-08-12T12:00:00Z',
-      fetched_at: new Date().toISOString(),
-    })
-
-    const event = createTestEvent({ supabase: mockSupabase })
-    const result = await handler(event)
-
-    expect(result.stations).toHaveLength(1)
-    expect(result.stations[0].id).toBe('1')
-    expect(result.stations[0].forecasts).toHaveLength(1)
-  })
-
-  it('defaults to 24 hours', async () => {
-    const event = createTestEvent({ supabase: mockSupabase })
-    const result = await handler(event)
-    expect(result.hours).toBe(24)
-  })
-
-  it('caps hours at 48', async () => {
-    const event = createTestEvent({ supabase: mockSupabase, query: { hours: '100' } })
-    const result = await handler(event)
-    expect(result.hours).toBe(48)
-  })
-
-  // Regression: PostgREST clamps a single response to db.max_rows (1000),
-  // so `.limit(3000)` silently truncated a 48 h × 55-station window to
-  // ~20 h per station. The handler must page until a short page arrives.
-  it('pages past the 1000-row PostgREST cap to return the full window', async () => {
-    const stationCount = 55
-    const hours = 48
-    for (let h = 0; h < hours; h++) {
-      for (let s = 0; s < stationCount; s++) {
-        const id = `s${s}`
-        mockForecastRows.push({
-          station_id: id,
-          cloud_cover: 40,
-          precipitation_prob: 0,
-          valid_time: new Date(Date.UTC(2026, 7, 10, 18 + h)).toISOString(),
-          forecast_time: '2026-08-10T12:00:00Z',
-          fetched_at: new Date().toISOString(),
-        })
-      }
-    }
-
-    const event = createTestEvent({ supabase: mockSupabase, query: { hours: '48' } })
-    const result = await handler(event)
-
-    expect(rangeCalls.length).toBeGreaterThan(1)
-    expect(result.stations).toHaveLength(stationCount)
-    for (const station of result.stations) {
-      expect(station.forecasts).toHaveLength(hours)
+  it('emits each hour once, ascending, all on eclipse day', () => {
+    const res: any = handler(createTestEvent({ query: { hours: '48' } }))
+    for (const station of res.stations) {
+      const times = station.forecasts.map((f: any) => f.valid_time)
+      expect(times).toEqual([...times].sort())
+      expect(new Set(times).size).toBe(times.length)
+      expect(times.every((t: string) => t.startsWith('2026-08-12'))).toBe(true)
     }
   })
 
-  // Regression: two vedur batches can land inside the 6 h forecast_time
-  // window. Emitting both would double every hour and halve the span the
-  // timeline actually covers.
-  it('keeps only the freshest batch when two cover the same valid_time', async () => {
-    mockStationRows.push({ id: '1', name: 'Reykjavík', lat: 64.13, lng: -21.9, region: 'reykjavik' })
-    // Ordered forecast_time-ascending, as the query returns them.
-    mockForecastRows.push(
-      {
-        station_id: '1', cloud_cover: 10, precipitation_prob: 0,
-        valid_time: '2026-08-12T18:00:00Z', forecast_time: '2026-08-12T06:00:00Z',
-        fetched_at: new Date().toISOString(),
-      },
-      {
-        station_id: '1', cloud_cover: 90, precipitation_prob: 0,
-        valid_time: '2026-08-12T18:00:00Z', forecast_time: '2026-08-12T12:00:00Z',
-        fetched_at: new Date().toISOString(),
-      },
-    )
-
-    const event = createTestEvent({ supabase: mockSupabase })
-    const result = await handler(event)
-
-    expect(result.stations[0].forecasts).toHaveLength(1)
-    expect(result.stations[0].forecasts[0].cloud_cover).toBe(90)
+  it('defaults to 24 hours and caps at 48', () => {
+    expect((handler(createTestEvent({})) as any).hours).toBe(24)
+    expect((handler(createTestEvent({ query: { hours: '100' } })) as any).hours).toBe(48)
   })
 
-  it('includes stale flag and fetched_at', async () => {
-    const event = createTestEvent({ supabase: mockSupabase })
-    const result = await handler(event)
-    expect(result).toHaveProperty('stale')
-    expect(result).toHaveProperty('fetched_at')
+  // The archive covers one day, so `hours` narrows a window centred on
+  // totality rather than extending a rolling one. A 12 h request must
+  // return real slots straddling C2 — never padded or extrapolated ones.
+  it('narrows to a totality-centred window for hours=12', () => {
+    const twelve: any = handler(createTestEvent({ query: { hours: '12' } }))
+    const full: any = handler(createTestEvent({ query: { hours: '48' } }))
+
+    const short = twelve.stations[0].forecasts
+    const long = full.stations[0].forecasts
+    expect(short.length).toBeLessThanOrEqual(12)
+    expect(short.length).toBeLessThan(long.length)
+    for (const slot of short) {
+      expect(long.some((f: any) => f.valid_time === slot.valid_time)).toBe(true)
+    }
+    // The window straddles the 17:43Z eclipse instant.
+    expect(short[0].valid_time <= '2026-08-12T17:43').toBe(true)
+    expect(short[short.length - 1]!.valid_time >= '2026-08-12T17:43').toBe(true)
+  })
+
+  it('reports the frozen archive as fresh, stamped with the capture time', () => {
+    const res: any = handler(createTestEvent({}))
+    expect(res.stale).toBe(false)
+    expect(res.fetched_at).toBe(CAPTURED_AT)
+  })
+
+  it('needs no database', () => {
+    // No supabase mock passed — a surviving Supabase call would throw.
+    expect(() => handler(createTestEvent({ query: { hours: '48' } }))).not.toThrow()
   })
 })
