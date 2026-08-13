@@ -2,13 +2,11 @@
 import { bestRegion } from '~/utils/weather'
 import { cloudLevel, regionLabel } from '~/utils/eclipse'
 
-definePageMeta({ middleware: ['pro-gate'] })
-
 useHead({ title: 'Dashboard' })
 
-// Defense in depth: even with SSR off + middleware redirect, hold the
-// real markup behind `isPro` so a free user navigating SPA-style can
-// never glimpse the dashboard while the redirect is in flight.
+// RETIRED 2026-08-13 — this route now 410s at the edge (see
+// server/middleware/retired-routes.ts) and is unreachable. The `isPro`
+// hold below is left in place as a harmless belt-and-braces guard.
 const { isPro, loading: proLoading } = useProStatus()
 const showContent = computed(() => isPro.value && !proLoading.value)
 
@@ -33,10 +31,8 @@ const { t } = useI18n()
 
 <template>
   <PageShell screen="home">
-    <!-- Hold the real markup behind isPro so a free user can never glimpse
-         dashboard content while pro-gate's redirect to /pro is in flight.
-         Combined with `ssr: false` for /dashboard in nuxt.config, this
-         kills the "flash of dashboard content" on hard reloads. -->
+    <!-- Retired route (410 at the edge). The isPro hold remains as a
+         defence-in-depth guard against any stray client-side navigation. -->
     <div v-if="showContent">
       <Eyebrow align="center" tone="accent" class="home-eyebrow">{{ t('v0.home.eyebrow') }}</Eyebrow>
 

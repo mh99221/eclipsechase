@@ -28,10 +28,9 @@ const homeUrlEn = canonicalize(siteUrl)
 const homeUrlIs = canonicalize(`${siteUrl}/is`)
 // Pro status drives whether this landing shows the conversion track
 // (tricky/compare/free-FAQ) or the Pro track (status card + Pro email
-// copy + filtered FAQ). The composable only runs `checkStatus` from
-// pro-gate middleware on /dashboard and /map — without this onMounted
-// call, a returning Pro user hard-loading `/` would see the Free variant
-// until they navigated to a gated route. Client-only; SSR keeps the
+// copy + filtered FAQ). Nothing else calls `checkStatus` any more (the
+// gated routes were retired 2026-08-13), so this onMounted call is the
+// only place a returning Pro user's status is read. Client-only; SSR keeps the
 // Free shell so SEO crawls stay marketing-flavoured.
 const { isPro, checkStatus } = useProStatus()
 onMounted(() => {

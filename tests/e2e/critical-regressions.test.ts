@@ -3,10 +3,10 @@
  * Each test pins the architectural decision that fixed it, so a future
  * change that re-introduces the bug fails fast.
  *
- *  1. Free user must NOT see Pro-gated content (no SSR markup leak,
- *     no flash on hard reload).
- *  2. /pro H1 typography is mixed-case after a redirect from /dashboard
- *     (no CSS leak from the dashboard's eyebrow rule).
+ *  1. Free user must NOT see Pro-gated content. RETIRED 2026-08-13 —
+ *     superseded by the edge 410 on /dashboard and /map, which is what
+ *     this file now pins. (The old #2 case — /pro H1 typography after a
+ *     redirect from /dashboard — went away with the redirect itself.)
  *  3. 404s render the branded error.vue, not a Nuxt default page.
  *  4. Free users have a discoverable "Restore" entry point in the
  *     BrandBar that deep-links to /pro#restore and auto-expands the
@@ -18,44 +18,17 @@
 import { expect, test } from './fixtures'
 
 test.describe('Critical regressions', () => {
-  // ── #1: Dashboard flash for free users ─────────────────────────────
-  test('/dashboard ships no SSR markup (Pro-gated, ssr: false)', async ({ page, goto }) => {
+  // ── #1: Retired Pro surfaces never leak content ────────────────────
+  // The old pro-gate redirect is gone; the surfaces now 410 at the edge,
+  // which is a strictly stronger guarantee — no markup is served at all.
+  test('/dashboard is 410 Gone and ships no dashboard markup', async ({ page, goto }) => {
     const response = await goto('/dashboard', { waitUntil: 'commit' })
-    expect(response).toBeTruthy()
+    expect(response?.status()).toBe(410)
+
     const html = await response!.text()
-
-    // Nuxt ships an empty SPA shell when ssr: false is set.
-    expect(html).toContain('data-ssr="false"')
-
-    // Pro-gated content must NOT be in the SSR HTML — no eyebrow text,
-    // no checklist, no "best conditions" card. (After hydration the
-    // pro-gate middleware redirects to /pro, but we test the SSR cut.)
     expect(html).not.toContain('home-eyebrow')
     expect(html).not.toContain('CountdownGrid')
     expect(html).not.toContain('best-conditions')
-  })
-
-  test('free user reaches /pro after navigating to /dashboard', async ({ page, goto }) => {
-    await goto('/dashboard', { waitUntil: 'hydration' })
-    await expect(page).toHaveURL(/\/pro$/)
-
-    // The dashboard's home-eyebrow class must NOT be present in the
-    // final DOM — its 0.48em letter-spacing × 12px font = 5.76px is
-    // the source of the historical "all-caps leak" on /pro.
-    const eyebrow = page.locator('.home-eyebrow')
-    await expect(eyebrow).toHaveCount(0)
-  })
-
-  // ── #3: /pro H1 typography after redirect ─────────────────────────
-  test('/pro H1 renders in mixed case (no uppercase leak from dashboard)', async ({ page, goto }) => {
-    await goto('/dashboard', { waitUntil: 'hydration' })
-    await expect(page).toHaveURL(/\/pro$/)
-
-    const h1 = page.locator('h1').first()
-    await expect(h1).toBeVisible()
-
-    const transform = await h1.evaluate(el => getComputedStyle(el).textTransform)
-    expect(transform).toBe('none')
   })
 
   // ── #8 / #24: Branded 404 page ────────────────────────────────────

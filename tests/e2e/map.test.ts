@@ -1,23 +1,23 @@
 import { expect, test } from './fixtures'
 
-test.describe('Map page', () => {
-  // In production builds, the pro-gate middleware redirects to /pro.
-  // These tests verify the gate behavior for the map page.
-
-  test('non-Pro user is redirected to /pro', async ({ page, goto }) => {
-    await goto('/map', { waitUntil: 'hydration' })
-
-    // Pro-gate redirects to /pro since user has no JWT
-    await expect(page).toHaveURL(/\/pro/)
+/**
+ * RETIRED 2026-08-13. /map is gone; server/middleware/retired-routes.ts
+ * answers it with a permanent 410. These tests lock in that contract so a
+ * future change can't silently resurrect the live map surface.
+ */
+test.describe('Map page (retired)', () => {
+  test('/map returns 410 Gone', async ({ page }) => {
+    const response = await page.goto('/map')
+    expect(response?.status()).toBe(410)
   })
 
-  test('/pro page shows upgrade prompt with map feature', async ({ page, goto }) => {
-    await goto('/map', { waitUntil: 'hydration' })
+  test('/dashboard returns 410 Gone', async ({ page }) => {
+    const response = await page.goto('/dashboard')
+    expect(response?.status()).toBe(410)
+  })
 
-    // After redirect to /pro, the page shows pricing
-    await expect(page).toHaveURL(/\/pro/)
-
-    const price = page.getByText('9.99')
-    await expect(price.first()).toBeVisible()
+  test('/pro redirects to the farewell page', async ({ page }) => {
+    await page.goto('/pro')
+    await expect(page).toHaveURL(/\/farewell/)
   })
 })

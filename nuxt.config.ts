@@ -148,25 +148,22 @@ export default defineNuxtConfig({
     // only goes green for routes that exist as HTML at build time.
     '/': { prerender: true },
     '/guide': { prerender: true },
-    '/pro': { ssr: true },
+    // RETIRED 2026-08-13. The eclipse has passed; Pro is no longer sold.
+    // 301 (not 410) because these URLs were public and indexed — the
+    // farewell page is the honest successor content.
+    '/pro': { redirect: { to: '/farewell', statusCode: 301 } },
+    '/pro/success': { redirect: { to: '/farewell', statusCode: 301 } },
     '/privacy': { prerender: true },
     '/terms': { prerender: true },
-    // Pro-gated routes render client-only — Pro status lives in the
-    // browser's IndexedDB (RS256 JWT), so the server can't know who is
-    // entitled. SPA-rendering them lets pro-gate middleware redirect
-    // free users to /pro before any gated markup is painted, killing
-    // the "flash of dashboard content" bug.
-    '/dashboard': { ssr: false },
-    '/map': { ssr: false },
-    '/spots': {
-      ssr: true,
-      headers: {
-        'Cache-Control': 'public, max-age=0, must-revalidate',
-        'CDN-Cache-Control': 'no-store',
-        'Vercel-CDN-Cache-Control': 'no-store',
-      },
-    },
-    '/spots/**': { isr: 3600 },
+    '/farewell': { prerender: true },
+    // Retired below by server/middleware/retired-routes.ts with a 410.
+    // Kept out of prerender so the build doesn't try to render them.
+    '/dashboard': { ssr: false, prerender: false },
+    '/map': { ssr: false, prerender: false },
+    // The archive is static — prerender the list and every detail page so
+    // the site serves as pure CDN HTML with no server work at all.
+    '/spots': { prerender: true },
+    '/spots/**': { prerender: true },
 
     // API edge-caching is set in the handlers themselves via
     // setResponseHeader (server/api/spots/index.get.ts and

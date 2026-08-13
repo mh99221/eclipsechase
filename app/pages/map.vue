@@ -1,6 +1,4 @@
 <script setup lang="ts">
-definePageMeta({ middleware: ['pro-gate'] })
-
 import mapboxgl from 'mapbox-gl'
 import { CLOUD_COVER_LEVELS, CLOUD_COVER_NO_DATA, parseJsonb } from '~/utils/eclipse'
 import type { HorizonCheck } from '~/types/horizon'
@@ -845,8 +843,8 @@ onUnmounted(() => { window.removeEventListener('resize', updateIsMobile) })
 
 // ─── Bare-map tap → dock HORIZON mode ───
 // On mobile, tapping anywhere on the map drops a crosshair and opens
-// the HORIZON dock for that lat/lng (Pro only — the page is gated by
-// pro-gate middleware, so we don't need a runtime check here).
+// the HORIZON dock for that lat/lng. (Retired 2026-08-13 — this route
+// now 410s at the edge, so this code path is unreachable.)
 let horizonMarker: any = null
 onScopeDispose(() => { horizonMarker?.remove(); horizonMarker = null })
 
