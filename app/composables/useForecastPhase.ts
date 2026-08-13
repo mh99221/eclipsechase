@@ -23,7 +23,13 @@
  */
 import { computed, ref, type Ref } from 'vue'
 
-export const ECLIPSE_DATE = new Date('2026-08-12T17:43:00Z')
+// Named distinctly from app/utils/eventStatus.ts's ECLIPSE_DATE (17:46Z,
+// the totality midpoint) even though both are auto-imported: Nuxt's
+// auto-import silently picks one on a bare-name collision, and this file's
+// phase-boundary math wants first contact (17:43Z), not the midpoint. Two
+// different instants for two different purposes — keep the names distinct
+// rather than merging them.
+export const ECLIPSE_PHASE_DATE = new Date('2026-08-12T17:43:00Z')
 
 export type ForecastPhase =
   | 'climatology'   // > 30 days — only historical means are meaningful
@@ -44,7 +50,7 @@ export function useForecastPhase(now?: Ref<Date>): UseForecastPhaseReturn {
   // exercise the threshold logic without mocking the runtime.
   if (now) {
     const daysUntil = computed(
-      () => (ECLIPSE_DATE.getTime() - now.value.getTime()) / 86_400_000,
+      () => (ECLIPSE_PHASE_DATE.getTime() - now.value.getTime()) / 86_400_000,
     )
     const phase = computed<ForecastPhase>(() => phaseFromDays(daysUntil.value))
     return { phase, daysUntil, isPreview: ref(false) }
@@ -65,7 +71,7 @@ export function useForecastPhase(now?: Ref<Date>): UseForecastPhaseReturn {
   const effectiveNow = computed<Date>(() => previewDate.value ?? new Date())
 
   const daysUntil = computed(
-    () => (ECLIPSE_DATE.getTime() - effectiveNow.value.getTime()) / 86_400_000,
+    () => (ECLIPSE_PHASE_DATE.getTime() - effectiveNow.value.getTime()) / 86_400_000,
   )
   const phase = computed<ForecastPhase>(() => phaseFromDays(daysUntil.value))
   const isPreview = computed(() => previewDate.value !== null)

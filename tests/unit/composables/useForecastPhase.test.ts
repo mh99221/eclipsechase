@@ -6,11 +6,11 @@ import { ref } from 'vue'
 // hooks inside the composable.
 
 describe('useForecastPhase', () => {
-  it('exports ECLIPSE_DATE pinned to 2026-08-12T17:43:00Z', async () => {
-    const { ECLIPSE_DATE } = await import(
+  it('exports ECLIPSE_PHASE_DATE pinned to 2026-08-12T17:43:00Z', async () => {
+    const { ECLIPSE_PHASE_DATE } = await import(
       '../../../app/composables/useForecastPhase'
     )
-    expect(ECLIPSE_DATE.toISOString()).toBe('2026-08-12T17:43:00.000Z')
+    expect(ECLIPSE_PHASE_DATE.toISOString()).toBe('2026-08-12T17:43:00.000Z')
   })
 
   // Edge cases: 1 minute either side of each phase boundary, plus the

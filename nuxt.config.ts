@@ -1,3 +1,16 @@
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+
+// Reads server/data/archive/spots.json directly (not via
+// server/utils/spotsArchive.ts) because this runs at nuxt.config
+// evaluation time, before Nitro's auto-imports and path aliases exist.
+// Used only to seed nitro.prerender.routes below — see the comment there.
+function spotArchiveRoutes(): string[] {
+  const path = fileURLToPath(new URL('./server/data/archive/spots.json', import.meta.url))
+  const archive = JSON.parse(readFileSync(path, 'utf-8')) as { spots: { slug: string }[] }
+  return archive.spots.map(s => `/spots/${s.slug}`)
+}
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -113,6 +126,14 @@ export default defineNuxtConfig({
     defaultLocale: 'en',
     langDir: '../i18n',
     strategy: 'prefix_except_default',
+    // Without this, vue-i18n renders a MISSING key as its literal path
+    // ("archive.notice") rather than falling back. is.json is 765/769
+    // translated, so the gap is normally invisible — but the sunset added
+    // 9 English-only keys, including the archive banner that renders on
+    // every page via PageShell, which would have shipped the raw key text
+    // across the whole Icelandic site. English fallback is the documented
+    // policy for untranslated keys (see CLAUDE.md); this makes it real.
+    vueI18n: './i18n/vue-i18n.options.ts',
   },
 
   supabase: {
@@ -180,6 +201,15 @@ export default defineNuxtConfig({
       { baseName: 'dem', dir: './server/data/dem' },
       { baseName: 'eclipse-data', dir: './public/eclipse-data' },
     ],
+    // `/spots/**: { prerender: true }` alone isn't enough — Nitro's
+    // crawler only follows <a href> links it finds in already-prerendered
+    // HTML, and .output/public/spots/index.html contains zero
+    // `/spots/<slug>` hrefs (confirmed by build: the directory held only
+    // index.html, no per-slug subfolders). Enumerate every archived slug
+    // explicitly instead of depending on the crawl finding them.
+    prerender: {
+      routes: spotArchiveRoutes(),
+    },
   },
 
   // Mapbox GL JS is ~1.5 MB minified by design — the largest single

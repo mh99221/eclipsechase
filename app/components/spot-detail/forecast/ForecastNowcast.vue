@@ -24,7 +24,7 @@
  * QA-ing all three timer states without waiting until August.
  */
 import { useNearestStation } from '~/composables/useNearestStation'
-import { ECLIPSE_DATE } from '~/composables/useForecastPhase'
+import { ECLIPSE_PHASE_DATE } from '~/composables/useForecastPhase'
 import { cloudColor, cloudLevel } from '~/utils/eclipse'
 
 interface ForecastSlot {
@@ -111,7 +111,7 @@ const eclipseInstant = computed(() => {
     const d = new Date(props.spot.totality_start)
     if (!Number.isNaN(d.getTime())) return d
   }
-  return ECLIPSE_DATE
+  return ECLIPSE_PHASE_DATE
 })
 const eclipseEnd = computed(() => {
   const dur = props.spot.totality_duration_seconds ?? 130
