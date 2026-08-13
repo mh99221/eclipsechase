@@ -766,21 +766,23 @@ const { default: handler } = await import('../../../../server/api/spots/[slug].g
 const KNOWN_SLUG = getAllSpots()[0]!.slug
 
 describe('GET /api/spots/[slug]', () => {
-  it('returns the requested spot', async () => {
-    const res: any = await handler(createTestEvent({ params: { slug: KNOWN_SLUG } }))
+  it('returns the requested spot', () => {
+    const res: any = handler(createTestEvent({ params: { slug: KNOWN_SLUG } }))
     expect(res.spot.slug).toBe(KNOWN_SLUG)
   })
 
-  it('404s on an unknown slug', async () => {
-    await expect(
-      handler(createTestEvent({ params: { slug: 'nope-not-a-spot' } })),
-    ).rejects.toMatchObject({ statusCode: 404 })
+  // NOTE: the handler is synchronous, so it THROWS rather than returning a
+  // rejected promise. `await expect(...).rejects` does not work here — the
+  // throw happens while evaluating the argument to expect(). Confirmed the
+  // hard way on Task 1. Use the thunk form.
+  it('404s on an unknown slug', () => {
+    expect(() => handler(createTestEvent({ params: { slug: 'nope-not-a-spot' } })))
+      .toThrowError(expect.objectContaining({ statusCode: 404 }))
   })
 
-  it('400s when the slug is missing', async () => {
-    await expect(
-      handler(createTestEvent({ params: {} })),
-    ).rejects.toMatchObject({ statusCode: 400 })
+  it('400s when the slug is missing', () => {
+    expect(() => handler(createTestEvent({ params: {} })))
+      .toThrowError(expect.objectContaining({ statusCode: 400 }))
   })
 })
 ```
@@ -1507,6 +1509,16 @@ Leave it paused. Do not delete it: the snapshot is committed, but the project is
 ---
 
 ## Notes for the implementer
+
+- **Synchronous handlers throw; they do not reject.** Several handlers in this
+  plan are plain (non-`async`) `defineEventHandler` functions. `await
+  expect(handler(event)).rejects.…` fails against them, because the throw
+  happens while evaluating the argument to `expect()`. Use
+  `expect(() => handler(event)).toThrowError(expect.objectContaining({ statusCode: N }))`.
+  Task 1 hit this; Tasks 4 and 5 are already written in the correct form.
+- **`createTestEvent` supports `supabase`, `body`, `query`, `params`, `headers`
+  and `rawBody`** (verified in `tests/server/api/_helpers.ts:85`). Task 4
+  Step 11's contingency is therefore expected to be a no-op — check, then move on.
 
 - **Do not delete `public/sw.js`.** A 404 does not unregister a service worker. Browsers holding v9 need to successfully fetch v10 in order to self-destruct, so that file must remain reachable forever.
 - **`server/data/archive/*.json` is generated but committed.** Do not add it to `.gitignore`. It is the source of truth now — losing it loses the site.
