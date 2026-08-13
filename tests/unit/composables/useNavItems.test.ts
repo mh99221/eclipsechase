@@ -1,13 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 
-vi.mock('~/composables/useProStatus', () => ({
-  useProStatus: vi.fn(),
-}))
-
-// useNavItems() now calls useI18n() to resolve labels via t(). The
-// real vue-i18n composable insists on being called inside a setup
-// scope; mock it instead. Identity-on-key is fine — these tests
-// assert `to` and `locked`, not the label text.
+// useNavItems() calls useI18n() to resolve labels via t(). The real
+// vue-i18n composable insists on being called inside a setup scope;
+// mock it instead. Identity-on-key is fine — these tests assert `to`
+// and `icon`, not the label text.
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({ t: (key: string) => key }),
 }))
@@ -17,41 +13,21 @@ vi.mock('vue-i18n', () => ({
 // — the composable resolves it lazily inside the function, so these
 // tests (which only assert on `items`) never touch it.
 
-import { useProStatus } from '~/composables/useProStatus'
 import { useNavItems } from '~/composables/useNavItems'
 
-beforeEach(() => {
-  vi.resetAllMocks()
-})
-
 describe('useNavItems', () => {
-  it('points Home at / for free users and marks Map locked', () => {
-    vi.mocked(useProStatus).mockReturnValue({
-      isPro: ref(false),
-      loading: ref(false),
-      checkStatus: vi.fn(),
-      clearPro: vi.fn(),
-    } as any)
-
+  it('points Home at / and exposes only the surviving routes', () => {
     const { items } = useNavItems()
-    const home = items.value.find(i => i.icon === 'home')!
-    const map = items.value.find(i => i.icon === 'map')!
-    expect(home.to).toBe('/')
-    expect(map.locked).toBe(true)
+    expect(items.value.map(i => i.to)).toEqual(['/', '/spots', '/guide'])
   })
 
-  it('points Home at /dashboard for Pro users and Map is unlocked', () => {
-    vi.mocked(useProStatus).mockReturnValue({
-      isPro: ref(true),
-      loading: ref(false),
-      checkStatus: vi.fn(),
-      clearPro: vi.fn(),
-    } as any)
-
+  it('no longer offers the retired Map tab', () => {
     const { items } = useNavItems()
-    const home = items.value.find(i => i.icon === 'home')!
-    const map = items.value.find(i => i.icon === 'map')!
-    expect(home.to).toBe('/dashboard')
-    expect(map.locked).toBeFalsy()
+    expect(items.value.find(i => i.icon === 'map')).toBeUndefined()
+  })
+
+  it('marks nothing as locked — there is nothing left to upsell', () => {
+    const { items } = useNavItems()
+    expect(items.value.every(i => !i.locked)).toBe(true)
   })
 })

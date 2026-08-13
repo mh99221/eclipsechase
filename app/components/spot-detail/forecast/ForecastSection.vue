@@ -106,7 +106,6 @@ const showHorizonAdvisory = computed(() => {
            when the phase is climatology. -->
       <ForecastReliable v-else :spot="spot" />
     </template>
-    <UpgradeForecastCard v-else :phase="phase" />
   </div>
 </template>
 

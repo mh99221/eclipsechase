@@ -1,36 +1,22 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import HomeTileGrid from '~/components/HomeTileGrid.vue'
 
 // vue-i18n is stubbed globally in tests/mocks/setup.ts.
 
-vi.mock('~/composables/useProStatus', () => ({
-  useProStatus: vi.fn(),
-}))
-import { useProStatus } from '~/composables/useProStatus'
-
-beforeEach(() => { vi.resetAllMocks() })
-
 describe('HomeTileGrid', () => {
-  it('renders 4 tiles for free users including Get Pro and locked Map', async () => {
-    vi.mocked(useProStatus).mockReturnValue({
-      isPro: ref(false), loading: ref(false), checkStatus: vi.fn(), clearPro: vi.fn(),
-    } as any)
+  it('renders only the two surviving destinations', async () => {
     const wrapper = await mountSuspended(HomeTileGrid)
-    expect(wrapper.findAll('[data-testid="home-tile"]')).toHaveLength(4)
-    expect(wrapper.find('[data-testid-extra="home-tile-pro"]').exists()).toBe(true)
-    expect(wrapper.find('[data-testid-extra="home-tile-map"]').classes()).toContain('locked')
+    const tiles = wrapper.findAll('[data-testid="home-tile"]')
+    expect(tiles).toHaveLength(2)
+    expect(tiles.map(t => t.attributes('href'))).toEqual(['/spots', '/guide'])
   })
 
-  it('renders 4 tiles for Pro users with Dashboard replacing Get Pro, Map unlocked', async () => {
-    vi.mocked(useProStatus).mockReturnValue({
-      isPro: ref(true), loading: ref(false), checkStatus: vi.fn(), clearPro: vi.fn(),
-    } as any)
+  it('offers no purchase tile and no retired routes', async () => {
     const wrapper = await mountSuspended(HomeTileGrid)
-    expect(wrapper.findAll('[data-testid="home-tile"]')).toHaveLength(4)
-    expect(wrapper.find('[data-testid-extra="home-tile-pro"]').exists()).toBe(false)
-    expect(wrapper.find('[data-testid-extra="home-tile-dashboard"]').exists()).toBe(true)
-    expect(wrapper.find('[data-testid-extra="home-tile-dashboard"]').attributes('href')).toBe('/dashboard')
-    expect(wrapper.find('[data-testid-extra="home-tile-map"]').classes()).not.toContain('locked')
+    const html = wrapper.html()
+    expect(html).not.toContain('/pro')
+    expect(html).not.toContain('/map')
+    expect(html).not.toContain('/dashboard')
   })
 })

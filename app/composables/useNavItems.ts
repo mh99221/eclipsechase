@@ -1,12 +1,10 @@
 /**
  * Shared nav items used by both the desktop top nav (masthead) and the
- * mobile bottom nav. Pro-aware: `Home` resolves to `/` for free users
- * and `/dashboard` for Pro users; `Map` is marked `locked` when the user
- * is not Pro so consumers can intercept the click and open the upsell
- * sheet instead of routing.
+ * mobile bottom nav.
  *
- * There is no `Me` tab — Pro status + the referral card live on /dashboard,
- * and purchase restore lives on /pro.
+ * RETIRED 2026-08-13: the Map tab and the Pro-aware Home target are gone
+ * along with the Pro app surfaces. Home always resolves to `/`, and no
+ * item is `locked` — there is nothing left to upsell.
  *
  * Labels resolve through useI18n() so they follow the active locale.
  */
@@ -22,13 +20,11 @@ export interface NavItem {
 export function useNavItems() {
   const route = useRoute()
   const { t } = useI18n()
-  const { isPro } = useProStatus()
 
   const items = computed<NavItem[]>(() => [
-    { to: isPro.value ? '/dashboard' : '/', label: t('nav.home'),  icon: 'home' },
-    { to: '/spots',                          label: t('nav.spots'), icon: 'spots' },
-    { to: '/map',                            label: t('nav.map'),   icon: 'map', locked: !isPro.value },
-    { to: '/guide',                          label: t('nav.guide'), icon: 'guide' },
+    { to: '/',       label: t('nav.home'),  icon: 'home' },
+    { to: '/spots',  label: t('nav.spots'), icon: 'spots' },
+    { to: '/guide',  label: t('nav.guide'), icon: 'guide' },
   ])
 
   function isActive(to: string): boolean {

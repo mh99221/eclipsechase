@@ -25,6 +25,5 @@ const mobileNavPadding = computed(() => !isMap.value)
     <NuxtPage />
     <BottomNav />
     <CookieConsent />
-    <UpsellSheet />
   </div>
 </template>

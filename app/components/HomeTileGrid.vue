@@ -1,19 +1,14 @@
 ﻿<script setup lang="ts">
+/**
+ * Quick-links grid on the landing page.
+ *
+ * RETIRED 2026-08-13: the Map, Pro and Dashboard tiles are gone — those
+ * routes no longer exist and Eclipse Pro is no longer for sale. What
+ * remains are the two surviving destinations.
+ *
+ * Tile eyebrows re-use the nav.* labels so they follow the active locale.
+ */
 const { t } = useI18n()
-const { isPro } = useProStatus()
-const { openUpsell } = useUpsell()
-
-// Tile-eyebrow tokens — re-uses the nav.* labels so the eyebrow
-// follows the active locale. PRO is a brand token and stays
-// untranslated.
-const proEyebrow = 'PRO'
-
-function onMapTileClick(e: MouseEvent) {
-  if (!isPro.value) {
-    e.preventDefault()
-    openUpsell({ source: 'tile' })
-  }
-}
 </script>
 
 <template>
@@ -37,43 +32,6 @@ function onMapTileClick(e: MouseEvent) {
       <span class="tile-title">{{ t('v0.home.tile_guide_title') }}</span>
       <span class="tile-body">{{ t('v0.home.tile_guide_body') }}</span>
     </NuxtLinkLocale>
-
-    <NuxtLinkLocale
-      data-testid="home-tile"
-      data-testid-extra="home-tile-map"
-      :to="isPro ? '/map' : '/pro'"
-      class="tile"
-      :class="{ locked: !isPro }"
-      @click="onMapTileClick"
-    >
-      <span class="tile-eyebrow">{{ t('nav.map').toUpperCase() }}<span v-if="!isPro" class="tile-lock" aria-hidden="true">🔒</span></span>
-      <span class="tile-title">{{ t('v0.home.tile_map_title') }}</span>
-      <span class="tile-body">{{ t('v0.home.tile_map_body') }}</span>
-    </NuxtLinkLocale>
-
-    <NuxtLinkLocale
-      v-if="!isPro"
-      data-testid="home-tile"
-      data-testid-extra="home-tile-pro"
-      to="/pro"
-      class="tile tile-accent"
-    >
-      <span class="tile-eyebrow">{{ proEyebrow }}</span>
-      <span class="tile-title">{{ t('v0.home.tile_pro_title') }}</span>
-      <span class="tile-body">{{ t('v0.home.tile_pro_body') }}</span>
-    </NuxtLinkLocale>
-
-    <NuxtLinkLocale
-      v-else
-      data-testid="home-tile"
-      data-testid-extra="home-tile-dashboard"
-      to="/dashboard"
-      class="tile"
-    >
-      <span class="tile-eyebrow">{{ t('nav.home').toUpperCase() }}</span>
-      <span class="tile-title">{{ t('v0.home.tile_dashboard_title') }}</span>
-      <span class="tile-body">{{ t('v0.home.tile_dashboard_body') }}</span>
-    </NuxtLinkLocale>
   </div>
 </template>
 
@@ -84,10 +42,7 @@ function onMapTileClick(e: MouseEvent) {
   gap: 12px;
 }
 @media (min-width: 768px) {
-  .home-tile-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-  }
+  .home-tile-grid { gap: 16px; }
 }
 
 .tile {
@@ -110,18 +65,6 @@ function onMapTileClick(e: MouseEvent) {
   border-color: rgb(var(--border-subtle) / 0.16);
   background: rgb(var(--surface) / 0.08);
 }
-.tile.locked { color: rgb(var(--ink-2)); }
-/* PRO tile keeps its accent emphasis — heavier border + amber wash so
-   the upgrade target stays visually distinct from the matter-of-fact
-   navigation tiles around it. */
-.tile-accent {
-  border-color: rgb(var(--accent) / 0.5);
-  background: rgb(var(--accent) / 0.06);
-}
-.tile-accent:hover {
-  border-color: rgb(var(--accent));
-  background: rgb(var(--accent) / 0.1);
-}
 
 .tile-eyebrow {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
@@ -130,12 +73,6 @@ function onMapTileClick(e: MouseEvent) {
   color: rgb(var(--ink-1) / 0.62);
   font-weight: 500;
   text-transform: uppercase;
-}
-.tile-lock {
-  display: inline-block;
-  margin-left: 3px;
-  font-size: 10px;
-  vertical-align: middle;
 }
 .tile-title {
   font-family: 'Inter Tight', system-ui, sans-serif;

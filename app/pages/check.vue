@@ -228,11 +228,6 @@ useHead({
       </section>
 
       <section class="result-section">
-        <Eyebrow tone="dim">{{ t('check.section_next') }}</Eyebrow>
-        <CheckSoftCTA :inside-path="result.totality.insidePath" />
-      </section>
-
-      <section class="result-section">
         <Eyebrow tone="dim">{{ t('check.section_share') }}</Eyebrow>
         <CheckShareButtons :result="result" />
       </section>

@@ -3,7 +3,6 @@ const { t } = useI18n()
 const { isPro, loading: proLoading, clearPro } = useProStatus()
 const route = useRoute()
 const { items: navItems, isActive: isNavActive } = useNavItems()
-const { openUpsell } = useUpsell()
 
 // Resolve the route's base name (strips the ___<locale> suffix that
 // @nuxtjs/i18n appends to every route under `prefix_except_default`).
@@ -17,19 +16,11 @@ const baseName = computed(() => String(getRouteBaseName(route) ?? ''))
 
 const isLanding = computed(() => baseName.value === 'index')
 const isMap = computed(() => baseName.value === 'map')
-const isProRoute = computed(() => baseName.value === 'pro' || baseName.value.startsWith('pro-'))
 // /check is a free-tier tool surface that intentionally drops the
 // page-level nav: shared visitors (Reddit, link previews) should
-// focus on the result. Brand-mark + right-slot (RESTORE / GET PRO
-// / locale) remain so they can still find their way around.
+// focus on the result. Brand-mark + right slot (locale) remain so
+// they can still find their way around.
 const isCheck = computed(() => baseName.value === 'check')
-
-// Free users see a small Get-Pro pill in the right slot on every page
-// except / (where the in-page tile already serves that purpose) and
-// /pro / /pro/success (where they're already on the upsell path).
-const showFreeGetProPill = computed(
-  () => !proLoading.value && !isPro.value && !isLanding.value && !isProRoute.value,
-)
 
 // Scroll-aware transparency on `/` — start transparent over the cinematic
 // hero, transition to the standard backdrop blur after 300px of scroll.
@@ -63,17 +54,10 @@ async function handleLogout() {
   isLoggingOut.value = true
   try {
     await clearPro()
-    navigateTo('/pro')
+    navigateTo('/')
   }
   finally {
     isLoggingOut.value = false
-  }
-}
-
-function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) {
-  if (item.locked) {
-    e.preventDefault()
-    openUpsell({ source: 'nav' })
   }
 }
 </script>
@@ -92,27 +76,19 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
       </NuxtLinkLocale>
 
       <!-- Masthead renders in SSR so the bare-logo flash on hard reload
-           is gone. `useNavItems` reads `isPro` (default false on the
-           server), so the SSR pass paints the free-user view; if the
-           visitor is actually Pro, hydration just swaps Home's href
-           and removes the Map lock — no layout shift. -->
+           is gone. Every item is a plain link now — the gated routes were
+           retired 2026-08-13, so there is nothing to lock or swap on
+           hydration. -->
       <nav v-if="!isCheck" class="masthead" aria-label="Primary">
         <NuxtLinkLocale
           v-for="item in navItems"
           :key="item.to + item.icon"
-          :to="item.locked ? '/pro' : item.to"
+          :to="item.to"
           class="masthead-link"
-          :class="{ active: isNavActive(item.to), locked: item.locked }"
+          :class="{ active: isNavActive(item.to) }"
           :aria-current="isNavActive(item.to) ? 'page' : undefined"
-          @click="(e: MouseEvent) => onMastheadClick(item, e)"
         >
           {{ item.label }}
-          <span
-            v-if="item.locked"
-            :data-testid="`masthead-lock-${item.icon}`"
-            class="masthead-lock"
-            aria-hidden="true"
-          >🔒</span>
         </NuxtLinkLocale>
       </nav>
 
@@ -122,24 +98,7 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
              appears in SSR and doesn't shift on hydrate. -->
         <LocaleSwitcher class="hidden sm:inline-flex" />
         <ClientOnly>
-          <template v-if="showFreeGetProPill">
-            <NuxtLinkLocale
-              data-testid="brandbar-restore"
-              to="/pro#restore"
-              class="restore-link"
-              :aria-label="t('v0.home.nav_restore_aria')"
-            >
-              {{ t('v0.home.nav_restore') }}
-            </NuxtLinkLocale>
-            <NuxtLinkLocale
-              data-testid="brandbar-get-pro"
-              to="/pro"
-              class="get-pro-pill"
-            >
-              {{ t('v0.home.nav_get_pro') }}
-            </NuxtLinkLocale>
-          </template>
-          <div v-else-if="isPro && !proLoading" class="flex items-center gap-3">
+          <div v-if="isPro && !proLoading" class="flex items-center gap-3">
             <span class="hidden sm:inline font-mono text-[10px] text-accent/60 tracking-wider uppercase">
               {{ t('pro.badge', 'Pro') }}
             </span>
@@ -236,15 +195,13 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
   color: rgb(var(--ink-1) / 0.62);
   text-decoration: none;
   padding: 4px 0;
-  /* Without nowrap, the lock-icon Map link breaks onto two lines on
-     /is/* because "KORT 🔒" no longer fits the gap. Force everything
-     onto its own row instead — overflow handled by the wider cap. */
+  /* Keep each label on its own row — the /is/* captions are longer and
+     would otherwise wrap inside the 24 px masthead gap. */
   white-space: nowrap;
   transition: color 0.2s ease;
 }
 .masthead-link:hover { color: rgb(var(--ink-1)); }
 .masthead-link.active { color: rgb(var(--accent)); }
-.masthead-link.locked { color: rgb(var(--ink-1) / 0.42); }
 .masthead-link.active::after {
   content: '';
   position: absolute;
@@ -256,60 +213,5 @@ function onMastheadClick(item: { to: string; locked?: boolean }, e: MouseEvent) 
   border-radius: 99px;
   background: rgb(var(--accent));
   box-shadow: 0 0 8px rgb(var(--accent) / 0.7);
-}
-.masthead-lock {
-  display: inline-block;
-  margin-left: -5px;
-  font-size: 10px;
-  filter: grayscale(0.4);
-}
-
-.get-pro-pill {
-  display: inline-flex;
-  align-items: center;
-  background: rgb(var(--accent));
-  color: rgb(var(--accent-ink));
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 7px 12px;
-  border-radius: 999px;
-  text-decoration: none;
-  /* "FÁ PRO" was wrapping into two stacked lines on /is/*, breaking
-     the pill silhouette. Two short caps fit on one line at this size
-     in either locale; just stop the line break. */
-  white-space: nowrap;
-  transition: background 0.2s ease;
-}
-.get-pro-pill:hover { background: rgb(var(--accent-strong)); }
-
-/* Subordinate text link for returning Pro users — sits next to the
-   GET PRO pill, deep-links to /pro#restore. Same mono cap stack as the
-   masthead links so it reads as ambient nav, not a CTA. */
-.restore-link {
-  display: inline-flex;
-  align-items: center;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgb(var(--ink-1) / 0.62);
-  text-decoration: none;
-  min-height: 44px;
-  padding: 0 4px;
-  /* "ENDURHEIMTA" is one word — keep it on one line in case sibling
-     items push it against the Get Pro pill on tighter widths. */
-  white-space: nowrap;
-  transition: color 0.2s ease;
-}
-.restore-link:hover { color: rgb(var(--ink-1)); }
-/* On <360 px the BrandBar gap gets tight. Drop the link letter-spacing
-   first; if the wordmark still pinches we can hide it on the smallest
-   phones via display:none here. */
-@media (max-width: 359px) {
-  .restore-link { letter-spacing: 0.06em; padding: 0 2px; }
 }
 </style>

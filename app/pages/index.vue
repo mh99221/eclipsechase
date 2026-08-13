@@ -26,17 +26,6 @@ const homeUrl = computed(() =>
 // x-default → EN.
 const homeUrlEn = canonicalize(siteUrl)
 const homeUrlIs = canonicalize(`${siteUrl}/is`)
-// Pro status drives whether this landing shows the conversion track
-// (tricky/compare/free-FAQ) or the Pro track (status card + Pro email
-// copy + filtered FAQ). Nothing else calls `checkStatus` any more (the
-// gated routes were retired 2026-08-13), so this onMounted call is the
-// only place a returning Pro user's status is read. Client-only; SSR keeps the
-// Free shell so SEO crawls stay marketing-flavoured.
-const { isPro, checkStatus } = useProStatus()
-onMounted(() => {
-  checkStatus()
-})
-
 interface HorizonComparisonEntry {
   id: string
   lat: number
@@ -142,19 +131,14 @@ useHead(() => ({
   ],
 }))
 
-// `proHidden: true` drops the question once a visitor is a Pro user — the
-// account question is framed around the purchase flow they've already
-// completed, so it'd be noise to them. The other three (offline, accuracy,
-// clouds) are still useful on eclipse day regardless of tier.
-const faqItems = computed(() => {
-  const all = [
-    { q: t('v0.home.faq_q_account'), a: t('v0.home.faq_a_account'), proHidden: true },
-    { q: t('v0.home.faq_q_offline'), a: t('v0.home.faq_a_offline') },
-    { q: t('v0.home.faq_q_accuracy'), a: t('v0.home.faq_a_accuracy') },
-    { q: t('v0.home.faq_q_clouds'), a: t('v0.home.faq_a_clouds') },
-  ]
-  return all.filter(item => !(isPro.value && item.proHidden))
-})
+// The "do I need an account?" entry was dropped 2026-08-13 — it was
+// framed entirely around the Pro purchase flow, which no longer exists.
+// The rest still answer real questions about the archived data.
+const faqItems = computed(() => [
+  { q: t('v0.home.faq_q_offline'), a: t('v0.home.faq_a_offline') },
+  { q: t('v0.home.faq_q_accuracy'), a: t('v0.home.faq_a_accuracy') },
+  { q: t('v0.home.faq_q_clouds'), a: t('v0.home.faq_a_clouds') },
+])
 </script>
 
 <template>
@@ -181,9 +165,6 @@ const faqItems = computed(() => {
           </ul>
           <NuxtLinkLocale to="/spots" class="btn-corona home-hero-cta">
             {{ t('v0.home.hero_cta') }}
-          </NuxtLinkLocale>
-          <NuxtLinkLocale v-if="!isPro" to="/pro" class="home-hero-subcta">
-            {{ t('v0.home.hero_pro_cta') }}
           </NuxtLinkLocale>
         </div>
       </section>
@@ -389,54 +370,7 @@ const faqItems = computed(() => {
         </div>
       </section>
 
-      <!-- Pro status card — Pro-only. Sits where the Free-vs-Pro CTA would
-           render for free users, so the page rhythm stays the same once you
-           upgrade: dashboard preview → confirmation that you have it →
-           email signup → data sources. Mirrors the .compare-cta surface
-           but swaps the amber CTA border for --good (green) to signal an
-           active/positive state, not a conversion. -->
-      <section v-if="isPro" class="home-section home-pro-status" aria-labelledby="pro-status-heading">
-        <div class="pro-status-card">
-          <div class="pro-status-header">
-            <span class="pro-status-dot" aria-hidden="true"></span>
-            <p class="pro-status-eyebrow">{{ t('v0.home.pro_status_eyebrow') }}</p>
-          </div>
-          <h2 id="pro-status-heading" class="pro-status-title">{{ t('v0.home.pro_status_title') }}</h2>
-          <p class="pro-status-body">{{ t('v0.home.pro_status_body') }}</p>
-          <NuxtLinkLocale to="/map" class="btn-corona pro-status-cta">
-            {{ t('v0.home.pro_status_cta') }}
-          </NuxtLinkLocale>
-        </div>
-      </section>
-
-      <!-- Free vs Pro comparison: non-Pro only -->
-      <section v-if="!isPro" class="home-section home-compare" aria-labelledby="compare-heading">
-        <p class="home-eyebrow">{{ t('v0.home.pro_compare_eyebrow') }}</p>
-        <h2 id="compare-heading" class="home-h2">{{ t('v0.home.pro_compare_title') }}</h2>
-        <p class="home-body">{{ t('v0.home.pro_compare_body') }}</p>
-
-        <Card class="compare-card-landing">
-          <ProCompareTable />
-        </Card>
-
-        <div class="compare-cta">
-          <p class="compare-urgency">{{ t('v0.home.pro_compare_urgency') }}</p>
-          <p class="compare-price">{{ t('v0.home.pro_compare_price') }}</p>
-          <p class="compare-price-note">{{ t('v0.home.pro_compare_price_note') }}</p>
-          <NuxtLinkLocale to="/pro" class="btn-corona mt-2">
-            {{ t('v0.home.pro_compare_cta') }}
-          </NuxtLinkLocale>
-          <p class="compare-restore">
-            <span>{{ t('v0.home.pro_compare_restore_pre') }}</span>
-            <NuxtLinkLocale to="/pro#restore" class="compare-restore-link">
-              {{ t('v0.home.pro_compare_restore_cta') }}
-            </NuxtLinkLocale>
-          </p>
-        </div>
-      </section>
-
-      <!-- FAQ — visible to everyone. faqItems drops the "account" question
-           for Pro users since it's framed around the purchase flow. -->
+      <!-- FAQ — visible to everyone. -->
       <section class="home-section home-faq" aria-labelledby="faq-heading">
         <p class="home-eyebrow">{{ t('v0.home.faq_eyebrow') }}</p>
         <h2 id="faq-heading" class="home-h2">{{ t('v0.home.faq_title') }}</h2>
@@ -449,21 +383,11 @@ const faqItems = computed(() => {
         </div>
       </section>
 
-      <!-- Eclipse updates email row. Pro users see a service-touchpoint
-           framing ("Stay in the loop", supplements push); free users see
-           the original acquisition copy. The signup form itself is the
-           same endpoint either way. -->
+      <!-- Eclipse updates email row. -->
       <section class="home-section home-email" aria-labelledby="email-heading">
-        <h2 id="email-heading" class="home-h2-mono">
-          {{ isPro ? t('v0.home.email_title_pro') : t('v0.home.email_title') }}
-        </h2>
-        <p class="home-email-body">
-          {{ isPro ? t('v0.home.email_body_pro') : t('v0.home.email_body') }}
-        </p>
-        <EmailSignup
-          compact
-          :submit-label="isPro ? t('v0.home.email_cta_pro') : undefined"
-        />
+        <h2 id="email-heading" class="home-h2-mono">{{ t('v0.home.email_title') }}</h2>
+        <p class="home-email-body">{{ t('v0.home.email_body') }}</p>
+        <EmailSignup compact />
       </section>
 
       <!-- Trust strip — relocated from under the hero so methodology doesn't
@@ -629,20 +553,6 @@ const faqItems = computed(() => {
 .home-hero-cta {
   margin-top: 6px;
 }
-/* Secondary Pro CTA under the primary hero button. A quiet text link, not a
-   second amber button, so the free-first /spots action stays dominant while
-   Pro is still announced in the first viewport. Hidden for Pro users. */
-.home-hero-subcta {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 13px;
-  line-height: 1.5;
-  color: rgb(var(--accent));
-  text-decoration: none;
-  margin-top: 2px;
-  transition: color 0.2s ease;
-}
-.home-hero-subcta:hover { color: rgb(var(--accent-strong)); }
-
 /* ── Trust strip ────────────────────────────────────────── */
 .home-trust {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
@@ -820,78 +730,6 @@ const faqItems = computed(() => {
   margin: 0;
 }
 
-/* ── Pro status card ────────────────────────────────────────
-   Same surface as .compare-cta (surface/0.04 bg, 12 px radius,
-   centered text) so the Free / Pro variants of the landing read as
-   the same design language. Border swaps amber → --good to signal
-   active/positive state. .btn-corona reuses the established CTA
-   styling so we don't fork a one-off button for one section. */
-.home-pro-status {
-  gap: 0;
-}
-.pro-status-card {
-  padding: 24px 18px;
-  border: 1px solid rgb(var(--good) / 0.45);
-  background: rgb(var(--surface) / 0.04);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  text-align: center;
-}
-@media (min-width: 768px) {
-  .pro-status-card { padding: 32px; }
-}
-.pro-status-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 2px;
-}
-.pro-status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgb(var(--good));
-  box-shadow: 0 0 8px rgb(var(--good) / 0.5);
-  display: inline-block;
-}
-.pro-status-eyebrow {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  color: rgb(var(--good));
-  text-transform: uppercase;
-  margin: 0;
-  font-weight: 500;
-}
-.pro-status-title {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  color: rgb(var(--ink-1));
-  margin: 0;
-  line-height: 1.25;
-  letter-spacing: -0.005em;
-  max-width: 28ch;
-}
-@media (min-width: 768px) {
-  .pro-status-title { font-size: 24px; }
-}
-.pro-status-body {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 13px;
-  line-height: 1.55;
-  color: rgb(var(--ink-2));
-  margin: 0;
-  max-width: 48ch;
-}
-.pro-status-cta {
-  margin-top: 10px;
-}
-
 /* ── Tricky comparison ──────────────────────────────────── */
 .tricky-grid {
   display: grid;
@@ -991,69 +829,6 @@ const faqItems = computed(() => {
   text-transform: uppercase;
   margin-top: 2px;
 }
-
-/* ── Free vs Pro table — body shared with /pro via <ProCompareTable>.
-   The landing wraps it in a Card so the soft surface/border matches
-   the other landing cards. Slight top-margin gives breathing room
-   under the section body copy. */
-.compare-card-landing {
-  margin-top: 4px;
-}
-
-/* Teaser price card on the landing. Mirrors the .price-card surface on
-   /pro (surface/0.04 bg, accent/0.22 border, 12 px radius) so the two
-   pricing surfaces feel like the same product family. */
-.compare-cta {
-  margin-top: 18px;
-  padding: 24px 18px;
-  border: 1px solid rgb(var(--accent) / 0.22);
-  background: rgb(var(--surface) / 0.04);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  text-align: center;
-}
-@media (min-width: 768px) {
-  .compare-cta { padding: 32px; }
-}
-.compare-urgency {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-  color: rgb(var(--ink-2));
-  margin: 0 0 6px;
-  max-width: 420px;
-}
-.compare-price {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  color: rgb(var(--ink-1));
-  margin: 0;
-}
-.compare-price-note {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 13px;
-  line-height: 1.5;
-  color: rgb(var(--ink-2));
-  margin: 0;
-  max-width: 380px;
-}
-.compare-restore {
-  font-family: 'Inter Tight', system-ui, sans-serif;
-  font-size: 12px;
-  color: rgb(var(--ink-3));
-  margin: 4px 0 0;
-}
-.compare-restore-link {
-  color: rgb(var(--ink-2));
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  margin-left: 4px;
-}
-.compare-restore-link:hover { color: rgb(var(--ink-1)); }
 
 /* ── FAQ — mirrors guide-content details/summary so the FAQ on /
    and the FAQ inside /guide read as one design language. */

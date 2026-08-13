@@ -8,9 +8,9 @@
  *     this file now pins. (The old #2 case — /pro H1 typography after a
  *     redirect from /dashboard — went away with the redirect itself.)
  *  3. 404s render the branded error.vue, not a Nuxt default page.
- *  4. Free users have a discoverable "Restore" entry point in the
- *     BrandBar that deep-links to /pro#restore and auto-expands the
- *     restore form.
+ *  4. The BrandBar carries no purchase or restore CTA. RETIRED
+ *     2026-08-13 — Eclipse Pro is no longer for sale, so the case now
+ *     pins the ABSENCE of those entry points.
  *  5. Privacy policy is free of placeholder brackets and stale
  *     Magic Link / Supabase Auth references.
  */
@@ -50,36 +50,16 @@ test.describe('Critical regressions', () => {
     await expect(page.locator('.brand-bar')).toBeVisible()
   })
 
-  // ── #9: BrandBar restore entry point ──────────────────────────────
-  test('free user sees Restore + GET PRO in header on public pages', async ({ page, goto }) => {
+  // ── #9: BrandBar carries no purchase CTA ──────────────────────────
+  // Was: "free user sees Restore + GET PRO". Both pills were removed with
+  // the rest of the purchase surfaces; the archive must not advertise a
+  // product that can no longer be bought.
+  test('BrandBar offers no Restore or GET PRO entry point', async ({ page, goto }) => {
     await goto('/spots', { waitUntil: 'hydration' })
 
-    const restore = page.getByTestId('brandbar-restore')
-    const getPro = page.getByTestId('brandbar-get-pro')
-    await expect(restore).toBeVisible()
-    await expect(getPro).toBeVisible()
-
-    // Anchor target lives on /pro.
-    // trailingSlash:'append' (nuxt.config experimental.defaults.nuxtLink)
-    // slashes the path before the fragment: /pro#restore → /pro/#restore.
-    await expect(restore).toHaveAttribute('href', /\/pro\/#restore$/)
-  })
-
-  test('Restore link routes to /pro#restore and the form auto-expands', async ({ page, goto }) => {
-    await goto('/spots', { waitUntil: 'hydration' })
-
-    await page.getByTestId('brandbar-restore').click()
-    await expect(page).toHaveURL(/\/pro\/#restore$/)
-
-    // RestorePurchase auto-advances from `idle` to `email_input` when
-    // the URL hash is #restore. The "Already purchased? Restore here"
-    // button (idle state) should NOT be visible.
-    const idleButton = page.getByText('Already purchased? Restore here')
-    await expect(idleButton).toHaveCount(0)
-
-    // Email input is present and focused.
-    const emailInput = page.locator('input[type="email"]').first()
-    await expect(emailInput).toBeVisible()
+    await expect(page.getByTestId('brandbar-restore')).toHaveCount(0)
+    await expect(page.getByTestId('brandbar-get-pro')).toHaveCount(0)
+    await expect(page.locator('.brand-bar a[href*="/pro"]')).toHaveCount(0)
   })
 
   // ── #2: Privacy policy placeholders + stale auth refs ─────────────

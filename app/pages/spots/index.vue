@@ -5,7 +5,6 @@ import { PROFILES, useRecommendation } from '~/composables/useRecommendation'
 import type { ProfileId, RankedSpot } from '~/composables/useRecommendation'
 import type { Region, SpotPhoto } from '~/types/spots'
 
-const { isPro } = useProStatus()
 const { coords } = useLocation()
 const route = useRoute()
 const router = useRouter()
@@ -86,8 +85,6 @@ const initialProfile = typeof route.query.profile === 'string' ? route.query.pro
 const selectedProfile = ref<ProfileId | null>(
   PROFILES.some(p => p.id === initialProfile) ? (initialProfile as ProfileId) : null,
 )
-const showProPrompt = ref(false)
-
 watch(selectedProfile, (val) => {
   if (!import.meta.client) return
   const query = { ...route.query }
@@ -96,22 +93,13 @@ watch(selectedProfile, (val) => {
   router.replace({ path: route.path, query })
 })
 
-// Pro-gate the profile picker — free users see the pills but get prompted to upgrade.
-function setProfile(id: ProfileId | null) {
-  if (id != null && !isPro.value) {
-    showProPrompt.value = true
-    return
-  }
-  selectedProfile.value = id
-}
+// The profile picker was Pro-gated until 2026-08-13. Eclipse Pro is
+// retired, so every visitor gets the ranker — there is nothing to
+// upsell and the upgrade prompt has been removed.
 const profileModel = computed<ProfileId | null>({
   get: () => selectedProfile.value,
-  set: (v) => setProfile(v),
+  set: (v) => { selectedProfile.value = v },
 })
-
-function dismissProPrompt() {
-  showProPrompt.value = false
-}
 
 // Recommendation engine
 const { ranked, thinResults } = useRecommendation(
@@ -247,14 +235,6 @@ const headerSub = computed(() => {
     <SortTabs v-model="sortKey" :disabled="!!selectedProfile" />
     <RegionChips v-model="selectedRegion" />
 
-    <div v-if="showProPrompt" class="pro-prompt">
-      <p class="pro-prompt-text">
-        {{ t('spots_page.pro_prompt') }}
-        <NuxtLinkLocale to="/pro" class="pro-prompt-link">{{ t('spots_page.pro_prompt_cta') }}</NuxtLinkLocale>
-      </p>
-      <button type="button" class="pro-prompt-dismiss" @click="dismissProPrompt">{{ t('spots_page.dismiss') }}</button>
-    </div>
-
     <div v-if="selectedProfile && thinResults" class="thin-results">
       {{ t('spots_page.thin_results') }}
     </div>
@@ -289,36 +269,6 @@ const headerSub = computed(() => {
   font-size: 14px;
   color: rgb(var(--ink-1) / 0.62);
   margin: 0;
-}
-
-.pro-prompt {
-  margin: 12px 16px;
-  padding: 12px 14px;
-  background: rgb(var(--accent) / 0.1);
-  border: 1px solid rgb(var(--accent) / 0.4);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 11px;
-}
-.pro-prompt-text { margin: 0; color: rgb(var(--ink-1)); }
-.pro-prompt-link {
-  color: rgb(var(--accent));
-  text-decoration: none;
-  margin-left: 6px;
-  font-weight: 600;
-}
-.pro-prompt-dismiss {
-  background: transparent;
-  border: 0;
-  color: rgb(var(--ink-1) / 0.62);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 11px;
-  min-height: 32px;
 }
 
 .thin-results {
